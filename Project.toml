@@ -1,0 +1,7 @@
+name = "Typst"
+uuid = "f0ed7684-a786-439e-b1e3-3b82803b501e"
+authors = ["Jakob Peters <jakobj.peters@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Typst_jll = "eb4b1da6-20f6-5c66-9826-fdb8ad410d0e"
