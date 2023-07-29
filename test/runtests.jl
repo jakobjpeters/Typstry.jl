@@ -1,6 +1,6 @@
 
 using Test: @testset, @test, detect_ambiguities, detect_unbound_args
-using Typst
+using Typstry
 
 @testset "`detect_ambiguities` and `detect_unbound_args`" begin
     for detect in (:detect_ambiguities, :detect_unbound_args)
