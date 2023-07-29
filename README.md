@@ -3,6 +3,7 @@
 
 [![Codecov](https://codecov.io/gh/jakobjpeters/PAQ.jl/branch/main/graph/badge.svg?token=XFWU66WSD7)](https://codecov.io/gh/jakobjpeters/Typst.jl)
 [![Continuous Integration](https://github.com/jakobjpeters/PAQ.jl/workflows/Continuous%20Integration/badge.svg)](https://github.com/jakobjpeters/Typst.jl/actions/continuous_integration.yml)
+![License](https://img.shields.io/github/license/jakobjpeters/PAQ.jl)
 
 A package to iteract with `Typst`.
 
