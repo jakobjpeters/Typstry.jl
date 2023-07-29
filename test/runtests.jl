@@ -4,6 +4,6 @@ using Typstry
 
 @testset "`detect_ambiguities` and `detect_unbound_args`" begin
     for detect in (:detect_ambiguities, :detect_unbound_args)
-        @eval @test isempty($detect(Typst, recursive = true))
+        @eval @test isempty($detect(Typstry, recursive = true))
     end
 end

@@ -27,6 +27,15 @@ macro T_str(s)
     s
 end
 
+export typst, compile, watch, fonts, @T_str
+
+end # module Typst
+
+
+
+
+#=
+
 # function pdf(path; delete = false)
 #     compile(path)
 #     delete && rm(path)
@@ -37,14 +46,6 @@ end
 #     write(path, s)
 #     pdf(path; delete)
 # end
-
-export typst, compile, watch, fonts, @T_str, pdf
-
-end # module Typst
-
-
-
-#=
 
 # compile(doc, name = "out.pdf")
 
