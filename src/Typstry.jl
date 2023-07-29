@@ -1,27 +1,62 @@
 
 module Typst
 
-import Base: show, ncodeunits, iterate, getindex, isvalid
-using Typst_jll
+import Typst_jll
 
-struct TypstString <: AbstractString
+"""
+    typst(args...)
+"""
+typst(args...) = Typst_jll.typst(exe -> run(Cmd([exe, args...])))
+
+"""
+    compile(args...)
+"""
+compile(args...) = typst("compile", args...)
+
+"""
+    watch(args...)
+"""
+watch(args...) = typst("watch", args...)
+
+"""
+    fonts(args...)
+"""
+fonts(args...) = typst("fonts", args...)
+
+macro T_str(s)
+    s
+end
+
+# function pdf(path; delete = false)
+#     compile(path)
+#     delete && rm(path)
+#     nothing
+# end
+
+# function pdf(s, path = "out.typ"; delete = false)
+#     write(path, s)
+#     pdf(path; delete)
+# end
+
+export typst, compile, watch, fonts, @T_str, pdf
+
+end # module Typst
+
+
+
+#=
+
+# compile(doc, name = "out.pdf")
+
+pdf(s, delete = false, open = true)
+pdf(s::TypstString; path = out.pdf, delete = false, open = true)
+
+
+watch -> use threads?
+
+
+mutable struct X <: AbstractString
     s::String
 end
 
-function show(io::IO, ts::TypstString)
-    print(io, "T")
-    show(io, ts.s)
-end
-
-macro T_str(s)
-    TypstString(s)
-end
-
-ncodeunits(t::TypstString) = ncodeunits(t.s)
-iterate(t::TypstString) = iterate(t.s)
-iterate(t::TypstString, state::Integer) = iterate(t.s, state)
-isvalid(t::TypstString, i::Integer) = Base.isvalid(t.s, i)
-
-export TypstString, @T_str
-
-end # module Typst
+=#
