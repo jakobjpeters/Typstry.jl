@@ -1,5 +1,5 @@
 
-module Typst
+module Typstry
 
 import Typst_jll
 
