@@ -1,7 +1,5 @@
 
-# Typstry.jl
-
-<p align="center"><img width="200px" src="docs/src/assets/logo.svg"/></p>
+<p align="center"><img height="200px" src="docs/src/assets/logo.svg"/></p>
 
 <div align="center">
 
@@ -16,6 +14,10 @@
 <!-- [![Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/Typstry)](https://pkgs.genieframework.com?packages=Typstry) -->
 
 </div>
+
+# Typstry.jl
+
+## Introduction
 
 A package to access the `Typst` command-line interface.
 

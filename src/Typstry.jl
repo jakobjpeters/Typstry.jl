@@ -9,7 +9,7 @@ import Typst_jll
 Call the `typst` command-line interface with the given arguments via
 [`Typst_jll.jl`](https://github.com/JuliaBinaryWrappers/Typst_jll.jl).
 
-Equivalent to `\$ typst args...`.
+Equivalent to `\$ typst args...` in the shell.
 """
 typst(args...) = Typst_jll.typst(exe -> run(Cmd([exe, args...])))
 
