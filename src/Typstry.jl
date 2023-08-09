@@ -85,24 +85,36 @@ Options:
 help() = typst(help)
 help(command::Function) = typst(help, string(command))
 
+const prefix = "\$\$"
+
 """
     t_str(s)
 
-Construct a string without interpolation and unescaping
+Construct a string with custom interpolation and without unescaping
 (except for quotation marks, `\"`, which still have to be escaped).
 
-!!! note
-    This macro is currently equivalent to `@raw_str`.
-    Future work will implement custom interpolation.
+The `\$` symbol cannot be used to interpolate Julia values,
+because `Typst` uses that symbol to start and end a math mode block.
+Instead, use `\$\$` with the same semantics.
 
 # Examples
 ```jldoctest
-julia> t"\$1 / x\$"
-"\\\$1 / x\\\$"
+julia> x = 1;
+
+julia> t"\$1 / x\$" # math mode
+\"\\\$1 / x\\\$\"
+
+julia> t"\$\$x \$\$(x + 1)" # interpolation
+"1 2"
+
+julia> t"\\\$\$x" # escaping
+"\\\$\\\$x"
 ```
 """
 macro t_str(s)
-    s
+    esc(Meta.parse("\"" * replace(s,
+        "\\" * prefix => "\\\$\\\$", prefix => "\$", "\$" => "\\\$"
+    ) * "\""))
 end
 
 export typst, compile, watch, fonts, help, @t_str
