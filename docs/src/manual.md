@@ -14,5 +14,5 @@ help
 ## Utility
 
 ```@docs
-@t_str
+@typst_str
 ```

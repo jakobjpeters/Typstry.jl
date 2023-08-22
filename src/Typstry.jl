@@ -86,7 +86,7 @@ help() = typst(help)
 help(command::Function) = typst(help, string(command))
 
 """
-    t_str(s)
+    typst_str(s)
 
 Construct a string with custom interpolation and without unescaping
 (except for quotation marks, `\"`, which still have to be escaped).
@@ -99,22 +99,22 @@ Instead, use `\$\$` with the same semantics.
 ```jldoctest
 julia> x = 1;
 
-julia> t"\$1 / x\$" # math mode
+julia> typst"\$1 / x\$" # math mode
 \"\\\$1 / x\\\$\"
 
-julia> t"\$\$x \$\$(x + 1)" # interpolation
+julia> typst"\$\$x \$\$(x + 1)" # interpolation
 "1 2"
 
-julia> t"\\\$\$x" # escaping
+julia> typst"\\\$\$x" # escaping
 "\\\$\\\$x"
 ```
 """
-macro t_str(s)
+macro typst_str(s)
     esc(Meta.parse("\"" * replace(s,
         "\\\$\$" => "\\\$\\\$", "\$\$" => "\$", "\$" => "\\\$", "\\" => "\\\\"
     ) * "\""))
 end
 
-export typst, compile, watch, fonts, help, @t_str
+export typst, compile, watch, fonts, help, @typst_str
 
 end # module
