@@ -24,9 +24,9 @@ A package to access the `Typst` command-line interface.
 ## Showcase
 
 ```julia
-julia> using Pkg
+julia> using Pkg: add
 
-julia> Pkg.add(url = "https://github.com/jakobjpeters/Typstry.jl")
+julia> add(url = "https://github.com/jakobjpeters/Typstry.jl")
 
 julia> using Typstry
 
