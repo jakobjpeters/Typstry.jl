@@ -85,8 +85,6 @@ Options:
 help() = typst(help)
 help(command::Function) = typst(help, string(command))
 
-const prefix = "\$\$"
-
 """
     t_str(s)
 
@@ -113,10 +111,10 @@ julia> t"\\\$\$x" # escaping
 """
 macro t_str(s)
     esc(Meta.parse("\"" * replace(s,
-        "\\" * prefix => "\\\$\\\$", prefix => "\$", "\$" => "\\\$"
+        "\\\$\$" => "\\\$\\\$", "\$\$" => "\$", "\$" => "\\\$", "\\" => "\\\\"
     ) * "\""))
 end
 
 export typst, compile, watch, fonts, help, @t_str
 
-end # module Typst
+end # module
