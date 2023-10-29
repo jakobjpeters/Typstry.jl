@@ -29,3 +29,5 @@ julia> compile(file_name)
 ## Related Projects
 
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
+- [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
+- [Latexify.jl](https://github.com/korsbo/Latexify.jl)
