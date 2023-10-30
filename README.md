@@ -77,7 +77,7 @@ julia> document = typst"""
 julia> render(document);
 ```
 
-![Showcase document](docs/assets/showcase.png)
+![Showcase document](docs/src/assets/showcase.png)
 
 ## Related Projects
 
