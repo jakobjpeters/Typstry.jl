@@ -5,3 +5,7 @@ version = "0.1.0"
 
 [deps]
 Typst_jll = "eb4b1da6-20f6-5c66-9826-fdb8ad410d0e"
+
+[compat]
+Typst_jll = "0.8"
+julia = "1"
