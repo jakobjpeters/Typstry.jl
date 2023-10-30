@@ -28,6 +28,10 @@ Use `\$\$` to interpolate values.
 The `\$` symbol is not used because Typst uses
 that symbol to start and end a math mode block.
 
+!!! warning
+    See also the performance tip to [avoid string interpolation for I/O]
+    (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
+
 # Examples
 ```jldoctest
 julia> x = 1;
@@ -81,8 +85,6 @@ macro typst_str(s)
     end
     :(string($(xs...)))
 end
-
-"`\$x`"
 
 """
     @typst_cmd(s)
@@ -171,13 +173,13 @@ julia> typst("compile", "input.typ", "output.pdf");
 typst(xs...) = typst(join(xs, " "))
 
 """
-    render(::String; input = "input.typ", output = "output.pdf", open = true)
+    render(::String...; input = "input.typ", output = "output.pdf", open = true)
 
-Render the given string to a document.
+Render the given strings to a document.
 
 This function generates two files.
-The first is the `input`, which contains the Typst document.
-The second is the `output`, which is rendered from the `input` using Typst's compile function.
+The first is the `input`, which contains the Typst code.
+The second is the `output`, which is rendered from the `input` using Typst's compile command.
 
 The document format is inferred by the file extension of `output`.
 The available formats are `pdf`, `png`, and `svg`.
@@ -195,22 +197,22 @@ julia> render(typst"\$x ^ 2\$");
 julia> render([1, 2, 3, 4]);
 ```
 """
-function render(document::String; input = "input.typ", output = "output.pdf", open = true)
-    write(input, document)
+function render(elements::String...; input = "input.typ", output = "output.pdf", open = true)
+    write(input, elements...)
     typst(("compile", input, output, "--open")[begin:end - !open]...)
 end
 
 """
-    render(elements...; delimeter = " \\\\n", kwargs...)
+    render(elements...; kwargs...)
 
-Equivalent to `render(join(xs, delimeter; kwargs...))`.
+Equivalent to `render(map(string, elements)...; kwargs...)`.
 
 # Examples
 ```jldoctest
-julia> render("The area of a circle is", typst"\$A = pi dot r ^ 2\$"; delimeter = " ");
+julia> render("The area of a circle is ", typst"\$A = pi dot r ^ 2\$");
 ```
 """
-render(elements...; delimeter = " \\\n", kwargs...) = render(join(elements, delimeter); kwargs...)
+render(elements...; kwargs...) = render(map(string, elements)...; kwargs...)
 
 export @typst_str, @typst_cmd, typst, render
 
