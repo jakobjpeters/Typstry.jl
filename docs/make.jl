@@ -23,7 +23,6 @@ makedocs(
         "Home" => "index.md",
         "Manual" => "manual.md"
     ],
-    strict = true
 )
 
 deploydocs(

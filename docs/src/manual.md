@@ -1,18 +1,18 @@
 
 # Manual
 
-## Typst Command-Line Interface
-
-```@docs
-typst
-compile
-watch
-fonts
-help
-```
-
-## Utility
+## Interface
 
 ```@docs
 @typst_str
+@typst_cmd
+typst
+render
+```
+
+## Internals
+
+```@docs
+Typstry.interpolate
+Typstry.typst_cmd
 ```
