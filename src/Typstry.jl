@@ -14,7 +14,7 @@ interpolate(xs, s, start, stop) = push!(xs, esc(parse(s[start:stop])))
 """
     typst_cmd(s)
 """
-typst_cmd(s) = Typst_jll.typst(exe -> Cmd([exe, map(string, split(s))...]))
+typst_cmd(s) = `$(Typst_jll.typst()) $(split(s))`
 
 # Interface
 
