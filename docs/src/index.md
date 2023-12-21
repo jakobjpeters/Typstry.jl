@@ -32,7 +32,7 @@ julia> using Typstry
 ## Showcase
 
 ```
-julia> document = typst"""
+julia> render(typst"""
        #set page(width: 10cm, height: auto)
        #set heading(numbering: "1.")
 
@@ -56,15 +56,14 @@ julia> document = typst"""
            ..nums.map(n => $F_#n$),
            ..nums.map(n => str(fib(n))),
        ))
-       """;
-
-julia> render(document);
+       """);
 ```
 
 ![Showcase document](./assets/showcase.png)
 
-## Related Projects
+## Related Packages
 
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
-- [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [Latexify.jl](https://github.com/korsbo/Latexify.jl)
+- [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
+- [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
