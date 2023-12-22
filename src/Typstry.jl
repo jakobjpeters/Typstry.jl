@@ -12,14 +12,16 @@ using Base: Meta.parse
 interpolate(xs, s, start, stop) = push!(xs, esc(parse(s[start:stop])))
 
 """
-    typst_cmd(s)
+    typst_cmd(x; kwargs...)
 """
-typst_cmd(s) = `$(Typst_jll.typst()) $(split(s))`
+typst_cmd(xs; kwargs...) = Cmd(`$(Typst_jll.typst()) $xs`; kwargs...)
+typst_cmd(s::String; kwargs...) = typst_cmd(split(s); kwargs...)
 
 # Interface
 
 """
     @typst_str(s)
+    typst"s"
 
 Construct a string with custom interpolation and without unescaping.
 Backslashes (`\\`) and quotation marks (`\"`) must still be escaped.
@@ -51,6 +53,7 @@ julia> typst"\\\\"
 """
 macro typst_str(s)
     i, n, xs = 1, length(s), []
+
     while i <= n
         maybe_j = findnext("\$\$", s, i)
         if isnothing(maybe_j)
@@ -83,14 +86,16 @@ macro typst_str(s)
             end
         end
     end
+
     :(string($(xs...)))
 end
 
 """
     @typst_cmd(s)
+    typst`s`
 
-Return a `Cmd` such that ```run(typst`\$s`)```
-is equivalent to `shell> typst \$s`.
+Return a `Cmd` whose first argument is the Typst command-line interface
+and whose remaining arguments are given by `split(s)`.
 
 !!! note
     This macro does not yet support interpolation.
@@ -126,9 +131,15 @@ macro typst_cmd(s)
 end
 
 """
-    typst(s)
+    typst(x; kwargs...)
 
-Equivalent to `shell> typst \$s`.
+Construct and run a `Cmd` whose first argument is the Typst command-line interface
+and whose remaining arguments are given by `x`.
+
+If `x` is a string, the arguments are given by `split(x)`.
+The `kwargs` are passed to `Cmd`.
+
+See also [`@typst_cmd`](@ref).
 
 # Examples
 ```jldoctest
@@ -156,26 +167,14 @@ julia> write("input.typ", typst"\$x ^ 2\$");
 julia> typst("compile input.typ output.pdf");
 ```
 """
-typst(s) = run(typst_cmd(s))
+typst(x; kwargs...) = run(typst_cmd(x; kwargs...))
 
 """
-    typst(xs...)
+    render(elements...;
+        delimeter = "", input = "input.typ", output = "output.pdf", open_output = true
+    )
 
-Equivalent to `typst(join(xs, " "))`.
-
-# Examples
-```jldoctest
-julia> write("input.typ", typst"\$x ^ 2\$");
-
-julia> typst("compile", "input.typ", "output.pdf");
-```
-"""
-typst(xs...) = typst(join(xs, " "))
-
-"""
-    render(::String...; input = "input.typ", output = "output.pdf", open = true)
-
-Render the given strings to a document.
+Render the `elements`, each separated by the `delimeter`, to a document.
 
 This function generates two files.
 The first is the `input`, which contains the Typst code.
@@ -184,11 +183,7 @@ The second is the `output`, which is rendered from the `input` using Typst's com
 The document format is inferred by the file extension of `output`.
 The available formats are `pdf`, `png`, and `svg`.
 
-If `open`, `output` will be opened using the default viewer.
-
-!!! note
-    This is designed to generate a document with little effort.
-    For more advanced useage, see [`typst`](@ref).
+If `open_output = true`, the `output` will be opened using the default viewer.
 
 # Examples
 ```jldoctest
@@ -197,22 +192,10 @@ julia> render(typst"\$x ^ 2\$");
 julia> render([1, 2, 3, 4]);
 ```
 """
-function render(elements::String...; input = "input.typ", output = "output.pdf", open = true)
-    write(input, elements...)
-    typst(("compile", input, output, "--open")[begin:end - !open]...)
+function render(elements...; delimeter = "", input = "input.typ", output = "output.pdf", open_output = true)
+    open(file -> join(file, elements, delimeter), input; truncate = true)
+    typst(("compile", input, output, "--open")[begin:end - !open_output])
 end
-
-"""
-    render(elements...; kwargs...)
-
-Equivalent to `render(map(string, elements)...; kwargs...)`.
-
-# Examples
-```jldoctest
-julia> render("The area of a circle is ", typst"\$A = pi dot r ^ 2\$");
-```
-"""
-render(elements...; kwargs...) = render(map(string, elements)...; kwargs...)
 
 export @typst_str, @typst_cmd, typst, render
 
