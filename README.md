@@ -1,19 +1,7 @@
 
-<p align="center"><img height="200px" src="docs/src/assets/logo.svg"/></p>
-
-<div align="center">
-
-[![Documentation dev](https://img.shields.io/badge/Documentation-dev-blue.svg)](https://jakobjpeters.github.io/Typstry.jl/dev/)
-[![Codecov](https://codecov.io/gh/jakobjpeters/Typstry.jl/branch/main/graph/badge.svg?token=J38tlZ9wFs)](https://codecov.io/gh/jakobjpeters/Typstry.jl)
-![License](https://img.shields.io/github/license/jakobjpeters/Typstry.jl)
-
-[![Documentation](https://github.com/jakobjpeters/Typstry.jl/workflows/Documentation/badge.svg)](https://github.com/jakobjpeters/Typstry.jl/actions/documentation.yml)
-[![Continuous Integration](https://github.com/jakobjpeters/Typstry.jl/workflows/Continuous%20Integration/badge.svg)](https://github.com/jakobjpeters/Typst.jl/actions/continuous_integration.yml)
-
-<!-- ![Version](https://img.shields.io/github/v/release/jakobjpeters/Typstry.jl) -->
-<!-- [![Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/Typstry)](https://pkgs.genieframework.com?packages=Typstry) -->
-
-</div>
+```@meta
+DocTestSetup = :(using Typstry)
+```
 
 # Typstry.jl
 
@@ -25,8 +13,9 @@ and [repository](https://github.com/typst/typst).
 
 ## Features
 
-- Macros to construct Typst strings and commands
-- Functions to construct and render documents
+- Write Typst code
+- Create and run Typst commands
+- Construct and render documents
 
 ### Planned
 
@@ -47,26 +36,45 @@ julia> using Typstry
 
 ## Showcase
 
-```
+```jldoctest
+julia> typst"$1 / x$"
+"\$1 / x\$"
+
+julia> typst`compile input.typ output.pdf`;
+
+julia> typst("help");
+The Typst compiler
+
+Usage: typst [OPTIONS] <COMMAND>
+
+Commands:
+  compile  Compiles an input file into a supported output format [aliases: c]
+  watch    Watches an input file and recompiles on changes [aliases: w]
+  query    Processes an input file to extract provided metadata
+  fonts    Lists all discovered fonts in system and custom font paths
+  update   Self update the Typst CLI (disabled)
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbosity...  Sets the level of logging verbosity: -v = warning & error, -vv = info, -vvv = debug, -vvvv = trace
+      --cert <CERT>   Path to a custom CA certificate to use when making network requests [env: TYPST_CERT=]
+  -h, --help          Print help
+  -V, --version       Print version
+
 julia> render(typst"""
        #set page(width: 10cm, height: auto)
        #set heading(numbering: "1.")
-
        = Fibonacci sequence
        The Fibonacci sequence is defined through the recurrance relation
        $F_n = F_(n-1) + F_(n-2)$. It can also be expressed in _closed form:_
-
        $ F_n round(1 / sqrt(5) phi.alt^n), quad phi.alt = (1 + sqrt(5)) / 2 $
-
        #let count = 8
        #let nums = range(1, count + 1)
        #let fib(n) = (
            if n <= 2 { 1 }
            else { fib(n - 1) + fib(n - 2) }
        )
-
        The first #count numbers of the sequence are:
-
        #align(center, table(
            columns: count,
            ..nums.map(n => $F_#n$),

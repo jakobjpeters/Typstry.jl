@@ -1,5 +1,7 @@
 
 Manifest.toml
 docs/build/
-input.typ
-output.pdf
+*.typ
+*.pdf
+*.png
+*.svg
