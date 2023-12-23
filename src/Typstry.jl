@@ -7,11 +7,6 @@ using Base: Meta.parse
 # Internals
 
 """
-    interpolate(xs, s, start, stop)
-"""
-interpolate(xs, s, start, stop) = push!(xs, esc(parse(s[start:stop])))
-
-"""
     typst_cmd(x; kwargs...)
 """
 typst_cmd(xs; kwargs...) = Cmd(`$(Typst_jll.typst()) $xs`; kwargs...)
@@ -52,42 +47,9 @@ julia> typst"\\\\"
 ```
 """
 macro typst_str(s)
-    i, n, xs = 1, length(s), []
-
-    while i <= n
-        maybe_j = findnext("\$\$", s, i)
-        if isnothing(maybe_j)
-            push!(xs, s[i:n])
-            break
-        end
-        j = first(maybe_j) - 1
-        push!(xs, s[i:j - 1])
-        i = j + 3
-        if j != 0 && s[j] == '\\' push!(xs, s[j + 1: j + 2])
-        else
-            (j + 2 == n || s[j + 3] == ' ') && error("invalid interpolation syntax: missing value")
-            j != 0 && push!(xs, s[j])
-            k = j + 3
-            if s[i] == '('
-                i += open = 1
-                while open != 0 && (i <= n || error("invalid interpolation syntax: unmatched parentheses"))
-                    open += (s[i] == '(') - (s[i] == ')')
-                    i += 1
-                end
-                interpolate(xs, s, k, i - 1)
-            else
-                maybe_i = findnext(' ', s, i)
-                if isnothing(maybe_i)
-                    interpolate(xs, s, k, n)
-                    break
-                end
-                i = only(maybe_i)
-                interpolate(xs, s, k, i)
-            end
-        end
-    end
-
-    :(string($(xs...)))
+    esc(parse("\"" * replace(s,
+        "\\\$\$" => "\\\$\\\$", "\$\$" => "\$", "\$" => "\\\$", "\"" => "\\\"", "\\" => "\\\\"
+    ) * "\""))
 end
 
 """
