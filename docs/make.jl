@@ -1,11 +1,12 @@
 
-using Documenter: DocMeta.setdocmeta!, makedocs, HTML, deploydocs
+using Documenter: HTML, DocMeta.setdocmeta!, deploydocs, makedocs
 using Typstry
 
 const directory = joinpath(@__DIR__, "src", "assets")
 const logo = joinpath(directory, "logo.svg")
+
 if !ispath(logo)
-    using Luxor: Drawing, julia_blue, julia_red, julia_green, julia_purple, sethue, rect, finish
+    using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 
     const width, height = 210, 297
 
@@ -27,14 +28,14 @@ setdocmeta!(
     Typstry,
     :DocTestSetup,
     :(using Typstry),
-    recursive = true,
+    recursive = true
 )
 
 makedocs(
     sitename = "Typstry.jl",
     format = HTML(edit_link = "main"),
     modules = [Typstry],
-    pages = ["Home" => "index.md", "Manual" => "manual.md"],
+    pages = ["Home" => "index.md", "Manual" => ["Strings" => "manual/strings.md", "Commands" => "manual/commands.md"]]
 )
 
 deploydocs(
