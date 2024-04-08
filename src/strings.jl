@@ -2,30 +2,98 @@
 # Internals
 
 """
-    enclose(x, left, right = reverse(left))
-
-Return `TypstString(left * x * right)`.
-
-See also [`TypstString`](@ref).
+    TypstText
 """
-enclose(x, left, right = reverse(left)) = TypstString(left * x * right)
-
-# Interface
+struct TypstText
+    text::String
+end
 
 """
     TypstString <: AbstractString
-    TypstString(x)
+    TypstString(::TypstText)
+
+See also [`TypstText`](@ref Typstry.TypstText)
 """
 struct TypstString <: AbstractString
     text::String
 
-    TypstString(x) = new(string(x))
+    TypstString(text::TypstText) = new(text.text)
 end
+
+"""
+    enclose(x, left, right = reverse(left))
+
+Return `join((left, x, right))`.
+"""
+enclose(x, left, right = reverse(left)) = join((left, x, right))
+
+"""
+    pad_math(x, inline)
+
+Return `enclose(x, inline ? "\\\$" : "\\\$ ")`.
+
+See also [`enclose`](@ref Typstry.enclose)
+"""
+pad_math(x, inline) = enclose(x, inline ? "\$" : "\$ ")
+
+_typstify(xs; settings...) = Iterators.map(x -> typstify(x; settings...), xs)
+
+"""
+    typstify(x; settings...)
+"""
+function typstify(x::AbstractChar; mode, settings...)
+    s = repr(x)
+    mode == markup ? s : enclose(s, "\"")
+end
+function typstify(x::AbstractMatrix; mode, inline, tab, settings...)
+    s = "mat" * enclose(join(Iterators.map(row -> tab * join(
+        Iterators.map(cell -> typstify(cell; mode = math, tab, inline, settings...), row)
+    , ", "), eachrow(x)), ";\n"), "(\n", "\n)")
+    mode == math ? s : pad_math(s, inline)
+end
+function typstify(x::AbstractString; mode, settings...)
+    s = repr(x)
+    mode == markup ? s : enclose(escape_string(s), "\"")
+end
+function typstify(x::Bool; mode, settings...)
+    s = string(x)
+
+    if mode == code s
+    elseif mode == math enclose(x, "\"")
+    else "#" * s
+    end
+end
+typstify(x::Irrational; mode, settings...) = mode == code ? enclose(x, "\"") : string(x)
+function typstify(x::Rational; mode, inline, settings...)
+    n, d = _typstify([numerator(x), denominator(x)]; mode = math, settings...)
+    s = "$n / $d"
+    mode == markup ? pad_math(s, inline) : s
+end
+typstify(x::Union{AbstractFloat, Signed, Text}; settings...) = string(x)
+function typstify(x::OrdinalRange{<:Integer, <:Integer}; mode, settings...)
+    f, l, s = _typstify([first(x), last(x), step(x)]; mode = code, settings...)
+    s = "range($f, $l, step: $s)"
+    mode == code ? s : "#" * s
+end
+function typstify(x::AbstractVector; mode, inline, settings...)
+    s = "vec" * enclose(join(Iterators.map(cell -> _typstify(cell; mode = math, settings...), x), ", "), "(", ")")
+    mode == math ? s : pad_math(s, inline)
+end
+# typstify(x::Unsigned, mode) = mode == markup ? TypstString(x) :
+# typstify(x::AbstractRange, mode) = typstify(collect(x), mode)
 
 """
     Mode
 """
-@enum Mode markup math code
+@enum Mode code markup math
+
+"""
+    TypstString(x; mode = markup, inline = true, tab = " " ^ 4, settings...)
+
+See also [`Mode`](@ref).
+"""
+TypstString(x; mode = markup, inline = true, tab = " " ^ 4, settings...) =
+    TypstString(TypstText(typstify(x; mode, inline, tab, settings...)))
 
 """
     @typst_str(s)
@@ -72,44 +140,19 @@ macro typst_str(s)
         expr, current = parse(s, current + ncodeunits(regex_match.match); filename, greedy = false)
         previous = current
         mode = only(regex_match)
-        push!(args, esc(:(typstify($expr, $(isempty(mode) ? :markup : Symbol(mode))))))
+        push!(args, esc(:(TypstString($expr; mode = $(isempty(mode) ? :markup : Symbol(mode))))))
     end
 
     previous <= lastindex(s) && push!(args, s[previous:end])
-    :(TypstString($_s))
+    :(TypstString(TypstText($_s)))
 end
-
-"""
-    typstify(x, mode = markup)
-
-See also [`Mode`](@ref).
-"""
-typstify(x::Union{Text, Signed, AbstractFloat}, mode) = TypstString(x)
-
-typstify(x::Union{AbstractChar, AbstractString}, mode) =
-    mode == markup ? TypstString(repr(x)) : enclose(x, "\"\\\"")
-
-typstify(x::Bool, mode) = mode == math ? enclose(x, "\"") : TypstString(x)
-
-# typstify(x::Unsigned, mode) = mode == markup ? TypstString(x) :
-
-typstify(x::Irrational, mode) = mode == code ? enclose(x, "\"") : TypstString(x)
-
-typstify(x::Rational, mode) = mode == markup ?
-    enclose(typstify(x, math), "\$") :
-    TypstString("$(numerator(x)) / $(denominator(x))")
-
-function typstify(x::AbstractMatrix, mode)
-    y = enclose(join(Iterators.map(row -> "    " * join(Iterators.map(typstify, row), ", "), eachrow(x)), ";\n"), "\n")
-    typst"$ mat(\(Text(y))) $"
-end
-
-typstify(x::UnitRange{<:Integer}, mode) = typst"$ range(\(first(x)), \(last(x)), step: \(step(x))) $"
-
-# typstify(x::TypstString, mode = markup) = x
-typstify(x) = typstify(x, markup)
 
 # Interface
+
+"""
+    *(::TypstString, ::TypstString)
+"""
+x::TypstString * y::TypstString = TypstString(x.text * y.text)
 
 """
     show(::IO, ::TypstString)
