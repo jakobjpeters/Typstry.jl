@@ -36,7 +36,7 @@ See also [`enclose`](@ref Typstry.enclose)
 """
 pad_math(x, inline) = enclose(x, inline ? "\$" : "\$ ")
 
-_typstify(xs; settings...) = Iterators.map(x -> typstify(x; settings...), xs)
+_typstify(xs; settings...) = map(x -> typstify(x; settings...), xs)
 
 """
     typstify(x; settings...)
@@ -47,7 +47,7 @@ function typstify(x::AbstractChar; mode, settings...)
 end
 function typstify(x::AbstractMatrix; mode, inline, tab, settings...)
     s = "mat" * enclose(join(Iterators.map(row -> tab * join(
-        Iterators.map(cell -> typstify(cell; mode = math, tab, inline, settings...), row)
+        _typstify(row; mode = math, tab, inline, settings...)
     , ", "), eachrow(x)), ";\n"), "(\n", "\n)")
     mode == math ? s : pad_math(s, inline)
 end
@@ -76,11 +76,12 @@ function typstify(x::OrdinalRange{<:Integer, <:Integer}; mode, settings...)
     mode == code ? s : "#" * s
 end
 function typstify(x::AbstractVector; mode, inline, settings...)
-    s = "vec" * enclose(join(Iterators.map(cell -> _typstify(cell; mode = math, settings...), x), ", "), "(", ")")
+    s = "vec" * enclose(join(_typstify(x; mode = math, settings...), ", "), "(", ")")
     mode == math ? s : pad_math(s, inline)
 end
-# typstify(x::Unsigned, mode) = mode == markup ? TypstString(x) :
-# typstify(x::AbstractRange, mode) = typstify(collect(x), mode)
+# typistify(x::Symbol; settings...)
+# typstify(x::Unsigned; settings...)
+# typstify(x::AbstractRange; settings...)
 
 """
     Mode
@@ -102,10 +103,8 @@ TypstString(x; mode = markup, inline = true, tab = " " ^ 4, settings...) =
 Construct a string with custom interpolation and without unescaping.
 Backslashes `\\` and quotation marks `\"` must still be escaped.
 
-The syntax for interpolation is a backslash `\\`,
-followed by the [`Mode`](@ref) to [`typstify`](@ref) the interpolated value,
-and finally a Julia expression enclosed in parentheses `(x)`.
-The syntax `typst\"\\(x)\"` is equivalent to `typst\"\\markup(x)\"`.
+The syntax for interpolation is a function call to [`TypstString`](@ref),
+except with a backslash `\\` instead of the type name.
 
 !!! warning
     See also the performance tip to [avoid string interpolation for I/O]
@@ -134,13 +133,13 @@ macro typst_str(s)
     filename = string(__source__.file)
     previous = current = firstindex(s)
 
-    while (regex_match = match(r"(?<!\\)\\((?:markup|math|code)|)\(", s, current)) !== nothing
+    while (regex_match = match(r"(?<!\\)\\\(", s, current)) !== nothing
         current = prevind(s, regex_match.offset)
+        start = current + 2
         previous <= current && push!(args, s[previous:current])
-        expr, current = parse(s, current + ncodeunits(regex_match.match); filename, greedy = false)
+        _, current = parse(s, start; filename, greedy = false)
         previous = current
-        mode = only(regex_match)
-        push!(args, esc(:(TypstString($expr; mode = $(isempty(mode) ? :markup : Symbol(mode))))))
+        push!(args, esc(parse("TypstString" * s[start:current - 1]; filename)))
     end
 
     previous <= lastindex(s) && push!(args, s[previous:end])

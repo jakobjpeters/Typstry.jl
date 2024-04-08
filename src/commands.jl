@@ -56,7 +56,7 @@ julia> render([1 2; 3 4]);
 """
 function render(elements...; delimeter = "", input = "input.typ", output = "output.pdf", open = true)
     Base.open(input; truncate = true) do file
-        join(file, Iterators.map(_typstify, elements), delimeter)
+        join(file, Iterators.map(TypstString, elements), delimeter)
         println(file)
     end
     run(TypstCommand(["compile", input, output, "--open"][begin:end - !open]))
