@@ -4,7 +4,9 @@
 """
     enclose(x, left, right = reverse(left))
 
-Return `left * x * right`.
+Return `TypstString(left * x * right)`.
+
+See also [`TypstString`](@ref).
 """
 enclose(x, left, right = reverse(left)) = TypstString(left * x * right)
 
@@ -30,7 +32,7 @@ end
     typst"s"
 
 Construct a string with custom interpolation and without unescaping.
-Backslashes (`\\`) and quotation marks (`\"`) must still be escaped.
+Backslashes `\\` and quotation marks `\"` must still be escaped.
 
 The syntax for interpolation is a backslash `\\`,
 followed by the [`Mode`](@ref) to [`typstify`](@ref) the interpolated value,
@@ -119,14 +121,14 @@ end
 
 for f in (:iterate, :ncodeunits, :codeunit, :pointer, :IOBuffer)
     @eval begin
-        """$($f)(::TypstString)"""
+        "\t$($f)(::TypstString)"
         Base.$f(ts::TypstString) = $f(ts.text)
     end
 end
 
 for f in (:iterate, :isvalid, :codeunit)
     @eval begin
-        """$($f)(::TypstString, ::Integer)"""
+        "\t$($f)(::TypstString, ::Integer)"
         Base.$f(ts::TypstString, i::Integer) = $f(ts.text, i)
     end
 end
