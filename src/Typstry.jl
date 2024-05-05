@@ -3,7 +3,7 @@ module Typstry
 
 import Base: *, addenv, detach, ignorestatus, run, setcpuaffinity, setenv, show
 using Base: Docs.Text, Iterators.Stateful, Meta.parse
-using Typst_jll: typst
+using Typst_jll: Typst_jll
 
 include("commands.jl")
 

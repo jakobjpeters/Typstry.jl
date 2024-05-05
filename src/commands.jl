@@ -1,4 +1,6 @@
 
+const typst = Typst_jll.typst()
+
 """
     TypstCommand
     TypstCommand(::Vector{String})
@@ -8,7 +10,7 @@ struct TypstCommand
     typst::Cmd
     parameters::Cmd
 
-    TypstCommand(parameters::Vector{String}) = new(typst(), Cmd(parameters))
+    TypstCommand(parameters::Vector{String}) = new(typst, Cmd(parameters))
     TypstCommand(tc::TypstCommand; kwargs...) = new(Cmd(tc.typst; kwargs...), tc.parameters)
 end
 
