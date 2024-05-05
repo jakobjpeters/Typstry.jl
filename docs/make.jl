@@ -35,7 +35,11 @@ makedocs(
     sitename = "Typstry.jl",
     format = HTML(edit_link = "main"),
     modules = [Typstry],
-    pages = ["Home" => "index.md", "Manual" => ["Strings" => "manual/strings.md", "Commands" => "manual/commands.md"]]
+    pages = ["Home" => "index.md", "Manual" => [
+        "Strings" => "manual/strings.md",
+        "Commands" => "manual/commands.md",
+        "Internals" => "manual/internals.md"
+    ]]
 )
 
 deploydocs(

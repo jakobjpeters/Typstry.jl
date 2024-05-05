@@ -3,14 +3,16 @@
 
 ```@docs
 TypstString
-Mode
 @typst_str
-typstify
+Mode
+format
+print_typst
 ```
 
 ## Interface
 
 ```@docs
+*
 IOBuffer
 codeunit
 isvalid

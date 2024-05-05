@@ -7,7 +7,7 @@ DocTestSetup = :(using Typstry)
 
 A package to access the Typst command-line interface.
 
-See also their [website](https://typst.app/),
+See also Typst's [website](https://typst.app/),
 [documentation](https://typst.app/docs/),
 and [repository](https://github.com/typst/typst).
 
@@ -38,7 +38,7 @@ julia> using Typstry
 
 ```jldoctest
 julia> typst"\(1 // 2)"
-typst"\$1 / 2\$"
+typst"\$ 1 / 2 \$"
 ```
 
 ## Related Packages

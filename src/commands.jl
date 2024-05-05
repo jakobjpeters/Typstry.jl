@@ -33,19 +33,23 @@ end
 
 """
     render(elements...;
-        delimeter = "", input = "input.typ", output = "output.pdf", open = true
-    )
+        delimeter = '\\n',
+        input = "input.typ",
+        output = "output.pdf",
+        open = true,
+    settings...)
 
-Render the `elements`, each separated by the `delimeter`, to a document.
+Render the `elements` to a document.
 
-This function generates two files.
-The first is the `input`, which contains the Typst code.
-The second is the `output`, which is rendered from the `input` using Typst's compile command.
+Each element is written to the `input` file with [`print_typst`](@ref)
+and the given `settings`, seperated by the `delimeter`.
+
+Then, the `input` file is compiled to the `output` file with a [`TypstCommand`](@ref).
 
 The document format is inferred by the file extension of `output`.
 The available formats are `pdf`, `png`, and `svg`.
 
-If `open` = true`, the `output` will be opened using the default viewer.
+If `open` = true`, the `output` file will be opened using the default viewer.
 
 # Examples
 ```jldoctest
@@ -54,11 +58,12 @@ julia> render(typst"\$x ^ 2\$");
 julia> render([1 2; 3 4]);
 ```
 """
-function render(elements...; delimeter = "", input = "input.typ", output = "output.pdf", open = true)
+function render(elements...; delimeter = '\n', input = "input.typ", output = "output.pdf", open = true, settings...)
     Base.open(input; truncate = true) do file
-        join(file, Iterators.map(TypstString, elements), delimeter)
+        join_with(print_typst, file, elements, delimeter; settings...)
         println(file)
     end
+
     run(TypstCommand(["compile", input, output, "--open"][begin:end - !open]))
 end
 
