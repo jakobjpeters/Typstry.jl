@@ -43,7 +43,13 @@ typst"\$ 1 / 2 \$"
 
 ## Related Packages
 
+### Typst
+
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
+- [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
+
+### LaTeX
+
 - [Latexify.jl](https://github.com/korsbo/Latexify.jl)
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)

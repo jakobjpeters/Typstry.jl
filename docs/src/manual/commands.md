@@ -10,11 +10,11 @@ render
 ## Interface
 
 ```@docs
-show(::IO, ::TypstCommand)
-run
 addenv
-setenv
-ignorestatus
 detach
+ignorestatus
+run
 setcpuaffinity
+setenv
+show(::IO, ::TypstCommand)
 ```

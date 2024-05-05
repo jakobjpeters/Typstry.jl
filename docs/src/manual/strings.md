@@ -12,8 +12,8 @@ print_typst
 ## Interface
 
 ```@docs
-*
 IOBuffer
+*
 codeunit
 isvalid
 iterate

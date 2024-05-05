@@ -2,7 +2,9 @@
 # Internals
 
 """
-    TypstText
+    TypstText, indent_width
+
+Wraps a `String` to construct a [`TypstString`](@ref) instead of dispatching to [`print_typst`](@ref).
 """
 struct TypstText
     text::String
@@ -31,8 +33,6 @@ end
 
 """
     pad_math(io, x, inline)
-
-See also [`enclose`](@ref Typstry.enclose)
 """
 pad_math(mode, inline) =
     if mode == markup inline ? "\$" : "\$ "
@@ -61,10 +61,9 @@ end
     @typst_str(s)
     typst"s"
 
-Construct a [`TypstString`](@ref) with custom interpolation and escaping.
-Backslashes `\\` and quotation marks `\"` must still be escaped.
+Construct a [`TypstString`](@ref).
 
-The syntax for interpolation is a call to the `TypstString` constructor,
+Values can be interpolated by calling the `TypstString` constructor,
 except with a backslash `\\` instead of the type name.
 
 !!! tip
@@ -113,8 +112,8 @@ end
 """
     Mode
 
-An `Enum` to indicate whether the current mode is
-`code`, `markup`, or `math`.
+An `Enum`erated type to indicate whether the current context
+is in `code`, `markup`, or `math` mode.
 
 ```jldoctest
 julia> Mode
@@ -128,6 +127,16 @@ math = 2
 
 """
     format(io, x; settings...)
+
+Write `x` to `io` as Typst code with the given `settings`.
+
+Should be implemented for types passed to [`print_typst`](@ref).
+
+!!! warning
+    The methods of this function are incomplete.
+    Please file an issue or create a pull-request for missing methods.
+    It is safe to implement missing methods (via type-piracy) until
+    it has been released in a new minor version of Typstry.jl.
 """
 format(io, x::AbstractChar; mode, settings...) =
     enclose(show, io, x, mode == markup ? "\"" : "")
@@ -145,17 +154,17 @@ format(io, x::Complex; mode, inline, settings...) =
 #     end
 # end
 format(io, x::AbstractMatrix; mode, inline, settings...) =
-    enclose((io, x; tab, depth, settings...) -> begin
+    enclose((io, x; indent, depth, settings...) -> begin
         print(io, "mat(\n")
 
-        join_with((io, x; tab, depth, settings...) -> begin
-            print(io, tab ^ depth)
+        join_with((io, x; indent, depth, settings...) -> begin
+            print(io, indent ^ depth)
             join_with((io, x; settings...) ->
                 format(io, x; mode = math, settings...),
-            io, x, ", "; tab, depth, settings...)
-        end, io, eachrow(x), ";\n"; depth = depth + 1, tab, settings...)
+            io, x, ", "; indent, depth, settings...)
+        end, io, eachrow(x), ";\n"; depth = depth + 1, indent, settings...)
 
-        print(io, "\n", tab ^ depth, ")")
+        print(io, "\n", indent ^ depth, ")")
     end, io, x, pad_math(mode, inline); inline, settings...)
 format(io, x::AbstractString; mode, settings...) =
     mode == markup ? show(io, x) : show(io, repr(x))
@@ -209,14 +218,23 @@ Enum
     print_typst(io = stdout, x;
         mode = markup,
         inline = false,
-        tab = ' ' ^ 4,
+        indent = ' ' ^ 4,
         depth = 0,
     settings...)
 
-See also [`Mode`](@ref).
+Write `x` to `io` as Typst code with default `settings`.
+
+This function calls [`format`](@ref), which should be implemented for each type.
+
+| Setting | Description |
+|:--------|:------------|
+| mode    | The Typst [`Mode`](@ref) in the current context, where `code` follows the number sign `#`, `math` is enclosed in dollar signs `\$`, and `markup` is at the top-level and enclosed in square brackets `[]`. |
+| inline  | When `mode = math`, specifies whether the enclosing dollar signs `\$` are padded with a space to render the element inline or its own block. |
+| indent  | The string used for horizontal spacing by some elements with multi-line Typst code. |
+| depth   | Indicates the current level of nesting within container types. |
 """
-print_typst(io, x; mode = markup, inline = false, tab = "    ", depth = 0, settings...) =
-    format(io, x; mode, inline, tab, depth, settings...)
+print_typst(io, x; mode = markup, inline = false, indent = "    ", depth = 0, settings...) =
+    format(io, x; mode, inline, indent, depth, settings...)
 print_typst(x; settings...) = format(stdout, x; settings...)
 
 # Interface
@@ -234,14 +252,14 @@ function show(io::IO, ts::TypstString)
     show(io, ts.text)
 end
 
-for f in (:iterate, :ncodeunits, :codeunit, :pointer, :IOBuffer)
+for f in (:IOBuffer, :codeunit, :iterate, :ncodeunits, :pointer)
     @eval begin
         "\t$($f)(::TypstString)"
         Base.$f(ts::TypstString) = $f(ts.text)
     end
 end
 
-for f in (:iterate, :isvalid, :codeunit)
+for f in (:codeunit, :isvalid, :iterate)
     @eval begin
         "\t$($f)(::TypstString, ::Integer)"
         Base.$f(ts::TypstString, i::Integer) = $f(ts.text, i)
