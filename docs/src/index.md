@@ -38,7 +38,7 @@ julia> using Typstry
 
 ```jldoctest
 julia> typst"\(1 // 2)"
-typst"\$ 1 / 2 \$"
+typst"$1 / 2$"
 ```
 
 ## Related Packages

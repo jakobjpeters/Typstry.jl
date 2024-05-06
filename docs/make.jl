@@ -31,7 +31,7 @@ setdocmeta!(
     recursive = true
 )
 
-makedocs(
+makedocs(;
     sitename = "Typstry.jl",
     format = HTML(edit_link = "main"),
     modules = [Typstry],

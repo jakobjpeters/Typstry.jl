@@ -1,5 +1,8 @@
 
-const typst = Typst_jll.typst()
+"""
+    typst_executable
+"""
+const typst_executable = typst()
 
 """
     TypstCommand
@@ -24,7 +27,7 @@ struct TypstCommand
     typst::Cmd
     parameters::Cmd
 
-    TypstCommand(parameters::Vector{String}) = new(typst, Cmd(parameters))
+    TypstCommand(parameters::Vector{String}) = new(typst_executable, Cmd(parameters))
     TypstCommand(tc::TypstCommand; kwargs...) = new(Cmd(tc.typst; kwargs...), tc.parameters)
 end
 
@@ -59,7 +62,7 @@ end
 
 Render the `elements` to a document.
 
-Each element is written to the `input` file with [`print_typst`](@ref)
+Each element is written to the `input` file with `print_typst`
 and the given `settings`, seperated by the `delimeter`.
 
 Then, the `input` file is compiled to the `output` file with a [`TypstCommand`](@ref).
@@ -68,12 +71,6 @@ The document format is inferred by the file extension of `output`.
 The available formats are `pdf`, `png`, and `svg`.
 
 If `open` = true`, the `output` file will be opened using the default viewer.
-
-# Examples
-```jldoctest
-julia> render(typst"\$x ^ 2\$");
-
-julia> render([1 2; 3 4]);
 ```
 """
 function render(elements...; delimeter = '\n', input = "input.typ", output = "output.pdf", open = true, settings...)

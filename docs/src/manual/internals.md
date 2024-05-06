@@ -7,5 +7,13 @@
 Typstry.TypstText
 Typstry.join_with
 Typstry.enclose
-Typstry.pad_math
+Typstry.math_pad
+```
+
+```@docs
+Typstry.typst_mime
+Typstry.settings
+Typstry.typst_executable
+Typstry.escape_quote
+Typstry.code_mode
 ```
