@@ -1,6 +1,4 @@
 
-# Internals
-
 """
     print_parameters(io, f, parameters)
 """
@@ -38,17 +36,6 @@ end
 const typst_mime = MIME"text/typst"()
 
 """
-    TypstText, indent_width, string_with_env
-
-Wrap a `String` to construct a [`TypstString`](@ref) instead of dispatching to [`show`](@ref).
-"""
-struct TypstText
-    text::String
-
-    TypstText(x) = new(string(x))
-end
-
-"""
     join_with(f, io, xs, delimeter; settings...)
 """
 function join_with(f, io, xs, delimeter; settings...)
@@ -78,6 +65,17 @@ math_pad(io) =
     if mode(io) == math ""
     else inline(io) ? "\$" : "\$ "
     end
+
+"""
+    TypstText
+
+Wrap a `String` to construct a [`TypstString`](@ref) instead of dispatching to `show`.
+"""
+struct TypstText
+    text::String
+
+    TypstText(x) = new(string(x))
+end
 
 """
     TypstString <: AbstractString
@@ -322,32 +320,3 @@ Symbol
 Unsigned
 Enum
 =#
-
-# Interface
-
-"""
-    *(::TypstString, ::TypstString)
-"""
-x::TypstString * y::TypstString = TypstString(x.text * y.text)
-
-"""
-    show(::IO, ::TypstString)
-"""
-function show(io::IO, ts::TypstString)
-    print(io, "typst")
-    escape_quote(io, ts.text)
-end
-
-for f in (:IOBuffer, :codeunit, :iterate, :ncodeunits, :pointer)
-    @eval begin
-        "\t$($f)(::TypstString)"
-        Base.$f(ts::TypstString) = $f(ts.text)
-    end
-end
-
-for f in (:codeunit, :isvalid, :iterate)
-    @eval begin
-        "\t$($f)(::TypstString, ::Integer)"
-        Base.$f(ts::TypstString, i::Integer) = $f(ts.text, i)
-    end
-end
