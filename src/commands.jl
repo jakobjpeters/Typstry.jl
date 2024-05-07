@@ -2,6 +2,15 @@
 # Internals
 
 """
+    apply(f, tc, args...; kwargs...)
+"""
+function apply(f, tc, args...; kwargs...)
+    _tc = deepcopy(tc)
+    _tc.typst = f(tc.typst, args...; kwargs...)
+    _tc
+end
+
+"""
     typst_program
 
 A constant `Cmd` that is the Typst command-line interface
@@ -29,9 +38,9 @@ julia> TypstCommand(help; ignorestatus = true)
 typst`help`
 ```
 """
-struct TypstCommand
+mutable struct TypstCommand
     typst::Cmd
-    parameters::Cmd
+    const parameters::Cmd
 
     TypstCommand(parameters::Vector{String}) = new(typst_program, Cmd(parameters))
     TypstCommand(tc::TypstCommand; kwargs...) = new(Cmd(tc.typst; kwargs...), tc.parameters)
@@ -63,23 +72,55 @@ end
 """
     addenv(::TypstCommand, args...; kwargs...)
 """
-addenv(tc::TypstCommand, args...; kwargs...) =
-    TypstCommand(addenv(tc.typst, args...; kwargs...), tc.parameters)
+addenv(tc::TypstCommand, args...; kwargs...) = apply(addenv, tc, args...; kwargs...)
 
 """
     detach(::TypstCommand)
+
+# Examples
+```jldoctest
+julia> detach(typst`help`)
+typst`help`
+```
 """
-detach(tc::TypstCommand) =
-    TypstCommand(detach(tc.typst), tc.parameters)
+detach(tc::TypstCommand) = apply(detach, tc)
 
 """
     ignorestatus(::TypstCommand)
+
+# Examples
+```jldoctest
+julia> ignorestatus(typst`help`)
+typst`help`
+```
 """
-ignorestatus(tc::TypstCommand) =
-    TypstCommand(ignorestatus(tc.typst), tc.parameters)
+ignorestatus(tc::TypstCommand) = apply(ignorestatus, tc)
 
 """
     run(::TypstCommand, args...; kwargs...)
+
+# Examples
+```jldoctest
+julia> run(typst`help`);
+The Typst compiler
+
+Usage: typst [OPTIONS] <COMMAND>
+
+Commands:
+  compile  Compiles an input file into a supported output format [aliases: c]
+  watch    Watches an input file and recompiles on changes [aliases: w]
+  init     Initializes a new project from a template
+  query    Processes an input file to extract provided metadata
+  fonts    Lists all discovered fonts in system and custom font paths
+  update   Self update the Typst CLI (disabled)
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+      --color[=<WHEN>]  Set when to use color. auto = use color if a capable terminal is detected [default: auto] [possible values: auto, always, never]
+      --cert <CERT>     Path to a custom CA certificate to use when making network requests [env: TYPST_CERT=]
+  -h, --help            Print help
+  -V, --version         Print version
+```
 """
 run(tc::TypstCommand, args...; kwargs...) =
     run(Cmd(`$(tc.typst) $(tc.parameters)`), args...; kwargs...)
@@ -87,14 +128,12 @@ run(tc::TypstCommand, args...; kwargs...) =
 """
     setcpuaffinity(::TypstCommand, cpus)
 """
-setcpuaffinity(tc::TypstCommand, cpus) =
-    TypstCommand(setcpuaffinity(tc.typst, cpus), tc.parameters)
+setcpuaffinity(tc::TypstCommand, cpus) = apply(setcpuaffinity, tc, cpus)
 
 """
     setenv(::TypstCommand, env; kwargs...)
 """
-setenv(tc::TypstCommand, env; kwargs...) =
-    TypstCommand(setenv(tc.typst, env; kwargs...), tc.parameters)
+setenv(tc::TypstCommand, env; kwargs...) = apply(setenv, tc, env; kwargs...)
 
 """
     show(::IO, ::TypstCommand)
