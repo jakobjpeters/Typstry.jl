@@ -20,6 +20,6 @@ Typstry.print_parameters
 ## Commands
 
 ```@docs
-Typstry.apply
 Typstry.typst_program
+Typstry.apply
 ```

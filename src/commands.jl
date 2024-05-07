@@ -2,6 +2,14 @@
 # Internals
 
 """
+    typst_program
+
+A constant `Cmd` that is the Typst command-line interface
+given by Typst_jll.jl with no additional parameters.
+"""
+const typst_program = typst()
+
+"""
     apply(f, tc, args...; kwargs...)
 """
 function apply(f, tc, args...; kwargs...)
@@ -9,14 +17,6 @@ function apply(f, tc, args...; kwargs...)
     _tc.typst = f(tc.typst, args...; kwargs...)
     _tc
 end
-
-"""
-    typst_program
-
-A constant `Cmd` that is the Typst command-line interface
-given by Typst_jll.jl with no additional parameters.
-"""
-const typst_program = typst()
 
 # `Typstry`
 
