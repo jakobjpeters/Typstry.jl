@@ -11,7 +11,7 @@ export TypstCommand, @typst_cmd
 
 include("strings.jl")
 
-export Mode, TypstString, TypstText, @typst_str, code, markup, math, print_typst, show_typst
+export Mode, TypstString, TypstText, @typst_str, code, markup, math, show_typst
 
 include("interfaces.jl")
 
