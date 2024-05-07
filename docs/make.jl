@@ -5,6 +5,8 @@ using Typstry
 const directory = joinpath(@__DIR__, "src", "assets")
 const logo = joinpath(directory, "logo.svg")
 
+include("strings.jl")
+
 if !ispath(logo)
     using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 

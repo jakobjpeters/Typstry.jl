@@ -21,7 +21,7 @@ const cases = Stateful([
     TypstText("[\"a\"]") => TypstText,
 ])
 
-open("show.typ"; truncate = true) do file
+open("docs/show.typ"; truncate = true) do file
     print(file, "\n#set page(paper: \"a4\", margin: 1em, height: auto)\n#set text(9pt, font: \"JuliaMono\")\n\n#let julia(s) = raw(s, lang: \"julia\")\n\n")
     for s in [
         "#table(align: horizon, columns: 5",
@@ -67,4 +67,4 @@ open("show.typ"; truncate = true) do file
     println(file, "\n)")
 end
 
-run(typst`compile show.typ src/assets/show.png`)
+run(typst`compile docs/show.typ docs/src/assets/show.png`)
