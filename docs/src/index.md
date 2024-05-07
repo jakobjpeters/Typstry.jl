@@ -3,7 +3,9 @@
 DocTestSetup = :(using Typstry)
 ```
 
-# Typstry.jl
+# Home
+
+## Introduction
 
 See also Typst's [website](https://typst.app/),
 [documentation](https://typst.app/docs/),
