@@ -1,8 +1,8 @@
 
 # Strings
 
-For a type `T`, implement `show(::IO, ::MIME"text/typst", ::T)` to specify
-default settings and `show_typst(::IO, ::T)` to specify its Typst code.
+Types should implement [`show(::IO, ::MIME"text/typst", ::Any)`](@ref) to
+specify default settings and [`show_typst`](@ref) to specify their Typst code.
 
 ![strings](../assets/strings.png)
 

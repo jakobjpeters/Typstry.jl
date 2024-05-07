@@ -23,7 +23,7 @@ math = 2
     settings
 
 A constant `NamedTuple` containing the default `IOContext` settings
-for `show` with the `"text/typst"` MIME type.
+for [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
 """
 const settings = (
     mode = markup,
@@ -37,7 +37,7 @@ const settings = (
 
 Print the number sign `"#"` unless `mode(io) == code`.
 
-See also [`mode`](@ref Typstry.mode).
+See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
 
 # Examples
 ```jldoctest
@@ -172,7 +172,7 @@ end
     TypstString <: AbstractString
     TypstString(x, ::Pair{Symbol}...)
 
-Construct a string from [`show`](@ref) with `MIME"text/typst"`.
+Construct a string using [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
 
 This type implements the `String` interface.
 However, this interface is unspecified which may result in missing functionality.
@@ -193,8 +193,8 @@ end
 """
     TypstText(::Any)
 
-A wrapper to construct a [`TypstString`](@ref) using `print`
-instead of `show` with the `"text/typst"` MIME type.
+A wrapper to construct a [`TypstString`](@ref) using `print` instead of
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
 
 !!! info
     Use `TypstText` to insert text into a `TypstString`
@@ -218,10 +218,10 @@ end
 Construct a [`TypstString`](@ref).
 
 Values can be interpolated by calling the `TypstString` constructor,
-except with a backslash `\\` instead of the type name.
+except with a backslash `"\\\\"` instead of the type name.
 
 !!! tip
-    Use [`show`](@ref) with `MIME"text/typst"` to print directly to an `IO`.
+    Use [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref) to print directly to an `IO`.
 
     See also the performance tip to [avoid string interpolation for I/O]
     (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
@@ -267,9 +267,8 @@ end
     show_typst(io, x)
 
 Settings are used in Julia to format the [`TypstString`](@ref) and can be any type.
-Parameters are passed to a Typst function and must be a `String`.
-Parameters have the same name as in Typst,
-except that dashes `"-"` are replaced with underscores `"_"`.
+Parameters are passed to a Typst function and must be a `String` with the same name
+as in Typst, except that dashes `"-"` are replaced with underscores `"_"`.
 
 | Type                                      | Settings                                | Parameters                                              |
 |:------------------------------------------|:----------------------------------------|:--------------------------------------------------------|
