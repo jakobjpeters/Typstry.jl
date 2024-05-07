@@ -226,7 +226,6 @@ Parameters are passed to a Typst function and must be a `String`.
     It is safe to implement missing methods (via type-piracy) until
     it has been released in a new minor version of Typstry.jl.
 """
-function show_typst end
 show_typst(io, x::AbstractChar) =
     enclose(show, io, x, mode(io) == code ? "\"" : "")
 # function format(io, x::AbstractDict{<:AbstractString}; mode, settings...)
