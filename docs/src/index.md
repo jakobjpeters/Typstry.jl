@@ -39,6 +39,7 @@ julia> using Typstry
 
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
+- [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 
 ### LaTeX
 
