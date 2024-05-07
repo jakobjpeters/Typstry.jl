@@ -5,8 +5,6 @@ DocTestSetup = :(using Typstry)
 
 # Typstry.jl
 
-A package to access the Typst command-line interface.
-
 See also Typst's [website](https://typst.app/),
 [documentation](https://typst.app/docs/),
 and [repository](https://github.com/typst/typst).
@@ -14,12 +12,11 @@ and [repository](https://github.com/typst/typst).
 ## Features
 
 - Write Typst strings
+    - Convert Julia values
 - Run Typst commands
-- Construct and render documents
 
 ### Planned
 
-- Convert Julia values to Typst strings
 - Explore rendering
     - Unicode in the REPL?
     - Other environments?
@@ -35,11 +32,6 @@ julia> using Typstry
 ```
 
 ## Showcase
-
-```jldoctest
-julia> typst"\(1 // 2)"
-typst"$1 / 2$"
-```
 
 ## Related Packages
 

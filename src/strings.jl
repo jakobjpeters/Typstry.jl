@@ -2,7 +2,23 @@
 # Internals
 
 """
+    print_parameters(io, f, parameters)
+"""
+function print_parameters(io, f, keys)
+    print(io, f, "(")
+    
+    for key in keys
+        value = get(io, key, "")::String
+        isempty(value) || print(io, key, ": ", value, ", ")
+    end
+
+    println(io)
+end
+
+"""
     code_mode(io)
+
+Requires `:mode`.
 """
 code_mode(io) = mode(io) == code || print(io, "#")
 
@@ -17,7 +33,7 @@ escape_quote(io, s) = enclose(io, s, "\"") do io, s
 end
 
 """
-    typst_mime, Math
+    typst_mime
 """
 const typst_mime = MIME"text/typst"()
 
@@ -54,7 +70,9 @@ function enclose(f, io, x, left, right = reverse(left); settings...)
 end
 
 """
-    math_pad(io, x, inline)
+    math_pad(io, x)
+
+Requires `:mode` and `:inline`.
 """
 math_pad(io) =
     if mode(io) == math ""
@@ -153,13 +171,6 @@ end
 
 """
     settings
-
-| Setting   | Value   | Description |
-|:----------|:--------|:------------|
-| mode      | markup  | The Typst [`Mode`](@ref) in the current context, where `code` follows the number sign `#`, `markup` is at the top-level and enclosed in square brackets `[]`, and `math` is enclosed in dollar signs `\$`. |
-| inline    | true    | When `mode = math`, specifies whether the enclosing dollar signs `\$` are padded with a space to render the element inline or its own block. |
-| indent    | ' ' ^ 4 | The string used for horizontal spacing by some elements with multi-line Typst code. |
-| depth     | 0       | Indicates the current level of nesting within container types. |
 """
 const settings = (
     mode = markup,
@@ -175,33 +186,49 @@ Write `x` to `io` as Typst code.
 
 Provides default settings for [`show_typst`](@ref).
 
-!!! warning
-    The methods of `show_typst` are incomplete.
-    Please file an issue or create a pull-request for missing methods.
-    It is safe to implement missing methods (via type-piracy) until
-    it has been released in a new minor version of Typstry.jl.
+| Setting   | Default   | Type           | Description |
+|:----------|:----------|:---------------|:------------|
+| `:mode`   | `markup`  | [`Mode`](@ref) | The current Typst context where `code` follows the number sign `#`, `markup` is at the top-level and enclosed in square brackets `[]`, and `math` is enclosed in dollar signs `\$`. |
+| `:inline` | `true`    | `Bool`         | When `mode = math`, specifies whether the enclosing dollar signs `\$` are padded with a space to render the element inline or its own block. |
+| `:indent` | `' ' ^ 4` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst code. |
+| `:depth`  | `0`       | `Int`          | The current level of nesting within container types to specify the degree of indentation. |
 """
 show(io::IO, ::MIME"text/typst", x) =
     show_typst(IOContext(io, map(key -> key => get(io, key, settings[key]), keys(settings))...), x)
 
 """
-    show_typst(io, ::AbstractChar)
+    show_typst(io, x)
 
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", 'a')
-"'a'"
+Settings are used in Julia to format the [`TypstString`](@ref) and can be any type.
+Parameters are passed to a Typst function and must be a `String`.
 
-julia> show(IOContext(stdout, :mode => markup), "text/typst", 'a')
-'a'
+| Type                                 | Settings                                | Parameters |
+|:-------------------------------------|:----------------------------------------|:-----------|
+| `AbstractChar`                       | `:mode`                                 |            |
+| `AbstractFloat`                      |                                         |            |
+| `AbstractMatrix`                     | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:augment`, `:gap`, `:row_gap`, `:column_gap` |
+| `AbstractString`                     | `:mode`                                 |            |
+| `AbstractVector`                     | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:gap` |
+| `Bool`                               | `:mode`                                 |            |
+| `Complex`                            | `:mode`, `:inline`                      |            |
+| `Irrational`                         | `:mode`                                 |            |
+| `Nothing`                            | `:mode`                                 |            |
+| `OrdinalRange{<:Integer, <:Integer}` | `:mode`                                 |            |
+| `Rational`                           | `:mode`, `:inline`                      |            |
+| `Regex`                              | `:mode`                                 |            |
+| `Signed`                             |                                         |            |
+| `Text`                               | `:mode`                                 |            |
+| `TypstText`                          |                                         |            |
 
-julia> show(IOContext(stdout, :mode => math), "text/typst", 'a')
-'a'
-```
+!!! warning
+    This function's methods are incomplete.
+    Please file an issue or create a pull-request for missing methods.
+    It is safe to implement missing methods (via type-piracy) until
+    it has been released in a new minor version of Typstry.jl.
 """
+function show_typst end
 show_typst(io, x::AbstractChar) =
     enclose(show, io, x, mode(io) == code ? "\"" : "")
-
 # function format(io, x::AbstractDict{<:AbstractString}; mode, settings...)
 #     mode == code || print(io, "#")
 
@@ -213,84 +240,18 @@ show_typst(io, x::AbstractChar) =
 #         end
 #     end
 # end
-
-"""
-    show_typst(io, ::AbstractFloat)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", 1.2)
-1.2
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", 1.2)
-1.2
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", 1.2)
-1.2
-```
-"""
 show_typst(io, x::AbstractFloat) = print(io, x)
-
-"""
-    show_typst(io, ::AbstractMatrix)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", [true 1; 1.0 [Any[true 1; 1.0 nothing]]])
-\$mat(
-    "true", 1;
-    1.0, mat(
-        "true", 1;
-        1.0, ""
-    )
-)\$
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", [true 1; 1.0 [Any[true 1; 1.0 nothing]]])
-\$mat(
-    "true", 1;
-    1.0, mat(
-        "true", 1;
-        1.0, ""
-    )
-)\$
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", [true 1; 1.0 [Any[true 1; 1.0 nothing]]])
-mat(
-    "true", 1;
-    1.0, mat(
-        "true", 1;
-        1.0, ""
-    )
-)
-```
-"""
 show_typst(io, x::AbstractMatrix) =
     enclose((io, x; indent, depth) -> begin
         _depth = depth + 1
 
-        print(io, "mat(\n")
+        print_parameters(io, "mat", [:delim, :augment, :gap, :row_gap, :column_gap])
         join_with((io, x; indent) -> begin
             print(io, indent ^ _depth)
             join_with((io, x) -> show_typst(io, x), io, x, ", ")
         end, IOContext(io, :mode => math, :depth => _depth), eachrow(x), ";\n"; indent)
         print(io, "\n", indent ^ depth, ")")
     end, io, x, math_pad(io); indent = indent(io), depth = depth(io))
-
-"""
-    show_typst(io, ::AbstractString)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", "a")
-"\\\"a\\\""
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", "a")
-"a"
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", "a")
-"\\\"a\\\""
-```
-"""
 show_typst(io, x::AbstractString) = enclose(io, x, "\"") do io, x
     s = mode(io) == markup ? "" : "\\\""
     enclose(io, x, s, s) do io, x
@@ -300,46 +261,14 @@ show_typst(io, x::AbstractString) = enclose(io, x, "\"") do io, x
         end
     end
 end
-
-"""
-    show_typst(io, ::AbstractVector)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", Any[true, [1]])
-\$vec("true", vec(1))\$
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", Any[true, [1]])
-\$vec("true", vec(1))\$
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", Any[true, [1]])
-vec("true", vec(1))
-```
-"""
 show_typst(io, x::AbstractVector) = enclose(IOContext(io, :mode => math), x, math_pad(io)) do io, x
-    delim, gap = map(key -> get(io, key, "")::String, [:delim, :gap])
-    print(io, "vec(")
-    isempty(delim) || print(io, "delim: ", repr(delim), ", ")
-    isempty(gap) || print(io, "gap: ", gap, ", ")
-    join_with(show_typst, io, x, ", "),
-    print(io, ")")
+    _depth, _indent = depth(io), indent(io)
+    __depth = _depth + 1
+    print_parameters(io, "vec", [:delim, :gap])
+    print(io, _indent ^ __depth)
+    join_with(show_typst, IOContext(io, :depth => __depth), x, ", "),
+    print(io, "\n", _indent ^ _depth, ")")
 end
-
-"""
-    show_typst(io, ::Bool)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", true)
-true
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", true)
-#true
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", true)
-"true"
-```
-"""
 function show_typst(io, x::Bool)
     _mode = mode(io)
 
@@ -348,74 +277,11 @@ function show_typst(io, x::Bool)
     else print(io, x)
     end
 end
-
-"""
-    show_typst(io, ::Complex)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", 1 + 2im)
-\$1 + 2i\$
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", 1 + 2im)
-\$1 + 2i\$
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", 1 + 2im)
-1 + 2i
-```
-"""
 show_typst(io, x::Complex) =
     enclose((io, x) -> print(io, sprint(print, x)[begin:end - 1]), io, x, math_pad(io))
-
-"""
-    show_typst(io, ::Irrational)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", π)
-3.141592653589793
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", π)
-π
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", π)
-π
-```
-"""
 show_typst(io, x::Irrational) =
     mode(io) == code ? show_typst(io, Float64(x)) : print(io, x)
-
-"""
-    show_typst(io, ::Nothing)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", nothing)
-""
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", nothing)
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", nothing)
-""
-```
-"""
 show_typst(io, ::Nothing) = if mode(io) != markup print(io, "\"\"") end
-
-"""
-    show_typst(io, ::OrdinalRange{<:Integer, <:Integer})
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", 1:4)
-range(1, 5, step: 1)
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", 1:4)
-#range(1, 5, step: 1)
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", 1:4)
-#range(1, 5, step: 1)
-```
-"""
 function show_typst(io, x::OrdinalRange{<:Integer, <:Integer})
     code_mode(io)
 
@@ -427,22 +293,6 @@ function show_typst(io, x::OrdinalRange{<:Integer, <:Integer})
         show_typst(io, step(x))
     end, IOContext(io, :mode => code), x, "range(", ")")
 end
-
-"""
-    show_typst(io, ::Rational)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", 1//2)
-(1 / 2)
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", 1//2)
-\$1 / 2\$
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", 1//2)
-1 / 2
-```
-"""
 function show_typst(io, x::Rational)
     _mode = mode(io)
     f = (io, x) -> begin
@@ -456,79 +306,15 @@ function show_typst(io, x::Rational)
     else f(io, x)
     end
 end
-
-"""
-    show_typst(io, ::Regex)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", r"[a-z]")
-regex("[a-z]")
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", r"[a-z]")
-#regex("[a-z]")
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", r"[a-z]")
-#regex("[a-z]")
-```
-"""
 function show_typst(io, x::Regex)
     code_mode(io)
     enclose((io, x) -> print(io, sprint(print, x)[begin + 1:end]), io, x, "regex(", ")")
 end
-
-"""
-    show_typst(io, ::Signed)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", 1)
-1
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", 1)
-1
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", 1)
-1
-```
-"""
 show_typst(io, x::Signed) = print(io, x)
-
-"""
-    show_typst(io, ::Text)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", Text("[\\\"a\\\"]"))
-"[\\\"a\\\"]"
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", Text("[\\\"a\\\"]"))
-#"[\\\"a\\\"]"
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", Text("[\\\"a\\\"]"))
-#"[\\\"a\\\"]"
-```
-"""
 function show_typst(io, x::Text)
     code_mode(io)
     escape_quote(io, repr(x))
 end
-
-"""
-    show_typst(io, ::TypstText)
-
-# Examples
-```jldoctest
-julia> show(IOContext(stdout, :mode => code), "text/typst", TypstText("[\\\"a\\\"]"))
-["a"]
-
-julia> show(IOContext(stdout, :mode => markup), "text/typst", TypstText("[\\\"a\\\"]"))
-["a"]
-
-julia> show(IOContext(stdout, :mode => math), "text/typst", TypstText("[\\\"a\\\"]"))
-["a"]
-```
-"""
 show_typst(io, x::TypstText) = print(io, x.text)
 #=
 AbstractIrrational

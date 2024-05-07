@@ -36,20 +36,20 @@ open("show.typ"; truncate = true) do file
 
     for (v, t) in cases
         _modes = Stateful(modes)
-        is_matrix = t <: AbstractMatrix
+        is_matrix, is_vector = t <: AbstractMatrix, t <: AbstractVector && !(t <: OrdinalRange)
 
         print(file, "    julia(")
 
-        if t <: AbstractVector && !(t <: OrdinalRange) print(file, "\"[true [1]]\"")
+        if is_vector print(file, "\"[true [1]]\"")
         elseif is_matrix print(file, "\"[true 1; 1.0 Any[[\\n    true 1; 1.0 nothing\\n]]]\"")
         elseif t <: Text print(file, "\"Text(\\\"[\\\\\\\"a\\\\\\\"]\\\")\"")
         else show(file, repr(v))
         end
 
-        print(file, "), `", t, "`,", is_matrix ? "\n        " : " ")
+        print(file, "), `", t, "`,", is_vector || is_matrix ? "\n        " : " ")
 
         for mode in _modes
-            s = TypstString(v, :mode => mode, :depth => 3)
+            s = TypstString(v, :mode => mode, :depth => 2)
 
             if mode == math print(file, "\$", s, "\$")
             else
