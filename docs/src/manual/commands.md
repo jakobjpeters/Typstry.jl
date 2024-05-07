@@ -1,5 +1,5 @@
 
-# Command
+# Commands
 
 ```@docs
 TypstCommand

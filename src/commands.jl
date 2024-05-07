@@ -1,14 +1,13 @@
 
 """
-    typst_executable
+    typst_program
 
 A constant `Cmd` that is the Typst command-line interface
 given by Typst_jll.jl with no additional parameters.
 """
-const typst_executable = typst()
+const typst_program = typst()
 
 """
-    TypstCommand
     TypstCommand(::Vector{String})
     TypstCommand(::TypstCommand; kwargs...)
 
@@ -30,7 +29,7 @@ struct TypstCommand
     typst::Cmd
     parameters::Cmd
 
-    TypstCommand(parameters::Vector{String}) = new(typst_executable, Cmd(parameters))
+    TypstCommand(parameters::Vector{String}) = new(typst_program, Cmd(parameters))
     TypstCommand(tc::TypstCommand; kwargs...) = new(Cmd(tc.typst; kwargs...), tc.parameters)
 end
 
