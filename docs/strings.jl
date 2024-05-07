@@ -22,7 +22,7 @@ const cases = Stateful([
 ])
 
 open("show.typ"; truncate = true) do file
-    print(file, "\n#set page(paper: \"a4\", margin: 1em)\n#set text(9pt, font: \"JuliaMono\")\n\n#let julia(s) = raw(s, lang: \"julia\")\n\n")
+    print(file, "\n#set page(paper: \"a4\", margin: 1em, height: auto)\n#set text(9pt, font: \"JuliaMono\")\n\n#let julia(s) = raw(s, lang: \"julia\")\n\n")
     for s in [
         "#table(align: horizon, columns: 5",
         "table.cell(rowspan: 2)[*Value*]",

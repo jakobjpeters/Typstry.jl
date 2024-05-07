@@ -52,36 +52,6 @@ macro typst_cmd(parameters)
     :(TypstCommand(map(string, eachsplit($parameters, " "))))
 end
 
-"""
-    render(elements...;
-        delimeter = '\\n',
-        input = "input.typ",
-        output = "output.pdf",
-        open = true,
-    settings...)
-
-Render the `elements` to a document.
-
-Each element is written to the `input` file with `print_typst`
-and the given `settings`, seperated by the `delimeter`.
-
-Then, the `input` file is compiled to the `output` file with a [`TypstCommand`](@ref).
-
-The document format is inferred by the file extension of `output`.
-The available formats are `pdf`, `png`, and `svg`.
-
-If `open` = true`, the `output` file will be opened using the default viewer.
-```
-"""
-function render(elements...; delimeter = '\n', input = "input.typ", output = "output.pdf", open = true, settings...)
-    Base.open(input; truncate = true) do file
-        join_with(print_typst, file, elements, delimeter; settings...)
-        println(file)
-    end
-
-    run(TypstCommand(["compile", input, output, "--open"][begin:end - !open]))
-end
-
 # Interface
 
 """

@@ -7,7 +7,7 @@ using Typst_jll: typst
 
 include("commands.jl")
 
-export TypstCommand, @typst_cmd, render
+export TypstCommand, @typst_cmd
 
 include("strings.jl")
 

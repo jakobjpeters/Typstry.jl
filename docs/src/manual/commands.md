@@ -4,7 +4,6 @@
 ```@docs
 TypstCommand
 @typst_cmd
-render
 ```
 
 ## Interface
