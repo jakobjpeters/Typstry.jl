@@ -80,6 +80,10 @@ typst`compile input.typ output.pdf`
 
 ### Planned
 
+- Implement `show_typst` for more types
+    - `Base`
+    - Standard Library
+    - Package extensions
 - Explore rendering environments
     - REPL Unicode
     - Notebooks
