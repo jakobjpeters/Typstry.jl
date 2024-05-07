@@ -17,14 +17,14 @@ end
 for f in (:IOBuffer, :codeunit, :iterate, :ncodeunits, :pointer)
     @eval begin
         "\t$($f)(::TypstString)"
-        Base.$f(ts::TypstString) = $f(ts.text)
+        $f(ts::TypstString) = $f(ts.text)
     end
 end
 
 for f in (:codeunit, :isvalid, :iterate)
     @eval begin
         "\t$($f)(::TypstString, ::Integer)"
-        Base.$f(ts::TypstString, i::Integer) = $f(ts.text, i)
+        $f(ts::TypstString, i::Integer) = $f(ts.text, i)
     end
 end
 

@@ -1,6 +1,9 @@
 
 """
     typst_executable
+
+A constant `Cmd` that is the Typst command-line interface
+given by Typst_jll.jl with no additional parameters.
 """
 const typst_executable = typst()
 

@@ -1,7 +1,9 @@
 
 module Typstry
 
-import Base: *, addenv, detach, ignorestatus, run, setcpuaffinity, setenv, show
+import Base:
+    IOBuffer, *, addenv, codeunit, detach, ignorestatus, isvalid,
+    iterate, ncodeunits, pointer, run, setcpuaffinity, setenv, show
 using Base: Docs.Text, Iterators.Stateful, Meta.parse
 using Typst_jll: typst
 

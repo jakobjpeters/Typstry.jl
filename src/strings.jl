@@ -1,6 +1,19 @@
 
 """
-    print_parameters(io, f, parameters)
+    print_parameters(io, f, keys)
+
+Print the name of a Typst function,
+an opening parenthesis,
+the parameters to a Typst function,
+and a newline.
+
+Skip `keys` that are not in the `IOContext`.
+
+# Examples
+```jldoctest
+julia> Typstry.print_parameters(IOContext(stdout, :delim => "\\\"(\\\""), "vec", [:delim, :gap])
+vec(delim: "(",
+```
 """
 function print_parameters(io, f, keys)
     print(io, f, "(")
@@ -16,12 +29,33 @@ end
 """
     code_mode(io)
 
-Requires `:mode`.
+Print the number sign `#` unless `mode(io) == code`.
+
+See also [`mode`](@ref Typstry.mode).
+
+# Examples
+```jldoctest
+julia> Typstry.code_mode(IOContext(stdout, :mode => code))
+
+julia> Typstry.code_mode(IOContext(stdout, :mode => markup))
+#
+
+julia> Typstry.code_mode(IOContext(stdout, :mode => math))
+#
+```
 """
-code_mode(io) = mode(io) == code || print(io, "#")
+code_mode(io) = if mode(io) != code print(io, "#") end
 
 """
     escape_quote(io, s)
+
+Print the string, with quotes `"` escaped.
+
+# Examples
+```jldoctest
+julia> Typstry.escape_quote(stdout, TypstString("a"))
+"\\\"a\\\""
+```
 """
 escape_quote(io, s) = enclose(io, s, "\"") do io, s
     for c in s
@@ -32,11 +66,30 @@ end
 
 """
     typst_mime
+
+A constant equal to `MIME"text/typst()`.
+
+# Examples
+```jldoctest
+julia> Typstry.typst_mime
+MIME type text/typst
+
+julia> show(stdout, Typstry.typst_mime, 1//2)
+\$1 / 2\$
+```
 """
 const typst_mime = MIME"text/typst"()
 
 """
     join_with(f, io, xs, delimeter; settings...)
+
+Similar to `join`, but printing with `f(io, x; settings...)`.
+
+# Examples
+```jldoctest
+julia> Typstry.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
+-1x, -2x, -3x, -4x
+```
 """
 function join_with(f, io, xs, delimeter; settings...)
     _xs = Stateful(xs)
@@ -49,6 +102,14 @@ end
 
 """
     enclose(f, io, x, left, right = reverse(left); settings...)
+
+Call `f(io, x; settings...)` in between printing `left` and `right`, respectfully.
+
+# Examples
+```jldoctest
+julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
+\$ 1x \$
+```
 """
 function enclose(f, io, x, left, right = reverse(left); settings...)
     print(io, left)
@@ -59,7 +120,21 @@ end
 """
     math_pad(io, x)
 
-Requires `:mode` and `:inline`.
+Return `""`, `"\\\$"`, or `"\\\$ "` depending on whether `mode(io) == math` and `inline(io)`.
+
+See also [`mode`](@ref Typstry.mode) and [`inline`](@ref Typstry.inline).
+
+# Examples
+```jldoctest
+julia> Typstry.math_pad(IOContext(stdout, :mode => math))
+""
+
+julia> Typstry.math_pad(IOContext(stdout, :mode => markup, :inline => true))
+"\\\$"
+
+julia> Typstry.math_pad(IOContext(stdout, :mode => markup, :inline => false))
+"\\\$ "
+```
 """
 math_pad(io) =
     if mode(io) == math ""
@@ -69,7 +144,13 @@ math_pad(io) =
 """
     TypstText
 
-Wrap a `String` to construct a [`TypstString`](@ref) instead of dispatching to `show`.
+A wrapper to construct a [`TypstString`](@ref) using `print`
+instead of `show` with the `"text/typst"` MIME type.
+
+!!! tip
+    Use this to insert text into a `TypstString`
+    and by extension a Typst source file.
+    Use `Text` to directly insert text into a Typst document.
 """
 struct TypstText
     text::String
@@ -164,11 +245,17 @@ math = 2
 @enum Mode code markup math
 
 for (setting, type) in [:mode => Mode, :inline => Bool, :indent => String, :depth => Int]
-    @eval $setting(io) = io[$(QuoteNode(setting))]::$type
+    @eval begin
+        "\t$($setting)(io)\nReturn `io[$($(QuoteNode(setting)))]::$($type)`"
+        $setting(io) = io[$(QuoteNode(setting))]::$type
+    end
 end
 
 """
     settings
+
+A constant `NamedTuple` containing the default `IOContext` settings
+for `show` with the `"text/typst"` MIME type.
 """
 const settings = (
     mode = markup,
