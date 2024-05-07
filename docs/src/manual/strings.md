@@ -8,6 +8,7 @@ default settings and `show_typst(::IO, ::T)` to specify its Typst code.
 
 ```@docs
 TypstString
+TypstText
 @typst_str
 Mode
 show(::IO, ::MIME"text/typst", ::Any)

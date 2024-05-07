@@ -67,7 +67,7 @@ end
 """
     typst_mime
 
-A constant equal to `MIME"text/typst()`.
+A constant equal to `MIME"text/typst"()`.
 
 # Examples
 ```jldoctest
@@ -142,15 +142,19 @@ math_pad(io) =
     end
 
 """
-    TypstText
+    TypstText(::Any)
 
 A wrapper to construct a [`TypstString`](@ref) using `print`
 instead of `show` with the `"text/typst"` MIME type.
 
-!!! tip
-    Use this to insert text into a `TypstString`
+!!! info
+    Use `TypstText` to insert text into a `TypstString`
     and by extension a Typst source file.
     Use `Text` to directly insert text into a Typst document.
+
+    Note that unescaped control characters, such as `"\n"`,
+    in `TypstString`s are not escaped when being printed with `show`.
+    This may break formatting in some environments such as the REPL.
 """
 struct TypstText
     text::String
@@ -246,7 +250,7 @@ math = 2
 
 for (setting, type) in [:mode => Mode, :inline => Bool, :indent => String, :depth => Int]
     @eval begin
-        "\t$($setting)(io)\nReturn `io[$($(QuoteNode(setting)))]::$($type)`"
+        "\t$($setting)(io)\nReturn `io[$($(QuoteNode(setting)))]::$($type)`."
         $setting(io) = io[$(QuoteNode(setting))]::$type
     end
 end

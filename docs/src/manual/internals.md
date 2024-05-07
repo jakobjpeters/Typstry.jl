@@ -4,7 +4,6 @@
 ## Strings
 
 ```@docs
-Typstry.TypstText
 Typstry.join_with
 Typstry.enclose
 Typstry.math_pad
@@ -21,4 +20,10 @@ Typstry.mode
 Typstry.inline
 Typstry.indent
 Typstry.depth
+```
+
+## Commands
+
+```@docs
+Typstry.typst_program
 ```
