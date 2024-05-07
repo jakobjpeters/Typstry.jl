@@ -100,7 +100,7 @@ makedocs(;
     modules = [Typstry],
     pages = ["Home" => "index.md", "Manual" => map(
         page -> uppercasefirst(page) => joinpath("manual", page * ".md"),
-    ["strings", "commands", "interfaces", "internals"])]
+    ["strings", "commands", "internals"])]
 )
 
 deploydocs(

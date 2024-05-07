@@ -15,6 +15,4 @@ include("strings.jl")
 
 export Mode, TypstString, TypstText, @typst_str, code, markup, math, show_typst
 
-include("interfaces.jl")
-
 end # module

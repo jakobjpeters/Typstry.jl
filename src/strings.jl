@@ -1,35 +1,41 @@
 
+# `Typstry`
+
 """
-    print_parameters(io, f, keys)
+    Mode
 
-Print the name of a Typst function,
-an opening parenthesis,
-the parameters to a Typst function,
-and a newline.
+An `Enum`erated type to indicate whether the current context
+is in `code`, `markup`, or `math` mode.
 
-Skip `keys` that are not in the `IOContext`.
-
-# Examples
 ```jldoctest
-julia> Typstry.print_parameters(IOContext(stdout, :delim => "\\\"(\\\""), "vec", [:delim, :gap])
-vec(delim: "(",
+julia> Mode
+Enum Mode:
+code = 0
+markup = 1
+math = 2
 ```
 """
-function print_parameters(io, f, keys)
-    print(io, f, "(")
-    
-    for key in keys
-        value = get(io, key, "")::String
-        isempty(value) || print(io, key, ": ", value, ", ")
-    end
+@enum Mode code markup math
 
-    println(io)
-end
+# Internals
+
+"""
+    settings
+
+A constant `NamedTuple` containing the default `IOContext` settings
+for `show` with the `"text/typst"` MIME type.
+"""
+const settings = (
+    mode = markup,
+    inline = true,
+    indent = "    ",
+    depth = 0
+)
 
 """
     code_mode(io)
 
-Print the number sign `#` unless `mode(io) == code`.
+Print the number sign `"#"` unless `mode(io) == code`.
 
 See also [`mode`](@ref Typstry.mode).
 
@@ -47,9 +53,26 @@ julia> Typstry.code_mode(IOContext(stdout, :mode => math))
 code_mode(io) = if mode(io) != code print(io, "#") end
 
 """
+    enclose(f, io, x, left, right = reverse(left); settings...)
+
+Call `f(io, x; settings...)` between printing `left` and `right`, respectfully.
+
+# Examples
+```jldoctest
+julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
+\$ 1x \$
+```
+"""
+function enclose(f, io, x, left, right = reverse(left); settings...)
+    print(io, left)
+    f(io, x; settings...)
+    print(io, right)
+end
+
+"""
     escape_quote(io, s)
 
-Print the string, with quotes `"` escaped.
+Print the string, with quotes `"\\\""` escaped.
 
 # Examples
 ```jldoctest
@@ -65,25 +88,9 @@ escape_quote(io, s) = enclose(io, s, "\"") do io, s
 end
 
 """
-    typst_mime
-
-A constant equal to `MIME"text/typst"()`.
-
-# Examples
-```jldoctest
-julia> Typstry.typst_mime
-MIME type text/typst
-
-julia> show(stdout, Typstry.typst_mime, 1//2)
-\$1 / 2\$
-```
-"""
-const typst_mime = MIME"text/typst"()
-
-"""
     join_with(f, io, xs, delimeter; settings...)
 
-Similar to `join`, but printing with `f(io, x; settings...)`.
+Similar to `join`, except printing with `f(io, x; settings...)`.
 
 # Examples
 ```jldoctest
@@ -101,28 +108,10 @@ function join_with(f, io, xs, delimeter; settings...)
 end
 
 """
-    enclose(f, io, x, left, right = reverse(left); settings...)
-
-Call `f(io, x; settings...)` in between printing `left` and `right`, respectfully.
-
-# Examples
-```jldoctest
-julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
-\$ 1x \$
-```
-"""
-function enclose(f, io, x, left, right = reverse(left); settings...)
-    print(io, left)
-    f(io, x; settings...)
-    print(io, right)
-end
-
-"""
     math_pad(io, x)
 
-Return `""`, `"\\\$"`, or `"\\\$ "` depending on whether `mode(io) == math` and `inline(io)`.
-
-See also [`mode`](@ref Typstry.mode) and [`inline`](@ref Typstry.inline).
+Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
+[`mode`](@ref Typstry.mode) and [`inline`](@ref Typstry.inline) settings.
 
 # Examples
 ```jldoctest
@@ -142,6 +131,66 @@ math_pad(io) =
     end
 
 """
+    print_parameters(io, f, keys)
+
+Print the name of a Typst function,
+an opening parenthesis,
+the parameters to a Typst function,
+and a newline.
+
+Skip `keys` that are not in the `IOContext`.
+
+# Examples
+```jldoctest
+julia> Typstry.print_parameters(
+           IOContext(stdout, :delim => "\\\"(\\\""),
+       "vec", [:delim, :gap])
+vec(delim: "(",
+```
+"""
+function print_parameters(io, f, keys)
+    print(io, f, "(")
+    
+    for key in keys
+        value = get(io, key, "")::String
+        isempty(value) || print(io, key, ": ", value, ", ")
+    end
+
+    println(io)
+end
+
+for (setting, type) in [:mode => Mode, :inline => Bool, :indent => String, :depth => Int]
+    @eval begin
+        "\t$($setting)(io)\nReturn `io[$($(QuoteNode(setting)))]::$($type)`."
+        $setting(io) = io[$(QuoteNode(setting))]::$type
+    end
+end
+
+# `Typstry`
+
+"""
+    TypstString <: AbstractString
+    TypstString(x, ::Pair{Symbol}...)
+
+Construct a string from [`show`](@ref) with `MIME"text/typst"`.
+
+This type implements the `String` interface.
+However, this interface is unspecified which may result in missing functionality.
+"""
+struct TypstString <: AbstractString
+    text::String
+
+    TypstString(x, settings...) = new(
+        if x isa TypstText x.text
+        else
+            buffer = IOBuffer()
+            show(IOContext(buffer, settings...), MIME"text/typst"(), x)
+            String(take!(buffer))
+        end
+    )
+end
+
+"""
     TypstText(::Any)
 
 A wrapper to construct a [`TypstString`](@ref) using `print`
@@ -152,32 +201,14 @@ instead of `show` with the `"text/typst"` MIME type.
     and by extension a Typst source file.
     Use `Text` to directly insert text into a Typst document.
 
-    Note that unescaped control characters, such as `"\n"`,
-    in `TypstString`s are not escaped when being printed with `show`.
+    Note that unescaped control characters, such as `"\\n"`,
+    in `TypstString`s are not escaped when being printed.
     This may break formatting in some environments such as the REPL.
 """
 struct TypstText
     text::String
 
     TypstText(x) = new(string(x))
-end
-
-"""
-    TypstString <: AbstractString
-    TypstString(x, ::Pair{Symbol}...)
-
-Construct a string from [`show`](@ref) with `MIME"text/typst"`.
-"""
-struct TypstString <: AbstractString
-    text::String
-
-    TypstString(text::TypstText) = new(text.text)
-end
-
-function TypstString(x, settings...)
-    buffer = IOBuffer()
-    show(IOContext(buffer, settings...), typst_mime, x)
-    TypstString(TypstText(String(take!(buffer))))
 end
 
 """
@@ -233,81 +264,30 @@ macro typst_str(s)
 end
 
 """
-    Mode
-
-An `Enum`erated type to indicate whether the current context
-is in `code`, `markup`, or `math` mode.
-
-```jldoctest
-julia> Mode
-Enum Mode:
-code = 0
-markup = 1
-math = 2
-```
-"""
-@enum Mode code markup math
-
-for (setting, type) in [:mode => Mode, :inline => Bool, :indent => String, :depth => Int]
-    @eval begin
-        "\t$($setting)(io)\nReturn `io[$($(QuoteNode(setting)))]::$($type)`."
-        $setting(io) = io[$(QuoteNode(setting))]::$type
-    end
-end
-
-"""
-    settings
-
-A constant `NamedTuple` containing the default `IOContext` settings
-for `show` with the `"text/typst"` MIME type.
-"""
-const settings = (
-    mode = markup,
-    inline = true,
-    indent = "    ",
-    depth = 0
-)
-
-"""
-    show(::IO, ::MIME"text/typst", x)
-
-Write `x` to `io` as Typst code.
-
-Provides default settings for [`show_typst`](@ref).
-
-| Setting   | Default   | Type           | Description |
-|:----------|:----------|:---------------|:------------|
-| `:mode`   | `markup`  | [`Mode`](@ref) | The current Typst context where `code` follows the number sign `#`, `markup` is at the top-level and enclosed in square brackets `[]`, and `math` is enclosed in dollar signs `\$`. |
-| `:inline` | `true`    | `Bool`         | When `mode = math`, specifies whether the enclosing dollar signs `\$` are padded with a space to render the element inline or its own block. |
-| `:indent` | `' ' ^ 4` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst code. |
-| `:depth`  | `0`       | `Int`          | The current level of nesting within container types to specify the degree of indentation. |
-"""
-show(io::IO, ::MIME"text/typst", x) =
-    show_typst(IOContext(io, map(key -> key => get(io, key, settings[key]), keys(settings))...), x)
-
-"""
     show_typst(io, x)
 
 Settings are used in Julia to format the [`TypstString`](@ref) and can be any type.
 Parameters are passed to a Typst function and must be a `String`.
+Parameters have the same name as in Typst,
+except that dashes `"-"` are replaced with underscores `"_"`.
 
-| Type                                 | Settings                                | Parameters |
-|:-------------------------------------|:----------------------------------------|:-----------|
-| `AbstractChar`                       | `:mode`                                 |            |
-| `AbstractFloat`                      |                                         |            |
-| `AbstractMatrix`                     | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:augment`, `:gap`, `:row_gap`, `:column_gap` |
-| `AbstractString`                     | `:mode`                                 |            |
-| `AbstractVector`                     | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:gap` |
-| `Bool`                               | `:mode`                                 |            |
-| `Complex`                            | `:mode`, `:inline`                      |            |
-| `Irrational`                         | `:mode`                                 |            |
-| `Nothing`                            | `:mode`                                 |            |
-| `OrdinalRange{<:Integer, <:Integer}` | `:mode`                                 |            |
-| `Rational`                           | `:mode`, `:inline`                      |            |
-| `Regex`                              | `:mode`                                 |            |
-| `Signed`                             |                                         |            |
-| `Text`                               | `:mode`                                 |            |
-| `TypstText`                          |                                         |            |
+| Type                                      | Settings                                | Parameters                                              |
+|:------------------------------------------|:----------------------------------------|:--------------------------------------------------------|
+| `AbstractChar`                            | `:mode`                                 |                                                         |
+| `AbstractFloat`                           |                                         |                                                         |
+| `AbstractMatrix`                          | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:augment`, `:gap`, `:row_gap`, `:column_gap` |
+| `AbstractString`                          | `:mode`                                 |                                                         |
+| `AbstractVector`                          | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:gap`                                        |
+| `Bool`                                    | `:mode`                                 |                                                         |
+| `Complex`                                 | `:mode`, `:inline`                      |                                                         |
+| `Irrational`                              | `:mode`                                 |                                                         |
+| `Nothing`                                 | `:mode`                                 |                                                         |
+| `OrdinalRange{<:Integer,\u00A0<:Integer}` | `:mode`                                 |                                                         |
+| `Rational`                                | `:mode`, `:inline`                      |                                                         |
+| `Regex`                                   | `:mode`                                 |                                                         |
+| `Signed`                                  |                                         |                                                         |
+| `Text`                                    | `:mode`                                 |                                                         |
+| `TypstText`                               |                                         |                                                         |
 
 !!! warning
     This function's methods are incomplete.
@@ -411,3 +391,49 @@ Symbol
 Unsigned
 Enum
 =#
+
+# `Base`
+
+"""
+    *(::TypstString, ::TypstString)
+"""
+x::TypstString * y::TypstString = TypstString(x.text * y.text)
+
+"""
+    show(::IO, ::MIME"text/typst", x)
+
+Print `x` in Typst format.
+
+Provides default settings for [`show_typst`](@ref).
+
+| Setting   | Default                  | Type           | Description                                                                                                                                                                         |
+|:----------|:-------------------------|:---------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `:mode`   | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign `#`, `markup` is at the top-level and enclosed in square brackets `[]`, and `math` is enclosed in dollar signs `\$`. |
+| `:inline` | `true`                   | `Bool`         | When `mode = math`, specifies whether the enclosing dollar signs `\$` are padded with a space to render the element inline or its own block.                                        |
+| `:indent` | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst code.                                                                                                 |
+| `:depth`  | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                                           |
+"""
+show(io::IO, ::MIME"text/typst", x) =
+    show_typst(IOContext(io, map(key -> key => get(io, key, settings[key]), keys(settings))...), x)
+
+"""
+    show(::IO, ::TypstString)
+"""
+function show(io::IO, ts::TypstString)
+    print(io, "typst")
+    escape_quote(io, ts.text)
+end
+
+for f in (:IOBuffer, :codeunit, :iterate, :ncodeunits, :pointer)
+    @eval begin
+        "\t$($f)(::TypstString)"
+        $f(ts::TypstString) = $f(ts.text)
+    end
+end
+
+for f in (:codeunit, :isvalid, :iterate)
+    @eval begin
+        "\t$($f)(::TypstString, ::Integer)"
+        $f(ts::TypstString, i::Integer) = $f(ts.text, i)
+    end
+end

@@ -6,11 +6,26 @@ default settings and `show_typst(::IO, ::T)` to specify its Typst code.
 
 ![strings](../assets/strings.png)
 
+## `Typstry`
+
 ```@docs
+Mode
 TypstString
 TypstText
 @typst_str
-Mode
-show(::IO, ::MIME"text/typst", ::Any)
 show_typst
+```
+
+## `Base`
+
+```@docs
+IOBuffer
+*
+codeunit
+isvalid
+iterate
+ncodeunits
+pointer
+show(::IO, ::MIME"text/typst", ::Any)
+show(::IO, ::TypstString)
 ```

@@ -1,4 +1,6 @@
 
+# Internals
+
 """
     typst_program
 
@@ -7,13 +9,15 @@ given by Typst_jll.jl with no additional parameters.
 """
 const typst_program = typst()
 
+# `Typstry`
+
 """
     TypstCommand(::Vector{String})
     TypstCommand(::TypstCommand; kwargs...)
 
 The Typst command-line interface.
 
-This command attempts to support the same interface as `Cmd`.
+This type implements the `Cmd` interface.
 However, this interface is unspecified which may result in missing functionality.
 
 # Examples
@@ -53,3 +57,46 @@ typst`compile input.typ output.typ`
 macro typst_cmd(parameters)
     :(TypstCommand(map(string, eachsplit($parameters, " "))))
 end
+
+# `Base`
+
+"""
+    addenv(::TypstCommand, args...; kwargs...)
+"""
+addenv(tc::TypstCommand, args...; kwargs...) =
+    TypstCommand(addenv(tc.typst, args...; kwargs...), tc.parameters)
+
+"""
+    detach(::TypstCommand)
+"""
+detach(tc::TypstCommand) =
+    TypstCommand(detach(tc.typst), tc.parameters)
+
+"""
+    ignorestatus(::TypstCommand)
+"""
+ignorestatus(tc::TypstCommand) =
+    TypstCommand(ignorestatus(tc.typst), tc.parameters)
+
+"""
+    run(::TypstCommand, args...; kwargs...)
+"""
+run(tc::TypstCommand, args...; kwargs...) =
+    run(Cmd(`$(tc.typst) $(tc.parameters)`), args...; kwargs...)
+
+"""
+    setcpuaffinity(::TypstCommand, cpus)
+"""
+setcpuaffinity(tc::TypstCommand, cpus) =
+    TypstCommand(setcpuaffinity(tc.typst, cpus), tc.parameters)
+
+"""
+    setenv(::TypstCommand, env; kwargs...)
+"""
+setenv(tc::TypstCommand, env; kwargs...) =
+    TypstCommand(setenv(tc.typst, env; kwargs...), tc.parameters)
+
+"""
+    show(::IO, ::TypstCommand)
+"""
+show(io::IO, tc::TypstCommand) = print(io, "typst", tc.parameters)

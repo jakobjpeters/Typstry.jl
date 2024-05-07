@@ -4,22 +4,17 @@
 ## Strings
 
 ```@docs
-Typstry.join_with
-Typstry.enclose
-Typstry.math_pad
-```
-
-```@docs
-Typstry.typst_mime
 Typstry.settings
-Typstry.typst_executable
-Typstry.escape_quote
 Typstry.code_mode
-Typstry.print_parameters
-Typstry.mode
-Typstry.inline
-Typstry.indent
 Typstry.depth
+Typstry.enclose
+Typstry.escape_quote
+Typstry.indent
+Typstry.inline
+Typstry.join_with
+Typstry.math_pad
+Typstry.mode
+Typstry.print_parameters
 ```
 
 ## Commands
