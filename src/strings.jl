@@ -69,6 +69,7 @@ function enclose(f, io, x, left, right = reverse(left); settings...)
     print(io, right)
 end
 
+# TODO: use `Base.escape_raw_string`?
 """
     escape_quote(io, s)
 
@@ -158,6 +159,12 @@ function print_parameters(io, f, keys)
 
     println(io)
 end
+
+"""
+    static_parse(args...; filename, kwargs...)
+"""
+static_parse(args...; filename, kwargs...) =
+    @static VERSION < v"1.10" ? parse(args...; kwargs...) : parse(args...; filename, kwargs...)
 
 for (setting, type) in [:mode => Mode, :inline => Bool, :indent => String, :depth => Int]
     @eval begin
@@ -254,9 +261,9 @@ macro typst_str(s)
         current = prevind(s, regex_match.offset)
         start = current + 2
         previous <= current && push!(args, s[previous:current])
-        _, current = parse(s, start; filename, greedy = false)
+        current = static_parse(s, start; filename, greedy = false)[2]
         previous = current
-        push!(args, esc(parse("TypstString" * s[start:current - 1]; filename)))
+        push!(args, esc(static_parse("TypstString" * s[start: current - 1]; filename)))
     end
 
     previous <= last && push!(args, s[previous:last])

@@ -3,9 +3,11 @@ module Typstry
 
 import Base:
     IOBuffer, *, addenv, codeunit, detach, ignorestatus, isvalid,
-    iterate, ncodeunits, pointer, run, setcpuaffinity, setenv, show
+    iterate, ncodeunits, pointer, run, setenv, show
 using Base: Docs.Text, Iterators.Stateful, Meta.parse
 using Typst_jll: typst
+
+@static isdefined(Base, :setcpuaffinity) && import Base: setcpuaffinity
 
 include("commands.jl")
 

@@ -40,7 +40,7 @@ typst`help`
 """
 mutable struct TypstCommand
     typst::Cmd
-    const parameters::Cmd
+    parameters::Cmd
 
     TypstCommand(parameters::Vector{String}) = new(typst_program, Cmd(parameters))
     TypstCommand(tc::TypstCommand; kwargs...) = new(Cmd(tc.typst; kwargs...), tc.parameters)
@@ -64,7 +64,7 @@ typst`compile input.typ output.typ`
 ```
 """
 macro typst_cmd(parameters)
-    :(TypstCommand(map(string, eachsplit($parameters, " "))))
+    :(TypstCommand(map(string, split($parameters, " "))))
 end
 
 # `Base`
@@ -126,11 +126,6 @@ run(tc::TypstCommand, args...; kwargs...) =
     run(Cmd(`$(tc.typst) $(tc.parameters)`), args...; kwargs...)
 
 """
-    setcpuaffinity(::TypstCommand, cpus)
-"""
-setcpuaffinity(tc::TypstCommand, cpus) = apply(setcpuaffinity, tc, cpus)
-
-"""
     setenv(::TypstCommand, env; kwargs...)
 """
 setenv(tc::TypstCommand, env; kwargs...) = apply(setenv, tc, env; kwargs...)
@@ -139,3 +134,14 @@ setenv(tc::TypstCommand, env; kwargs...) = apply(setenv, tc, env; kwargs...)
     show(::IO, ::TypstCommand)
 """
 show(io::IO, tc::TypstCommand) = print(io, "typst", tc.parameters)
+
+@static if isdefined(Base, :setcpuaffinity)
+    setcpuaffinity(tc::TypstCommand, cpus) = apply(setcpuaffinity, tc, cpus)
+
+    @doc """
+        setcpuaffinity(::TypstCommand, cpus)
+
+    !!! compat
+        Requires Julia v0.8+.
+    """ setcpuaffinity
+end

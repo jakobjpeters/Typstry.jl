@@ -15,6 +15,7 @@ Typstry.join_with
 Typstry.math_pad
 Typstry.mode
 Typstry.print_parameters
+Typstry.static_parse
 ```
 
 ## Commands
