@@ -96,6 +96,7 @@ typst`compile input.typ output.pdf`
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
 - [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
+- [Typst_jll.jl](https://github.com/JuliaBinaryWrappers/Typst_jll.jl)
 
 ### LaTeX
 
