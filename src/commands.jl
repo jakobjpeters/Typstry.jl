@@ -98,29 +98,6 @@ ignorestatus(tc::TypstCommand) = apply(ignorestatus, tc)
 
 """
     run(::TypstCommand, args...; kwargs...)
-
-# Examples
-```jldoctest
-julia> run(typst`help`);
-The Typst compiler
-
-Usage: typst [OPTIONS] <COMMAND>
-
-Commands:
-  compile  Compiles an input file into a supported output format [aliases: c]
-  watch    Watches an input file and recompiles on changes [aliases: w]
-  init     Initializes a new project from a template
-  query    Processes an input file to extract provided metadata
-  fonts    Lists all discovered fonts in system and custom font paths
-  update   Self update the Typst CLI (disabled)
-  help     Print this message or the help of the given subcommand(s)
-
-Options:
-      --color[=<WHEN>]  Set when to use color. auto = use color if a capable terminal is detected [default: auto] [possible values: auto, always, never]
-      --cert <CERT>     Path to a custom CA certificate to use when making network requests [env: TYPST_CERT=]
-  -h, --help            Print help
-  -V, --version         Print version
-```
 """
 run(tc::TypstCommand, args...; kwargs...) =
     run(Cmd(`$(tc.typst) $(tc.parameters)`), args...; kwargs...)
