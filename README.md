@@ -21,19 +21,15 @@
 ## Introduction
 
 Julia is a language designed for high-performance scientific computing.
-Typst is a language designed for easy and precise typesetting.
+[Typst](https://github.com/typst/typst) is a language designed for easy and precise typesetting.
 Typstry.jl is the interface to convert the computational power of Julia into beautifully formatted Typst documents.
-
-See also Typst's [website](https://typst.app/),
-[documentation](https://typst.app/docs/),
-and [repository](https://github.com/typst/typst).
 
 ## Installation
 
 ```julia
 julia> using Pkg: add
 
-julia> add(url = "https://github.com/jakobjpeters/Typstry.jl")
+julia> add(; url = "https://github.com/jakobjpeters/Typstry.jl")
 
 julia> using Typstry
 ```
