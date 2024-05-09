@@ -23,8 +23,9 @@ math = 2
 
 Construct a string using [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
 
-This type implements the `String` interface.
-However, the interface is unspecified which may result unexpected behavior.
+!!!
+    This type implements the `String` interface.
+    However, the interface is unspecified which may result unexpected behavior.
 
 # Examples
 ```jldoctest
@@ -138,7 +139,7 @@ end
 
 Settings are used in Julia to format the [`TypstString`](@ref) and can be any type.
 Parameters are passed to a Typst function and must be a `String` with the same name
-as in Typst, except that dashes `-` are replaced with underscores `_`.
+as in Typst, except that dashes `"-"` are replaced with underscores `"_"`.
 
 | Type                                      | Settings                                | Parameters                                              |
 |:------------------------------------------|:----------------------------------------|:--------------------------------------------------------|
@@ -173,17 +174,6 @@ julia> show_typst(IOContext(stdout, :mode => markup), "a")
 """
 show_typst(io, x::AbstractChar) =
     enclose(show, io, x, mode(io) == code ? "\"" : "")
-# function format(io, x::AbstractDict{<:AbstractString}; mode, settings...)
-#     mode == code || print(io, "#")
-
-#     enclose(io, "(", ")") do
-#         map_join(io, pairs(x), ", ") do (key, value)
-#             # ?
-#             print(io, ": ")
-#             typstify(io, value; mode = code, settings)
-#         end
-#     end
-# end
 show_typst(io, x::AbstractFloat) = print(io, x)
 show_typst(io, x::AbstractMatrix) =
     enclose((io, x; indent, depth) -> begin
@@ -261,6 +251,7 @@ function show_typst(io, x::Text)
 end
 show_typst(io, x::TypstText) = print(io, x.text)
 #=
+AbstractDict
 AbstractIrrational
 AbstractRange
 Symbol
@@ -394,7 +385,7 @@ end
 
 A constant `Vector{Pair{Any, Type}}` where the first element is a value
 and the second element is the (potentially abstract) type corresponding
-to its [`show(::IO, ::MIME"text/plain", ::Any)`](@ref) method.
+to its [`show(::IO,\u00A0::MIME"text/plain",\u00A0::Any)`](@ref) method.
 """
 const examples = [
     'a' => AbstractChar,
@@ -476,7 +467,7 @@ depth(io) = io[:depth]::Int
 """
     enclose(f, io, x, left, right = reverse(left); settings...)
 
-Call `f(io, x; settings...)` between printing `left` and `right`, respectfully.
+Call `f(io,\u00A0x;\u00A0settings...)` between printing `left` and `right`, respectfully.
 
 # Examples
 ```jldoctest
