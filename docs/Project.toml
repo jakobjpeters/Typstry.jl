@@ -1,3 +1,9 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Luxor = "ae8d54c2-7ccd-5906-9d76-62fc9837b5bc"
+Typst_jll = "eb4b1da6-20f6-5c66-9826-fdb8ad410d0e"
+
+[compat]
+Documenter = "1"
+Luxor = "4"
+Typst_jll = "0.11"
