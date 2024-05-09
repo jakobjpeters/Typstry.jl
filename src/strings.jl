@@ -412,7 +412,7 @@ to its [`show(::IO, ::MIME"text/plain", ::Any)`](@ref) method.
 const examples = [
     'a' => AbstractChar,
     1.2 => AbstractFloat,
-    [true 1; 1.0 [Any[true 1; 1.0 nothing]]] => AbstractMatrix,
+    [true 1; 1.0 [[true 1; 1.0 nothing]]] => AbstractMatrix,
     @typst_str("a") => AbstractString,
     TypstString(TypstText("a")) => AbstractString,
     [true, [1]] => AbstractVector,
