@@ -1,30 +1,26 @@
 
 using Documenter: HTML, DocMeta.setdocmeta!, deploydocs, makedocs
+using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Typstry
 using Typstry: join_with
 
 const assets = joinpath(@__DIR__, "src", "assets")
 const logo = joinpath(assets, "logo.svg")
 const modes = instances(Mode)
+const width, height = 210, 297
 
-if !ispath(logo)
-    using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
+mkpath(assets)
+Drawing(width, height, :svg, logo)
 
-    const width, height = 210, 297
-
-    mkpath(assets)
-    Drawing(width, height, :svg, logo)
-
-    for (color, (x_min, y_min)) in zip(
-        (julia_purple, julia_green, julia_red, julia_blue),
-        map(i -> ((0.3 - i) * width, i * height), 0:0.1:0.3)
-    )
-        sethue(color)
-        rect(x_min, y_min, 0.7 * width, 0.7 * height; action = :fill)
-    end
-
-    finish()
+for (color, (x_min, y_min)) in zip(
+    (julia_purple, julia_green, julia_red, julia_blue),
+    map(i -> ((0.3 - i) * width, i * height), 0:0.1:0.3)
+)
+    sethue(color)
+    rect(x_min, y_min, 0.7 * width, 0.7 * height; action = :fill)
 end
+
+finish()
 
 open(joinpath(@__DIR__, "strings.typ"); truncate = true) do file
     print(file, "\n#set page(paper: \"a4\", margin: 1em, height: auto, width: auto)\n#set text(12pt, font: \"JuliaMono\")\n\n#let julia(s) = raw(s, lang: \"julia\")\n\n")
