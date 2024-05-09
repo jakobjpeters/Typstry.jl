@@ -71,11 +71,15 @@ end
 
 """
     addenv(::TypstCommand, args...; kwargs...)
+
+See also [`TypstCommand`](@ref).
 """
 addenv(tc::TypstCommand, args...; kwargs...) = apply(addenv, tc, args...; kwargs...)
 
 """
     detach(::TypstCommand)
+
+See also [`TypstCommand`](@ref).
 
 # Examples
 ```jldoctest
@@ -88,6 +92,8 @@ detach(tc::TypstCommand) = apply(detach, tc)
 """
     ignorestatus(::TypstCommand)
 
+See also [`TypstCommand`](@ref).
+
 # Examples
 ```jldoctest
 julia> ignorestatus(typst`help`)
@@ -98,19 +104,11 @@ ignorestatus(tc::TypstCommand) = apply(ignorestatus, tc)
 
 """
     run(::TypstCommand, args...; kwargs...)
+
+See also [`TypstCommand`](@ref).
 """
 run(tc::TypstCommand, args...; kwargs...) =
     run(Cmd(`$(tc.typst) $(tc.parameters)`), args...; kwargs...)
-
-"""
-    setenv(::TypstCommand, env; kwargs...)
-"""
-setenv(tc::TypstCommand, env; kwargs...) = apply(setenv, tc, env; kwargs...)
-
-"""
-    show(::IO, ::TypstCommand)
-"""
-show(io::IO, tc::TypstCommand) = print(io, "typst", tc.parameters)
 
 @static if isdefined(Base, :setcpuaffinity)
     setcpuaffinity(tc::TypstCommand, cpus) = apply(setcpuaffinity, tc, cpus)
@@ -118,7 +116,35 @@ show(io::IO, tc::TypstCommand) = print(io, "typst", tc.parameters)
     @doc """
         setcpuaffinity(::TypstCommand, cpus)
 
+    See also [`TypstCommand`](@ref).
+
     !!! compat
-        Requires Julia v0.8+.
+        Requires at least Julia v0.8.
+
+    # Examples
+    ```jldoctest
+    julia> setcpuaffinity(typst`help`, [1])
+    typst`help`
+    ```
     """ setcpuaffinity
 end
+
+"""
+    setenv(::TypstCommand, env; kwargs...)
+
+See also [`TypstCommand`](@ref).
+"""
+setenv(tc::TypstCommand, env; kwargs...) = apply(setenv, tc, env; kwargs...)
+
+"""
+    show(::IO, ::TypstCommand)
+
+See also [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> show(stdout, typst`help`)
+typst`help`
+```
+"""
+show(io::IO, tc::TypstCommand) = print(io, "typst", tc.parameters)

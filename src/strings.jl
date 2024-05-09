@@ -53,6 +53,19 @@ julia> Typstry.code_mode(IOContext(stdout, :mode => math))
 code_mode(io) = if mode(io) != code print(io, "#") end
 
 """
+    depth(io)
+
+Return `io[:depth]::Int`
+
+# Examples
+```jldoctest
+julia> Typstry.depth(IOContext(stdout, :depth => 0))
+0
+```
+"""
+depth(io) = io[:depth]::Int
+
+"""
     enclose(f, io, x, left, right = reverse(left); settings...)
 
 Call `f(io, x; settings...)` between printing `left` and `right`, respectfully.
@@ -87,6 +100,32 @@ escape_quote(io, s) = enclose(io, s, "\"") do io, s
         print(io, c)
     end
 end
+
+"""
+    indent(io)
+
+Return `io[:indent]::String`
+
+# Examples
+```jldoctest
+julia> Typstry.indent(IOContext(stdout, :indent => ' ' ^ 4))
+"    "
+```
+"""
+indent(io) = io[:indent]::String
+
+"""
+    inline(io)
+
+Return `io[:inline]::Bool`.
+
+# Examples
+```jldoctest
+julia> Typstry.inline(IOContext(stdout, :inline => true))
+true
+```
+"""
+inline(io) = io[:inline]::Bool
 
 """
     join_with(f, io, xs, delimeter; settings...)
@@ -132,6 +171,21 @@ math_pad(io) =
     end
 
 """
+    mode(io)
+
+Return `io[:mode]::Mode`.
+
+See also [`Mode`].
+
+# Examples
+```jldoctest
+julia> Typstry.mode(IOContext(stdout, :mode => code))
+code::Mode = 0
+```
+"""
+mode(io) = io[:mode]::Mode
+
+"""
     print_parameters(io, f, keys)
 
 Print the name of a Typst function,
@@ -162,16 +216,12 @@ end
 
 """
     static_parse(args...; filename, kwargs...)
+
+Call `Meta.parse` with the `filename` if it is supported
+in the current Julia version (at least v1.10).
 """
 static_parse(args...; filename, kwargs...) =
     @static VERSION < v"1.10" ? parse(args...; kwargs...) : parse(args...; filename, kwargs...)
-
-for (setting, type) in [:mode => Mode, :inline => Bool, :indent => String, :depth => Int]
-    @eval begin
-        "\t$($setting)(io)\nReturn `io[$($(QuoteNode(setting)))]::$($type)`."
-        $setting(io) = io[$(QuoteNode(setting))]::$type
-    end
-end
 
 # `Typstry`
 
@@ -183,6 +233,18 @@ Construct a string using [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@re
 
 This type implements the `String` interface.
 However, this interface is unspecified which may result in missing functionality.
+
+# Examples
+```jldoctest
+julia> TypstString(TypstText("a"))
+typst"a"
+
+julia> TypstString("a")
+typst"\\\"a\\\""
+
+julia> TypstString("a", :mode => code)
+typst"\\\"\\\\"a\\\\"\\\""
+```
 """
 struct TypstString <: AbstractString
     text::String
@@ -211,6 +273,15 @@ A wrapper to construct a [`TypstString`](@ref) using `print` instead of
     Note that unescaped control characters, such as `"\\n"`,
     in `TypstString`s are not escaped when being printed.
     This may break formatting in some environments such as the REPL.
+
+# Examples
+```jldoctest
+julia> TypstText("a")
+TypstText("a")
+
+julia> TypstText(1)
+TypstText("1")
+```
 """
 struct TypstText
     text::String
@@ -300,6 +371,15 @@ as in Typst, except that dashes `"-"` are replaced with underscores `"_"`.
     Please file an issue or create a pull-request for missing methods.
     It is safe to implement missing methods (via type-piracy) until
     it has been released in a new minor version of Typstry.jl.
+
+# Examples
+```jldoctest
+julia> show_typst(stdout, TypstText("a"))
+a
+
+julia> show_typst(IOContext(stdout, :mode => markup), "a")
+"a"
+```
 """
 show_typst(io, x::AbstractChar) =
     enclose(show, io, x, mode(io) == code ? "\"" : "")
@@ -401,9 +481,89 @@ Enum
 # `Base`
 
 """
-    *(::TypstString, ::TypstString)
+    IOBuffer(::TypstString)
+
+See also [`TypstString`](@ref).
+
+# Examples
+```jldoctest
+julia> IOBuffer(typst"a")
+IOBuffer(data=UInt8[...], readable=true, writable=false, seekable=true, append=false, size=1, maxsize=Inf, ptr=1, mark=-1)
+```
 """
-x::TypstString * y::TypstString = TypstString(x.text * y.text)
+IOBuffer(ts::TypstString) = IOBuffer(ts.text)
+
+"""
+    *(::TypstString, ::TypstString)
+
+See also [`TypstString`](@ref).
+
+# Examples
+```jldoctest
+julia> typst"a" * typst"b"
+typst"ab"
+```
+"""
+x::TypstString * y::TypstString = TypstString(TypstText(x.text * y.text))
+
+"""
+    codeunit(::TypstString)
+    codeunit(::TypstString, ::Integer)
+
+# Examples
+```jldoctest
+julia> codeunit(typst"a")
+UInt8
+
+julia> codeunit(typst"a", 1)
+0x61
+```
+"""
+codeunit(ts::TypstString) = codeunit(ts.text)
+codeunit(ts::TypstString, i::Integer) = codeunit(ts.text, i)
+
+"""
+    isvalid(::TypstString, ::Integer)
+
+# Examples
+```jldoctest
+julia> isvalid(typst"a", 1)
+true
+```
+"""
+isvalid(ts::TypstString, i::Integer) = isvalid(ts.text, i::Integer)
+
+"""
+    iterate(::TypstString)
+    iterate(::TypstString, ::Integer)
+
+# Examples
+```jldoctest
+julia> iterate(typst"a")
+('a', 2)
+
+julia> iterate(typst"a", 1)
+('a', 2)
+```
+"""
+iterate(ts::TypstString) = iterate(ts.text)
+iterate(ts::TypstString, i::Integer) = iterate(ts.text, i)
+
+"""
+    ncodeunits(::TypstString)
+
+# Examples
+```jldoctest
+julia> ncodeunits(typst"a")
+1
+```
+"""
+ncodeunits(ts::TypstString) = ncodeunits(ts.text)
+
+"""
+    pointer(::TypstString)
+"""
+pointer(ts::TypstString) = pointer(ts.text)
 
 """
     show(::IO, ::MIME"text/typst", x)
@@ -418,28 +578,32 @@ Provides default settings for [`show_typst`](@ref).
 | `:inline` | `true`                   | `Bool`         | When `mode = math`, specifies whether the enclosing dollar signs `\$` are padded with a space to render the element inline or its own block.                                        |
 | `:indent` | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst code.                                                                                                 |
 | `:depth`  | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                                           |
+
+# Examples
+```jldoctest
+julia> show(stdout, "text/typst", TypstText("a"))
+a
+
+julia> show(stdout, "text/typst", "a")
+"a"
+
+julia> show(IOContext(stdout, :mode => code), "text/typst", "a")
+"\\\"a\\\""
+```
 """
 show(io::IO, ::MIME"text/typst", x) =
     show_typst(IOContext(io, map(key -> key => get(io, key, settings[key]), keys(settings))...), x)
 
 """
     show(::IO, ::TypstString)
+
+# Examples
+```jldoctest
+julia> show(stdout, typst"a")
+typst"a"
+```
 """
 function show(io::IO, ts::TypstString)
     print(io, "typst")
     escape_quote(io, ts.text)
-end
-
-for f in (:IOBuffer, :codeunit, :iterate, :ncodeunits, :pointer)
-    @eval begin
-        "\t$($f)(::TypstString)"
-        $f(ts::TypstString) = $f(ts.text)
-    end
-end
-
-for f in (:codeunit, :isvalid, :iterate)
-    @eval begin
-        "\t$($f)(::TypstString, ::Integer)"
-        $f(ts::TypstString, i::Integer) = $f(ts.text, i)
-    end
 end

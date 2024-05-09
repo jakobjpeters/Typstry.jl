@@ -4,8 +4,7 @@ using Documenter: DocMeta.setdocmeta!, doctest
 using Typstry
 
 @testset "`detect_ambiguities` and `detect_unbound_args`" all(
-    detect -> isempty(detect(Typstry)), (detect_ambiguities, detect_unbound_args)
-)
+    detect -> isempty(detect(Typstry)), (detect_ambiguities, detect_unbound_args))
 
 setdocmeta!(
     Typstry,
