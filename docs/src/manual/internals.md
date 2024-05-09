@@ -4,7 +4,9 @@
 ## Strings
 
 ```@docs
+Typstry.examples
 Typstry.settings
+Typstry.typst_mime
 Typstry.code_mode
 Typstry.depth
 Typstry.enclose

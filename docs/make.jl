@@ -2,7 +2,7 @@
 using Documenter: HTML, DocMeta.setdocmeta!, deploydocs, makedocs
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Typstry
-using Typstry: join_with
+using Typstry: examples, join_with
 
 const assets = joinpath(@__DIR__, "src", "assets")
 const logo = joinpath(assets, "logo.svg")
@@ -37,23 +37,7 @@ open(joinpath(@__DIR__, "strings.typ"); truncate = true) do file
     join(file, map(mode -> "[*`$mode`*]", modes), ", ")
     println(file, ",")
 
-    join_with(file, [
-        'a' => AbstractChar,
-        1.2 => AbstractFloat,
-        [true 1; 1.0 [Any[true 1; 1.0 nothing]]] => AbstractMatrix,
-        typst"a" => AbstractString,
-        [true, [1]] => AbstractVector,
-        true => Bool,
-        1 + 2im => Complex,
-        π => Irrational,
-        nothing => Nothing,
-        1:4 => OrdinalRange{<:Integer, <:Integer},
-        1 // 2 => Rational,
-        r"[a-z]" => Regex,
-        1 => Signed,
-        text"[\"a\"]" => Text,
-        TypstText("[\"a\"]") => TypstText
-    ], ",\n") do file, (v, t)
+    join_with(file, examples, ",\n") do file, (v, t)
         is_matrix, is_vector = t <: AbstractMatrix, t <: AbstractVector && !(t <: OrdinalRange)
 
         print(file, "    julia(")

@@ -17,7 +17,144 @@ math = 2
 """
 @enum Mode code markup math
 
+"""
+    TypstString <: AbstractString
+    TypstString(x, ::Pair{Symbol}...)
+
+Construct a string using [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
+
+This type implements the `String` interface.
+However, this interface is unspecified which may result in missing functionality.
+
+# Examples
+```jldoctest
+julia> TypstString(TypstText("a"))
+typst"a"
+
+julia> TypstString("a")
+typst"\\\"a\\\""
+
+julia> TypstString("a", :mode => code)
+typst"\\\"\\\\"a\\\\"\\\""
+```
+"""
+struct TypstString <: AbstractString
+    text::String
+
+    TypstString(x, settings...) = new(
+        if x isa TypstText x.text
+        else
+            buffer = IOBuffer()
+            show(IOContext(buffer, settings...), MIME"text/typst"(), x)
+            String(take!(buffer))
+        end
+    )
+end
+
+"""
+    TypstText(::Any)
+
+A wrapper to construct a [`TypstString`](@ref) using `print` instead of
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
+
+!!! info
+    Use `TypstText` to insert text into a `TypstString`
+    and by extension a Typst source file.
+    Use `Text` to directly insert text into a Typst document.
+
+    Note that unescaped control characters, such as `"\\n"`,
+    in `TypstString`s are not escaped when being printed.
+    This may break formatting in some environments such as the REPL.
+
+# Examples
+```jldoctest
+julia> TypstText("a")
+TypstText("a")
+
+julia> TypstText(1)
+TypstText("1")
+```
+"""
+struct TypstText
+    text::String
+
+    TypstText(x) = new(string(x))
+end
+
+"""
+    @typst_str(s)
+    typst"s"
+
+Construct a [`TypstString`](@ref).
+
+Values can be interpolated by calling the `TypstString` constructor,
+except with a backslash `"\\\\"` instead of the type name.
+
+!!! tip
+    Use [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref) to print directly to an `IO`.
+
+    See also the performance tip to [avoid string interpolation for I/O]
+    (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
+
+# Examples
+```jldoctest
+julia> x = 1;
+
+julia> typst"\$\\(x) / \\(x + 1)\$"
+typst"\$1 / 2\$"
+
+julia> typst"\\(x // 2)"
+typst"\$1 / 2\$"
+
+julia> typst"\\(x // 2, :mode => math)"
+typst"1 / 2"
+
+julia> typst"\\\\(x)"
+typst"\\\\(x)"
+```
+"""
+macro typst_str(s)
+    _s = Expr(:string)
+    args = _s.args
+    filename = string(__source__.file)
+    previous = current = firstindex(s)
+    last = lastindex(s)
+
+    while (regex_match = match(r"(?<!\\)\\\(", s, current)) !== nothing
+        current = prevind(s, regex_match.offset)
+        start = current + 2
+        previous <= current && push!(args, s[previous:current])
+        current = static_parse(s, start; filename, greedy = false)[2]
+        previous = current
+        push!(args, esc(static_parse("TypstString" * s[start: current - 1]; filename)))
+    end
+
+    previous <= last && push!(args, s[previous:last])
+    :(TypstString(TypstText($_s)))
+end
+
 # Internals
+
+"""
+    examples
+"""
+const examples = [
+    'a' => AbstractChar,
+    1.2 => AbstractFloat,
+    [true 1; 1.0 [Any[true 1; 1.0 nothing]]] => AbstractMatrix,
+    TypstString(TypstText("a")) => AbstractString,
+    [true, [1]] => AbstractVector,
+    true => Bool,
+    1 + 2im => Complex,
+    π => Irrational,
+    nothing => Nothing,
+    1:4 => OrdinalRange{<:Integer, <:Integer},
+    1 // 2 => Rational,
+    r"[a-z]" => Regex,
+    1 => Signed,
+    text"[\"a\"]" => Text,
+    TypstText("[\"a\"]") => TypstText
+]
 
 """
     settings
@@ -31,6 +168,19 @@ const settings = (
     indent = "    ",
     depth = 0
 )
+
+"""
+    typst_mime
+
+A constant equal to `MIME"text/typst"()`.
+
+# Examples
+```jldoctest
+julia> Typstry.typst_mime
+MIME type text/typst
+```
+"""
+const typst_mime = MIME"text/typst"()
 
 """
     code_mode(io)
@@ -205,7 +355,7 @@ vec(delim: "(",
 """
 function print_parameters(io, f, keys)
     print(io, f, "(")
-    
+
     for key in keys
         value = get(io, key, "")::String
         isempty(value) || print(io, key, ": ", value, ", ")
@@ -224,122 +374,6 @@ static_parse(args...; filename, kwargs...) =
     @static VERSION < v"1.10" ? parse(args...; kwargs...) : parse(args...; filename, kwargs...)
 
 # `Typstry`
-
-"""
-    TypstString <: AbstractString
-    TypstString(x, ::Pair{Symbol}...)
-
-Construct a string using [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
-
-This type implements the `String` interface.
-However, this interface is unspecified which may result in missing functionality.
-
-# Examples
-```jldoctest
-julia> TypstString(TypstText("a"))
-typst"a"
-
-julia> TypstString("a")
-typst"\\\"a\\\""
-
-julia> TypstString("a", :mode => code)
-typst"\\\"\\\\"a\\\\"\\\""
-```
-"""
-struct TypstString <: AbstractString
-    text::String
-
-    TypstString(x, settings...) = new(
-        if x isa TypstText x.text
-        else
-            buffer = IOBuffer()
-            show(IOContext(buffer, settings...), MIME"text/typst"(), x)
-            String(take!(buffer))
-        end
-    )
-end
-
-"""
-    TypstText(::Any)
-
-A wrapper to construct a [`TypstString`](@ref) using `print` instead of
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
-
-!!! info
-    Use `TypstText` to insert text into a `TypstString`
-    and by extension a Typst source file.
-    Use `Text` to directly insert text into a Typst document.
-
-    Note that unescaped control characters, such as `"\\n"`,
-    in `TypstString`s are not escaped when being printed.
-    This may break formatting in some environments such as the REPL.
-
-# Examples
-```jldoctest
-julia> TypstText("a")
-TypstText("a")
-
-julia> TypstText(1)
-TypstText("1")
-```
-"""
-struct TypstText
-    text::String
-
-    TypstText(x) = new(string(x))
-end
-
-"""
-    @typst_str(s)
-    typst"s"
-
-Construct a [`TypstString`](@ref).
-
-Values can be interpolated by calling the `TypstString` constructor,
-except with a backslash `"\\\\"` instead of the type name.
-
-!!! tip
-    Use [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref) to print directly to an `IO`.
-
-    See also the performance tip to [avoid string interpolation for I/O]
-    (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
-
-# Examples
-```jldoctest
-julia> x = 1;
-
-julia> typst"\$\\(x) / \\(x + 1)\$"
-typst"\$1 / 2\$"
-
-julia> typst"\\(x // 2)"
-typst"\$1 / 2\$"
-
-julia> typst"\\(x // 2, :mode => math)"
-typst"1 / 2"
-
-julia> typst"\\\\(x)"
-typst"\\\\(x)"
-```
-"""
-macro typst_str(s)
-    _s = Expr(:string)
-    args = _s.args
-    filename = string(__source__.file)
-    previous = current = firstindex(s)
-    last = lastindex(s)
-
-    while (regex_match = match(r"(?<!\\)\\\(", s, current)) !== nothing
-        current = prevind(s, regex_match.offset)
-        start = current + 2
-        previous <= current && push!(args, s[previous:current])
-        current = static_parse(s, start; filename, greedy = false)[2]
-        previous = current
-        push!(args, esc(static_parse("TypstString" * s[start: current - 1]; filename)))
-    end
-
-    previous <= last && push!(args, s[previous:last])
-    :(TypstString(TypstText($_s)))
-end
 
 """
     show_typst(io, x)
