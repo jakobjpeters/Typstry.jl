@@ -35,7 +35,7 @@ julia> TypstString("a")
 typst"\\\"a\\\""
 
 julia> TypstString("a", :mode => code)
-typst"\\\"\\\\"a\\\\"\\\""
+typst"\\\"\\\\\\"a\\\\\\"\\\""
 ```
 """
 struct TypstString <: AbstractString
@@ -132,248 +132,6 @@ macro typst_str(s)
     previous <= last && push!(args, s[previous:last])
     :(TypstString(TypstText($_s)))
 end
-
-# Internals
-
-"""
-    examples
-"""
-const examples = [
-    'a' => AbstractChar,
-    1.2 => AbstractFloat,
-    [true 1; 1.0 [Any[true 1; 1.0 nothing]]] => AbstractMatrix,
-    TypstString(TypstText("a")) => AbstractString,
-    [true, [1]] => AbstractVector,
-    true => Bool,
-    1 + 2im => Complex,
-    π => Irrational,
-    nothing => Nothing,
-    1:4 => OrdinalRange{<:Integer, <:Integer},
-    1 // 2 => Rational,
-    r"[a-z]" => Regex,
-    1 => Signed,
-    text"[\"a\"]" => Text,
-    TypstText("[\"a\"]") => TypstText
-]
-
-"""
-    settings
-
-A constant `NamedTuple` containing the default `IOContext` settings
-for [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
-"""
-const settings = (
-    mode = markup,
-    inline = true,
-    indent = "    ",
-    depth = 0
-)
-
-"""
-    typst_mime
-
-A constant equal to `MIME"text/typst"()`.
-
-# Examples
-```jldoctest
-julia> Typstry.typst_mime
-MIME type text/typst
-```
-"""
-const typst_mime = MIME"text/typst"()
-
-"""
-    code_mode(io)
-
-Print the number sign `"#"` unless `mode(io) == code`.
-
-See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
-
-# Examples
-```jldoctest
-julia> Typstry.code_mode(IOContext(stdout, :mode => code))
-
-julia> Typstry.code_mode(IOContext(stdout, :mode => markup))
-#
-
-julia> Typstry.code_mode(IOContext(stdout, :mode => math))
-#
-```
-"""
-code_mode(io) = if mode(io) != code print(io, "#") end
-
-"""
-    depth(io)
-
-Return `io[:depth]::Int`
-
-# Examples
-```jldoctest
-julia> Typstry.depth(IOContext(stdout, :depth => 0))
-0
-```
-"""
-depth(io) = io[:depth]::Int
-
-"""
-    enclose(f, io, x, left, right = reverse(left); settings...)
-
-Call `f(io, x; settings...)` between printing `left` and `right`, respectfully.
-
-# Examples
-```jldoctest
-julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
-\$ 1x \$
-```
-"""
-function enclose(f, io, x, left, right = reverse(left); settings...)
-    print(io, left)
-    f(io, x; settings...)
-    print(io, right)
-end
-
-# TODO: use `Base.escape_raw_string`?
-"""
-    escape_quote(io, s)
-
-Print the string, with quotes `"\\\""` escaped.
-
-# Examples
-```jldoctest
-julia> Typstry.escape_quote(stdout, TypstString("a"))
-"\\\"a\\\""
-```
-"""
-escape_quote(io, s) = enclose(io, s, "\"") do io, s
-    for c in s
-        c == '"' && print(io, "\\")
-        print(io, c)
-    end
-end
-
-"""
-    indent(io)
-
-Return `io[:indent]::String`
-
-# Examples
-```jldoctest
-julia> Typstry.indent(IOContext(stdout, :indent => ' ' ^ 4))
-"    "
-```
-"""
-indent(io) = io[:indent]::String
-
-"""
-    inline(io)
-
-Return `io[:inline]::Bool`.
-
-# Examples
-```jldoctest
-julia> Typstry.inline(IOContext(stdout, :inline => true))
-true
-```
-"""
-inline(io) = io[:inline]::Bool
-
-"""
-    join_with(f, io, xs, delimeter; settings...)
-
-Similar to `join`, except printing with `f(io, x; settings...)`.
-
-# Examples
-```jldoctest
-julia> Typstry.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
--1x, -2x, -3x, -4x
-```
-"""
-function join_with(f, io, xs, delimeter; settings...)
-    _xs = Stateful(xs)
-
-    for x in _xs
-        f(io, x; settings...)
-        isempty(_xs) || print(io, delimeter)
-    end
-end
-
-"""
-    math_pad(io, x)
-
-Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
-[`mode`](@ref Typstry.mode) and [`inline`](@ref Typstry.inline) settings.
-
-# Examples
-```jldoctest
-julia> Typstry.math_pad(IOContext(stdout, :mode => math))
-""
-
-julia> Typstry.math_pad(IOContext(stdout, :mode => markup, :inline => true))
-"\\\$"
-
-julia> Typstry.math_pad(IOContext(stdout, :mode => markup, :inline => false))
-"\\\$ "
-```
-"""
-math_pad(io) =
-    if mode(io) == math ""
-    else inline(io) ? "\$" : "\$ "
-    end
-
-"""
-    mode(io)
-
-Return `io[:mode]::Mode`.
-
-See also [`Mode`].
-
-# Examples
-```jldoctest
-julia> Typstry.mode(IOContext(stdout, :mode => code))
-code::Mode = 0
-```
-"""
-mode(io) = io[:mode]::Mode
-
-"""
-    print_parameters(io, f, keys)
-
-Print the name of a Typst function,
-an opening parenthesis,
-the parameters to a Typst function,
-and a newline.
-
-Skip `keys` that are not in the `IOContext`.
-
-# Examples
-```jldoctest
-julia> Typstry.print_parameters(
-           IOContext(stdout, :delim => "\\\"(\\\""),
-       "vec", [:delim, :gap])
-vec(delim: "(",
-```
-"""
-function print_parameters(io, f, keys)
-    print(io, f, "(")
-
-    for key in keys
-        value = get(io, key, "")::String
-        isempty(value) || print(io, key, ": ", value, ", ")
-    end
-
-    println(io)
-end
-
-"""
-    static_parse(args...; filename, kwargs...)
-
-Call `Meta.parse` with the `filename` if it is supported
-in the current Julia version (at least v1.10).
-"""
-static_parse(args...; filename, kwargs...) =
-    @static VERSION < v"1.10" ? parse(args...; kwargs...) : parse(args...; filename, kwargs...)
-
-# `Typstry`
 
 """
     show_typst(io, x)
@@ -641,3 +399,236 @@ function show(io::IO, ts::TypstString)
     print(io, "typst")
     escape_quote(io, ts.text)
 end
+
+# Internals
+
+"""
+    examples
+"""
+const examples = [
+    'a' => AbstractChar,
+    1.2 => AbstractFloat,
+    [true 1; 1.0 [Any[true 1; 1.0 nothing]]] => AbstractMatrix,
+    @typst_str("a") => AbstractString,
+    TypstString(TypstText("a")) => AbstractString,
+    [true, [1]] => AbstractVector,
+    true => Bool,
+    1 + 2im => Complex,
+    π => Irrational,
+    nothing => Nothing,
+    1:4 => OrdinalRange{<:Integer, <:Integer},
+    1 // 2 => Rational,
+    r"[a-z]" => Regex,
+    1 => Signed,
+    text"[\"a\"]" => Text,
+    TypstText("[\"a\"]") => TypstText
+]
+
+"""
+    settings
+
+A constant `NamedTuple` containing the default `IOContext` settings
+for [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
+"""
+const settings = (
+    mode = markup,
+    inline = true,
+    indent = "    ",
+    depth = 0
+)
+
+"""
+    typst_mime
+
+A constant equal to `MIME"text/typst"()`.
+
+# Examples
+```jldoctest
+julia> Typstry.typst_mime
+MIME type text/typst
+```
+"""
+const typst_mime = MIME"text/typst"()
+
+"""
+    code_mode(io)
+
+Print the number sign `"#"` unless `mode(io) == code`.
+
+See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
+
+# Examples
+```jldoctest
+julia> Typstry.code_mode(IOContext(stdout, :mode => code))
+
+julia> Typstry.code_mode(IOContext(stdout, :mode => markup))
+#
+
+julia> Typstry.code_mode(IOContext(stdout, :mode => math))
+#
+```
+"""
+code_mode(io) = if mode(io) != code print(io, "#") end
+
+"""
+    depth(io)
+
+Return `io[:depth]::Int`
+
+# Examples
+```jldoctest
+julia> Typstry.depth(IOContext(stdout, :depth => 0))
+0
+```
+"""
+depth(io) = io[:depth]::Int
+
+"""
+    enclose(f, io, x, left, right = reverse(left); settings...)
+
+Call `f(io, x; settings...)` between printing `left` and `right`, respectfully.
+
+# Examples
+```jldoctest
+julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
+\$ 1x \$
+```
+"""
+function enclose(f, io, x, left, right = reverse(left); settings...)
+    print(io, left)
+    f(io, x; settings...)
+    print(io, right)
+end
+
+"""
+    escape_quote(io, s)
+
+Print the string, with quotes `"\\\""` escaped.
+
+# Examples
+```jldoctest
+julia> Typstry.escape_quote(stdout, TypstString("a"))
+"\\\"a\\\""
+```
+"""
+escape_quote(io, s) = enclose(escape_raw_string, io, s, "\"")
+
+"""
+    indent(io)
+
+Return `io[:indent]::String`.
+
+# Examples
+```jldoctest
+julia> Typstry.indent(IOContext(stdout, :indent => ' ' ^ 4))
+"    "
+```
+"""
+indent(io) = io[:indent]::String
+
+"""
+    inline(io)
+
+Return `io[:inline]::Bool`.
+
+# Examples
+```jldoctest
+julia> Typstry.inline(IOContext(stdout, :inline => true))
+true
+```
+"""
+inline(io) = io[:inline]::Bool
+
+"""
+    join_with(f, io, xs, delimeter; settings...)
+
+Similar to `join`, except printing with `f(io, x; settings...)`.
+
+# Examples
+```jldoctest
+julia> Typstry.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
+-1x, -2x, -3x, -4x
+```
+"""
+function join_with(f, io, xs, delimeter; settings...)
+    _xs = Stateful(xs)
+
+    for x in _xs
+        f(io, x; settings...)
+        isempty(_xs) || print(io, delimeter)
+    end
+end
+
+"""
+    math_pad(io, x)
+
+Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
+[`mode`](@ref Typstry.mode) and [`inline`](@ref Typstry.inline) settings.
+
+# Examples
+```jldoctest
+julia> Typstry.math_pad(IOContext(stdout, :mode => math))
+""
+
+julia> Typstry.math_pad(IOContext(stdout, :mode => markup, :inline => true))
+"\\\$"
+
+julia> Typstry.math_pad(IOContext(stdout, :mode => markup, :inline => false))
+"\\\$ "
+```
+"""
+math_pad(io) =
+    if mode(io) == math ""
+    else inline(io) ? "\$" : "\$ "
+    end
+
+"""
+    mode(io)
+
+Return `io[:mode]::Mode`.
+
+See also [`Mode`].
+
+# Examples
+```jldoctest
+julia> Typstry.mode(IOContext(stdout, :mode => code))
+code::Mode = 0
+```
+"""
+mode(io) = io[:mode]::Mode
+
+"""
+    print_parameters(io, f, keys)
+
+Print the name of a Typst function, an opening parenthesis,
+the parameters to a Typst function, and a newline.
+
+Skip `keys` that are not in the `IOContext`.
+
+# Examples
+```jldoctest
+julia> Typstry.print_parameters(
+           IOContext(stdout, :delim => "\\\"(\\\""),
+       "vec", [:delim, :gap])
+vec(delim: "(",
+```
+"""
+function print_parameters(io, f, keys)
+    print(io, f, "(")
+
+    for key in keys
+        value = get(io, key, "")::String
+        isempty(value) || print(io, key, ": ", value, ", ")
+    end
+
+    println(io)
+end
+
+"""
+    static_parse(args...; filename, kwargs...)
+
+Call `Meta.parse` with the `filename` if it is supported
+in the current Julia version (at least v1.10).
+"""
+static_parse(args...; filename, kwargs...) =
+    @static VERSION < v"1.10" ? parse(args...; kwargs...) : parse(args...; filename, kwargs...)
