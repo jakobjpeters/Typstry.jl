@@ -404,6 +404,10 @@ end
 
 """
     examples
+
+A constant `Vector{Pair{Any, Type}}` where the first element is a value
+and the second element is the (potentially abstract) type corresponding
+to its [`show(::IO, ::MIME"text/plain", ::Any)`](@ref) method.
 """
 const examples = [
     'a' => AbstractChar,
