@@ -24,7 +24,7 @@ math = 2
 Construct a string using [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
 
 This type implements the `String` interface.
-However, this interface is unspecified which may result in missing functionality.
+However, the interface is unspecified which may result unexpected behavior.
 
 # Examples
 ```jldoctest
@@ -138,7 +138,7 @@ end
 
 Settings are used in Julia to format the [`TypstString`](@ref) and can be any type.
 Parameters are passed to a Typst function and must be a `String` with the same name
-as in Typst, except that dashes `"-"` are replaced with underscores `"_"`.
+as in Typst, except that dashes `-` are replaced with underscores `_`.
 
 | Type                                      | Settings                                | Parameters                                              |
 |:------------------------------------------|:----------------------------------------|:--------------------------------------------------------|
@@ -161,8 +161,6 @@ as in Typst, except that dashes `"-"` are replaced with underscores `"_"`.
 !!! warning
     This function's methods are incomplete.
     Please file an issue or create a pull-request for missing methods.
-    It is safe to implement missing methods (via type-piracy) until
-    it has been released in a new minor version of Typstry.jl.
 
 # Examples
 ```jldoctest
@@ -286,19 +284,6 @@ IOBuffer(data=UInt8[...], readable=true, writable=false, seekable=true, append=f
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 
 """
-    *(::TypstString, ::TypstString)
-
-See also [`TypstString`](@ref).
-
-# Examples
-```jldoctest
-julia> typst"a" * typst"b"
-typst"ab"
-```
-"""
-x::TypstString * y::TypstString = TypstString(TypstText(x.text * y.text))
-
-"""
     codeunit(::TypstString)
     codeunit(::TypstString, ::Integer)
 
@@ -362,7 +347,9 @@ pointer(ts::TypstString) = pointer(ts.text)
 
 Print `x` in Typst format.
 
-Provides default settings for [`show_typst`](@ref).
+Provides default settings for [`show_typst`](@ref)
+which may be specified in an `IOContext`.
+Custom default settings may be given by implementing new methods.
 
 | Setting   | Default                  | Type           | Description                                                                                                                                                                         |
 |:----------|:-------------------------|:---------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -456,9 +443,9 @@ const typst_mime = MIME"text/typst"()
 """
     code_mode(io)
 
-Print the number sign `"#"` unless `mode(io) == code`.
+Print the number sign `#` unless `mode(io) == code`.
 
-See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
+# See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
 
 # Examples
 ```jldoctest
@@ -506,7 +493,7 @@ end
 """
     escape_quote(io, s)
 
-Print the string, with quotes `"\\\""` escaped.
+Print the string, with quotes `\\` escaped.
 
 # Examples
 ```jldoctest

@@ -27,7 +27,7 @@ end
 The Typst command-line interface.
 
 This type implements the `Cmd` interface.
-However, this interface is unspecified which may result in missing functionality.
+However, the interface is unspecified which may result unexpected behavior.
 
 # Examples
 ```jldoctest
@@ -52,7 +52,7 @@ end
 
 Construct a [`TypstCommand`](@ref) without interpolation.
 
-Each parameter must be separated by a space `" "`.
+Each parameter must be separated by a space ` `.
 
 # Examples
 ```jldoctest

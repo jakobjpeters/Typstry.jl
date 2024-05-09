@@ -20,7 +20,6 @@ show_typst
 
 ```@docs
 IOBuffer
-*
 codeunit
 isvalid
 iterate
