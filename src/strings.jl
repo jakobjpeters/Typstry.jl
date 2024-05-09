@@ -414,7 +414,6 @@ const examples = [
     1.2 => AbstractFloat,
     [true 1; 1.0 [[true 1; 1.0 nothing]]] => AbstractMatrix,
     @typst_str("a") => AbstractString,
-    TypstString(TypstText("a")) => AbstractString,
     [true, [1]] => AbstractVector,
     true => Bool,
     1 + 2im => Complex,
