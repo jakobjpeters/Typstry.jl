@@ -23,7 +23,7 @@ end
 finish()
 
 open(joinpath(@__DIR__, "strings.typ"); truncate = true) do file
-    print(file, "\n#set page(paper: \"a4\", margin: 1em, height: auto, width: auto)\n#set text(12pt, font: \"JuliaMono\")\n\n#let julia(s) = raw(s, lang: \"julia\")\n\n")
+    print(file, "\n#set page(margin: 1em, height: auto, width: auto)\n#set text(12pt, font: \"JuliaMono\")\n\n#let julia(s) = raw(s, lang: \"julia\")\n\n")
 
     for s in [
         "#table(align: horizon, columns: 5, inset: 8pt",

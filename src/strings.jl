@@ -4,8 +4,8 @@
 """
     Mode
 
-An `Enum`erated type to indicate whether the current context
-is in `code`, `markup`, or `math` mode.
+An `Enum`erated type to indicate whether the current
+Typst context is in `code`, `markup`, or `math` mode.
 
 ```jldoctest
 julia> Mode
@@ -59,9 +59,9 @@ A wrapper to construct a [`TypstString`](@ref) using `print` instead of
 [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
 
 !!! info
-    Use `TypstText` to insert text into a `TypstString`
+    Use `TypstText` to print text to a `TypstString`
     and by extension a Typst source file.
-    Use `Text` to directly insert text into a Typst document.
+    Use `Text` to render the text in a Typst document.
 
     Note that unescaped control characters, such as `"\\n"`,
     in `TypstString`s are not escaped when being printed.
