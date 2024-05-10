@@ -172,8 +172,9 @@ julia> show_typst(IOContext(stdout, :mode => markup), "a")
 "a"
 ```
 """
-show_typst(io, x::AbstractChar) =
-    enclose(show, io, x, mode(io) == code ? "\"" : "")
+show_typst(io, x::AbstractChar) = mode(io) == code ?
+    enclose(show, io, x, "\"") :
+    show(io, x)
 show_typst(io, x::AbstractFloat) = print(io, x)
 show_typst(io, x::AbstractMatrix) =
     enclose((io, x; indent, depth) -> begin
@@ -186,18 +187,13 @@ show_typst(io, x::AbstractMatrix) =
         end, IOContext(io, :mode => math, :depth => _depth), eachrow(x), ";\n"; indent)
         print(io, "\n", indent ^ depth, ")")
     end, io, x, math_pad(io); indent = indent(io), depth = depth(io))
-show_typst(io, x::AbstractString) = enclose(io, x, "\"") do io, x
-    s = mode(io) == markup ? "" : "\\\""
-    enclose(io, x, s, s) do io, x
-        for c in x
-            c == '"' && print(io, "\\\\\\")
-            print(io, c)
-        end
-    end
-end
+show_typst(io, x::AbstractString) = mode(io) == markup ?
+    enclose(escape_string, io, x, "\"") :
+    enclose(escape_string, io, escape_string(x), "\"\\\"", "\\\"\"") # TODO: remove string allocation
 show_typst(io, x::AbstractVector) = enclose(IOContext(io, :mode => math), x, math_pad(io)) do io, x
     _depth, _indent = depth(io), indent(io)
     __depth = _depth + 1
+
     print_parameters(io, "vec", [:delim, :gap])
     print(io, _indent ^ __depth)
     join_with(show_typst, IOContext(io, :depth => __depth), x, ", "),
@@ -212,7 +208,7 @@ function show_typst(io, x::Bool)
     end
 end
 show_typst(io, x::Complex) =
-    enclose((io, x) -> print(io, sprint(print, x)[begin:end - 1]), io, x, math_pad(io))
+    enclose((io, x) -> print(io, real(x), " + ", imag(x), "i"), io, x, math_pad(io))
 show_typst(io, x::Irrational) =
     mode(io) == code ? show_typst(io, Float64(x)) : print(io, x)
 show_typst(io, ::Nothing) = if mode(io) != markup print(io, "\"\"") end
@@ -221,9 +217,7 @@ function show_typst(io, x::OrdinalRange{<:Integer, <:Integer})
 
     enclose((io, x) -> begin
         show_typst(io, first(x))
-        print(io, ", ")
-        show_typst(io, last(x) + 1)
-        print(io, ", step: ")
+        enclose(show_typst, io, last(x) + 1, ", ", ", step: ")
         show_typst(io, step(x))
     end, IOContext(io, :mode => code), x, "range(", ")")
 end
@@ -242,7 +236,16 @@ function show_typst(io, x::Rational)
 end
 function show_typst(io, x::Regex)
     code_mode(io)
-    enclose((io, x) -> print(io, sprint(print, x)[begin + 1:end]), io, x, "regex(", ")")
+    enclose(io, x, "regex(", ")") do io, x
+        buffer = IOBuffer()
+
+        print(buffer, x)
+        seek(buffer, 1)
+
+        for c in readeach(buffer, Char)
+            print(io, c)
+        end
+    end
 end
 show_typst(io, x::Signed) = print(io, x)
 function show_typst(io, x::Text)
@@ -278,6 +281,8 @@ IOBuffer(ts::TypstString) = IOBuffer(ts.text)
     codeunit(::TypstString)
     codeunit(::TypstString, ::Integer)
 
+See also [`TypstString`](@ref).
+
 # Examples
 ```jldoctest
 julia> codeunit(typst"a")
@@ -293,6 +298,8 @@ codeunit(ts::TypstString, i::Integer) = codeunit(ts.text, i)
 """
     isvalid(::TypstString, ::Integer)
 
+See also [`TypstString`](@ref).
+
 # Examples
 ```jldoctest
 julia> isvalid(typst"a", 1)
@@ -304,6 +311,8 @@ isvalid(ts::TypstString, i::Integer) = isvalid(ts.text, i::Integer)
 """
     iterate(::TypstString)
     iterate(::TypstString, ::Integer)
+
+See also [`TypstString`](@ref).
 
 # Examples
 ```jldoctest
@@ -367,6 +376,8 @@ show(io::IO, ::MIME"text/typst", x) =
 """
     show(::IO, ::TypstString)
 
+See also [`TypstString`](@ref).
+
 # Examples
 ```jldoctest
 julia> show(stdout, typst"a")
@@ -390,14 +401,14 @@ to its [`show(::IO,\u00A0::MIME"text/plain",\u00A0::Any)`](@ref) method.
 const examples = [
     'a' => AbstractChar,
     1.2 => AbstractFloat,
-    [true 1; 1.0 [[true 1; 1.0 nothing]]] => AbstractMatrix,
+    [true 1; 1.0 [Any[true 1; 1.0 nothing]]] => AbstractMatrix,
     @typst_str("a") => AbstractString,
     [true, [1]] => AbstractVector,
     true => Bool,
     1 + 2im => Complex,
     π => Irrational,
     nothing => Nothing,
-    1:4 => OrdinalRange{<:Integer, <:Integer},
+    0:2:6 => OrdinalRange{<:Integer, <:Integer},
     1 // 2 => Rational,
     r"[a-z]" => Regex,
     1 => Signed,

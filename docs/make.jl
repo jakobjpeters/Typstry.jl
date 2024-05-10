@@ -43,7 +43,7 @@ open(joinpath(@__DIR__, "strings.typ"); truncate = true) do file
         print(file, "    julia(")
 
         if is_vector print(file, "\"[true [1]]\"")
-        elseif is_matrix print(file, "\"[true 1; 1.0 [[\\n    true 1; 1.0 nothing\\n]]]\"")
+        elseif is_matrix print(file, "\"[true 1; 1.0 [Any[\\n    true 1; 1.0 nothing\\n]]]\"")
         elseif t <: Text print(file, "\"Text(\\\"[\\\\\\\"a\\\\\\\"]\\\")\"")
         else show(file, repr(v))
         end

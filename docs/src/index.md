@@ -36,7 +36,7 @@ $mat(
     )
 )$
 
-julia> TypstString(1//2, :inline => false)
+julia> TypstString(1 // 2, :inline => false)
 typst"$ 1 / 2 $"
 
 julia> typst"$ \(1 + 2im, :mode => math) $"
