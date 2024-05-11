@@ -73,6 +73,8 @@ end
 
 An `Artifact` containing the
 [JuliaMono](https://github.com/cormullion/juliamono) typeface.
+
+Use with [`addenv`](@ref) or the `font-path` command-line option.
 """
 const julia_mono = artifact"JuliaMono"
 
