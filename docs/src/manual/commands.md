@@ -6,6 +6,7 @@
 ```@docs
 TypstCommand
 @typst_cmd
+julia_mono
 ```
 
 ## `Base`

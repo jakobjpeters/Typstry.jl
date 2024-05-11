@@ -68,12 +68,26 @@ macro typst_cmd(parameters)
     :(TypstCommand(map(string, split($parameters, " "))))
 end
 
+"""
+    julia_mono
+
+An `Artifact` containing the
+[JuliaMono](https://github.com/cormullion/juliamono) typeface.
+"""
+const julia_mono = artifact"JuliaMono"
+
 # `Base`
 
 """
     addenv(::TypstCommand, args...; kwargs...)
 
 See also [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> addenv(typst`compile input.typ output.pdf`, "TYPST_FONT_PATHS" => julia_mono)
+typst`compile input.typ output.pdf`
+```
 """
 addenv(tc::TypstCommand, args...; kwargs...) = apply(addenv, tc, args...; kwargs...)
 

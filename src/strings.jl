@@ -377,8 +377,9 @@ function show_image(io, format, t)
     _name = name * "." * format
 
     open(file -> print(file, preamble, t), name; write = true)
-    success(run(ignorestatus(TypstCommand(["compile", name, _name])))) &&
-        print(io, read(_name, String))
+    success(run(ignorestatus(TypstCommand([
+        "compile", "--font-path=" * julia_mono, name, _name
+    ])))) && print(io, read(_name, String))
 end
 
 """

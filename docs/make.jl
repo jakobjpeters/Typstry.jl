@@ -67,7 +67,7 @@ end
 
 run(TypstCommand([
     "compile",
-    "--font-path=" * assets,
+    "--font-path=" * julia_mono,
     joinpath(@__DIR__, "strings.typ"),
     joinpath(assets, "strings.png")
 ]))
