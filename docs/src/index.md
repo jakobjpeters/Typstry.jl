@@ -60,6 +60,7 @@ typst`compile input.typ output.pdf`
 - Commands
     - Render documents using the Typst command-line interface
     - Construct `TypstCommand`s with vectors of strings or using `@typst_cmd`
+- Rendering in Pluto.jl notebooks
 
 ### Planned
 
@@ -69,7 +70,7 @@ typst`compile input.typ output.pdf`
     - Package extensions
 - Explore rendering environments
     - REPL Unicode
-    - Notebooks
+    - IJulia
     - Other?
 
 ## Related Packages

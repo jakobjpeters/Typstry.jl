@@ -25,6 +25,7 @@ isvalid
 iterate
 ncodeunits
 pointer
+show(::IO, ::MIME"image/png", ::TypstString)
 show(::IO, ::MIME"text/typst", ::Any)
 show(::IO, ::TypstString)
 ```
