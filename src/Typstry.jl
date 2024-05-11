@@ -17,12 +17,10 @@ export TypstCommand, @typst_cmd
 
 include("strings.jl")
 
-export Mode, TypstString, TypstText, @typst_str, julia_mono, code, markup, math, show_typst
+export Mode, TypstString, @typst_str, julia_mono, code, markup, math, show_typst, typst_text
 
-@compile_workload redirect_stdout(devnull) do
-    for (x, _) in examples
-         show(stdout, typst_mime, x)
-    end
+@compile_workload for (x, _) in examples
+    TypstString(x)
 end
 
 end # module

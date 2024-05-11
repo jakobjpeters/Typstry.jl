@@ -11,9 +11,9 @@ specify default settings and [`show_typst`](@ref) to specify their Typst code.
 ```@docs
 Mode
 TypstString
-TypstText
 @typst_str
 show_typst
+typst_text
 ```
 
 ## `Base`

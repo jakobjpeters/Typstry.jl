@@ -7,11 +7,8 @@ DocTestSetup = :(using Typstry)
 
 ## Introduction
 
-Julia is a language designed for high-performance scientific computing.
-
-[Typst](https://github.com/typst/typst) is a language designed for easy and precise typesetting.
-
-Typstry.jl is the interface to convert the computational power of Julia into beautifully formatted Typst documents.
+Typstry.jl is the interface to convert the computational power of Julia into
+beautifully formatted [Typst](https://github.com/typst/typst) documents.
 
 ## Installation
 
@@ -59,7 +56,7 @@ typst`compile input.typ output.pdf`
         - Implement `show_typst` for custom types
     - Create and manipulate `TypstString`s
         - Interpolate formatted Julia values using `@typst_str`
-    - Render `TypstString`s and `TypstText` in Pluto.jl notebooks
+        - Render in Pluto.jl notebooks
 - Commands
     - Construct `TypstCommand`s with `Vector`s of `String`s or using `@typst_cmd`
     - Render documents using the Typst command-line interface
@@ -73,7 +70,7 @@ typst`compile input.typ output.pdf`
     - Package extensions
 - Explore rendering environments
     - REPL Unicode
-    - IJulia
+    - IJulia.jl
     - Other?
 
 ## Related Packages

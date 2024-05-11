@@ -29,7 +29,7 @@ Construct a string using [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@re
 
 # Examples
 ```jldoctest
-julia> TypstString(TypstText("a"))
+julia> typst_text("a")
 typst"a"
 
 julia> TypstString("a")
@@ -50,36 +50,6 @@ struct TypstString <: AbstractString
             String(take!(buffer))
         end
     )
-end
-
-"""
-    TypstText(::Any)
-
-A wrapper to construct a [`TypstString`](@ref) using `print` instead of
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
-
-!!! info
-    Use `TypstText` to print text to a `TypstString`
-    and by extension a Typst source file.
-    Use `Text` to render the text in a Typst document.
-
-    Note that unescaped control characters, such as `"\\n"`,
-    in `TypstString`s are not escaped when being printed.
-    This may break formatting in some environments such as the REPL.
-
-# Examples
-```jldoctest
-julia> TypstText("a")
-TypstText("a")
-
-julia> TypstText(1)
-TypstText("1")
-```
-"""
-struct TypstText
-    text::String
-
-    TypstText(x) = new(string(x))
 end
 
 """
@@ -135,6 +105,29 @@ macro typst_str(s)
 end
 
 # Internals
+
+"""
+    TypstText(::Any)
+
+A wrapper used to construct a [`TypstString`](@ref) using `print` instead of
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
+
+See also [`typst_text`](@ref).
+
+# Examples
+```jldoctest
+julia> Typstry.TypstText("a")
+Typstry.TypstText("a")
+
+julia> Typstry.TypstText([1, 2, 3, 4])
+Typstry.TypstText("[1, 2, 3, 4]")
+```
+"""
+struct TypstText
+    text::String
+
+    TypstText(x) = new(string(x))
+end
 
 """
     examples
@@ -424,11 +417,11 @@ as in Typst, except that dashes `-` are replaced with underscores `_`.
 
 # Examples
 ```jldoctest
-julia> show_typst(stdout, TypstText("a"))
-a
+julia> show_typst(stdout, 1)
+1
 
-julia> show_typst(IOContext(stdout, :mode => markup), "a")
-"a"
+julia> show_typst(IOContext(stdout, :mode => code), "a")
+"\\\"a\\\""
 ```
 """
 show_typst(io, x::AbstractChar) = mode(io) == code ?
@@ -511,7 +504,6 @@ function show_typst(io, x::Text)
     code_mode(io)
     escape_quote(io, repr(x))
 end
-show_typst(io, x::TypstText) = print(io, x.text)
 #=
 AbstractDict
 AbstractIrrational
@@ -520,6 +512,32 @@ Symbol
 Unsigned
 Enum
 =#
+
+"""
+    typst_text(x)
+
+Construct a [`TypstString`](@ref) using `print` instead of
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
+
+!!! info
+    Use `typst_text` to print text to a `TypstString`
+    and by extension a Typst source file.
+    Use `Text` to render the text in a Typst document.
+
+    Note that unescaped control characters, such as `"\\n"`,
+    in `TypstString`s are not escaped when being printed.
+    This may break formatting in some environments such as the REPL.
+
+# Examples
+```jldoctest
+julia> typst_text("a")
+typst"a"
+
+julia> typst_text([1, 2, 3, 4])
+typst"[1, 2, 3, 4]"
+```
+"""
+typst_text(x) = TypstString(TypstText(x))
 
 # `Base`
 
@@ -602,7 +620,7 @@ ncodeunits(ts::TypstString) = ncodeunits(ts.text)
 pointer(ts::TypstString) = pointer(ts.text)
 
 """
-    show(::IO, ::Union{MIME"image/png", MIME"image/svg+xml"}, ::Union{TypstString, TypstText})
+    show(::IO, ::Union{MIME"image/png", MIME"image/svg+xml"}, ::TypstString)
 
 Used to render a Typst document in environments such as Pluto.jl.
 
@@ -612,13 +630,11 @@ The document's preamble is:
 $preamble
 ```
 
-See also [`TypstString`](@ref), [`TypstText`](@ref),
-and the [JuliaMono](https://github.com/cormullion/juliamono) typeface.
+See also [`TypstString`](@ref) and the
+[JuliaMono](https://github.com/cormullion/juliamono) typeface.
 """
 show(io::IO, ::MIME"image/png", t::TypstString) = show_image(io, "png", t)
-show(io::IO, ::MIME"image/png", t::TypstText) = show_image(io, "png", t.text)
 show(io::IO, ::MIME"image/svg+xml", t::TypstString) = show_image(io, "svg", t)
-show(io::IO, ::MIME"image/svg+xml", t::TypstText) = show_image(io, "svg", t.text)
 
 """
     show(::IO, ::MIME"text/typst", x)
@@ -638,9 +654,6 @@ Custom default settings may be provided by implementing new methods.
 
 # Examples
 ```jldoctest
-julia> show(stdout, "text/typst", TypstText("a"))
-a
-
 julia> show(stdout, "text/typst", "a")
 "a"
 

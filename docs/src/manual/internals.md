@@ -4,6 +4,7 @@
 ## Strings
 
 ```@docs
+Typstry.TypstText
 Typstry.examples
 Typstry.preamble
 Typstry.settings
