@@ -1,7 +1,6 @@
 
 [JuliaMono]
 git-tree-sha1 = "49dcd2c19616ebaa3cbc4eb8897132e15777709c"
-lazy = true
 
     [[JuliaMono.download]]
     sha256 = "027654737001a1f85cc1689faa3676fb42a06d5bf5aa6e83ff77eb1edb3a3602"
