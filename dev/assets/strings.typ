@@ -19,19 +19,19 @@
     "'a'", `AbstractChar`, [#"'a'"], ['a'], $'a'$,
     "1.2", `AbstractFloat`, [#1.2], [1.2], $1.2$,
     "[true 1; 1.0 [Any[\n    true 1; 1.0 nothing\n]]]", `AbstractMatrix`,
-        [#$mat(
+        [#$ mat(
             "true", 1;
             1.0, mat(
                 "true", 1;
                 1.0, ""
             )
-        )$], [$mat(
+        ) $], [$ mat(
             "true", 1;
             1.0, mat(
                 "true", 1;
                 1.0, ""
             )
-        )$], $mat(
+        ) $], $mat(
             "true", 1;
             1.0, mat(
                 "true", 1;
@@ -40,25 +40,25 @@
         )$,
     "\"a\"", `AbstractString`, [#"\"a\""], ["a"], $"\"a\""$,
     "[true [1]]", `AbstractVector`,
-        [#$vec(
+        [#$ vec(
             "true", vec(
                 1
             )
-        )$], [$vec(
+        ) $], [$ vec(
             "true", vec(
                 1
             )
-        )$], $vec(
+        ) $], $vec(
             "true", vec(
                 1
             )
         )$,
     "true", `Bool`, [#true], [#true], $"true"$,
-    "1 + 2im", `Complex`, [#$1 + 2i$], [$1 + 2i$], $1 + 2i$,
+    "1 + 2im", `Complex`, [#$ 1 + 2i $], [$ 1 + 2i $], $1 + 2i$,
     "π", `Irrational`, [#3.141592653589793], [π], $π$,
     "nothing", `Nothing`, [#""], [], $""$,
     "0:2:6", `OrdinalRange{<:Integer, <:Integer}`, [#range(0, 7, step: 2)], [#range(0, 7, step: 2)], $#range(0, 7, step: 2)$,
-    "1//2", `Rational`, [#(1 / 2)], [$1 / 2$], $1 / 2$,
+    "1//2", `Rational`, [#(1 / 2)], [$ 1 / 2 $], $1 / 2$,
     "r\"[a-z]\"", `Regex`, [#regex("[a-z]")], [#regex("[a-z]")], $#regex("[a-z]")$,
     "1", `Signed`, [#1], [1], $1$,
     "StepRangeLen(0, 2, 4)", `StepRangeLen{<:Integer, <:Integer, <:Integer}`, [#range(0, 7, step: 2)], [#range(0, 7, step: 2)], $#range(0, 7, step: 2)$,
