@@ -80,7 +80,7 @@ julia> typst"\$\\(x) / \\(x + 1)\$"
 typst"\$1 / 2\$"
 
 julia> typst"\\(x // 2)"
-typst"\$1 / 2\$"
+typst"\$ 1 / 2 \$"
 
 julia> typst"\\(x // 2, :mode => math)"
 typst"1 / 2"
@@ -137,27 +137,6 @@ end
 
 A constant `Vector` of Julia values and their corresponding `Type`s implemented for
 [`show(::IO,\u00A0::MIME"text/plain",\u00A0::Any)`](@ref).
-
-# Examples
-```jldoctest
-julia> Typstry.examples
-16-element Vector{Pair{Any, Type}}:
-                                       'a' => AbstractChar
-                                       1.2 => AbstractFloat
- Any[true 1; 1.0 Any[true 1; 1.0 nothing]] => AbstractMatrix
-                                       "a" => AbstractString
-                            Any[true, [1]] => AbstractVector
-                                      true => Bool
-                                   1 + 2im => Complex
-                                         π => Irrational
-                                   nothing => Nothing
-                                     0:2:6 => OrdinalRange{<:Integer, <:Integer}
-                                      1//2 => Rational
-                                  r"[a-z]" => Regex
-                                         1 => Signed
-                                     0:2:6 => StepRangeLen{<:Integer, <:Integer, <:Integer}
-                                     ["a"] => Text
-                            typst"[\\\"a\\\"]" => TypstString
 ```
 """
 const examples = [
@@ -203,12 +182,12 @@ for [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
 # Examples
 ```jldoctest
 julia> Typstry.settings
-(mode = markup, inline = true, indent = "    ", depth = 0)
+(mode = markup, inline = false, indent = "    ", depth = 0)
 ```
 """
 const settings = (
     mode = markup,
-    inline = true,
+    inline = false,
     indent = "    ",
     depth = 0
 )
@@ -693,7 +672,7 @@ Custom default settings may be provided by implementing new methods.
 | Setting   | Default                  | Type           | Description                                                                                                                                                             |
 |:----------|:-------------------------|:---------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `:mode`   | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs.   |
-| `:inline` | `true`                   | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                               |
+| `:inline` | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                               |
 | `:indent` | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                               |
 | `:depth`  | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                               |
 

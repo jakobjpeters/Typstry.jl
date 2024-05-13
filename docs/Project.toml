@@ -5,5 +5,5 @@ Typst_jll = "eb4b1da6-20f6-5c66-9826-fdb8ad410d0e"
 
 [compat]
 Documenter = "1"
-Luxor = "4"
+Luxor = "3 - 4"
 Typst_jll = "0.11"

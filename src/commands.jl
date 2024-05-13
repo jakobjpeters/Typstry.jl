@@ -74,8 +74,8 @@ end
 An artifact containing the
 [JuliaMono](https://github.com/cormullion/juliamono) typeface.
 
-Use with a [`TypstCommand`](@ref) and either
-[`addenv`](@ref) or the `font-path` command-line option.
+Use with a [`TypstCommand`](@ref) and one of [`addenv`](@ref),
+[`setenv`], or the `font-path` command-line option.
 """
 const julia_mono = artifact"JuliaMono"
 
@@ -150,7 +150,13 @@ end
 """
     setenv(::TypstCommand, env; kwargs...)
 
-See also [`TypstCommand`](@ref).
+See also [`TypstCommand`](@ref) and [`julia_mono`](@ref).
+
+# Examples
+```jldoctest
+julia> setenv(typst`compile input.typ output.pdf`, "TYPST_FONT_PATHS" => julia_mono)
+typst`compile input.typ output.pdf`
+```
 """
 setenv(tc::TypstCommand, env; kwargs...) = apply(setenv, tc, env; kwargs...)
 

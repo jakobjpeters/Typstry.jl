@@ -1,4 +1,3 @@
-using Base: type_limited_string_from_context
 
 using Documenter: HTML, DocMeta.setdocmeta!, deploydocs, makedocs
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
