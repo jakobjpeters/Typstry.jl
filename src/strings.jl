@@ -4,7 +4,7 @@
 """
     Mode
 
-An `Enum`erated type to indicate whether the current
+An `Enum`erated type used to specify that the current
 Typst context is in `code`, `markup`, or `math` mode.
 
 ```jldoctest
@@ -19,19 +19,21 @@ math = 2
 
 """
     TypstString <: AbstractString
-    TypstString(x, ::Pair{Symbol}...)
+    TypstString(::Any, ::Pair{Symbol}...)
 
-Construct a string using [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
+Convert the value to a Typst formatted string.
 
-!!!
+Optional Julia settings and Typst parameters are passed to
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref)
+in an `IOContext`.
+See also [`show_typst`](@ref) for a list of supported types.
+
+!!! info
     This type implements the `String` interface.
     However, the interface is unspecified which may result unexpected behavior.
 
 # Examples
 ```jldoctest
-julia> typst_text("a")
-typst"a"
-
 julia> TypstString("a")
 typst"\\\"a\\\""
 
@@ -42,8 +44,8 @@ typst"\\\"\\\\\\"a\\\\\\"\\\""
 struct TypstString <: AbstractString
     text::String
 
-    TypstString(x, settings...) = new(
-        if x isa TypstText x.text
+    TypstString(x::T, settings...) where T = new(
+        if T <: Union{TypstString, TypstText} x.text
         else
             buffer = IOBuffer()
             show(IOContext(buffer, settings...), MIME"text/typst"(), x)
@@ -58,13 +60,16 @@ end
 
 Construct a [`TypstString`](@ref).
 
-Values can be interpolated by calling the `TypstString` constructor,
-except with a backslash `"\\\\"` instead of the type name.
+Control characters are escaped,
+except quotation marks and backslashes in the same manner as `@raw_str`.
+`TypstString`s containing control characters may be created using [`typst_text`](@ref).
+Values may be interpolated by calling the `TypstString` constructor,
+except using a backslash instead of the type name.
 
 !!! tip
     Use [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref) to print directly to an `IO`.
 
-    See also the performance tip to [avoid string interpolation for I/O]
+    See also the performance tip to [Avoid string interpolation for I/O]
     (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
 
 # Examples
@@ -109,10 +114,8 @@ end
 """
     TypstText(::Any)
 
-A wrapper used to construct a [`TypstString`](@ref) using `print` instead of
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
-
-See also [`typst_text`](@ref).
+A wrapper used to construct a [`TypstString`](@ref) with `print`
+instead of [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
 
 # Examples
 ```jldoctest
@@ -132,15 +135,36 @@ end
 """
     examples
 
-A constant `Vector` where the first element is a value and the second
-element is the (potentially abstract) `Type` corresponding to its
-[`show(::IO,\u00A0::MIME"text/plain",\u00A0::Any)`](@ref) method.
+A constant `Vector` of Julia values and their corresponding `Type`s implemented for
+[`show(::IO,\u00A0::MIME"text/plain",\u00A0::Any)`](@ref).
+
+# Examples
+```jldoctest
+julia> Typstry.examples
+16-element Vector{Pair{Any, Type}}:
+                                       'a' => AbstractChar
+                                       1.2 => AbstractFloat
+ Any[true 1; 1.0 Any[true 1; 1.0 nothing]] => AbstractMatrix
+                                       "a" => AbstractString
+                            Any[true, [1]] => AbstractVector
+                                      true => Bool
+                                   1 + 2im => Complex
+                                         π => Irrational
+                                   nothing => Nothing
+                                     0:2:6 => OrdinalRange{<:Integer, <:Integer}
+                                      1//2 => Rational
+                                  r"[a-z]" => Regex
+                                         1 => Signed
+                                     0:2:6 => StepRangeLen{<:Integer, <:Integer, <:Integer}
+                                     ["a"] => Text
+                            typst"[\\\"a\\\"]" => TypstString
+```
 """
 const examples = [
     'a' => AbstractChar,
     1.2 => AbstractFloat,
     [true 1; 1.0 [Any[true 1; 1.0 nothing]]] => AbstractMatrix,
-    @typst_str("a") => AbstractString,
+    "a" => AbstractString,
     [true, [1]] => AbstractVector,
     true => Bool,
     1 + 2im => Complex,
@@ -150,12 +174,20 @@ const examples = [
     1 // 2 => Rational,
     r"[a-z]" => Regex,
     1 => Signed,
+    StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer},
     text"[\"a\"]" => Text,
-    TypstText("[\"a\"]") => TypstText
+    @typst_str("[\"a\"]") => TypstString
 ]
 
 """
     preamble
+
+# Examples
+```jldoctest
+julia> print(Typstry.preamble)
+#set page(margin: 1em, height: auto, width: auto, fill: white)
+#set text(16pt, font: "JuliaMono")
+```
 """
 const preamble = """
 #set page(margin: 1em, height: auto, width: auto, fill: white)
@@ -167,6 +199,12 @@ const preamble = """
 
 A constant `NamedTuple` containing the default `IOContext` settings
 for [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
+
+# Examples
+```jldoctest
+julia> Typstry.settings
+(mode = markup, inline = true, indent = "    ", depth = 0)
+```
 """
 const settings = (
     mode = markup,
@@ -177,8 +215,6 @@ const settings = (
 
 """
     typst_mime
-
-A constant equal to `MIME"text/typst"()`.
 
 # Examples
 ```jldoctest
@@ -191,7 +227,7 @@ const typst_mime = MIME"text/typst"()
 """
     code_mode(io)
 
-Print the number sign `#` unless `mode(io) == code`.
+Print the number sign, unless `mode(io) == code`.
 
 # See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
 
@@ -211,7 +247,7 @@ code_mode(io) = if mode(io) != code print(io, "#") end
 """
     depth(io)
 
-Return `io[:depth]::Int`
+Return `io[:depth]::Int`.
 
 # Examples
 ```jldoctest
@@ -239,17 +275,19 @@ function enclose(f, io, x, left, right = reverse(left); settings...)
 end
 
 """
-    escape_quote(io, s)
-
-Print the string, with quotes `\\` escaped.
+    format(::Union{MIME"image/png", MIME"image/svg+xml})
 
 # Examples
 ```jldoctest
-julia> Typstry.escape_quote(stdout, TypstString("a"))
-"\\\"a\\\""
+julia> Typstry.format(MIME"image/png"())
+"png"
+
+julia> Typstry.format(MIME"image/svg+xml"())
+"svg"
 ```
 """
-escape_quote(io, s) = enclose(escape_raw_string, io, s, "\"")
+format(::MIME"image/png") = "png"
+format(::MIME"image/svg+xml") = "svg"
 
 """
     indent(io)
@@ -325,7 +363,7 @@ math_pad(io) =
 
 Return `io[:mode]::Mode`.
 
-See also [`Mode`].
+See also [`Mode`](@ref).
 
 # Examples
 ```jldoctest
@@ -363,11 +401,25 @@ function print_parameters(io, f, keys)
 end
 
 """
-    show_image(io, format, t)
+    print_quoted(io, s)
+
+Print the string [`enclose`](@ref Typstry.enclose)d
+in quotes and with interior quotes escaped.
+
+# Examples
+```jldoctest
+julia> Typstry.print_quoted(stdout, TypstString("a"))
+"\\\"a\\\""
+```
 """
-function show_image(io, format, t)
+print_quoted(io, s) = enclose(escape_raw_string, io, s, "\"")
+
+"""
+    show_image(io, m, t)
+"""
+function show_image(io, m, t)
     name = tempname()
-    _name = name * "." * format
+    _name = name * "." * format(m)
 
     open(file -> print(file, preamble, t), name; write = true)
     success(run(ignorestatus(TypstCommand([
@@ -389,31 +441,44 @@ static_parse(args...; filename, kwargs...) =
 """
     show_typst(io, x)
 
-Settings are used in Julia to format the [`TypstString`](@ref) and can be any type.
-Parameters are passed to a Typst function and must be a `String` with the same name
-as in Typst, except that dashes `-` are replaced with underscores `_`.
+Print to Typst format using required settings and parameters in the `IOContext`.
 
-| Type                                      | Settings                                | Parameters                                              |
-|:------------------------------------------|:----------------------------------------|:--------------------------------------------------------|
-| `AbstractChar`                            | `:mode`                                 |                                                         |
-| `AbstractFloat`                           |                                         |                                                         |
-| `AbstractMatrix`                          | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:augment`, `:gap`, `:row_gap`, `:column_gap` |
-| `AbstractString`                          | `:mode`                                 |                                                         |
-| `AbstractVector`                          | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:gap`                                        |
-| `Bool`                                    | `:mode`                                 |                                                         |
-| `Complex`                                 | `:mode`, `:inline`                      |                                                         |
-| `Irrational`                              | `:mode`                                 |                                                         |
-| `Nothing`                                 | `:mode`                                 |                                                         |
-| `OrdinalRange{<:Integer,\u00A0<:Integer}` | `:mode`                                 |                                                         |
-| `Rational`                                | `:mode`, `:inline`                      |                                                         |
-| `Regex`                                   | `:mode`                                 |                                                         |
-| `Signed`                                  |                                         |                                                         |
-| `Text`                                    | `:mode`                                 |                                                         |
-| `TypstText`                               |                                         |                                                         |
+Settings are used in Julia to format the [`TypstString`](@ref) and can be any type.
+Parameters are passed to a function in the Typst source file and must be a `String`
+with the same name as in Typst, except that dashes are replaced with underscores.
+
+For more information on parameters and settings,
+see also [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref)
+and the [Typst Documentation](https://typst.app/docs/),
+respectively.
+
+For more information on printing and rendering, see also [Examples](@ref).
+
+!!! tip
+    Implement this function for new types to specify their Typst formatting.
 
 !!! warning
     This function's methods are incomplete.
     Please file an issue or create a pull-request for missing methods.
+
+| Type                                                      | Settings                                | Parameters                                              |
+|:----------------------------------------------------------|:----------------------------------------|:--------------------------------------------------------|
+| `AbstractChar`                                            | `:mode`                                 |                                                         |
+| `AbstractFloat`                                           |                                         |                                                         |
+| `AbstractMatrix`                                          | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:augment`, `:gap`, `:row_gap`, `:column_gap` |
+| `AbstractString`                                          | `:mode`                                 |                                                         |
+| `AbstractVector`                                          | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:gap`                                        |
+| `Bool`                                                    | `:mode`                                 |                                                         |
+| `Complex`                                                 | `:mode`, `:inline`                      |                                                         |
+| `Irrational`                                              | `:mode`                                 |                                                         |
+| `Nothing`                                                 | `:mode`                                 |                                                         |
+| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                 |                                                         |
+| `Rational`                                                | `:mode`, `:inline`                      |                                                         |
+| `Regex`                                                   | `:mode`                                 |                                                         |
+| `Signed`                                                  |                                         |                                                         |
+| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                 |                                                         |
+| `Text`                                                    | `:mode`                                 |                                                         |
+| `TypstString`                                             |                                         |                                                         |
 
 # Examples
 ```jldoctest
@@ -427,7 +492,6 @@ julia> show_typst(IOContext(stdout, :mode => code), "a")
 show_typst(io, x::AbstractChar) = mode(io) == code ?
     enclose(show, io, x, "\"") :
     show(io, x)
-show_typst(io, x::AbstractFloat) = print(io, x)
 show_typst(io, x::AbstractMatrix) =
     enclose((io, x; indent, depth) -> begin
         _depth = depth + 1
@@ -464,15 +528,6 @@ show_typst(io, x::Complex) =
 show_typst(io, x::Irrational) =
     mode(io) == code ? show_typst(io, Float64(x)) : print(io, x)
 show_typst(io, ::Nothing) = if mode(io) != markup print(io, "\"\"") end
-function show_typst(io, x::OrdinalRange{<:Integer, <:Integer})
-    code_mode(io)
-
-    enclose((io, x) -> begin
-        show_typst(io, first(x))
-        enclose(show_typst, io, last(x) + 1, ", ", ", step: ")
-        show_typst(io, step(x))
-    end, IOContext(io, :mode => code), x, "range(", ")")
-end
 function show_typst(io, x::Rational)
     _mode = mode(io)
     f = (io, x) -> begin
@@ -499,34 +554,41 @@ function show_typst(io, x::Regex)
         end
     end
 end
-show_typst(io, x::Signed) = print(io, x)
 function show_typst(io, x::Text)
     code_mode(io)
-    escape_quote(io, repr(x))
+    print_quoted(io, repr(x))
+end
+show_typst(io, x::Union{AbstractFloat, Signed, TypstString}) = print(io, x)
+function show_typst(io, x::Union{OrdinalRange{<:Integer, <:Integer}, StepRangeLen{<:Integer, <:Integer, <:Integer}})
+    code_mode(io)
+
+    enclose((io, x) -> begin
+        show_typst(io, first(x))
+        enclose(show_typst, io, last(x) + 1, ", ", ", step: ")
+        show_typst(io, step(x))
+    end, IOContext(io, :mode => code), x, "range(", ")")
 end
 #=
 AbstractDict
 AbstractIrrational
-AbstractRange
 Symbol
 Unsigned
 Enum
 =#
 
 """
-    typst_text(x)
+    typst_text(::Any)
 
 Construct a [`TypstString`](@ref) using `print` instead of
 [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
 
-!!! info
-    Use `typst_text` to print text to a `TypstString`
-    and by extension a Typst source file.
+!!! tip
+    Use `typst_text` to print text to a `TypstString`.
     Use `Text` to render the text in a Typst document.
 
-    Note that unescaped control characters, such as `"\\n"`,
-    in `TypstString`s are not escaped when being printed.
-    This may break formatting in some environments such as the REPL.
+!!! warning
+    Unescaped control characters in `TypstString`s may
+    break formatting in some environments such as the REPL.
 
 # Examples
 ```jldoctest
@@ -620,37 +682,20 @@ ncodeunits(ts::TypstString) = ncodeunits(ts.text)
 pointer(ts::TypstString) = pointer(ts.text)
 
 """
-    show(::IO, ::Union{MIME"image/png", MIME"image/svg+xml"}, ::TypstString)
+    show(::IO, ::MIME"text/typst", ::Any)
 
-Used to render a Typst document in environments such as Pluto.jl.
-
-The document's preamble is:
-
-```typst
-$preamble
-```
-
-See also [`TypstString`](@ref) and the
-[JuliaMono](https://github.com/cormullion/juliamono) typeface.
-"""
-show(io::IO, ::MIME"image/png", t::TypstString) = show_image(io, "png", t)
-show(io::IO, ::MIME"image/svg+xml", t::TypstString) = show_image(io, "svg", t)
-
-"""
-    show(::IO, ::MIME"text/typst", x)
-
-Print `x` in Typst format.
+Print to Typst format.
 
 Provides default settings for [`show_typst`](@ref)
 which may be specified in an `IOContext`.
 Custom default settings may be provided by implementing new methods.
 
-| Setting   | Default                  | Type           | Description                                                                                                                                                                         |
-|:----------|:-------------------------|:---------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `:mode`   | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign `#`, `markup` is at the top-level and enclosed in square brackets `[]`, and `math` is enclosed in dollar signs `\$`. |
-| `:inline` | `true`                   | `Bool`         | When `mode = math`, specifies whether the enclosing dollar signs `\$` are padded with a space to render the element inline or its own block.                                        |
-| `:indent` | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst code.                                                                                                 |
-| `:depth`  | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                                           |
+| Setting   | Default                  | Type           | Description                                                                                                                                                             |
+|:----------|:-------------------------|:---------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `:mode`   | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs.   |
+| `:inline` | `true`                   | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                               |
+| `:indent` | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                               |
+| `:depth`  | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                               |
 
 # Examples
 ```jldoctest
@@ -665,6 +710,24 @@ show(io::IO, ::MIME"text/typst", x) =
     show_typst(IOContext(io, map(key -> key => get(io, key, settings[key]), keys(settings))...), x)
 
 """
+    show(::IO, ::Union{MIME"image/png", MIME"image/svg+xml"}, ::TypstString)
+
+Print to a Portable Network Graphics (PNG) or Scalable Vector Graphics (SVG) format.
+
+Environments such as Pluto.jl notebooks use this
+function to render [`TypstString`](@ref)s to a document.
+The corresponding Typst source file begins with this preamble:
+
+```typst
+$preamble
+```
+
+See also [`julia_mono`](@ref).
+"""
+show(io::IO, m::Union{MIME"image/png", MIME"image/svg+xml"}, t::TypstString) =
+    show_image(io, m, t)
+
+"""
     show(::IO, ::TypstString)
 
 See also [`TypstString`](@ref).
@@ -677,5 +740,5 @@ typst"a"
 """
 function show(io::IO, ts::TypstString)
     print(io, "typst")
-    escape_quote(io, ts.text)
+    print_quoted(io, ts.text)
 end

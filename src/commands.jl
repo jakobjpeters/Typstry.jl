@@ -4,8 +4,8 @@
 """
     typst_program
 
-A constant `Cmd` that is the Typst command-line interface
-given by Typst_jll.jl with no additional parameters.
+A constant `Cmd` that is the Typst compiler given
+by Typst_jll.jl with no additional parameters.
 """
 const typst_program = typst()
 
@@ -24,7 +24,7 @@ end
     TypstCommand(::Vector{String})
     TypstCommand(::TypstCommand; kwargs...)
 
-The Typst command-line interface.
+The Typst compiler.
 
 !!! info
     This type implements the `Cmd` interface.
@@ -48,12 +48,12 @@ mutable struct TypstCommand
 end
 
 """
-    @typst_cmd(parameters)
-    typst`parameters...`
+    @typst_cmd(s)
+    typst`s`
 
 Construct a [`TypstCommand`](@ref) without interpolation.
 
-Each parameter must be separated by a space `" "`.
+Each parameter must be separated by a space.
 
 # Examples
 ```jldoctest
@@ -74,7 +74,8 @@ end
 An `Artifact` containing the
 [JuliaMono](https://github.com/cormullion/juliamono) typeface.
 
-Use with [`addenv`](@ref) or the `font-path` command-line option.
+Use with a [`TypstCommand`](@ref) and either
+[`addenv`](@ref) or the `font-path` command-line option.
 """
 const julia_mono = artifact"JuliaMono"
 
@@ -83,7 +84,7 @@ const julia_mono = artifact"JuliaMono"
 """
     addenv(::TypstCommand, args...; kwargs...)
 
-See also [`TypstCommand`](@ref).
+See also [`TypstCommand`](@ref) and [`julia_mono`](@ref).
 
 # Examples
 ```jldoctest
@@ -140,7 +141,7 @@ run(tc::TypstCommand, args...; kwargs...) =
 
     # Examples
     ```jldoctest
-    julia> setcpuaffinity(typst`help`, [1])
+    julia> setcpuaffinity(typst`help`, nothing)
     typst`help`
     ```
     """ setcpuaffinity

@@ -1,11 +1,6 @@
 
 # Strings
 
-Types should implement [`show(::IO, ::MIME"text/typst", ::Any)`](@ref) to
-specify default settings and [`show_typst`](@ref) to specify their Typst code.
-
-![strings](../assets/strings.png)
-
 ## `Typstry`
 
 ```@docs
@@ -25,7 +20,7 @@ isvalid
 iterate
 ncodeunits
 pointer
-show(::IO, ::MIME"image/png", ::TypstString)
 show(::IO, ::MIME"text/typst", ::Any)
+show(::IO, ::Union{MIME"image/png", MIME"image/svg+xml"}, ::TypstString)
 show(::IO, ::TypstString)
 ```

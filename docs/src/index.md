@@ -51,7 +51,7 @@ typst`compile input.typ output.pdf`
 ## Features
 
 - Strings
-    - Convert Julia values to Typst using `show` with the `"text/typst"` MIME type
+    - Convert Julia values to Typst format using `show` with the `"text/typst"` MIME type
         - Specify Julia settings and Typst parameters in the `IOContext`
         - Implement `show_typst` for custom types
     - Create and manipulate `TypstString`s
@@ -68,9 +68,9 @@ typst`compile input.typ output.pdf`
     - `Base`
     - Standard Library
     - Package extensions
-- Explore rendering environments
-    - REPL Unicode
+- Support rendering in more environments
     - IJulia.jl
+    - REPL Unicode?
     - Other?
 
 ## Related Packages
