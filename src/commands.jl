@@ -71,7 +71,7 @@ end
 """
     julia_mono
 
-An `Artifact` containing the
+An artifact containing the
 [JuliaMono](https://github.com/cormullion/juliamono) typeface.
 
 Use with a [`TypstCommand`](@ref) and either

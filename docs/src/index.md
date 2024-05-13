@@ -15,7 +15,7 @@ beautifully formatted [Typst](https://github.com/typst/typst) documents.
 ```julia
 julia> using Pkg: add
 
-julia> add(; url = "https://github.com/jakobjpeters/Typstry.jl")
+julia> add("Typstry")
 
 julia> using Typstry
 ```
@@ -50,17 +50,20 @@ typst`compile input.typ output.pdf`
 
 ## Features
 
-- Strings
-    - Convert Julia values to Typst format using `show` with the `"text/typst"` MIME type
-        - Specify Julia settings and Typst parameters in the `IOContext`
-        - Implement `show_typst` for custom types
-    - Create and manipulate `TypstString`s
-        - Interpolate formatted Julia values using `@typst_str`
-        - Render in Pluto.jl notebooks
-- Commands
-    - Construct `TypstCommand`s with `Vector`s of `String`s or using `@typst_cmd`
-    - Render documents using the Typst command-line interface
-        - Use the [JuliaMono](https://github.com/cormullion/juliamono) typeface
+### Strings
+
+- Convert Julia values to Typst format using `show` with the `"text/typst"` MIME type
+    - Specify Julia settings and Typst parameters in the `IOContext`
+    - Implement `show_typst` for custom types
+- Create and manipulate `TypstString`s
+    - Interpolate formatted Julia values using `@typst_str`
+    - Render in Pluto.jl notebooks
+
+### Commands
+
+- Construct `TypstCommand`s with `Vector`s of `String`s or using `@typst_cmd`
+- Render documents using the Typst compiler
+    - Use the [JuliaMono](https://github.com/cormullion/juliamono) typeface
 
 ### Planned
 
