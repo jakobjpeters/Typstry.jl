@@ -20,16 +20,15 @@
 
 ## Introduction
 
-Julia is a language designed for high-performance scientific computing.
-[Typst](https://github.com/typst/typst) is a language designed for easy and precise typesetting.
-Typstry.jl is the interface to convert the computational power of Julia into beautifully formatted Typst documents.
+Typstry.jl is the interface to convert the computational power of Julia into
+beautifully formatted [Typst](https://github.com/typst/typst) documents.
 
 ## Installation
 
 ```julia
 julia> using Pkg: add
 
-julia> add(; url = "https://github.com/jakobjpeters/Typstry.jl")
+julia> add("Typstry")
 
 julia> using Typstry
 ```
@@ -58,22 +57,26 @@ typst"$ 1 + 2i $"
 julia> TypstCommand(["help"])
 typst`help`
 
-julia> typst`compile input.typ output.pdf`
+julia> addenv(typst`compile input.typ output.pdf`, "TYPST_FONT_PATHS" => julia_mono)
 typst`compile input.typ output.pdf`
 ```
 
 ## Features
 
-- Strings
-    - Convert Julia values to Typst using `show` with the `"text/typst"` MIME type
-        - Specify Julia settings and Typst parameters in the `IOContext`
-        - Implement `show_typst` for custom types
-    - Create and manipulate `TypstString`s
-        - Interpolate formatted Julia values using `@typst_str`
-- Commands
-    - Render documents using the Typst command-line interface
-    - Construct `TypstCommand`s with vectors of strings or using `@typst_cmd`
-- Rendering in Pluto.jl notebooks
+### Strings
+
+- Convert Julia values to Typst format using `show` with the `"text/typst"` MIME type
+    - Specify Julia settings and Typst parameters in the `IOContext`
+    - Implement `show_typst` for custom types
+- Create and manipulate `TypstString`s
+    - Interpolate formatted Julia values using `@typst_str`
+    - Render in Pluto.jl notebooks
+
+### Commands
+
+- Construct `TypstCommand`s with `Vector`s of `String`s or using `@typst_cmd`
+- Render documents using the Typst compiler
+    - Use the [JuliaMono](https://github.com/cormullion/juliamono) typeface
 
 ### Planned
 
@@ -81,9 +84,9 @@ typst`compile input.typ output.pdf`
     - `Base`
     - Standard Library
     - Package extensions
-- Explore rendering environments
-    - REPL Unicode
-    - IJulia
+- Support rendering in more environments
+    - IJulia.jl
+    - REPL Unicode?
     - Other?
 
 ## Related Packages
