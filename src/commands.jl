@@ -51,9 +51,9 @@ end
     @typst_cmd(s)
     typst`s`
 
-Construct a [`TypstCommand`](@ref) without interpolation.
+Construct a [`TypstCommand`](@ref) where each parameter is separated by a space.
 
-Each parameter must be separated by a space.
+This does not support interpolation; use the `TypstCommand` constructor instead.
 
 # Examples
 ```jldoctest
@@ -75,7 +75,7 @@ An artifact containing the
 [JuliaMono](https://github.com/cormullion/juliamono) typeface.
 
 Use with a [`TypstCommand`](@ref) and one of [`addenv`](@ref),
-[`setenv`], or the `font-path` command-line option.
+[`setenv`](@ref), or the `font-path` command-line option.
 """
 const julia_mono = artifact"JuliaMono"
 

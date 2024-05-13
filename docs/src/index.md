@@ -52,16 +52,16 @@ typst`compile input.typ output.pdf`
 
 ### Strings
 
-- Convert Julia values to Typst format using `show` with the `"text/typst"` MIME type
+- Convert Julia values to Typst format using `show(::IO, ::MIME"text/typst", ::Any)`
     - Specify Julia settings and Typst parameters in the `IOContext`
     - Implement `show_typst` for custom types
 - Create and manipulate `TypstString`s
-    - Interpolate formatted Julia values using `@typst_str`
+    - Interpolate formatted values using `@typst_str`
     - Render in Pluto.jl notebooks
 
 ### Commands
 
-- Construct `TypstCommand`s with `Vector`s of `String`s or using `@typst_cmd`
+- Construct `TypstCommand`s with a `Vector{String}` or using `@typst_cmd`
 - Render documents using the Typst compiler
     - Use the [JuliaMono](https://github.com/cormullion/juliamono) typeface
 
