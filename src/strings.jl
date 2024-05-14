@@ -538,10 +538,13 @@ function show_typst(io, x::Regex)
 end
 function show_typst(io, x::Text)
     code_mode(io)
-    print_quoted(io, repr(x))
+    print_quoted(io, repr(x)) # TODO: remove string allocation
 end
 show_typst(io, x::Union{AbstractFloat, Signed, TypstString}) = print(io, x)
-function show_typst(io, x::Union{OrdinalRange{<:Integer, <:Integer}, StepRangeLen{<:Integer, <:Integer, <:Integer}})
+function show_typst(io, x::Union{
+    OrdinalRange{<:Integer, <:Integer},
+    StepRangeLen{<:Integer, <:Integer, <:Integer}
+})
     code_mode(io)
 
     enclose((io, x) -> begin
