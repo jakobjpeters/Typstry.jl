@@ -21,6 +21,6 @@ iterate
 ncodeunits
 pointer
 show(::IO, ::MIME"text/typst", ::Any)
-show(::IO, ::Union{MIME"image/png", MIME"image/svg+xml"}, ::TypstString)
+show(::IO, ::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"}, ::TypstString)
 show(::IO, ::TypstString)
 ```

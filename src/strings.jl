@@ -256,10 +256,13 @@ function enclose(f, io, x, left, right = reverse(left); settings...)
 end
 
 """
-    format(::Union{MIME"image/png", MIME"image/svg+xml})
+    format(::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"})
 
 # Examples
 ```jldoctest
+julia> Typstry.format(MIME"application/pdf"())
+"pdf"
+
 julia> Typstry.format(MIME"image/png"())
 "png"
 
@@ -267,6 +270,7 @@ julia> Typstry.format(MIME"image/svg+xml"())
 "svg"
 ```
 """
+format(::MIME"application/pdf") = "pdf"
 format(::MIME"image/png") = "png"
 format(::MIME"image/svg+xml") = "svg"
 
@@ -700,9 +704,11 @@ show(io::IO, ::MIME"text/typst", x) =
     show_typst(IOContext(io, map(key -> key => get(io, key, settings[key]), keys(settings))...), x)
 
 """
-    show(::IO, ::Union{MIME"image/png", MIME"image/svg+xml"}, ::TypstString)
+    show(::IO, ::Union{
+        MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
+    }, ::TypstString)
 
-Print to a Portable Network Graphics (PNG) or Scalable Vector Graphics (SVG) format.
+Print to Portable Document Format (PDF), Portable Network Graphics (PNG), or Scalable Vector Graphics (SVG) format.
 
 Environments such as Pluto.jl notebooks use this
 function to render [`TypstString`](@ref)s to a document.
@@ -714,7 +720,7 @@ $preamble
 
 See also [`julia_mono`](@ref).
 """
-show(io::IO, m::Union{MIME"image/png", MIME"image/svg+xml"}, ts::TypstString) =
+show(io::IO, m::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"}, ts::TypstString) =
     show_image(io, m, ts)
 
 """
