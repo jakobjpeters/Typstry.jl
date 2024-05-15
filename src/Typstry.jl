@@ -13,14 +13,14 @@ using Typst_jll: typst
 
 include("commands.jl")
 
-export TypstCommand, @typst_cmd
+export TypstCommand, TypstError, @typst_cmd
 
 include("strings.jl")
 
 export Mode, TypstString, @typst_str, julia_mono, code, markup, math, show_typst, typst_text
 
 @compile_workload for (x, _) in examples
-    TypstString(x)
+    typst"\(x)"
 end
 
 end # module
