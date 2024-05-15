@@ -13,8 +13,10 @@ julia_mono
 ## `Base`
 
 ```@docs
+==
 addenv
 detach
+hash
 ignorestatus
 run
 setcpuaffinity

@@ -2,8 +2,8 @@
 module Typstry
 
 import Base:
-    IOBuffer, addenv, codeunit, convert, detach, ignorestatus, isvalid,
-    iterate, ncodeunits, pointer, run, setenv, show, showerror
+    IOBuffer, ==, addenv, codeunit, convert, detach, hash, ignorestatus,
+    isvalid, iterate, ncodeunits, pointer, run, setenv, show, showerror
 using Artifacts: @artifact_str
 using Base: Docs.Text, Iterators.Stateful, Meta.parse, escape_raw_string
 using PrecompileTools: PrecompileTools, @compile_workload

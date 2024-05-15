@@ -491,9 +491,9 @@ end
 function show_typst(io, x::Bool)
     _mode = mode(io)
 
-    if _mode == math enclose(print, io, x, "\"")
+    if _mode == code print(io, x)
     elseif _mode == markup print(io, "#", x)
-    else print(io, x)
+    else enclose(print, io, x, "\"")
     end
 end
 show_typst(io, x::Complex) =

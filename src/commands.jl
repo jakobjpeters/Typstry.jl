@@ -99,6 +99,24 @@ const julia_mono = artifact"JuliaMono"
 # `Base`
 
 """
+    ==(::TypstCommand, ::TypstCommand)
+
+See also [`TypstCommand`](@ref).
+
+```jldoctest
+julia> typst`help` == typst`help`
+true
+
+julia> typst`help` == ignorestatus(typst`help`)
+false
+```
+"""
+tc::TypstCommand == _tc::TypstCommand =
+    tc.compiler == _tc.compiler &&
+    tc.parameters == _tc.parameters &&
+    tc.ignore_status == _tc.ignore_status
+
+"""
     addenv(::TypstCommand, args...; kwargs...)
 
 See also [`TypstCommand`](@ref) and [`julia_mono`](@ref).
@@ -123,6 +141,14 @@ typst`help`
 ```
 """
 detach(tc::TypstCommand) = TypstCommand(tc; detach = true)
+
+"""
+    hash(::TypstCommand, ::UInt)
+
+See also [`TypstCommand`](@ref).
+"""
+hash(tc::TypstCommand, h::UInt) =
+    hash(TypstCommand, hash(tc.compiler, hash(tc.parameters, hash(tc.ignore_status, h))))
 
 """
     ignorestatus(::TypstCommand)
