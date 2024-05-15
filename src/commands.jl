@@ -54,11 +54,6 @@ end
     TypstError(::TypstCommand)
 
 An `Exception` indicating an failure to `run` a [`TypstCommand`](@ref).
-
-```jldoctest
-julia> TypstError(typst``)
-TypstError(typst``)
-```
 """
 struct TypstError <: Exception
     command::TypstCommand
@@ -213,18 +208,19 @@ typst`compile input.typ output.pdf`
 setenv(tc::TypstCommand, env; kwargs...) = apply(setenv, tc, env; kwargs...)
 
 """
-    show(::IO, ::TypstCommand)
+    show(::IO, ::MIME"text/plain", ::TypstCommand)
 
 See also [`TypstCommand`](@ref).
 
 # Examples
 ```jldoctest
-julia> show(stdout, typst`help`)
+julia> show(stdout, "text/plain", typst`help`)
 typst`help`
 ```
 """
-show(io::IO, tc::TypstCommand) =
-    enclose((io, parameters) -> join_with(print, io, parameters, " "), io, tc.parameters, "typst`", "`")
+show(io::IO, ::MIME"text/plain", tc::TypstCommand) = enclose((io, parameters) -> join_with(
+    (io, parameter) -> printstyled(io, parameter; underline = true),
+io, parameters, " "), io, tc.parameters, "typst`", "`")
 
 """
     showerror(::IO, ::TypstError)
@@ -234,8 +230,8 @@ Print a [`TypstError`](@ref) when failing to `run` a [`TypstCommand`](@ref).
 # Examples
 ```jldoctest
 julia> showerror(stdout, TypstError(typst``))
-TypstError: failed to `run(TypstCommand([""]))`
+TypstError: failed to `run` a `TypstCommand([""]))`
 ```
 """
 showerror(io::IO, te::TypstError) = print(io,
-    "TypstError: failed to `", run, "(", TypstCommand, "(", te.command.parameters, "))`")
+    "TypstError: failed to `run` a `", TypstCommand, "(", te.command.parameters, "))`")

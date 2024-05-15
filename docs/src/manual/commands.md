@@ -21,6 +21,6 @@ ignorestatus
 run
 setcpuaffinity
 setenv
-show(::IO, ::TypstCommand)
+show(::IO, ::MIME"text/plain", ::TypstCommand)
 showerror
 ```
