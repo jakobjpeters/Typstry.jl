@@ -5,7 +5,7 @@
     typst_compiler
 
 A constant `Cmd` that is the Typst compiler given
-by Typst_jll.jl with no additional parameters.
+by Typst_jll.jl with no additional parameters., parameter_upper_bound, parameter_upper_bound
 """
 const typst_compiler = typst()
 
@@ -98,6 +98,7 @@ const julia_mono = artifact"JuliaMono"
 
 See also [`TypstCommand`](@ref).
 
+# Examples
 ```jldoctest
 julia> typst`help` == typst`help`
 true
@@ -138,6 +139,45 @@ typst`help`
 detach(tc::TypstCommand) = TypstCommand(tc; detach = true)
 
 """
+    eltype(::Type{TypstCommand})
+
+See also [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> eltype(TypstCommand)
+String
+```
+"""
+eltype(::Type{TypstCommand}) = String
+
+"""
+    firstindex(::TypstCommand)
+
+See also [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> firstindex(typst`help`)
+1
+```
+"""
+firstindex(::TypstCommand) = 1
+
+"""
+    getindex(::TypstCommand, i)
+
+See also [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> typst`help`[2]
+"help"
+```
+"""
+getindex(tc::TypstCommand, i) = i == 1 ? tc.compiler : tc.parameters[i - 1]
+
+"""
     hash(::TypstCommand, ::UInt)
 
 See also [`TypstCommand`](@ref).
@@ -159,6 +199,69 @@ typst`help`
 ignorestatus(tc::TypstCommand) = TypstCommand(tc; ignorestatus = true)
 
 """
+    iterate(::TypstCommand)
+    iterate(::TypstCommand, i)
+
+See also [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> iterate(typst`help`, 2)
+("help", 3)
+
+julia> iterate(typst`help`, 3)
+```
+"""
+iterate(tc::TypstCommand) = iterate(tc, 1)
+iterate(tc::TypstCommand, i) =
+    if i == 1 (only(tc.compiler), 2)
+    else
+        parameters, _i = tc.parameters, i - 1
+        length(parameters) < _i ?  nothing : (parameters[_i], i + 1)
+    end
+
+"""
+    keys(::TypstCommand)
+
+See also [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> keys(typst`help`)
+2-element LinearIndices{1, Tuple{Base.OneTo{Int64}}}:
+ 1
+ 2
+```
+"""
+keys(tc::TypstCommand) = LinearIndices(firstindex(tc) : lastindex(tc))
+
+"""
+    lastindex(::TypstCommand)
+
+See also [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> lastindex(typst`help`)
+2
+```
+"""
+lastindex(tc::TypstCommand) = length(tc)
+
+"""
+    length(::TypstCommand)
+
+See also [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> length(typst`help`)
+2
+```
+"""
+length(tc::TypstCommand) = length(tc.parameters) + 1
+
+"""
     run(::TypstCommand, args...; kwargs...)
 
 See also [`TypstCommand`](@ref).
@@ -166,7 +269,7 @@ See also [`TypstCommand`](@ref).
 !!! info
     Errors from the Typst compiler are printed to `stderr`.
     If [`ignorestatus`](@ref) has been applied,
-    this will not throw an exception in Julia.
+    this will not throw an error in Julia.
     Otherwise, the Typst error will be printed before the Julia error.
 """
 function run(tc::TypstCommand, args...; kwargs...)

@@ -625,8 +625,8 @@ true
 isvalid(ts::TypstString, i::Integer) = isvalid(ts.text, i::Integer)
 
 """
-    iterate(::TypstString)
     iterate(::TypstString, ::Integer)
+    iterate(::TypstString)
 
 See also [`TypstString`](@ref).
 
@@ -661,6 +661,22 @@ ncodeunits(ts::TypstString) = ncodeunits(ts.text)
 See also [`TypstString`](@ref).
 """
 pointer(ts::TypstString) = pointer(ts.text)
+
+"""
+    show(::IO, ::TypstString)
+
+See also [`TypstString`](@ref).
+
+# Examples
+```jldoctest
+julia> show(stdout, typst"a")
+typst"a"
+```
+"""
+function show(io::IO, ts::TypstString)
+    print(io, "typst")
+    print_quoted(io, ts.text)
+end
 
 """
     show(::IO, ::MIME"text/typst", ::Any)
@@ -712,20 +728,4 @@ function show(io::IO, m::Union{
     run(addenv(TypstCommand(["compile", "--format=$(format(m))", "-", output]),
         "TYPST_FONT_PATHS" => julia_mono), input)
     print(io, read(output, String))
-end
-
-"""
-    show(::IO, ::TypstString)
-
-See also [`TypstString`](@ref).
-
-# Examples
-```jldoctest
-julia> show(stdout, typst"a")
-typst"a"
-```
-"""
-function show(io::IO, ts::TypstString)
-    print(io, "typst")
-    print_quoted(io, ts.text)
 end

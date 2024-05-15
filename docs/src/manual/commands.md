@@ -16,8 +16,15 @@ julia_mono
 ==
 addenv
 detach
+eltype
+firstindex
+getindex
 hash
 ignorestatus
+iterate(::TypstCommand)
+keys
+lastindex
+length
 run
 setcpuaffinity
 setenv
