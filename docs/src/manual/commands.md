@@ -5,6 +5,7 @@
 
 ```@docs
 TypstCommand
+TypstError
 @typst_cmd
 julia_mono
 ```
@@ -19,4 +20,5 @@ run
 setcpuaffinity
 setenv
 show(::IO, ::TypstCommand)
+showerror
 ```

@@ -20,13 +20,12 @@ Typstry.math_pad
 Typstry.mode
 Typstry.print_parameters
 Typstry.print_quoted
-Typstry.show_image
 Typstry.static_parse
 ```
 
 ## Commands
 
 ```@docs
-Typstry.typst_program
+Typstry.typst_compiler
 Typstry.apply
 ```

@@ -2,19 +2,19 @@
 # Internals
 
 """
-    typst_program
+    typst_compiler
 
 A constant `Cmd` that is the Typst compiler given
 by Typst_jll.jl with no additional parameters.
 """
-const typst_program = typst()
+const typst_compiler = typst()
 
 """
     apply(f, tc, args...; kwargs...)
 """
 function apply(f, tc, args...; kwargs...)
     _tc = deepcopy(tc)
-    _tc.typst = f(tc.typst, args...; kwargs...)
+    _tc.compiler = f(_tc.compiler, args...; kwargs...)
     _tc
 end
 
@@ -40,11 +40,28 @@ typst`help`
 ```
 """
 mutable struct TypstCommand
-    typst::Cmd
-    parameters::Cmd
+    compiler::Cmd
+    parameters::Vector{String}
+    ignore_status::Bool
 
-    TypstCommand(parameters::Vector{String}) = new(typst_program, Cmd(parameters))
-    TypstCommand(tc::TypstCommand; kwargs...) = new(Cmd(tc.typst; kwargs...), tc.parameters)
+    TypstCommand(parameters::Vector{String}) = new(typst_compiler, parameters, false)
+    TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
+        new(Cmd(tc.compiler; kwargs...), tc.parameters, ignorestatus)
+end
+
+"""
+    TypstError <: Exception
+    TypstError(::TypstCommand)
+
+An `Exception` indicating an failure to `run` a [`TypstCommand`](@ref).
+
+```jldoctest
+julia> TypstError(typst``)
+TypstError(typst``)
+```
+"""
+struct TypstError <: Exception
+    command::TypstCommand
 end
 
 """
@@ -71,7 +88,7 @@ end
 """
     julia_mono
 
-An artifact containing the
+An constant artifact containing the
 [JuliaMono](https://github.com/cormullion/juliamono) typeface.
 
 Use with a [`TypstCommand`](@ref) and one of [`addenv`](@ref),
@@ -105,7 +122,7 @@ julia> detach(typst`help`)
 typst`help`
 ```
 """
-detach(tc::TypstCommand) = apply(detach, tc)
+detach(tc::TypstCommand) = TypstCommand(tc; detach = true)
 
 """
     ignorestatus(::TypstCommand)
@@ -118,18 +135,27 @@ julia> ignorestatus(typst`help`)
 typst`help`
 ```
 """
-ignorestatus(tc::TypstCommand) = apply(ignorestatus, tc)
+ignorestatus(tc::TypstCommand) = TypstCommand(tc; ignorestatus = true)
 
 """
     run(::TypstCommand, args...; kwargs...)
 
 See also [`TypstCommand`](@ref).
+
+!!! info
+    Errors from the Typst compiler are printed to `stderr`.
+    If [`ignorestatus`](@ref) has been applied,
+    this will not throw an exception in Julia.
+    Otherwise, the Typst error will be printed before the Julia error.
 """
-run(tc::TypstCommand, args...; kwargs...) =
-    run(Cmd(`$(tc.typst) $(tc.parameters)`), args...; kwargs...)
+function run(tc::TypstCommand, args...; kwargs...)
+    process = run(ignorestatus(Cmd(`$(tc.compiler) $(tc.parameters)`)), args...; kwargs...)
+    success(process) || tc.ignore_status || throw(TypstError(tc))
+    process
+end
 
 @static if isdefined(Base, :setcpuaffinity)
-    setcpuaffinity(tc::TypstCommand, cpus) = apply(setcpuaffinity, tc, cpus)
+    setcpuaffinity(tc::TypstCommand, cpus) = TypstCommand(tc; cpus)
 
     @doc """
         setcpuaffinity(::TypstCommand, cpus)
@@ -171,4 +197,19 @@ julia> show(stdout, typst`help`)
 typst`help`
 ```
 """
-show(io::IO, tc::TypstCommand) = print(io, "typst", tc.parameters)
+show(io::IO, tc::TypstCommand) =
+    enclose((io, parameters) -> join_with(print, io, parameters, " "), io, tc.parameters, "typst`", "`")
+
+"""
+    showerror(::IO, ::TypstError)
+
+Print a [`TypstError`](@ref) when failing to `run` a [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> showerror(stdout, TypstError(typst``))
+TypstError: failed to `run(TypstCommand([""]))`
+```
+"""
+showerror(io::IO, te::TypstError) = print(io,
+    "TypstError: failed to `", run, "(", TypstCommand, "(", te.command.parameters, "))`")

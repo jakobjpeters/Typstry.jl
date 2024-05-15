@@ -48,7 +48,7 @@ struct TypstString <: AbstractString
         if T <: Union{TypstString, TypstText} x.text
         else
             buffer = IOBuffer()
-            show(IOContext(buffer, settings...), MIME"text/typst"(), x)
+            show(IOContext(buffer, settings...), typst_mime, x)
             String(take!(buffer))
         end
     )
@@ -184,14 +184,14 @@ for [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref).
 # Examples
 ```jldoctest
 julia> Typstry.settings
-(mode = markup, inline = false, indent = "    ", depth = 0)
+(depth = 0, indent = "    ", inline = false, mode = markup)
 ```
 """
 const settings = (
-    mode = markup,
-    inline = false,
+    depth = 0,
     indent = "    ",
-    depth = 0
+    inline = false,
+    mode = markup
 )
 
 """
@@ -398,19 +398,6 @@ julia> Typstry.print_quoted(stdout, TypstString("a"))
 ```
 """
 print_quoted(io, s) = enclose(escape_raw_string, io, s, "\"")
-
-"""
-    show_image(io, m, ts)
-"""
-function show_image(io, m, ts)
-    name = tempname()
-    _name = name * "." * format(m)
-
-    open(file -> print(file, preamble, ts), name; write = true)
-    success(run(ignorestatus(TypstCommand([
-        "compile", "--font-path=" * julia_mono, name, _name
-    ])))) && print(io, read(_name, String))
-end
 
 """
     static_parse(args...; filename, kwargs...)
@@ -686,10 +673,10 @@ Custom default settings may be provided by implementing methods for new types.
 
 | Setting   | Default                  | Type           | Description                                                                                                                                                             |
 |:----------|:-------------------------|:---------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `:mode`   | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs.   |
-| `:inline` | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                               |
-| `:indent` | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                               |
 | `:depth`  | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                               |
+| `:indent` | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                               |
+| `:inline` | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                               |
+| `:mode`   | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs.   |
 
 # Examples
 ```jldoctest
@@ -708,20 +695,24 @@ show(io::IO, ::MIME"text/typst", x) =
         MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
     }, ::TypstString)
 
-Print to Portable Document Format (PDF), Portable Network Graphics (PNG), or Scalable Vector Graphics (SVG) format.
+Print to Portable Document Format (PDF),
+Portable Network Graphics (PNG), or Scalable Vector Graphics (SVG) format.
 
 Environments such as Pluto.jl notebooks use this
 function to render [`TypstString`](@ref)s to a document.
-The corresponding Typst source file begins with this preamble:
-
-```typst
-$preamble
-```
-
-See also [`julia_mono`](@ref).
 """
-show(io::IO, m::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"}, ts::TypstString) =
-    show_image(io, m, ts)
+function show(io::IO, m::Union{
+    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
+}, ts::TypstString)
+    input, output = IOBuffer(), tempname()
+
+    print(input, preamble, ts)
+    seekstart(input)
+
+    run(addenv(TypstCommand(["compile", "--format=$(format(m))", "-", output]),
+        "TYPST_FONT_PATHS" => julia_mono), input)
+    print(io, read(output, String))
+end
 
 """
     show(::IO, ::TypstString)

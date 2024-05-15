@@ -73,6 +73,7 @@ typst`compile input.typ output.pdf`
     - Package extensions
 - Support rendering in more environments
     - IJulia.jl
+    - Quarto?
     - REPL Unicode?
     - Other?
 
