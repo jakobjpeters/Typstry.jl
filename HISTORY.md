@@ -16,5 +16,5 @@
 ### Commands
 
 - `TypstCommand` implements the `Cmd` interface and represents the Typst compiler
-- `@typst_str` constructs `TypstCommand`s
+- `@typst_cmd` constructs `TypstCommand`s
 - `julia_mono` is an artifact containing the [JuliaMono](https://github.com/cormullion/juliamono) typeface, which may be used in rendered Typst documents
