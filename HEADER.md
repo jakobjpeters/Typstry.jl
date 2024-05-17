@@ -10,7 +10,7 @@
 [![Continuous Integration](https://github.com/jakobjpeters/Typstry.jl/workflows/Continuous%20Integration/badge.svg)](https://github.com/jakobjpeters/Typstry.jl/actions/workflows/continuous_integration.yml)
 
 [![Codecov](https://codecov.io/gh/jakobjpeters/Typstry.jl/branch/main/graph/badge.svg?token=XFWU66WSD7)](https://codecov.io/gh/jakobjpeters/Typstry.jl)
-<!-- [![Dependents](https://docs.juliahub.com/Typstry/deps.svg)](https://juliahub.com/ui/Packages/Typstry/????) -->
+[![Dependents](https://juliahub.com/docs/General/Typstry/stable/deps.svg)](https://juliahub.com/ui/Packages/General/Typstry?t=2)
 
 </div>
 
