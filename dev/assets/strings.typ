@@ -62,6 +62,6 @@
     "r\"[a-z]\"", `Regex`, [#regex("[a-z]")], [#regex("[a-z]")], $#regex("[a-z]")$,
     "1", `Signed`, [#1], [1], $1$,
     "StepRangeLen(0, 2, 4)", `StepRangeLen{<:Integer, <:Integer, <:Integer}`, [#range(0, 7, step: 2)], [#range(0, 7, step: 2)], $#range(0, 7, step: 2)$,
-    "Text(\"[\\\"a\\\"]\")", `Text`, [#"[\"a\"]"], [#"[\"a\"]"], $#"[\"a\"]"$,
+    "text\"[\\\"a\\\"]\"", `Text`, [#"[\"a\"]"], [#"[\"a\"]"], $#"[\"a\"]"$,
     "typst\"[\\\"a\\\"]\"", `TypstString`, [#["a"]], [["a"]], $["a"]$
 )
