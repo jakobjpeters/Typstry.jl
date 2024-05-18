@@ -5,7 +5,7 @@
     typst_compiler
 
 A constant `Cmd` that is the Typst compiler given
-by Typst_jll.jl with no additional parameters., parameter_upper_bound, parameter_upper_bound
+by Typst_jll.jl with no additional parameters.
 """
 const typst_compiler = typst()
 
@@ -23,6 +23,7 @@ end
 """
     TypstCommand(::Vector{String})
     TypstCommand(::TypstCommand; kwargs...)
+    TypstCommand(::TypstCommand, ignorestatus, flags, env, dir, cpus = nothing)
 
 The Typst compiler.
 
@@ -48,6 +49,9 @@ mutable struct TypstCommand
     TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
         new(Cmd(tc.compiler; kwargs...), tc.parameters, ignorestatus)
 end
+
+TypstCommand(tc::TypstCommand, ignorestatus, flags, env, dir, cpus = nothing) =
+    TypstCommand(tc; ignorestatus, flags, env, dir, cpus)
 
 """
     TypstError <: Exception
@@ -175,7 +179,7 @@ julia> typst`help`[2]
 "help"
 ```
 """
-getindex(tc::TypstCommand, i) = i == 1 ? tc.compiler : tc.parameters[i - 1]
+getindex(tc::TypstCommand, i) = i == 1 ? only(tc.compiler) : tc.parameters[i - 1]
 
 """
     hash(::TypstCommand, ::UInt)
@@ -298,7 +302,7 @@ end
 end
 
 """
-    setenv(::TypstCommand, env; kwargs...)
+    setenv(::TypstCommand, args...; kwargs...)
 
 See also [`TypstCommand`](@ref) and [`julia_mono`](@ref).
 
@@ -308,7 +312,7 @@ julia> setenv(typst`compile input.typ output.pdf`, "TYPST_FONT_PATHS" => julia_m
 typst`compile input.typ output.pdf`
 ```
 """
-setenv(tc::TypstCommand, env; kwargs...) = apply(setenv, tc, env; kwargs...)
+setenv(tc::TypstCommand, args...; kwargs...) = apply(setenv, tc, args...; kwargs...)
 
 """
     show(::IO, ::MIME"text/plain", ::TypstCommand)
