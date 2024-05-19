@@ -4,7 +4,7 @@ module Typstry
 import Base:
     IOBuffer, ==, addenv, codeunit, convert, detach, eltype, firstindex,
     getindex, hash, ignorestatus, isvalid, iterate, keys, lastindex,
-    length, ncodeunits, pointer, run, setenv, show, showerror
+    length, ncodeunits, pointer, repr, run, setenv, show, showerror
 using Artifacts: @artifact_str
 using Base: Docs.Text, Iterators.Stateful, Meta.parse, escape_raw_string
 using PrecompileTools: PrecompileTools, @compile_workload

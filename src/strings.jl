@@ -663,6 +663,19 @@ See also [`TypstString`](@ref).
 pointer(ts::TypstString) = pointer(ts.text)
 
 """
+    repr(::MIME, ::TypstString; kwargs...)
+
+See also [`TypstString`](@ref).
+
+!!! info
+    This method patches incorrect output from the assumption in `repr`
+    that the parameter is already in the requested `MIME` type when
+    the `MIME` type `istextmime` and the parameter is an `AbstractString`.
+"""
+repr(::MIME"text/typst", ts::TypstString; kwargs...) = ts
+repr(m::MIME, ts::TypstString; kwargs...) = sprint(show, m, ts; kwargs...)
+
+"""
     show(::IO, ::TypstString)
 
 See also [`TypstString`](@ref).
@@ -727,5 +740,6 @@ function show(io::IO, m::Union{
 
     run(addenv(TypstCommand(["compile", "--format=$(format(m))", "-", output]),
         "TYPST_FONT_PATHS" => julia_mono), input)
+
     print(io, read(output, String))
 end

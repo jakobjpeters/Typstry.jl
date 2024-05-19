@@ -20,6 +20,7 @@ isvalid
 iterate(::TypstString)
 ncodeunits
 pointer
+repr
 show(::IO, ::TypstString)
 show(::IO, ::MIME"text/typst", ::Any)
 show(::IO, ::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"}, ::TypstString)
