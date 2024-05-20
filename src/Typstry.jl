@@ -2,7 +2,7 @@
 module Typstry
 
 import Base:
-    IOBuffer, ==, addenv, codeunit, convert, detach, eltype, firstindex,
+    IOBuffer, ==, addenv, codeunit, detach, eltype, firstindex,
     getindex, hash, ignorestatus, isvalid, iterate, keys, lastindex,
     length, ncodeunits, pointer, repr, run, setenv, show, showerror
 using Artifacts: @artifact_str
