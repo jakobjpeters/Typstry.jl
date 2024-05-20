@@ -53,7 +53,6 @@ open(strings * ".typ"; truncate = true) do file
         print(file, "    ")
 
         if is_vector print(file, "\"[true [1]]\"")
-        elseif is_matrix print(file, "\"[true 1; 1.0 [Any[\\n    true 1; 1.0 nothing\\n]]]\"")
         elseif t <: Text print(file, "\"text\\\"[\\\\\\\"a\\\\\\\"]\\\"\"")
         elseif t <: StepRangeLen print(file, "\"StepRangeLen(0, 2, 4)\"")
         else show(file, repr(v))

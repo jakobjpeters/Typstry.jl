@@ -13,7 +13,7 @@ If no such value exists, it is formatted to render in a canonical representation
 
 !!! note
     Although many of the values are rendered similarly across modes,
-    the underlying Typst source code differs between them.
+    the generated Typst source code differs between them.
 
 ```@eval
 using Markdown: parse

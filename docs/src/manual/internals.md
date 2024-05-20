@@ -18,8 +18,11 @@ Typstry.indent
 Typstry.join_with
 Typstry.math_pad
 Typstry.mode
+Typstry.parenthesize
 Typstry.print_parameters
 Typstry.print_quoted
+Typstry.show_array
+Typstry.show_vector
 Typstry.static_parse
 ```
 

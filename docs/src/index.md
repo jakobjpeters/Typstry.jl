@@ -31,7 +31,7 @@ $mat(
     "true", 1;
     1.0, mat(
         "true", 1;
-        1.0, ""
+        1.0, #none
     )
 )$
 
@@ -39,7 +39,7 @@ julia> TypstString(1 // 2; block = true)
 typst"$ 1 / 2 $"
 
 julia> typst"$ \(1 + 2im; mode = math) $"
-typst"$ 1 + 2i $"
+typst"$ (1 + 2i) $"
 
 julia> TypstCommand(["help"])
 typst`help`

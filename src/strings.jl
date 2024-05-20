@@ -96,7 +96,7 @@ julia> typst"\\(x // 2)"
 typst"\$1 / 2\$"
 
 julia> typst"\\(x // 2; mode = math)"
-typst"1 / 2"
+typst"(1 / 2)"
 
 julia> typst"\\\\(x)"
 typst"\\\\(x)"
@@ -154,7 +154,7 @@ A constant `Vector` of Julia values and their corresponding `Type`s implemented 
 const examples = [
     'a' => AbstractChar,
     1.2 => AbstractFloat,
-    [true 1; 1.0 [Any[true 1; 1.0 nothing]]] => AbstractMatrix,
+    Any[true 1; 1.2 1 // 2] => AbstractMatrix,
     "a" => AbstractString,
     [true, [1]] => AbstractVector,
     true => Bool,
@@ -167,7 +167,9 @@ const examples = [
     1 => Signed,
     StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer},
     text"[\"a\"]" => Text,
-    @typst_str("[\"a\"]") => TypstString
+    (true, 1, 1.2, 1 // 2) => Tuple,
+    @typst_str("[\"a\"]") => TypstString,
+    0xff => Unsigned
 ]
 
 """
@@ -197,14 +199,15 @@ A constant `NamedTuple` containing the default `IOContext` settings used in
 # Examples
 ```jldoctest
 julia> Typstry.settings
-(block = false, depth = 0, indent = "    ", mode = markup)
+(block = false, depth = 0, indent = "    ", mode = markup, parenthesize = true)
 ```
 """
 const settings = (
     block = false,
     depth = 0,
     indent = "    ",
-    mode = markup
+    mode = markup,
+    parenthesize = true
 )
 
 """
@@ -372,6 +375,19 @@ code::Mode = 0
 mode(io) = io[:mode]::Mode
 
 """
+    parenthesize(io)
+
+Return `io[:parenthesize]::Bool`.
+
+# Examples
+```jldoctest
+julia> Typstry.parenthesize(IOContext(stdout, :parenthesize => true))
+true
+```
+"""
+parenthesize(io) = io[:parenthesize]::Bool
+
+"""
     print_parameters(io, f, keys)
 
 Print the name of a Typst function, an opening parenthesis,
@@ -413,6 +429,27 @@ julia> Typstry.print_quoted(stdout, TypstString("a"))
 print_quoted(io, s) = enclose(escape_raw_string, io, s, "\"")
 
 """
+    show_array(io, x)
+"""
+show_array(io, x) = enclose(io, x, "(", ")") do io, x
+    join_with(show_typst, io, x, ", ")
+    length(x) == 1 && print(io, ",")
+end
+
+"""
+    show_vector(io, x)
+"""
+show_vector(io, x) = enclose(io, x, math_pad(io)) do io, x
+    _depth, _indent = depth(io), indent(io)
+    __depth = _depth + 1
+
+    print_parameters(io, "vec", [:delim, :gap])
+    print(io, _indent ^ __depth)
+    join_with(show_typst, IOContext(io, :depth => __depth, :mode => math), x, ", "),
+    print(io, "\n", _indent ^ _depth, ")")
+end
+
+"""
     static_parse(args...; filename, kwargs...)
 
 Call `Meta.parse` with the `filename` if it is supported
@@ -426,8 +463,7 @@ static_parse(args...; filename, kwargs...) =
 """
     show_typst(io, x)
 
-Print to Typst format using required Julia settings
-and optional Typst parameters in the `IOContext`.
+Print to Typst format using Julia settings and Typst parameters in the `IOContext`.
 
 Settings are used in Julia to format the [`TypstString`](@ref) and can be any type.
 Parameters are passed to a function in the Typst source file and must be a `String`
@@ -454,11 +490,11 @@ For additional information on printing and rendering, see also [Examples](@ref).
 | `AbstractString`                                          | `:mode`                                |                                                         |
 | `AbstractVector`                                          | `:block`, `:depth`, `:indent`, `:mode` | `:delim`, `:gap`                                        |
 | `Bool`                                                    | `:mode`                                |                                                         |
-| `Complex`                                                 | `:block`, `:mode`                     |                                                         |
+| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`     |                                                         |
 | `Irrational`                                              | `:mode`                                |                                                         |
 | `Nothing`                                                 | `:mode`                                |                                                         |
 | `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                |                                                         |
-| `Rational`                                                | `:block`, `:mode`                     |                                                         |
+| `Rational`                                                | `:block`, `:mode`, `:parenthesize`     |                                                         |
 | `Regex`                                                   | `:mode`                                |                                                         |
 | `Signed`                                                  |                                        |                                                         |
 | `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                |                                                         |
@@ -478,29 +514,21 @@ julia> show_typst(IOContext(stdout, :mode => code), "a")
 show_typst(io, x::AbstractChar) = mode(io) == code ?
     enclose(show, io, x, "\"") :
     show(io, x)
-show_typst(io, x::AbstractMatrix) =
+show_typst(io, x::AbstractMatrix) = mode(io) == code ?
+    show_array(io, x) :
     enclose((io, x; indent, depth) -> begin
         _depth = depth + 1
 
-        print_parameters(io, "mat", [:delim, :augment, :gap, :row_gap, :column_gap])
+        print_parameters(io, "mat", [:augment, :column_gap, :delim, :gap, :row_gap])
         join_with((io, x; indent) -> begin
             print(io, indent ^ _depth)
-            join_with((io, x) -> show_typst(io, x), io, x, ", ")
-        end, IOContext(io, :mode => math, :depth => _depth), eachrow(x), ";\n"; indent)
+            join_with(show_typst, io, x, ", ")
+        end, IOContext(io, :depth => _depth, :mode => math), eachrow(x), ";\n"; indent)
         print(io, "\n", indent ^ depth, ")")
-    end, io, x, math_pad(io); indent = indent(io), depth = depth(io))
+    end, IOContext(io, :parenthesize => false), x, math_pad(io); indent = indent(io), depth = depth(io))
 show_typst(io, x::AbstractString) = mode(io) == markup ?
     enclose(escape_string, io, x, "\"") :
     enclose(escape_string, io, escape_string(x), "\"\\\"", "\\\"\"") # TODO: remove string allocation
-show_typst(io, x::AbstractVector) = enclose(IOContext(io, :mode => math), x, math_pad(io)) do io, x
-    _depth, _indent = depth(io), indent(io)
-    __depth = _depth + 1
-
-    print_parameters(io, "vec", [:delim, :gap])
-    print(io, _indent ^ __depth)
-    join_with(show_typst, IOContext(io, :depth => __depth), x, ", "),
-    print(io, "\n", _indent ^ _depth, ")")
-end
 function show_typst(io, x::Bool)
     _mode = mode(io)
 
@@ -509,23 +537,27 @@ function show_typst(io, x::Bool)
     else enclose(print, io, x, "\"")
     end
 end
-show_typst(io, x::Complex) =
-    enclose((io, x) -> print(io, real(x), " + ", imag(x), "i"), io, x, math_pad(io))
+show_typst(io, x::Complex) = enclose(
+    (io, x) -> enclose((io, x) -> print(IOContext(io, :mode => math), real(x), " + ", imag(x), "i"),
+        io, x, (mode(io) == math && parenthesize(io) ? ("(", ")") : ("", ""))...),
+io, x, math_pad(io))
 show_typst(io, x::Irrational) =
     mode(io) == code ? show_typst(io, Float64(x)) : print(io, x)
-show_typst(io, ::Nothing) = if mode(io) != markup print(io, "\"\"") end
+function show_typst(io, ::Nothing)
+    code_mode(io)
+    print(io, "none")
+end
 function show_typst(io, x::Rational)
     _mode = mode(io)
-    f = (io, x) -> begin
+    f = (io, x) -> enclose(io, x, (parenthesize(io) ? ("(", ")") : ("", ""))...) do io, x
         show_typst(io, numerator(x))
         print(io, " / ")
         show_typst(io, denominator(x))
     end
 
-    if _mode == code enclose(f, IOContext(io, :mode => code), x, "(", ")")
-    elseif _mode == markup enclose(f, IOContext(io, :mode => math), x, block(io) ? "\$ " : "\$")
-    else f(io, x)
-    end
+    _mode == markup ?
+        enclose(f, IOContext(io, :mode => math, :parenthesize => false), x, block(io) ? "\$ " : "\$") :
+        f(io, x)
 end
 function show_typst(io, x::Regex)
     code_mode(io)
@@ -545,26 +577,31 @@ function show_typst(io, x::Text)
     print_quoted(io, repr(x)) # TODO: remove string allocation
 end
 show_typst(io, x::Typst) = show_typst(io, x.value)
+function show_typst(io, x::Unsigned)
+    code_mode(io)
+    show(io, x)
+end
 show_typst(io, x::Union{AbstractFloat, Signed, TypstString}) = print(io, x)
-function show_typst(io, x::Union{
+function show_typst(io, x::Union{AbstractVector, Tuple})
+    io = IOContext(io, :parenthesize => false)
+    mode(io) == code ? show_array(io, x) : show_vector(io, x)
+end
+show_typst(io, x::Union{
     OrdinalRange{<:Integer, <:Integer},
     StepRangeLen{<:Integer, <:Integer, <:Integer}
-})
-    code_mode(io)
-
-    enclose((io, x) -> begin
+}) = mode(io) == code ?
+    enclose(io, x, "range(", ")") do io, x
         show_typst(io, first(x))
         enclose(show_typst, io, last(x) + 1, ", ", ", step: ")
         show_typst(io, step(x))
-    end, IOContext(io, :mode => code), x, "range(", ")")
-end
+    end :
+    show_vector(io, x)
 #=
 AbstractDict
 AbstractIrrational
 Enum
 Expr
 Symbol
-Unsigned
 =#
 
 """
@@ -681,6 +718,15 @@ See also [`TypstString`](@ref).
     This method patches incorrect output from the assumption in `repr`
     that the parameter is already in the requested `MIME` type when
     the `MIME` type `istextmime` and the parameter is an `AbstractString`.
+
+# Examples
+```jldoctest
+julia> repr(MIME"text/plain"(), typst"a")
+"typst\\\"a\\\""
+
+julia> repr(MIME"text/typst"(), typst"a")
+typst"a"
+```
 """
 repr(::MIME"text/typst", ts::TypstString; kwargs...) = ts
 repr(m::MIME, ts::TypstString; kwargs...) = sprint(show, m, ts; kwargs...)
@@ -714,12 +760,13 @@ See also [`Typst`](@ref) and [`TypstString`](@ref).
 !!! tip
     Implement this function for custom types to specify their default settings and parameters.
 
-| Setting   | Default                  | Type           | Description                                                                                                                                                             |
-|:----------|:-------------------------|:---------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `:block`  | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                               |
-| `:depth`  | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                               |
-| `:indent` | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                               |
-| `:mode`   | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs.   |
+| Setting         | Default                  | Type           | Description                                                                                                                                                           |
+|:----------------|:-------------------------|:---------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `:block`        | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                             |
+| `:depth`        | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                             |
+| `:indent`       | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                             |
+| `:mode`         | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs. |
+| `:parenthesize` | `true`                   | `Bool`         | Whether to enclose some mathematical elements in parentheses.                                                                                                         |
 
 # Examples
 ```jldoctest
