@@ -6,6 +6,7 @@
 ### Strings
 
 - `show_typst` prints a value in Typst format, with Julia settings and Typst parameters given in an `IOContext`
+    - Implemented for `AbstractChar`, `AbstractFloat`, `AbstractMatrix`, `AbstractString`, `AbstractVector`, `Bool`, `Complex`, `Irrational`, `Nothing`, `OrdinalRange{<:Integer, <:Integer}`, `Rational`, `Regex`, `Signed`, `StepRangeLen{<:Integer, <:Integer, <:Integer}`, `Text`, and `TypstString`
 - `show(::IO, ::MIME"text/typst", ::Any)` provides default settings to `show_typst`
 - `Mode` is a setting that specifies the current Typst context
 - `TypstString` is an `AbstractString` implementing the `String` interface and uses `show(::IO, ::MIME"text/typst", ::Any)` to print values to Typst format
