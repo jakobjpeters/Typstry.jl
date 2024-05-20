@@ -89,11 +89,11 @@ except using a backslash instead of the type name.
 ```jldoctest
 julia> x = 1;
 
-julia> typst"\$\\(x) / \\(x + 1)\$"
-typst"\$1 / 2\$"
+julia> typst"\$ \\(x) / \\(x + 1) \$"
+typst"\$ 1 / 2 \$"
 
 julia> typst"\\(x // 2)"
-typst"\$ 1 / 2 \$"
+typst"\$1 / 2\$"
 
 julia> typst"\\(x // 2; mode = math)"
 typst"1 / 2"
@@ -197,13 +197,13 @@ A constant `NamedTuple` containing the default `IOContext` settings used in
 # Examples
 ```jldoctest
 julia> Typstry.settings
-(depth = 0, indent = "    ", inline = false, mode = markup)
+(block = false, depth = 0, indent = "    ", mode = markup)
 ```
 """
 const settings = (
+    block = false,
     depth = 0,
     indent = "    ",
-    inline = false,
     mode = markup
 )
 
@@ -217,6 +217,19 @@ MIME type text/typst
 ```
 """
 const typst_mime = MIME"text/typst"()
+
+"""
+    block(io)
+
+Return `io[:block]::Bool`.
+
+# Examples
+```jldoctest
+julia> Typstry.block(IOContext(stdout, :block => true))
+true
+```
+"""
+block(io) = io[:block]::Bool
 
 """
     code_mode(io)
@@ -301,19 +314,6 @@ julia> Typstry.indent(IOContext(stdout, :indent => ' ' ^ 4))
 indent(io) = io[:indent]::String
 
 """
-    inline(io)
-
-Return `io[:inline]::Bool`.
-
-# Examples
-```jldoctest
-julia> Typstry.inline(IOContext(stdout, :inline => true))
-true
-```
-"""
-inline(io) = io[:inline]::Bool
-
-"""
     join_with(f, io, xs, delimeter; settings...)
 
 Similar to `join`, except printing with `f(io, x; settings...)`.
@@ -337,23 +337,23 @@ end
     math_pad(io, x)
 
 Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
-[`mode`](@ref Typstry.mode) and [`inline`](@ref Typstry.inline) settings.
+[`block`](@ref Typstry.block) and [`mode`](@ref Typstry.mode) settings.
 
 # Examples
 ```jldoctest
 julia> Typstry.math_pad(IOContext(stdout, :mode => math))
 ""
 
-julia> Typstry.math_pad(IOContext(stdout, :mode => markup, :inline => true))
-"\\\$"
-
-julia> Typstry.math_pad(IOContext(stdout, :mode => markup, :inline => false))
+julia> Typstry.math_pad(IOContext(stdout, :block => true, :mode => markup))
 "\\\$ "
+
+julia> Typstry.math_pad(IOContext(stdout, :block => false, :mode => markup))
+"\\\$"
 ```
 """
 math_pad(io) =
     if mode(io) == math ""
-    else inline(io) ? "\$" : "\$ "
+    else block(io) ? "\$ " : "\$"
     end
 
 """
@@ -446,25 +446,25 @@ For additional information on printing and rendering, see also [Examples](@ref).
     This function's methods are incomplete.
     Please file an issue or create a pull-request for missing methods.
 
-| Type                                                      | Settings                                | Parameters                                              |
-|:----------------------------------------------------------|:----------------------------------------|:--------------------------------------------------------|
-| `AbstractChar`                                            | `:mode`                                 |                                                         |
-| `AbstractFloat`                                           |                                         |                                                         |
-| `AbstractMatrix`                                          | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:augment`, `:gap`, `:row_gap`, `:column_gap` |
-| `AbstractString`                                          | `:mode`                                 |                                                         |
-| `AbstractVector`                                          | `:mode`, `:inline`, `:indent`, `:depth` | `:delim`, `:gap`                                        |
-| `Bool`                                                    | `:mode`                                 |                                                         |
-| `Complex`                                                 | `:mode`, `:inline`                      |                                                         |
-| `Irrational`                                              | `:mode`                                 |                                                         |
-| `Nothing`                                                 | `:mode`                                 |                                                         |
-| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                 |                                                         |
-| `Rational`                                                | `:mode`, `:inline`                      |                                                         |
-| `Regex`                                                   | `:mode`                                 |                                                         |
-| `Signed`                                                  |                                         |                                                         |
-| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                 |                                                         |
-| `Text`                                                    | `:mode`                                 |                                                         |
-| `Typst`                                                   | ...                                     | ...                                                     |
-| `TypstString`                                             |                                         |                                                         |
+| Type                                                      | Settings                               | Parameters                                              |
+|:----------------------------------------------------------|:---------------------------------------|:--------------------------------------------------------|
+| `AbstractChar`                                            | `:mode`                                |                                                         |
+| `AbstractFloat`                                           |                                        |                                                         |
+| `AbstractMatrix`                                          | `:block`, `:depth`, `:indent`, `:mode` | `:augment`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
+| `AbstractString`                                          | `:mode`                                |                                                         |
+| `AbstractVector`                                          | `:block`, `:depth`, `:indent`, `:mode` | `:delim`, `:gap`                                        |
+| `Bool`                                                    | `:mode`                                |                                                         |
+| `Complex`                                                 | `:block`, `:mode`                     |                                                         |
+| `Irrational`                                              | `:mode`                                |                                                         |
+| `Nothing`                                                 | `:mode`                                |                                                         |
+| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                |                                                         |
+| `Rational`                                                | `:block`, `:mode`                     |                                                         |
+| `Regex`                                                   | `:mode`                                |                                                         |
+| `Signed`                                                  |                                        |                                                         |
+| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                |                                                         |
+| `Text`                                                    | `:mode`                                |                                                         |
+| `Typst`                                                   | ...                                    | ...                                                     |
+| `TypstString`                                             |                                        |                                                         |
 
 # Examples
 ```jldoctest
@@ -523,7 +523,7 @@ function show_typst(io, x::Rational)
     end
 
     if _mode == code enclose(f, IOContext(io, :mode => code), x, "(", ")")
-    elseif _mode == markup enclose(f, IOContext(io, :mode => math), x, inline(io) ? "\$" : "\$ ")
+    elseif _mode == markup enclose(f, IOContext(io, :mode => math), x, block(io) ? "\$ " : "\$")
     else f(io, x)
     end
 end
@@ -716,9 +716,9 @@ See also [`Typst`](@ref) and [`TypstString`](@ref).
 
 | Setting   | Default                  | Type           | Description                                                                                                                                                             |
 |:----------|:-------------------------|:---------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `:block`  | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                               |
 | `:depth`  | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                               |
 | `:indent` | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                               |
-| `:inline` | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                               |
 | `:mode`   | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs.   |
 
 # Examples

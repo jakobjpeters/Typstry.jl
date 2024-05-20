@@ -27,16 +27,16 @@ julia> show_typst(IOContext(stdout, :mode => code), 'a')
 "'a'"
 
 julia> show(stdout, "text/typst", Typst([true 1; 1.0 [Any[true 1; 1.0 nothing]]]))
-$ mat(
+$mat(
     "true", 1;
     1.0, mat(
         "true", 1;
         1.0, ""
     )
-) $
+)$
 
-julia> TypstString(1 // 2; inline = true)
-typst"$1 / 2$"
+julia> TypstString(1 // 2; block = true)
+typst"$ 1 / 2 $"
 
 julia> typst"$ \(1 + 2im; mode = math) $"
 typst"$ 1 + 2i $"
