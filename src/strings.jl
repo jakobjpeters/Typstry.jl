@@ -19,13 +19,12 @@ math = 2
 
 """
     TypstString <: AbstractString
-    TypstString(::Any, ::Pair{Symbol}...)
+    TypstString(::Any; kwargs...)
 
 Convert the value to a Typst formatted string.
 
 Optional Julia settings and Typst parameters are passed to
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref)
-in an `IOContext`.
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`](@ref) in an `IOContext`.
 See also [`show_typst`](@ref) for a list of supported types.
 
 !!! info
@@ -37,14 +36,14 @@ See also [`show_typst`](@ref) for a list of supported types.
 julia> TypstString("a")
 typst"\\\"a\\\""
 
-julia> TypstString("a", :mode => code)
+julia> TypstString("a"; mode = code)
 typst"\\\"\\\\\\"a\\\\\\"\\\""
 ```
 """
 struct TypstString <: AbstractString
     text::String
 
-    TypstString(x::T, settings...) where T = new(
+    TypstString(x::T; settings...) where T = new(
         if T <: Union{TypstString, TypstText} x.text
         else
             buffer = IOBuffer()
@@ -82,7 +81,7 @@ typst"\$1 / 2\$"
 julia> typst"\\(x // 2)"
 typst"\$ 1 / 2 \$"
 
-julia> typst"\\(x // 2, :mode => math)"
+julia> typst"\\(x // 2; mode = math)"
 typst"1 / 2"
 
 julia> typst"\\\\(x)"

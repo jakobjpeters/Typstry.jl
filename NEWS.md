@@ -9,3 +9,4 @@
     - If not `ignorestatus`, a Typst compiler error will throw a Julia `TypstError`
 - Increase coverage of the `Cmd` interface implementation for `TypstCommand`
 - Patch incorrect output from an assumption in `repr(::MIME, ::TypstString)`
+- Formatting options in `TypstString` are now passed as keyword parameters instead of `Pair{Symbol}`s

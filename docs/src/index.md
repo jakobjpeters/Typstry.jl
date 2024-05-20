@@ -35,10 +35,10 @@ $ mat(
     )
 ) $
 
-julia> TypstString(1 // 2, :inline => true)
+julia> TypstString(1 // 2; inline = true)
 typst"$1 / 2$"
 
-julia> typst"$ \(1 + 2im, :mode => math) $"
+julia> typst"$ \(1 + 2im; mode = math) $"
 typst"$ 1 + 2i $"
 
 julia> TypstCommand(["help"])
