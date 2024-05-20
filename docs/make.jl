@@ -2,7 +2,7 @@
 using Documenter: HTML, DocMeta.setdocmeta!, deploydocs, makedocs
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Typstry
-using Typstry: enclose, examples, join_with, preamble, typst_mime
+using Typstry: Typst, enclose, examples, join_with, preamble, typst_mime
 
 const assets = joinpath(@__DIR__, "src", "assets")
 const strings = joinpath(assets, "strings")
@@ -62,7 +62,7 @@ open(strings * ".typ"; truncate = true) do file
         print(file, ", `", t, "`,", is_vector || is_matrix ? "\n        " : " ")
         join_with(file, modes, ", ") do file, mode
             enclose((file, v) ->
-                show(IOContext(file, :mode => mode, :depth => 2), typst_mime, v),
+                show(IOContext(file, :mode => mode, :depth => 2), typst_mime, Typst(v)),
             file, v, (
                 if mode == math; ("\$",)
                 else ("[" * (mode == code ? "#" : ""), "]")

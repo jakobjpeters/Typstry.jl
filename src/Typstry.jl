@@ -18,7 +18,7 @@ export TypstCommand, TypstError, @typst_cmd
 
 include("strings.jl")
 
-export Mode, TypstString, @typst_str, julia_mono, code, markup, math, show_typst, typst_text
+export Mode, Typst, TypstString, @typst_str, julia_mono, code, markup, math, show_typst, typst_text
 
 @compile_workload for (x, _) in examples
     typst"\(x)"

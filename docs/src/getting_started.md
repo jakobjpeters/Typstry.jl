@@ -4,7 +4,7 @@
 ## Examples
 
 This Typst source file and corresponding document were generated from Julia using \
-[`show(::IO, ::MIME"text/typst", ::Any)`](@ref) to print Julia values
+[`show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString})`](@ref) to print Julia values
 to Typst format and a [`TypstCommand`](@ref) to render it.
 
 A [`Mode`](@ref) specifies the current Typst context.
