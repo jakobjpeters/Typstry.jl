@@ -39,7 +39,7 @@ julia> using Typstry
 julia> show_typst(IOContext(stdout, :mode => code), 'a')
 "'a'"
 
-julia> show(stdout, "text/typst", [true 1; 1.0 [Any[true 1; 1.0 nothing]]])
+julia> show(stdout, "text/typst", Typst([true 1; 1.0 [Any[true 1; 1.0 nothing]]]))
 $ mat(
     "true", 1;
     1.0, mat(
@@ -48,10 +48,10 @@ $ mat(
     )
 ) $
 
-julia> TypstString(1 // 2, :inline => true)
+julia> TypstString(1 // 2; inline = true)
 typst"$1 / 2$"
 
-julia> typst"$ \(1 + 2im, :mode => math) $"
+julia> typst"$ \(1 + 2im; mode = math) $"
 typst"$ 1 + 2i $"
 
 julia> TypstCommand(["help"])
@@ -65,22 +65,22 @@ typst`compile input.typ output.pdf`
 
 ### Strings
 
-- Convert Julia values to Typst format using `show(::IO, ::MIME"text/typst", ::Any)`
-    - Specify Julia settings and Typst parameters in the `IOContext`
-    - Implement `show_typst` for custom types
-- Create and manipulate `TypstString`s
-    - Interpolate formatted values using `@typst_str`
+- Convert Julia values to Typst format
+    - Specify Julia settings and Typst parameters
+    - Implement formatting for custom types
+- Create and manipulate Typst formatted strings
+    - Interpolate formatted values
     - Render in Pluto.jl notebooks
 
 ### Commands
 
-- Construct `TypstCommand`s with a `Vector{String}` or using `@typst_cmd`
+- Construct Typst commands
 - Render documents using the Typst compiler
     - Use the [JuliaMono](https://github.com/cormullion/juliamono) typeface
 
 ### Planned
 
-- Implement `show_typst` for more types
+- Implement Typst formatting for more types
     - `Base`
     - Standard Library
     - Package extensions
