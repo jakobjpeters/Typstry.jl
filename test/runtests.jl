@@ -10,7 +10,8 @@ using Typstry
 end
 
 @testset "`detect_ambiguities` and `detect_unbound_args`" begin
-    @test all(detect -> isempty(detect(Typstry)), (detect_ambiguities, detect_unbound_args))
+    @test isempty(detect_ambiguities(Typstry))
+    @test isempty(detect_unbound_args(Typstry))
 end
 
 setdocmeta!(

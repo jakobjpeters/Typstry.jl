@@ -5,19 +5,29 @@ on:
     branches:
       - main
     tags: '*'
+  pull_request:
+    branches:
+      - main
+    tags: '*'
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
+    env:
+      coverage: {{ matrix.version == '1' && matrix.os == 'ubuntu-latest' && matrix.arch == 'x86' }}
     strategy:
       fail-fast: false
       matrix:
         version:
           - '1'
+          - '1.6'
         os:
           - ubuntu-latest
+          - macOS-latest
+          - windows-latest
         arch:
-          - x64
+          - 'x64'
+          - 'x86'
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
@@ -25,11 +35,17 @@ jobs:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
           show-versioninfo: true
+      - uses: julia-actions/julia-downgrade-compat@v1
+        if: {{ matrix.version == '1.6' }}
+        with:
+          strict: 'true'
       - uses: julia-actions/cache@v1
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
+        if: {{ coverage }}
       - uses: codecov/codecov-action@v4
+        if: {{ coverage }}
         with:
           files: lcov.info
         env:
