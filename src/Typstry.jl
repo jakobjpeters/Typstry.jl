@@ -20,8 +20,10 @@ include("strings.jl")
 
 export Mode, Typst, TypstString, @typst_str, julia_mono, code, markup, math, show_typst, typst_text
 
-@compile_workload for (x, _) in examples
-    typst"\(x)"
+@compile_workload begin
+    for (x, _) in examples
+        typst"\(x)"
+    end
 end
 
 end # module
