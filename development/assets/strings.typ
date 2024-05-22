@@ -16,6 +16,16 @@
         cell(colspan: 3, align: center)[`Mode`],
         `code`, `markup`, `math`
     ),
+    "[true, 1, Any[1.2, 1//2]]", `AbstractArray`,
+        [#(true, 1, (1.2, 1 / 2))], [$vec(
+            "true", 1, vec(
+                1.2, 1 / 2
+            )
+        )$], $vec(
+            "true", 1, vec(
+                1.2, 1 / 2
+            )
+        )$,
     "'a'", `AbstractChar`, [#"'a'"], ['a'], $'a'$,
     "1.2", `AbstractFloat`, [#1.2], [1.2], $1.2$,
     "Any[true 1; 1.2 1//2]", `AbstractMatrix`,
@@ -27,16 +37,6 @@
             1.2, 1 / 2
         )$,
     "\"a\"", `AbstractString`, [#"\"a\""], ["a"], $"\"a\""$,
-    "[true [1]]", `AbstractVector`,
-        [#(true, (1,))], [$vec(
-            "true", vec(
-                1
-            )
-        )$], $vec(
-            "true", vec(
-                1
-            )
-        )$,
     "true", `Bool`, [#true], [#true], $"true"$,
     "1 + 2im", `Complex`, [#$1 + 2i$], [$1 + 2i$], $(1 + 2i)$,
     "π", `Irrational`, [#3.141592653589793], [π], $π$,
