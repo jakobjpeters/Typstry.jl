@@ -35,7 +35,7 @@ jobs:
           arch: ${{ matrix.arch }}
           show-versioninfo: true
       - uses: julia-actions/julia-downgrade-compat@v1
-        if: ${{ matrix.version == '1.6' }}
+        if: ${{ matrix.version == '1.7' }}
         with:
           strict: 'true'
       - uses: julia-actions/cache@v1
