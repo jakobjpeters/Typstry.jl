@@ -92,6 +92,7 @@ makedocs(;
 )
 
 deploydocs(
-    repo = "github.com/jakobjpeters/Typstry.jl.git",
-    devbranch = "main"
+    devbranch = "main",
+    devurl = "development",
+    repo = "github.com/jakobjpeters/Typstry.jl.git"
 )
