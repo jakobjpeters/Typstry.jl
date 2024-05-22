@@ -4,7 +4,7 @@
 <div align="center">
 
 [![Documentation stable](https://img.shields.io/badge/Documentation-stable-blue.svg)](https://jakobjpeters.github.io/Typstry.jl/)
-[![Documentation development](https://img.shields.io/badge/Documentation-dev-blue.svg)](https://jakobjpeters.github.io/Typstry.jl/development/)
+[![Documentation development](https://img.shields.io/badge/Documentation-development-blue.svg)](https://jakobjpeters.github.io/Typstry.jl/development/)
 
 [![Continuous Integration](https://github.com/jakobjpeters/Typstry.jl/workflows/Continuous%20Integration/badge.svg)](https://github.com/jakobjpeters/Typstry.jl/actions/workflows/continuous_integration.yml)
 [![Documentation](https://github.com/jakobjpeters/Typstry.jl/workflows/Documentation/badge.svg)](https://github.com/jakobjpeters/Typstry.jl/actions/workflows/documentation.yml)
