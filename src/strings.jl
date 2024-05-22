@@ -152,11 +152,11 @@ A constant `Vector` of Julia values and their corresponding `Type`s implemented 
 [`show(::IO,\u00A0::MIME"text/plain",\u00A0::Union{Typst,\u00A0TypstString})`](@ref).
 """
 const examples = [
+    [true, 1, Any[1.2, 1 // 2]] => AbstractArray,
     'a' => AbstractChar,
     1.2 => AbstractFloat,
     Any[true 1; 1.2 1 // 2] => AbstractMatrix,
     "a" => AbstractString,
-    [true, [1]] => AbstractVector,
     true => Bool,
     1 + 2im => Complex,
     π => Irrational,
@@ -484,11 +484,11 @@ For additional information on printing and rendering, see also [Examples](@ref).
 
 | Type                                                      | Settings                               | Parameters                                              |
 |:----------------------------------------------------------|:---------------------------------------|:--------------------------------------------------------|
+| `AbstractArray`                                           | `:block`, `:depth`, `:indent`, `:mode` | `:delim`, `:gap`                                        |
 | `AbstractChar`                                            | `:mode`                                |                                                         |
 | `AbstractFloat`                                           |                                        |                                                         |
 | `AbstractMatrix`                                          | `:block`, `:depth`, `:indent`, `:mode` | `:augment`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
 | `AbstractString`                                          | `:mode`                                |                                                         |
-| `AbstractVector`                                          | `:block`, `:depth`, `:indent`, `:mode` | `:delim`, `:gap`                                        |
 | `Bool`                                                    | `:mode`                                |                                                         |
 | `Complex`                                                 | `:block`, `:mode`, `:parenthesize`     |                                                         |
 | `Irrational`                                              | `:mode`                                |                                                         |
@@ -499,7 +499,7 @@ For additional information on printing and rendering, see also [Examples](@ref).
 | `Signed`                                                  |                                        |                                                         |
 | `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                |                                                         |
 | `Text`                                                    | `:mode`                                |                                                         |
-| `Typst`                                                   | ...                                    | ...                                                     |
+| `Typst`                                                   |                                        |                                                         |
 | `TypstString`                                             |                                        |                                                         |
 
 # Examples
@@ -581,11 +581,11 @@ function show_typst(io, x::Unsigned)
     code_mode(io)
     show(io, x)
 end
-show_typst(io, x::Union{AbstractFloat, Signed, TypstString}) = print(io, x)
-function show_typst(io, x::Union{AbstractVector, Tuple})
+function show_typst(io, x::Union{AbstractArray, Tuple})
     io = IOContext(io, :parenthesize => false)
     mode(io) == code ? show_array(io, x) : show_vector(io, x)
 end
+show_typst(io, x::Union{AbstractFloat, Signed, TypstString}) = print(io, x)
 show_typst(io, x::Union{
     OrdinalRange{<:Integer, <:Integer},
     StepRangeLen{<:Integer, <:Integer, <:Integer}

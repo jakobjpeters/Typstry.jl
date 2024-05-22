@@ -9,7 +9,7 @@
 - Patch incorrect output from an assumption in `repr(::MIME, ::TypstString)`
 - Formatting options in `TypstString` are now passed as keyword parameters instead of `Pair{Symbol}`s
 - `show_typst`
-    - Implemented for `Tuple`, `Typst`, and `Unsigned`
+    - Implemented for `AbstractArray`, `Tuple`, `Typst`, and `Unsigned`
     - `nothing` now corresponds to Typst's `none`
     - `AbtractMatrix` and `AbstractVector` in `code` mode now correspond to a Typst array
     - `OrdinalRange{<:Integer, <:Integer}` and `StepRangeLen{<:Integer, <:Integer, <:Integer}` in `markup` and `math` mode now correspond to a Typst vector

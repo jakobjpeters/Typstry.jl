@@ -187,7 +187,7 @@ getindex(tc::TypstCommand, i) = i == 1 ? only(tc.compiler) : tc.parameters[i - 1
 See also [`TypstCommand`](@ref).
 """
 hash(tc::TypstCommand, h::UInt) =
-    hash(TypstCommand, hash(tc.compiler, hash(tc.parameters, hash(tc.ignore_status, h))))
+    foldr(hash, (TypstCommand, tc.compiler, tc.parameters, tc.ignore_status, h))
 
 """
     ignorestatus(::TypstCommand)

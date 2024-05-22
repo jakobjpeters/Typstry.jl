@@ -46,27 +46,21 @@ open(strings * ".typ"; truncate = true) do file
     println(file, "\n    ),")
 
     join_with(file, examples, ",\n") do file, (v, t)
-        is_matrix = t <: AbstractMatrix
-        is_range = t <: AbstractRange
-        is_vector = t <: AbstractVector && !is_range
+        is_vector = v isa Vector
 
         print(file, "    ")
 
-        if is_vector print(file, "\"[true [1]]\"")
-        elseif t <: Text print(file, "\"text\\\"[\\\\\\\"a\\\\\\\"]\\\"\"")
-        elseif t <: StepRangeLen print(file, "\"StepRangeLen(0, 2, 4)\"")
+        if is_vector print(file, "\"[true, 1, Any[1.2, 1//2]]\"")
+        elseif v isa StepRangeLen print(file, "\"StepRangeLen(0, 2, 4)\"")
+        elseif v isa Text print(file, "\"text\\\"[\\\\\\\"a\\\\\\\"]\\\"\"")
         else show(file, repr(v))
         end
 
-        print(file, ", `", t, "`,", is_vector || is_matrix ? "\n        " : " ")
+        print(file, ", `", t, "`,", is_vector || v isa AbstractMatrix ? "\n        " : " ")
         join_with(file, modes, ", ") do file, mode
             enclose((file, v) ->
                 show(IOContext(file, :mode => mode, :depth => 2), typst_mime, Typst(v)),
-            file, v, (
-                if mode == math; ("\$",)
-                else ("[" * (mode == code ? "#" : ""), "]")
-                end
-            )...)
+            file, v, (mode == math ? ("\$", "\$") : ("[" * (mode == code ? "#" : ""), "]"))...)
         end
     end
 
