@@ -461,9 +461,27 @@ static_parse(args...; filename, kwargs...) =
 # `Typstry`
 
 """
+    show_typst(x)
+
+Print the Typst format to `stdout` with default Julia settings and Typst parameters.
+
+# Examples
+```jldoctest
+julia> show_typst(1 // 2)
+\$1 / 2\$
+
+julia> show_typst(1:4)
+\$vec(
+    1, 2, 3, 4
+)\$
+```
+"""
+show_typst(x) = show(stdout, typst_mime, Typst(x))
+
+"""
     show_typst(io, x)
 
-Print to Typst format using Julia settings and Typst parameters in the `IOContext`.
+Print the Typst format using Julia settings and Typst parameters in an `IOContext`.
 
 Settings are used in Julia to format the [`TypstString`](@ref) and can be any type.
 Parameters are passed to a function in the Typst source file and must be a `String`
@@ -750,7 +768,7 @@ end
 """
     show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString})
 
-Print to Typst format.
+Print the Typst format.
 
 Provides default settings for [`show_typst`](@ref)
 which may be specified in an `IOContext`.
@@ -788,7 +806,7 @@ show(io::IO, ::MIME"text/typst", t::Union{Typst, TypstString}) =
         MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
     }, ::TypstString)
 
-Print to Portable Document Format (PDF),
+Print the Portable Document Format (PDF),
 Portable Network Graphics (PNG), or Scalable Vector Graphics (SVG) format.
 
 The corresponding Typst source file begins with this preamble:

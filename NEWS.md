@@ -5,6 +5,7 @@
 
 ### Strings
 
+- Implement `show_typst(x)` which prints to `stdout` with a default `IOContext`
 - Support `show(::IO, ::MIME"application/pdf", ::TypstString)`
 - Patch incorrect output from an assumption in `repr(::MIME, ::TypstString)`
 - Formatting options in `TypstString` are now passed as keyword parameters instead of `Pair{Symbol}`s
