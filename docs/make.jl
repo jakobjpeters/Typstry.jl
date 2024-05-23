@@ -80,9 +80,12 @@ makedocs(;
     sitename = "Typstry.jl",
     format = HTML(edit_link = "main"),
     modules = [Typstry],
-    pages = ["Home" => "index.md", "Getting Started" => "getting_started.md", "Manual" => map(
-        page -> uppercasefirst(page) => joinpath("manual", page * ".md"),
-    ["strings", "commands", "internals"])]
+    pages = [
+        "Home" => "index.md",
+        "Getting Started" => "getting_started.md",
+        "Tutorials" => ["Interface" => "tutorials/interface.md"],
+        "Manual" => map(page -> uppercasefirst(page) => joinpath("manual", page * ".md"), ["strings", "commands", "internals"])
+    ]
 )
 
 deploydocs(
