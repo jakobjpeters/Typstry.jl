@@ -73,7 +73,7 @@ end
 Construct a [`TypstString`](@ref).
 
 Control characters are escaped,
-except quotation marks and backslashes in the same manner as `@raw_str`.
+except double quotation marks and backslashes in the same manner as `@raw_str`.
 `TypstString`s containing control characters may be created using [`typst_text`](@ref).
 Values may be interpolated by calling the `TypstString` constructor,
 except using a backslash instead of the type name.
@@ -417,8 +417,8 @@ end
 """
     print_quoted(io, s)
 
-Print the string [`enclose`](@ref Typstry.enclose)d
-in quotes and with interior quotes escaped.
+Print the string [`enclose`](@ref Typstry.enclose)d in double
+quotation marks and with interior double quotations marks escaped.
 
 # Examples
 ```jldoctest
@@ -526,9 +526,9 @@ show_typst(io, x::AbstractMatrix) = mode(io) == code ?
         end, IOContext(io, :depth => _depth, :mode => math), eachrow(x), ";\n"; indent)
         print(io, "\n", indent ^ depth, ")")
     end, IOContext(io, :parenthesize => false), x, math_pad(io); indent = indent(io), depth = depth(io))
-show_typst(io, x::AbstractString) = mode(io) == markup ?
-    enclose(escape_string, io, x, "\"") :
-    enclose(escape_string, io, escape_string(x), "\"\\\"", "\\\"\"") # TODO: remove string allocation
+show_typst(io, x::AbstractString) = enclose((io, x) -> escape_string(io, x, "\"\$"), io,
+    (mode(io) == markup ? (String(x), "\"", "\"") : (escape_string(x), "\"\\\"", "\\\"\""))...
+) # TODO: test that escaping is correct and remove string allocation
 function show_typst(io, x::Bool)
     _mode = mode(io)
 

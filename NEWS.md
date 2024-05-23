@@ -24,3 +24,7 @@
 - Improve error handling
     - The Typst compiler prints error messages to `stderr`
     - If not `ignorestatus`, a Typst compiler error will throw a Julia `TypstError`
+
+### Bug Fixes
+
+- `show_typst(io, ::AbstractString)` now correctly escapes double quotation marks and dollar signs.
