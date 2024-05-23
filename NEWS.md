@@ -5,15 +5,17 @@
 
 ### Strings
 
-- Implement `show_typst(x)` which prints to `stdout` with a default `IOContext`
 - Support `show(::IO, ::MIME"application/pdf", ::TypstString)`
 - Patch incorrect output from an assumption in `repr(::MIME, ::TypstString)`
 - Formatting options in `TypstString` are now passed as keyword parameters instead of `Pair{Symbol}`s
 - `show_typst`
+    - Implement `show_typst(x)` which prints to `stdout` with a default `IOContext`
     - Implemented for `AbstractArray`, `Tuple`, `Typst`, and `Unsigned`
     - `nothing` now corresponds to Typst's `none`
     - `AbtractMatrix` and `AbstractVector` in `code` mode now correspond to a Typst array
-    - `OrdinalRange{<:Integer, <:Integer}` and `StepRangeLen{<:Integer, <:Integer, <:Integer}` in `markup` and `math` mode now correspond to a Typst vector
+    - `OrdinalRange{<:Integer, <:Integer}` and `StepRangeLen{<:Integer, <:Integer, <:Integer}`
+        - `code` mode implicitely uses the Typst default `step` if it is equal to `1`
+        - `markup` and `math` mode now correspond to a Typst vector
     - New default setting `parenthesize = true`
         - Used for `Complex` and `Rational`
     - The `inline` setting has been renamed to `block` to be consistent with Typst's `equation` function

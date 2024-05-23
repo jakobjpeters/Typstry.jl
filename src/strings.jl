@@ -609,9 +609,15 @@ show_typst(io, x::Union{
     StepRangeLen{<:Integer, <:Integer, <:Integer}
 }) = mode(io) == code ?
     enclose(io, x, "range(", ")") do io, x
+        _step = step(x)
+
         show_typst(io, first(x))
-        enclose(show_typst, io, last(x) + 1, ", ", ", step: ")
-        show_typst(io, step(x))
+        print(io, ", ")
+        show_typst(io, last(x) + 1)
+        if _step != 1
+            print(io, ", step: ")
+            show_typst(io, _step)
+        end
     end :
     show_vector(io, x)
 #=
