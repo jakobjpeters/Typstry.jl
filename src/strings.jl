@@ -62,8 +62,10 @@ typst"\\\"\\\\\\"a\\\\\\"\\\""
 struct TypstString <: AbstractString
     text::String
 
-    TypstString(x::T; context...) where T = new(T <: Union{TypstString, TypstText} ?
-        x.text : sprint(show, typst_mime, Typst(x); context = (context...,)))
+    TypstString(x::T; context...) where T =
+        if T <: TypstString x
+        else new(T <: TypstText ? x.text : sprint(show, typst_mime, Typst(x); context = (context...,)))
+        end
 end
 
 """
@@ -168,7 +170,7 @@ const examples = [
     StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer},
     text"[\"a\"]" => Text,
     (true, 1, 1.2, 1 // 2) => Tuple,
-    @typst_str("[\"a\"]") => TypstString,
+    typst"[\"a\"]" => TypstString,
     0xff => Unsigned
 ]
 
@@ -490,7 +492,6 @@ with the same name as in Typst, except that dashes are replaced with underscores
 For additional information on parameters and settings, see also
 [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref)
 and the [Typst Documentation](https://typst.app/docs/), respectively.
-
 For additional information on printing and rendering, see also [Examples](@ref).
 
 !!! tip
@@ -783,6 +784,7 @@ See also [`Typst`](@ref) and [`TypstString`](@ref).
 
 !!! tip
     Implement this function for custom types to specify their default settings and parameters.
+    Remember to [Avoid type piracy](https://docs.julialang.org/en/v1/manual/style-guide/#Avoid-type-piracy).
 
 | Setting         | Default                  | Type           | Description                                                                                                                                                           |
 |:----------------|:-------------------------|:---------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|

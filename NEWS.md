@@ -5,6 +5,7 @@
 
 ### Strings
 
+- Removed type piracy by requiring values to be either a `TypstString` or wrapped in `Typst`
 - Support `show(::IO, ::MIME"application/pdf", ::TypstString)`
 - Patch incorrect output from an assumption in `repr(::MIME, ::TypstString)`
 - Formatting options in `TypstString` are now passed as keyword parameters instead of `Pair{Symbol}`s
