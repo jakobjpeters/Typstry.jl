@@ -416,7 +416,7 @@ print_quoted(io, s) = enclose(escape_raw_string, io, s, "\"")
     show_array(io, x)
 """
 show_array(io, x) = enclose(io, x, "(", ")") do io, x
-    join_with(show_typst, io, x, ", ")
+    join_with(_show_typst, io, x, ", ")
     length(x) == 1 && print(io, ",")
 end
 
@@ -429,7 +429,7 @@ show_vector(io, x) = enclose(io, x, math_pad(io)) do io, x
 
     print_parameters(io, "vec", [:delim, :gap])
     print(io, _indent ^ __depth)
-    join_with(show_typst, IOContext(io, :depth => __depth, :mode => math), x, ", "),
+    join_with(_show_typst, IOContext(io, :depth => __depth, :mode => math), x, ", "),
     print(io, "\n", _indent ^ _depth, ")")
 end
 
@@ -475,6 +475,8 @@ context(x::Typst) = merge!(Dict(
 ), context(x.value))
 context(x) = Dict{Symbol, Union{}}()
 
+_show_typst(io, x) = show(io, typst_mime, Typst(x))
+
 """
     show_typst(x)
 
@@ -491,7 +493,7 @@ julia> show_typst(1:4)
 )\$
 ```
 """
-show_typst(x) = show(stdout, typst_mime, Typst(x))
+show_typst(x) = _show_typst(stdout, x)
 
 """
     show_typst(io, x)
@@ -551,7 +553,7 @@ show_typst(io, x::AbstractMatrix) = mode(io) == code ?
         print_parameters(io, "mat", [:augment, :column_gap, :delim, :gap, :row_gap])
         join_with((io, x; indent) -> begin
             print(io, indent ^ _depth)
-            join_with(show_typst, io, x, ", ")
+            join_with(_show_typst, io, x, ", ")
         end, IOContext(io, :depth => _depth, :mode => math), eachrow(x), ";\n"; indent)
         print(io, "\n", indent ^ depth, ")")
     end, IOContext(io, :parenthesize => false), x, math_pad(io); indent = indent(io), depth = depth(io))
@@ -571,14 +573,14 @@ show_typst(io, x::Complex) = enclose(io, x, math_pad(io)) do io, x
         (mode(io) == math && parenthesize(io) ? ("(", ")") : ("", ""))...) do io, x
         imaginary = imag(x)
 
-        show_typst(io, real(x))
+        _show_typst(io, real(x))
         enclose(print, io, signbit(imaginary) ? "-" : "+", " ")
-        show_typst(io, abs(imaginary))
+        _show_typst(io, abs(imaginary))
         print(io, "i")
     end
 end
 show_typst(io, x::Irrational) =
-    mode(io) == code ? show_typst(io, Float64(x)) : print(io, x)
+    mode(io) == code ? _show_typst(io, Float64(x)) : print(io, x)
 function show_typst(io, ::Nothing)
     code_mode(io)
     print(io, "none")
@@ -586,9 +588,9 @@ end
 function show_typst(io, x::Rational)
     _mode = mode(io)
     f = (io, x) -> enclose(io, x, (parenthesize(io) ? ("(", ")") : ("", ""))...) do io, x
-        show_typst(io, numerator(x))
+        _show_typst(io, numerator(x))
         print(io, " / ")
-        show_typst(io, denominator(x))
+        _show_typst(io, denominator(x))
     end
 
     _mode == markup ?
@@ -629,12 +631,12 @@ show_typst(io, x::Union{
     enclose(io, x, "range(", ")") do io, x
         _step = step(x)
 
-        show_typst(io, first(x))
+        _show_typst(io, first(x))
         print(io, ", ")
-        show_typst(io, last(x) + 1)
+        _show_typst(io, last(x) + 1)
         if _step != 1
             print(io, ", step: ")
-            show_typst(io, _step)
+            _show_typst(io, _step)
         end
     end :
     show_vector(io, x)

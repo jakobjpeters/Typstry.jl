@@ -158,8 +158,9 @@ julia> println(TypstString(1 // 2; mode = markup))
 $1 / 2$
 ```
 
-### Use `show_typst` to print values in containers
+### Format values in containers using `show(::IO, ::MIME"text/typst", ::Typst)`
 
+- The value potentially requires some of its default `context`
 - The `AbstractVector` method changes its `Mode` to `math` and increments its `depth`
 
 ```jldoctest 1
