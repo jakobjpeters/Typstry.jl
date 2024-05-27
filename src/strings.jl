@@ -843,13 +843,21 @@ $preamble
 function show(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
 }, ts::TypstString)
-    input, output = IOBuffer(), tempname()
-
-    print(input, preamble, ts)
-    seekstart(input)
-
-    run(addenv(TypstCommand(["compile", "--format=$(format(m))", "-", output]),
-        "TYPST_FONT_PATHS" => julia_mono), input)
-
+    output = tempname() * "." * format(m)
+    _render(ts, IOBuffer(), output, true, false)
     print(io, read(output, String))
 end
+
+# function show(io::IO, m::Union{
+#     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
+# }, ts::TypstString)
+#     input, output = IOBuffer(), tempname()
+
+#     print(input, preamble, ts)
+#     seekstart(input)
+
+#     run(addenv(TypstCommand(["compile", "--format=$(format(m))", "-", output]),
+#         "TYPST_FONT_PATHS" => julia_mono), input)
+
+#     print(io, read(output, String))
+# end

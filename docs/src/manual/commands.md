@@ -8,6 +8,7 @@ TypstCommand
 TypstError
 @typst_cmd
 julia_mono
+render
 ```
 
 ## `Base`

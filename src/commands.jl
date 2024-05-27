@@ -95,6 +95,41 @@ Use with a [`TypstCommand`](@ref) and one of [`addenv`](@ref),
 """
 const julia_mono = artifact"JuliaMono"
 
+function _render(x, input, output, _preamble, _open; context...)
+    _preamble && println(input, preamble)
+    show(IOContext(input, context...), typst_mime, Typst(x))
+    println(input)
+    seekstart(input)
+    run(addenv(TypstCommand(["compile", "-", output, "--open"][begin:end - !_open]),
+        "TYPST_FONT_PATHS" => julia_mono), input)
+end
+
+"""
+    render(x;
+        input = "input.typ",
+        output = "output.pdf",
+        preamble = true,
+        open = true,
+    context...)
+
+Render to a document using
+[`show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString})`](@ref)
+with the `context`.
+
+This generates two files: the `input` is the Typst
+source text and the `output` is the rendered document.
+The document format is inferred by the file extension of `output`,
+which may be `pdf`, `png`, or `svg`.
+The document may be automatically `open`ed by the default viewer.
+The Typst source text may begin with the following `preamble`:
+
+```typst
+$preamble
+```
+"""
+render(x; input = "input.typ", output = "output.pdf", preamble = true, open = true, context...) =
+    Base.open(file -> _render(x, file, output, preamble, open; context...), input; read = true, truncate = true)
+
 # `Base`
 
 """
