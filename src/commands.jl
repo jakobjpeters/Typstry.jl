@@ -95,15 +95,6 @@ Use with a [`TypstCommand`](@ref) and one of [`addenv`](@ref),
 """
 const julia_mono = artifact"JuliaMono"
 
-function _render(x, input, output, _preamble, _open; context...)
-    _preamble && println(input, preamble)
-    show(IOContext(input, context...), typst_mime, Typst(x))
-    println(input)
-    seekstart(input)
-    run(addenv(TypstCommand(["compile", "-", output, "--open"][begin:end - !_open]),
-        "TYPST_FONT_PATHS" => julia_mono), input)
-end
-
 """
     render(x;
         input = "input.typ",
@@ -127,8 +118,21 @@ The Typst source text may begin with the following `preamble`:
 $preamble
 ```
 """
-render(x; input = "input.typ", output = "output.pdf", preamble = true, open = true, context...) =
-    Base.open(file -> _render(x, file, output, preamble, open; context...), input; read = true, truncate = true)
+function render(x;
+    input = "input.typ",
+    output = "output.pdf",
+    preamble = true,
+    open = true,
+context...)
+    Base.open(input; truncate = true) do file
+        preamble && println(file, Typstry.preamble)
+        _show_typst(IOContext(file, context...), x)
+        println(file)
+    end
+
+    run(addenv(TypstCommand(["compile", input, output, "--open"][begin:end - !open]),
+        "TYPST_FONT_PATHS" => julia_mono))
+end
 
 # `Base`
 
