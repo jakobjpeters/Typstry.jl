@@ -566,10 +566,17 @@ function show_typst(io, x::Bool)
     else enclose(print, io, x, "\"")
     end
 end
-show_typst(io, x::Complex) = enclose(
-    (io, x) -> enclose((io, x) -> print(IOContext(io, :mode => math), real(x), " + ", imag(x), "i"),
-        io, x, (mode(io) == math && parenthesize(io) ? ("(", ")") : ("", ""))...),
-io, x, math_pad(io))
+show_typst(io, x::Complex) = enclose(io, x, math_pad(io)) do io, x
+    enclose(IOContext(io, :mode => math, :parenthesize => false), x,
+        (mode(io) == math && parenthesize(io) ? ("(", ")") : ("", ""))...) do io, x
+        imaginary = imag(x)
+
+        show_typst(io, real(x))
+        enclose(print, io, signbit(imaginary) ? "-" : "+", " ")
+        show_typst(io, abs(imaginary))
+        print(io, "i")
+    end
+end
 show_typst(io, x::Irrational) =
     mode(io) == code ? show_typst(io, Float64(x)) : print(io, x)
 function show_typst(io, ::Nothing)
