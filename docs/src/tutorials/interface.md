@@ -8,7 +8,7 @@ This tutorial illustrates the Julia to Typst interface.
 ```jldoctest 1
 julia> import Base: show
 
-julia> import Typstry: show_typst
+julia> import Typstry: context, show_typst
 
 julia> using Base: Docs.Text
 
@@ -20,40 +20,54 @@ julia> using Typstry
 Consider this new type.
 
 ```jldoctest 1
-julia> struct Greeting
-           subject::String
+julia> struct Reciprocal{N <: Number}
+           n::N
        end
 ```
 
-To specify its Typst formatting, implement the [`show_typst`](@ref) function.
+Implement the [`show_typst`](@ref) function to specify its Typst formatting.
 Remember to [Annotate values taken from untyped locations](https://docs.julialang.org/en/v1/manual/performance-tips/#Annotate-values-taken-from-untyped-locations).
 
 ```jldoctest 1
-julia> show_typst(io, g::Greeting) =
-           print(io, "Hi ", g.subject, get(io, :excited, true)::Bool ? "!" : ".");
+julia> show_typst(io, r::Reciprocal) =
+           if io[:mode]::Mode == markup
+               print(io, "#let reciprocal(n) = \$1 / n\$")
+           else
+               print(io, "reciprocal(")
+               show_typst(io, round(r.n; digits = io[:digits]::Int))
+               print(io, ")")
+           end;
 ```
 
-Now that the interface has been implemented for `Greeting`, it is fully supported by Typstry.jl.
+Although custom formatting may be handled in `show_typst` with `get(io, key, default)`,
+this may be repetitive when specifying defaults for multiple methods.
+Also, there is no way to tell if the value has been
+specified by the user or if it is a default.
+Instead, implement a custom [`context`](@ref) which overrides default,
+but not user specifications.
 
 ```jldoctest 1
-julia> g = Greeting("everyone");
+julia> context(::Reciprocal) = Dict(:digits => 2);
+```
 
-julia> show_typst(IOContext(stdout, :excited => false), g)
-Hi everyone.
+Now that the interface has been implemented, it is fully supported by Typstry.jl.
 
-julia> show(stdout, "text/typst", Typst(g))
-Hi everyone!
+```jldoctest 1
+julia> r = Reciprocal(π);
 
-julia> TypstString(g; excited = false)
-typst"Hi everyone."
+julia> println(TypstString(r))
+#let reciprocal(n) = $1 / n$
 
-julia> typst"\(g)"
-typst"Hi everyone!"
+julia> println(TypstString(r; mode = math))
+reciprocal(3.14)
+
+julia> println(TypstString(r; mode = math, digits = 4))
+reciprocal(3.1416)
 ```
 
 ## Guidelines
 
-While the interface itself only requires implementing a single method,
+While implementing the interface only requires implementing two methods,
 it may be more challenging to determine how a Julia value should be
 represented in a Typst source file and its corresponding rendered document.
 Julia and Typst are distinct languages and differ in both syntax and semantics,
@@ -85,13 +99,16 @@ julia> println(TypstString(π; mode = code))
 
 julia> println(TypstString(π; mode = math))
 π
+
+julia> println(TypstString(π; mode = markup))
+π
 ```
 
 ### Consider both the Typst source text and rendered document formatting
 
 - A `TypstString` represents Typst source text, and is printed directly
-- A `String` is meaningful in different ways for each Typst mode
-- A `Text` is documented to render as plain text, and therefore corresponds to text in the rendered Typst document
+- A `String` is meaningful in different ways for each Typst `Mode`
+- A `Text` is documented to "render [its value] as plain text", and therefore corresponds to text in a rendered Typst document
 
 ```jldoctest 1
 julia> println(TypstString(typst"[\"a\"]"))
@@ -106,7 +123,7 @@ julia> println(TypstString(text"[\"a\"]"))
 
 ### Try to ensure that the formatting is valid Typst source text
 
-- A `TypstString` represents Typst source text, so it may be invalid
+- A `TypstString` represents Typst source text, which may be invalid
 - A `UnitRange{Int}` is formatted differently for each `Mode`, but is always valid
 
 ```jldoctest 1
@@ -126,9 +143,9 @@ $vec(
 
 ### Consider edge cases
 
-- `#1 / 2` is valid Typst source text, but is parsed as `(#1) / 2`
-- `1 / 2` may be ambiguous in a mathematical expression
-- `$1 / 2$` is not ambiguous
+- `#1 / 2` is valid Typst source text, but is parsed partially in `code` `Mode` as `(#1) / 2`
+- `1 / 2` may be ambiguous in a `math` `Mode` expression
+- `$1 / 2$` is not ambiguous in `markup` `Mode`
 
 ```jldoctest 1
 julia> println(TypstString(1 // 2; mode = code))
@@ -141,9 +158,9 @@ julia> println(TypstString(1 // 2; mode = markup))
 $1 / 2$
 ```
 
-### Remember to update the context
+### Use `show_typst` to print values in containers
 
-- This nested `AbstractVector` changes its `Mode` to `math` and increments its `depth`
+- The `AbstractVector` method changes its `Mode` to `math` and increments its `depth`
 
 ```jldoctest 1
 julia> println(TypstString([true, 1, Any[1.2, 1 // 2]]))
@@ -156,7 +173,7 @@ $vec(
 
 ### Check parametric and abstract types
 
-- Similar Julia types may not be representable in the same Typst format
+- Related Julia types may not be representable in the same Typst format
 
 ```jldoctest 1
 julia> println(TypstString(1:2:6; mode = code))

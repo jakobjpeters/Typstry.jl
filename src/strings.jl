@@ -1,4 +1,27 @@
 
+# Internals
+
+"""
+    TypstText(::Any)
+
+A wrapper used by [`typst_text`](@ref) to construct a [`TypstString`](@ref) with `print` instead
+of [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref).
+
+# Examples
+```jldoctest
+julia> Typstry.TypstText("a")
+Typstry.TypstText("a")
+
+julia> Typstry.TypstText([1, 2, 3, 4])
+Typstry.TypstText("[1, 2, 3, 4]")
+```
+"""
+struct TypstText
+    text::String
+
+    TypstText(x) = new(string(x))
+end
+
 # `Typstry`
 
 """
@@ -62,11 +85,11 @@ typst"\\\"\\\\\\"a\\\\\\"\\\""
 struct TypstString <: AbstractString
     text::String
 
-    TypstString(x::T; context...) where T =
-        if T <: TypstString x
-        else new(T <: TypstText ? x.text : sprint(show, typst_mime, Typst(x); context = (context...,)))
-        end
+    TypstString(x::TypstText; context...) = new(x.text)
+    TypstString(x; context...) = new(sprint(show, typst_mime, Typst(x); context = (context...,)))
 end
+
+TypstString(x::TypstString; context...) = x
 
 """
     @typst_str(s)
@@ -107,7 +130,7 @@ typst"\\\\(x)"
 macro typst_str(s)
     _s = Expr(:string)
     args = _s.args
-    filename = string(__source__.file)
+    filename = __source__.file
     previous = current = firstindex(s)
     last = lastindex(s)
 
@@ -127,31 +150,10 @@ end
 # Internals
 
 """
-    TypstText(::Any)
-
-A wrapper used by [`typst_text`](@ref) to construct a [`TypstString`](@ref) with `print` instead
-of [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref).
-
-# Examples
-```jldoctest
-julia> Typstry.TypstText("a")
-Typstry.TypstText("a")
-
-julia> Typstry.TypstText([1, 2, 3, 4])
-Typstry.TypstText("[1, 2, 3, 4]")
-```
-"""
-struct TypstText
-    text::String
-
-    TypstText(x) = new(string(x))
-end
-
-"""
     examples
 
-A constant `Vector` of Julia values and their corresponding `Type`s implemented for
-[`show(::IO,\u00A0::MIME"text/plain",\u00A0::Union{Typst,\u00A0TypstString})`](@ref).
+A constant `Vector` of Julia values and their corresponding
+`Type`s implemented for [`show_typst`](@ref).
 """
 const examples = [
     [true, 1, Any[1.2, 1 // 2]] => AbstractArray,
@@ -191,26 +193,6 @@ const preamble = """
 #set page(margin: 1em, height: auto, width: auto, fill: white)
 #set text(16pt, font: "JuliaMono")
 """
-
-"""
-    settings
-
-A constant `NamedTuple` containing the default `IOContext` settings used in
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref).
-
-# Examples
-```jldoctest
-julia> Typstry.settings
-(block = false, depth = 0, indent = "    ", mode = markup, parenthesize = true)
-```
-"""
-const settings = (
-    block = false,
-    depth = 0,
-    indent = "    ",
-    mode = markup,
-    parenthesize = true
-)
 
 """
     typst_mime
@@ -270,7 +252,7 @@ julia> Typstry.depth(IOContext(stdout, :depth => 0))
 depth(io) = io[:depth]::Int
 
 """
-    enclose(f, io, x, left, right = reverse(left); settings...)
+    enclose(f, io, x, left, right = reverse(left); context...)
 
 Call `f(io,\u00A0x;\u00A0settings...)` between printing `left` and `right`, respectfully.
 
@@ -280,9 +262,9 @@ julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x
 \$ 1x \$
 ```
 """
-function enclose(f, io, x, left, right = reverse(left); settings...)
+function enclose(f, io, x, left, right = reverse(left); context...)
     print(io, left)
-    f(io, x; settings...)
+    f(io, x; context...)
     print(io, right)
 end
 
@@ -463,9 +445,40 @@ static_parse(args...; filename, kwargs...) =
 # `Typstry`
 
 """
+    context(x)
+
+Provide formatting data for
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst, TypstString})`](@ref).
+
+Implement this function for a custom type to specify its custom settings and parameters.
+Passing a value wrapped in [`Typst`](@ref) will `merge!` its custom context with defaults,
+such that the defaults may be overwritten.
+To be compatible with merging contexts and constructing an `IOContext`,
+methods must return an `AbstractDict{Symbol}`.
+
+See also [`TypstString`](@ref).
+
+| Setting         | Default                  | Type           | Description                                                                                                                                                           |
+|:----------------|:-------------------------|:---------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `:block`        | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                             |
+| `:depth`        | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                             |
+| `:indent`       | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                             |
+| `:mode`         | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs. |
+| `:parenthesize` | `true`                   | `Bool`         | Whether to enclose some mathematical elements in parentheses.                                                                                                         |
+"""
+context(x::Typst) = merge!(Dict(
+    :block => false,
+    :depth => 0,
+    :indent => "    ",
+    :mode => markup,
+    :parenthesize => true
+), context(x.value))
+context(x) = Dict{Symbol, Union{}}()
+
+"""
     show_typst(x)
 
-Print the Typst format to `stdout` with default Julia settings and Typst parameters.
+Print to `stdout` in Typst format with the default and custom [`context`](@ref)s.
 
 # Examples
 ```jldoctest
@@ -483,19 +496,16 @@ show_typst(x) = show(stdout, typst_mime, Typst(x))
 """
     show_typst(io, x)
 
-Print the Typst format using Julia settings and Typst parameters in an `IOContext`.
+Print in Typst format with Julia settings and Typst parameters provided provided by an `IOContext`.
 
-Settings are used in Julia to format the [`TypstString`](@ref) and can be any type.
+Implement this function for a custom type to specify its Typst formatting.
+Settings are used in Julia to format the [`TypstString`](@ref) and have varying types.
 Parameters are passed to a function in the Typst source file and must be a `String`
 with the same name as in Typst, except that dashes are replaced with underscores.
 
-For additional information on parameters and settings, see also
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref)
+For additional information on settings and parameters, see also [`context`](@ref)
 and the [Typst Documentation](https://typst.app/docs/), respectively.
 For additional information on printing and rendering, see also [Examples](@ref).
-
-!!! tip
-    Implement this function for custom types to specify their Typst formatting.
 
 !!! warning
     This function's methods are incomplete.
@@ -626,6 +636,7 @@ AbstractDict
 AbstractIrrational
 Enum
 Expr
+Set
 Symbol
 =#
 
@@ -777,22 +788,10 @@ end
 
 Print the Typst format.
 
-Provides default settings for [`show_typst`](@ref)
-which may be specified in an `IOContext`.
+This method provides formatting data to [`show_typst`](@ref)
+specified by a default and custom [`context`](@ref).
 
 See also [`Typst`](@ref) and [`TypstString`](@ref).
-
-!!! tip
-    Implement this function for custom types to specify their default settings and parameters.
-    Remember to [Avoid type piracy](https://docs.julialang.org/en/v1/manual/style-guide/#Avoid-type-piracy).
-
-| Setting         | Default                  | Type           | Description                                                                                                                                                           |
-|:----------------|:-------------------------|:---------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `:block`        | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                             |
-| `:depth`        | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                             |
-| `:indent`       | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                             |
-| `:mode`         | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs. |
-| `:parenthesize` | `true`                   | `Bool`         | Whether to enclose some mathematical elements in parentheses.                                                                                                         |
 
 # Examples
 ```jldoctest
@@ -806,8 +805,15 @@ julia> show(IOContext(stdout, :mode => code), "text/typst", Typst("a"))
 "\\\"a\\\""
 ```
 """
-show(io::IO, ::MIME"text/typst", t::Union{Typst, TypstString}) =
-    show_typst(IOContext(io, map(key -> key => get(io, key, settings[key]), keys(settings))...), t)
+function show(io::IOContext, ::MIME"text/typst", t::Union{Typst, TypstString})
+    for (k, v) in context(t)
+        io = IOContext(io, k => get(io, k, v))
+    end
+
+    show_typst(io, t)
+end
+show(io::IO, m::MIME"text/typst", t::Union{Typst, TypstString}) =
+    show(IOContext(io), m, t)
 
 """
     show(::IO, ::Union{

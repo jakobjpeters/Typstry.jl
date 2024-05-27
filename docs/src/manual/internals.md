@@ -7,7 +7,6 @@
 Typstry.TypstText
 Typstry.examples
 Typstry.preamble
-Typstry.settings
 Typstry.typst_mime
 Typstry.block
 Typstry.code_mode
