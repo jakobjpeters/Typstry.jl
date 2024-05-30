@@ -147,10 +147,13 @@ See also [`TypstCommand`](@ref).
 
 # Examples
 ```jldoctest
-julia> typst`help` == typst`help`
+julia> help = typst`help`
+typst`help`
+
+julia> help == help
 true
 
-julia> typst`help` == TypstCommand(typst`help`; ignorestatus = true)
+julia> help == TypstCommand(help; ignorestatus = true)
 false
 ```
 """

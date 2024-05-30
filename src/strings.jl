@@ -787,10 +787,10 @@ See also [`TypstString`](@ref).
 
 # Examples
 ```jldoctest
-julia> repr(MIME"text/plain"(), typst"a")
+julia> repr("text/plain", typst"a")
 "typst\\\"a\\\""
 
-julia> repr(MIME"text/typst"(), typst"a")
+julia> repr("text/typst", typst"a")
 typst"a"
 ```
 """

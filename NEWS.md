@@ -8,7 +8,7 @@
 - Pass formatting configuration to a `TypstString` with keyword parameters instead of `Pair{Symbol}`s
 - Remove type piracy of `show` with the `text/typst` MIME type
     - Values may instead be wrapped in `Typst`
-    - Format may be configured by implementing a custom `context`
+    - Formatting may be configured by implementing a custom `context`
 - Support `show(::IO, ::MIME"application/pdf", ::TypstString)`
 - Replace `typst_text` constructor with `TypstText` wrapper
 - `show_typst`

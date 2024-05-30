@@ -39,13 +39,13 @@ typst"$ π approx 3.141592653589793 $"
 
 ### Commands
 
-Use [`render`](@ref) to quickly generate a Typst source file and compile it into a document.
+Use [`render`](@ref) to easily generate a Typst source file and compile it into a document.
 
 ```jldoctest 1
 julia> render(Any[true 1; 1.2 1 // 2]);
 ```
 
-A source file is compiled using a [`TypstCommand`](@ref) created using its constructor or [`@typst_cmd`](@ref).
+Compile source files by `run`ning [`TypstCommand`](@ref) created using its constructor or [`@typst_cmd`](@ref).
 
 ```jldoctest 1
 julia> TypstCommand(["help"])
