@@ -48,7 +48,7 @@ in an `IOContext`. See also [`show_typst`](@ref) for a list of supported types.
 
 !!! info
     This type implements the `String` interface.
-    However, the interface is unspecified and may result in unexpected behavior.
+    However, the interface is unspecified, which may result in unexpected behavior.
 
 # Examples
 ```jldoctest
@@ -484,8 +484,6 @@ such that the defaults may be overwritten.
 To be compatible with merging contexts and constructing an `IOContext`,
 methods must return an `AbstractDict{Symbol}`.
 
-See also [`TypstString`](@ref).
-
 | Setting         | Default                  | Type           | Description                                                                                                                                                                       |
 |:----------------|:-------------------------|:---------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `:block`        | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                                         |
@@ -837,6 +835,7 @@ julia> show(IOContext(stdout, :mode => code), "text/typst", Typst("a"))
 "\\\"a\\\""
 ```
 """
+show(io::IO, m::MIME"text/typst", t::Typst) = show(IOContext(io), m, t)
 function show(io::IOContext, ::MIME"text/typst", t::Typst)
     for (k, v) in context(t)
         io = IOContext(io, k => get(io, k, v))
@@ -844,7 +843,6 @@ function show(io::IOContext, ::MIME"text/typst", t::Typst)
 
     show_typst(io, t)
 end
-show(io::IO, m::MIME"text/typst", t::Typst) = show(IOContext(io), m, t)
 show(io::IO, ::MIME"text/typst", t::Union{TypstString, TypstText}) = show_typst(io, t)
 
 """
@@ -856,8 +854,8 @@ Print the Portable Document Format (PDF), Portable Network Graphics (PNG),
 or Scalable Vector Graphics (SVG) format using [`render`](@ref).
 
 !!! note
-    Environments such as Pluto.jl notebooks use this
-    function to `display` [`TypstString`](@ref)s.
+    Environments, such as Pluto.jl notebooks,
+    may use these methods to `display` a [`TypstString`](@ref).
 """
 function show(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"

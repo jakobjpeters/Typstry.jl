@@ -23,7 +23,8 @@ julia> show(IOContext(stdout, :mode => code), "text/typst", Typst(π))
 3.141592653589793
 ```
 
-Instead of printing, construct a [`TypstString`](@ref).
+Instead of printing, create a [`TypstString`](@ref) using its constructor or
+[`@typst_str`](@ref) with formatted interpolation.
 
 ```jldoctest 1
 julia> TypstString(π)
@@ -31,12 +32,7 @@ typst"π"
 
 julia> TypstString(π; mode = code)
 typst"3.141592653589793"
-```
 
-Alternatively, use [`@typst_str`](@ref) to construct
-a `TypstString` with formatted interpolation.
-
-```jldoctest 1
 julia> typst"$ \(pi) approx \(pi; mode = code) $"
 typst"$ π approx 3.141592653589793 $"
 ```

@@ -29,7 +29,7 @@ The Typst compiler.
 
 !!! info
     This type implements the `Cmd` interface.
-    However, the interface is unspecified and may result in unexpected behavior.
+    However, the interface is unspecified, which may result in unexpected behavior.
 
 # Examples
 ```jldoctest
@@ -57,7 +57,7 @@ TypstCommand(tc::TypstCommand, ignorestatus, flags, env, dir, cpus = nothing) =
     TypstError <: Exception
     TypstError(::TypstCommand)
 
-An `Exception` indicating an failure to [`run`](@ref) a [`TypstCommand`](@ref).
+An `Exception` indicating a failure to [`run`](@ref) a [`TypstCommand`](@ref).
 """
 struct TypstError <: Exception
     command::TypstCommand
@@ -69,7 +69,7 @@ end
 
 Construct a [`TypstCommand`](@ref) where each parameter is separated by a space.
 
-This does not support interpolation; use the `TypstCommand` constructor instead.
+This does not support interpolation; use the constructor instead.
 
 # Examples
 ```jldoctest
@@ -91,7 +91,7 @@ An constant artifact containing the
 [JuliaMono](https://github.com/cormullion/juliamono) typeface.
 
 Use with a [`TypstCommand`](@ref) and one of [`addenv`](@ref),
-[`setenv`](@ref), or the `font-path` command-line option.
+[`setenv`](@ref), or the `font-path` Typst command-line option.
 """
 const julia_mono = artifact"JuliaMono"
 
@@ -99,16 +99,15 @@ const julia_mono = artifact"JuliaMono"
     render(x;
         input = "input.typ",
         output = "output.pdf",
-        preamble = true,
         open = true,
+        preamble = true,
     context...)
 
 Render to a document using
-[`show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString})`](@ref)
-with the `context`.
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
 
 This generates two files: the `input` is the Typst
-source text and the `output` is the rendered document.
+source text and the `output` is the compiled document.
 The document format is inferred by the file extension of `output`,
 which may be `pdf`, `png`, or `svg`.
 The document may be automatically `open`ed by the default viewer.
@@ -126,8 +125,8 @@ julia> render(Any[true 1; 1.2 1 // 2]);
 function render(x;
     input = "input.typ",
     output = "output.pdf",
-    preamble = true,
     open = true,
+    preamble = true,
 context...)
     Base.open(input; truncate = true) do file
         preamble && println(file, Typstry.preamble)
@@ -151,7 +150,7 @@ See also [`TypstCommand`](@ref).
 julia> typst`help` == typst`help`
 true
 
-julia> typst`help` == ignorestatus(typst`help`)
+julia> TypstCommand(["help"]) == TypstCommand(["help"]; ignorestatus = true)
 false
 ```
 """
@@ -236,7 +235,10 @@ hash(tc::TypstCommand, h::UInt) =
 """
     ignorestatus(::TypstCommand)
 
-See also [`TypstCommand`](@ref).
+Return a [`TypstCommand`](@ref) that does not throw a
+[`TypstError`](@ref) if the Typst compiler throws an error.
+
+Errors thrown by the Typst compiler are printed to `stderr` regardless.
 
 # Examples
 ```jldoctest
@@ -315,10 +317,8 @@ length(tc::TypstCommand) = length(tc.parameters) + 1
 See also [`TypstCommand`](@ref).
 
 !!! info
-    Errors from the Typst compiler are printed to `stderr`.
-    If [`ignorestatus`](@ref) has been applied,
-    this will not throw an error in Julia.
-    Otherwise, the Typst error will be printed before the Julia error.
+    If the Typst compiler throws an error, it will be printed to `stderr`.
+    Then, a Julia [`TypstError`](@ref) will be thrown unless the [`ignorestatus`](@ref) flag is set.
 
 # Examples
 ```jldoctest

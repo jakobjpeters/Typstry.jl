@@ -69,7 +69,7 @@ reciprocal(3.1416)
 
 While implementing the interface only requires implementing two methods,
 it may be more challenging to determine how a Julia value should be
-represented in a Typst source file and its corresponding rendered document.
+represented in a Typst source file and its corresponding compiled document.
 Julia and Typst are distinct languages that differ in both syntax and semantics,
 so there may be multiple meaningful formats to choose from.
 
@@ -88,7 +88,7 @@ julia> println(TypstString(r"[a-z]"))
 #regex("[a-z]")
 ```
 
-### Choose the most meaningful and semantically rich representation
+### Choose the most semantically rich representation
 
 - This may vary across `Mode`s and domains
 - Both Julia and Typst support Unicode characters, except unknown variables in Typst's `code` mode
@@ -106,14 +106,10 @@ julia> println(TypstString(π; mode = markup))
 
 ### Consider both the Typst source text and rendered document formatting
 
-- A `String` is meaningful in different ways for each Typst `Mode`
 - A `Text` is documented to "render [its value] as plain text", and therefore corresponds to text in a rendered Typst document
 - A `TypstString` represents Typst source text, and is printed directly
 
 ```jldoctest 1
-julia> println(TypstString("[\"a\"]"))
-"[\\\"a\\\"]"
-
 julia> println(TypstString(text"[\"a\"]"))
 "[\\\"a\\\"]"
 
@@ -121,7 +117,7 @@ julia> println(TypstString(typst"[\"a\"]"))
 ["a"]
 ```
 
-### Try to ensure that the formatting is valid Typst source text
+### Try to generate valid Typst source text
 
 - A `TypstString` represents Typst source text, which may be invalid
 - A `UnitRange{Int}` is formatted differently for each `Mode`, but is always valid
@@ -141,7 +137,7 @@ $vec(
 )$
 ```
 
-### Consider edge cases
+### Test for edge cases
 
 - `#1 / 2` is valid Typst source text, but is parsed partially in `code` mode as `(#1) / 2`
 - `1 / 2` may be ambiguous in a `math` mode expression

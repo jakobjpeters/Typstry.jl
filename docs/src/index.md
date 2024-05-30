@@ -7,8 +7,14 @@ DocTestSetup = :(using Typstry)
 
 ## Introduction
 
-Typstry.jl is the interface to convert the computational power of Julia into
-beautifully formatted [Typst](https://github.com/typst/typst) documents.
+Typstry.jl is the interface to convert the computational power of Julia into beautifully formatted Typst documents.
+
+### What is Typst?
+
+Typst is an open-source and relatively new typesetting system (written in Rust 🚀),
+[designed to improve upon the performance and usability of LaTeX](https://typst.app/about).
+See also the Typst [repository](https://github.com/typst/typst) and
+[documentation](https://typst.app/docs) for examples and how to get started.
 
 ## Installation
 
@@ -52,10 +58,10 @@ typst`compile input.typ output.pdf`
 
 ### Strings
 
-- Convert Julia values to Typst format
+- Print Julia values in Typst format
     - Specify Julia settings and Typst parameters
     - Implement formatting for custom types
-- Create and manipulate Typst formatted strings
+- Construct Typst strings
     - Interpolate formatted values
     - Render in Pluto.jl notebooks
 
