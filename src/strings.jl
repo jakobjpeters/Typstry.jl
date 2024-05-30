@@ -561,7 +561,7 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 | `Signed`                                                  |                                             |                                                         |
 | `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`, ...                                |                                                         |
 | `String`                                                  | `:mode`                                     |                                                         |
-| `Text`                                                    | `:mode`, ...                                |                                                         |
+| `Docs.Text`                                               | `:mode`, ...                                |                                                         |
 | `Tuple`                                                   | `:block`, `:depth`, `:indent`, `:mode`, ... | `:delim`, `:gap`                                        |
 | `Typst`                                                   | ...                                         |                                                         |
 | `TypstString`                                             |                                             |                                                         |

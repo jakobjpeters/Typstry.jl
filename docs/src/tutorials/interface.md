@@ -72,7 +72,7 @@ reciprocal(3.1416)
 
 ## Guidelines
 
-While implementing the interface only requires implementing two methods,
+While implementing the interface only requires two methods,
 it may be more challenging to determine how a Julia value should be
 represented in a Typst source file and its corresponding compiled document.
 Julia and Typst are distinct languages that differ in both syntax and semantics,
