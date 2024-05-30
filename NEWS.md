@@ -5,12 +5,12 @@
 
 ### Strings
 
-- Removed type piracy by requiring values to be either a `TypstString` or wrapped in `Typst`
+- Remove type piracy by requiring values to be either a `TypstString` or wrapped in `Typst`
+    - Format may be specified by implementing a custom `context`
 - Support `show(::IO, ::MIME"application/pdf", ::TypstString)`
-- Patch incorrect output from an assumption in `repr(::MIME, ::TypstString)`
 - Formatting options in `TypstString` are now passed as keyword parameters instead of `Pair{Symbol}`s
 - `show_typst`
-    - Implement `show_typst(x)` which prints to `stdout` with a default `IOContext`
+    - Implement `show_typst(x)` which prints to `stdout`
     - Implemented for `AbstractArray`, `Tuple`, `Typst`, and `Unsigned`
     - `nothing` now corresponds to Typst's `none`
     - `AbtractMatrix` and `AbstractVector` in `code` mode now correspond to a Typst array
@@ -24,6 +24,7 @@
 
 ### Commands
 
+- Implement `render` to easily generate a Typst document
 - Increase coverage of the `Cmd` interface implementation for `TypstCommand`
 - Improve error handling
     - The Typst compiler prints error messages to `stderr`
@@ -31,6 +32,7 @@
 
 ### Bug Fixes
 
+- Patch incorrect output from an assumption in `repr(::MIME, ::TypstString)`
 - Format values in containers using `show(::IO, ::MIME"text/typst", ::Typst)`
 - `show_typst(io, ::AbstractString)` now correctly escapes double quotation marks and dollar signs.
 - `show_typst(io, ::Complex)`

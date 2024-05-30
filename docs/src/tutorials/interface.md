@@ -31,7 +31,7 @@ Remember to [Annotate values taken from untyped locations](https://docs.julialan
 ```jldoctest 1
 julia> show_typst(io, r::Reciprocal) =
            if io[:mode]::Mode == markup
-               print(io, "#let reciprocal(n) = \$1 / n\$")
+               print(io, "#let reciprocal(n) = \$1 / #n\$")
            else
                print(io, "reciprocal(")
                show_typst(io, round(r.n; digits = io[:digits]::Int))
@@ -41,7 +41,7 @@ julia> show_typst(io, r::Reciprocal) =
 
 Although custom formatting may be handled in `show_typst` with `get(io, key, default)`,
 this may be repetitive when specifying defaults for multiple methods.
-Also, there is no way to tell if the value has been
+There is also no way to tell if the value has been
 specified by the user or if it is a default.
 Instead, implement a custom [`context`](@ref) which overrides default,
 but not user specifications.
@@ -56,7 +56,7 @@ Now that the interface has been implemented, it is fully supported by Typstry.jl
 julia> r = Reciprocal(π);
 
 julia> println(TypstString(r))
-#let reciprocal(n) = $1 / n$
+#let reciprocal(n) = $1 / #n$
 
 julia> println(TypstString(r; mode = math))
 reciprocal(3.14)
@@ -70,7 +70,7 @@ reciprocal(3.1416)
 While implementing the interface only requires implementing two methods,
 it may be more challenging to determine how a Julia value should be
 represented in a Typst source file and its corresponding rendered document.
-Julia and Typst are distinct languages and differ in both syntax and semantics,
+Julia and Typst are distinct languages that differ in both syntax and semantics,
 so there may be multiple meaningful formats to choose from.
 
 ### Make the obvious choice, if available
@@ -91,7 +91,7 @@ julia> println(TypstString(r"[a-z]"))
 ### Choose the most meaningful and semantically rich representation
 
 - This may vary across `Mode`s and domains
-- Both Julia and Typst support Unicode characters, except in Typst's `code` mode
+- Both Julia and Typst support Unicode characters, except unknown variables in Typst's `code` mode
 
 ```jldoctest 1
 julia> println(TypstString(π; mode = code))
@@ -106,19 +106,19 @@ julia> println(TypstString(π; mode = markup))
 
 ### Consider both the Typst source text and rendered document formatting
 
-- A `TypstString` represents Typst source text, and is printed directly
 - A `String` is meaningful in different ways for each Typst `Mode`
 - A `Text` is documented to "render [its value] as plain text", and therefore corresponds to text in a rendered Typst document
+- A `TypstString` represents Typst source text, and is printed directly
 
 ```jldoctest 1
-julia> println(TypstString(typst"[\"a\"]"))
-["a"]
-
 julia> println(TypstString("[\"a\"]"))
 "[\"a\"]"
 
 julia> println(TypstString(text"[\"a\"]"))
 #"[\"a\"]"
+
+julia> println(TypstString(typst"[\"a\"]"))
+["a"]
 ```
 
 ### Try to ensure that the formatting is valid Typst source text
@@ -158,9 +158,9 @@ julia> println(TypstString(1 // 2; mode = markup))
 $1 / 2$
 ```
 
-### Format values in containers using `show(::IO, ::MIME"text/typst", ::Typst)`
+### Format values in containers using `show` with the `text/typst` MIME type
 
-- The value potentially requires some of its default `context`
+- Values may require some of their `context`
 - The `AbstractVector` method changes its `Mode` to `math` and increments its `depth`
 
 ```jldoctest 1

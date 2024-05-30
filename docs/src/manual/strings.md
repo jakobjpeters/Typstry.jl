@@ -8,6 +8,9 @@ Mode
 Typst
 TypstString
 @typst_str
+code
+markup
+math
 context
 show_typst
 typst_text

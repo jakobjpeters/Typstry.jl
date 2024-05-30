@@ -27,8 +27,8 @@ end
 """
     Mode
 
-An `Enum`erated type used to specify that the current
-Typst context is in `code`, `markup`, or `math` mode.
+An `Enum`erated type used to specify that the current Typst syntactical
+context is [`code`](@ref), [`markup`](@ref), or [`math`](@ref).
 
 ```jldoctest
 julia> Mode
@@ -71,7 +71,7 @@ in an `IOContext`. See also [`show_typst`](@ref) for a list of supported types.
 
 !!! info
     This type implements the `String` interface.
-    However, the interface is unspecified which may result unexpected behavior.
+    However, the interface is unspecified and may result in unexpected behavior.
 
 # Examples
 ```jldoctest
@@ -99,12 +99,12 @@ Construct a [`TypstString`](@ref).
 
 Control characters are escaped,
 except double quotation marks and backslashes in the same manner as `@raw_str`.
-`TypstString`s containing control characters may be created using [`typst_text`](@ref).
+Control characters may be inserted using [`typst_text`](@ref).
 Values may be interpolated by calling the `TypstString` constructor,
 except using a backslash instead of the type name.
 
 !!! tip
-    Pring directly to an `IO` using
+    Print directly to an `IO` using
     [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref).
 
     See also the performance tip to [Avoid string interpolation for I/O]
@@ -444,6 +444,41 @@ static_parse(args...; filename, kwargs...) =
 
 # `Typstry`
 
+@doc """
+    code
+
+A Typst syntactical [`Mode`](@ref) prefixed by the number sign.
+
+# Examples
+```jldoctest
+julia> code
+code::Mode = 0
+```
+""" code
+
+@doc """
+    markup
+
+A Typst syntactical [`Mode`](@ref) at the top-level of source text and enclosed within square brackets.
+
+```jldoctest
+julia> markup
+markup::Mode = 1
+```
+""" markup
+
+
+@doc """
+    math
+
+A Typst syntactical [`Mode`](@ref) enclosed within dollar signs.
+
+```jldoctest
+julia> math
+math::Mode = 2
+```
+""" math
+
 """
     context(x)
 
@@ -458,13 +493,13 @@ methods must return an `AbstractDict{Symbol}`.
 
 See also [`TypstString`](@ref).
 
-| Setting         | Default                  | Type           | Description                                                                                                                                                           |
-|:----------------|:-------------------------|:---------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `:block`        | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                             |
-| `:depth`        | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                             |
-| `:indent`       | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                             |
-| `:mode`         | `markup`                 | [`Mode`](@ref) | The current Typst context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs. |
-| `:parenthesize` | `true`                   | `Bool`         | Whether to enclose some mathematical elements in parentheses.                                                                                                         |
+| Setting         | Default                  | Type           | Description                                                                                                                                                                       |
+|:----------------|:-------------------------|:---------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `:block`        | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                                         |
+| `:depth`        | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                                         |
+| `:indent`       | `'\u00A0'\u00A0^\u00A04` | `String`       | The string used for horizontal spacing by some elements with multi-line Typst formatting.                                                                                         |
+| `:mode`         | `markup`                 | [`Mode`](@ref) | The current Typst syntactical context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs. |
+| `:parenthesize` | `true`                   | `Bool`         | Whether to enclose some mathematical elements in parentheses to specify their operator precedence and avoid ambiguity.                                                            |
 """
 context(x::Typst) = merge!(Dict(
     :block => false,
@@ -507,7 +542,6 @@ with the same name as in Typst, except that dashes are replaced with underscores
 
 For additional information on settings and parameters, see also [`context`](@ref)
 and the [Typst Documentation](https://typst.app/docs/), respectively.
-For additional information on printing and rendering, see also [Examples](@ref).
 
 !!! warning
     This function's methods are incomplete.
@@ -829,18 +863,12 @@ show(io::IO, m::MIME"text/typst", t::Union{Typst, TypstString}) =
         MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
     }, ::TypstString)
 
-Print the Portable Document Format (PDF),
-Portable Network Graphics (PNG), or Scalable Vector Graphics (SVG) format.
-
-The corresponding Typst source file begins with this preamble:
-
-```typst
-$preamble
-```
+Print the Portable Document Format (PDF), Portable Network Graphics (PNG),
+or Scalable Vector Graphics (SVG) format using [`render`](@ref).
 
 !!! note
     Environments such as Pluto.jl notebooks use this
-    function to render [`TypstString`](@ref)s to a document.
+    function to `display` [`TypstString`](@ref)s.
 """
 function show(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"

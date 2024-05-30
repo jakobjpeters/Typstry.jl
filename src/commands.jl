@@ -29,7 +29,7 @@ The Typst compiler.
 
 !!! info
     This type implements the `Cmd` interface.
-    However, the interface is unspecified which may result unexpected behavior.
+    However, the interface is unspecified and may result in unexpected behavior.
 
 # Examples
 ```jldoctest
@@ -57,7 +57,7 @@ TypstCommand(tc::TypstCommand, ignorestatus, flags, env, dir, cpus = nothing) =
     TypstError <: Exception
     TypstError(::TypstCommand)
 
-An `Exception` indicating an failure to `run` a [`TypstCommand`](@ref).
+An `Exception` indicating an failure to [`run`](@ref) a [`TypstCommand`](@ref).
 """
 struct TypstError <: Exception
     command::TypstCommand
@@ -371,7 +371,7 @@ io, parameters, " "), io, tc.parameters, "typst`", "`")
 """
     showerror(::IO, ::TypstError)
 
-Print a [`TypstError`](@ref) when failing to `run` a [`TypstCommand`](@ref).
+Print a [`TypstError`](@ref) when failing to [`run`](@ref) a [`TypstCommand`](@ref).
 
 # Examples
 ```jldoctest
