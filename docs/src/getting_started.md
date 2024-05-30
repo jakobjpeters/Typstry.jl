@@ -1,40 +1,67 @@
 
+```@meta
+DocTestSetup = :(using Typstry)
+```
+
 # Getting Started
 
-## Workflow
-
-### Setup
-
-```jldoctest 1
-julia> import Base: show
-
-julia> import Typstry: show_typst
-
-julia> using Typstry
-```
+## Basics
 
 ### Strings
 
-At the base of Typstry.jl is the [`show_typst`](@ref) function,
-which prints Julia values in Typst format.
+Print Julia values in [`Typst`](@ref) format using `show` with the `text/typst` MIME type.
 
+```jldoctest 1
+julia> show(stdout, "text/typst", Typst(π))
+π
+```
 
-This formatting may be customized with an `IOContext`
+Some methods use an `IOContext` to configure the formatting.
 
+```jldoctest 1
+julia> show(IOContext(stdout, :mode => code), "text/typst", Typst(π))
+3.141592653589793
+```
+
+Instead of printing, construct a [`TypstString`](@ref).
+
+```jldoctest 1
+julia> TypstString(π)
+typst"π"
+
+julia> TypstString(π; mode = code)
+typst"3.141592653589793"
+```
+
+Alternatively, use [`@typst_str`](@ref) to construct
+a `TypstString` with formatted interpolation.
+
+```jldoctest 1
+julia> typst"$ \(pi) approx \(pi; mode = code) $"
+typst"$ π approx 3.141592653589793 $"
+```
 
 ### Commands
 
+Use [`render`](@ref) to quickly generate a Typst source file and compile it into a document.
 
+```jldoctest 1
+julia> render(Any[true 1; 1.2 1 // 2]);
+```
+
+A source file is compiled using a [`TypstCommand`](@ref) created using its constructor or [`@typst_cmd`](@ref).
+
+```jldoctest 1
+julia> TypstCommand(["help"])
+typst`help`
+
+julia> run(typst`compile input.typ output.pdf`);
+```
 
 ## Examples
 
-This Typst source file and corresponding document were generated from Julia using \
-[`show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString})`](@ref) to print Julia values
-to Typst format and a [`TypstCommand`](@ref) to render it.
-
-A [`Mode`](@ref) specifies the current Typst context.
-The formatting of each type corresponds to the most useful Typst value for a given mode.
-If no such value exists, it is formatted to render in a canonical representation.
+This Typst source file was generated from Julia using `show` with the
+`text/typst` MIME type and compiled using a `TypstCommand`.
 
 !!! note
     Although many of the values are rendered similarly across modes,

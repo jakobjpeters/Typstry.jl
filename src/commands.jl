@@ -117,6 +117,11 @@ The Typst source text may begin with the following `preamble`:
 ```typst
 $preamble
 ```
+
+# Examples
+```jldoctest
+julia> render(Any[true 1; 1.2 1 // 2]);
+```
 """
 function render(x;
     input = "input.typ",
@@ -314,6 +319,11 @@ See also [`TypstCommand`](@ref).
     If [`ignorestatus`](@ref) has been applied,
     this will not throw an error in Julia.
     Otherwise, the Typst error will be printed before the Julia error.
+
+# Examples
+```jldoctest
+julia> run(typst`compile input.typ output.pdf`);
+```
 """
 function run(tc::TypstCommand, args...; kwargs...)
     process = run(ignorestatus(Cmd(`$(tc.compiler) $(tc.parameters)`)), args...; kwargs...)

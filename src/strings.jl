@@ -553,6 +553,7 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 | `AbstractMatrix`                                          | `:block`, `:depth`, `:indent`, `:mode`, ... | `:augment`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
 | `AbstractString`                                          | `:mode`                                     |                                                         |
 | `Bool`                                                    | `:mode`                                     |                                                         |
+| `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`          |                                                         |
 | `Complex`                                                 | `:block`, `:mode`, `:parenthesize`, ...     |                                                         |
 | `Irrational`                                              | `:mode`, ...                                |                                                         |
 | `Nothing`                                                 | `:mode`                                     |                                                         |
@@ -561,6 +562,7 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 | `Regex`                                                   | `:mode`                                     |                                                         |
 | `Signed`                                                  |                                             |                                                         |
 | `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`, ...                                |                                                         |
+| `String`                                                  | `:mode`                                     |                                                         |
 | `Text`                                                    | `:mode`, ...                                |                                                         |
 | `Tuple`                                                   | `:block`, `:depth`, `:indent`, `:mode`, ... | `:delim`, `:gap`                                        |
 | `Typst`                                                   | ...                                         |                                                         |
@@ -592,26 +594,32 @@ show_typst(io, x::AbstractMatrix) = mode(io) == code ?
         end, IOContext(io, :depth => _depth, :mode => math), eachrow(x), ";\n"; indent)
         print(io, "\n", indent ^ depth, ")")
     end, IOContext(io, :parenthesize => false), x, math_pad(io); indent = indent(io), depth = depth(io))
-show_typst(io, x::AbstractString) = enclose((io, x) -> escape_string(io, x, "\"\$"), io,
-    (mode(io) == markup ? (String(x), "\"", "\"") : (escape_string(x), "\"\\\"", "\\\"\""))...
-) # TODO: test that escaping is correct and remove string allocation
+show_typst(io, x::AbstractString) = show_typst(io, Text(x))
 function show_typst(io, x::Bool)
     _mode = mode(io)
 
-    if _mode == code print(io, x)
-    elseif _mode == markup print(io, "#", x)
-    else enclose(print, io, x, "\"")
-    end
+    _mode == markup && print(io, "#")
+    _mode == math ? enclose(print, io, x, "\"") : print(io, x)
 end
+show_typst(io, x::Complex{Bool}) = show_typst(io, Complex(Int(real(x)), Int(imag(x))))
 show_typst(io, x::Complex) = enclose(io, x, math_pad(io)) do io, x
     enclose(IOContext(io, :mode => math, :parenthesize => false), x,
         (mode(io) == math && parenthesize(io) ? ("(", ")") : ("", ""))...) do io, x
         imaginary = imag(x)
+        _real, _imaginary = real(x), abs(imaginary)
+        __real, __imaginary = _real == 0, _imaginary == 0
+        ___imaginary = signbit(imaginary)
 
-        _show_typst(io, real(x))
-        enclose(print, io, signbit(imaginary) ? "-" : "+", " ")
-        _show_typst(io, abs(imaginary))
-        print(io, "i")
+        __real && !__imaginary || _show_typst(io, _real)
+
+        if _imaginary != 0
+            if !__real enclose(print, io, ___imaginary ? "-" : "+", " ")
+            elseif ___imaginary print(io, "-")
+            end
+
+            _imaginary == 1 || _show_typst(io, abs(imaginary))
+            print(io, "i")
+        end
     end
 end
 show_typst(io, x::Irrational) =
@@ -645,9 +653,9 @@ function show_typst(io, x::Regex)
         end
     end
 end
-function show_typst(io, x::Text)
-    code_mode(io)
-    print_quoted(io, repr(x)) # TODO: remove string allocation
+function show_typst(io, x::Text) # TODO: remove allocation
+    s = string(x)
+    mode(io) == markup ? show(io, escape_string(s, "\"\$")) : print_quoted(io, repr(s))
 end
 show_typst(io, x::Typst) = show_typst(io, x.value)
 show_typst(io, x::TypstText) = print(io, x.value)
@@ -679,9 +687,9 @@ show_typst(io, x::Union{
 #=
 AbstractDict
 AbstractIrrational
+AbstractSet
 Enum
 Expr
-Set
 Symbol
 =#
 
@@ -808,12 +816,14 @@ function show(io::IO, ts::TypstString)
 end
 
 """
-    show(::IO, ::MIME"text/typst", ::Typst)
+    show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString, TypstText})
 
-Print the Typst format.
+Print the [`Typst`](@ref) format.
 
 This method provides formatting data to [`show_typst`](@ref)
 specified by a default and custom [`context`](@ref).
+
+See also [`TypstString`](@ref) and [`TypstText`](@ref).
 
 # Examples
 ```jldoctest
@@ -872,6 +882,7 @@ const examples = [
     Any[true 1; 1.2 1 // 2] => AbstractMatrix,
     "a" => AbstractString,
     true => Bool,
+    im => Complex{Bool},
     1 + 2im => Complex,
     π => Irrational,
     nothing => Nothing,

@@ -112,10 +112,10 @@ julia> println(TypstString(π; mode = markup))
 
 ```jldoctest 1
 julia> println(TypstString("[\"a\"]"))
-"[\"a\"]"
+"[\\\"a\\\"]"
 
 julia> println(TypstString(text"[\"a\"]"))
-#"[\"a\"]"
+"[\\\"a\\\"]"
 
 julia> println(TypstString(typst"[\"a\"]"))
 ["a"]
@@ -143,9 +143,9 @@ $vec(
 
 ### Consider edge cases
 
-- `#1 / 2` is valid Typst source text, but is parsed partially in `code` `Mode` as `(#1) / 2`
-- `1 / 2` may be ambiguous in a `math` `Mode` expression
-- `$1 / 2$` is not ambiguous in `markup` `Mode`
+- `#1 / 2` is valid Typst source text, but is parsed partially in `code` mode as `(#1) / 2`
+- `1 / 2` may be ambiguous in a `math` mode expression
+- `$1 / 2$` is not ambiguous in `markup` mode
 
 ```jldoctest 1
 julia> println(TypstString(1 // 2; mode = code))

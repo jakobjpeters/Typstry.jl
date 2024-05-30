@@ -5,22 +5,24 @@
 
 ### Strings
 
-- Remove type piracy by requiring values to be either a `TypstString` or wrapped in `Typst`
-    - Format may be specified by implementing a custom `context`
+- Pass formatting configuration to a `TypstString` with keyword parameters instead of `Pair{Symbol}`s
+- Remove type piracy of `show` with the `text/typst` MIME type
+    - Values may instead be wrapped in `Typst`
+    - Format may be configured by implementing a custom `context`
 - Support `show(::IO, ::MIME"application/pdf", ::TypstString)`
-- Formatting options in `TypstString` are now passed as keyword parameters instead of `Pair{Symbol}`s
 - Replace `typst_text` constructor with `TypstText` wrapper
 - `show_typst`
     - Implement `show_typst(x)` which prints to `stdout`
-    - Implemented for `AbstractArray`, `Tuple`, `Typst`, `TypstText`, and `Unsigned`
+    - Implemented for `AbstractArray`, `Complex{Bool}`, `Tuple`, `Typst`, `TypstText`, and `Unsigned`
     - `nothing` now corresponds to Typst's `none`
     - `AbtractMatrix` and `AbstractVector` in `code` mode now correspond to a Typst array
     - `OrdinalRange{<:Integer, <:Integer}` and `StepRangeLen{<:Integer, <:Integer, <:Integer}`
-        - `code` mode implicitely uses the Typst default `step` if it is equal to `1`
+        - `code` mode implicitily uses the Typst default `step` if it is equal to `1`
         - `markup` and `math` mode now correspond to a Typst vector
+    - The `Text` format is simpler in `markup` mode
     - New default setting `parenthesize = true`
         - Used for `Complex` and `Rational`
-    - The `inline` setting has been renamed to `block` to be consistent with Typst's `equation` function
+    - Rename the `inline` setting to `block` for consistency with Typst's `equation` function
         - This toggles the default behavior, which is now inline
 
 ### Commands
