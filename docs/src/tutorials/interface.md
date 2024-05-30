@@ -15,7 +15,7 @@ julia> using Typstry
 
 ## Implementation
 
-Consider this new type.
+Consider this custom type.
 
 ```jldoctest 1
 julia> struct Reciprocal{N <: Number}
@@ -23,8 +23,8 @@ julia> struct Reciprocal{N <: Number}
        end
 ```
 
-Implement the [`show_typst`](@ref) function to specify its Typst formatting.
-Remember to [Annotate values taken from untyped locations](https://docs.julialang.org/en/v1/manual/performance-tips/#Annotate-values-taken-from-untyped-locations).
+Implement a [`show_typst`](@ref) method to specify its Typst formatting. Remember to
+[Annotate values taken from untyped locations](https://docs.julialang.org/en/v1/manual/performance-tips/#Annotate-values-taken-from-untyped-locations).
 
 ```jldoctest 1
 julia> show_typst(io, r::Reciprocal) =
@@ -48,7 +48,14 @@ but not user specifications.
 julia> context(::Reciprocal) = Dict(:digits => 2);
 ```
 
-Now that the interface has been implemented, it is fully supported by Typstry.jl.
+Those two methods are a complete implementation of the Julia to Typst interface.
+The following method is optional:
+
+```jldoctest 1
+julia> show(io::IO, m::MIME"text/typst", r::Reciprocal) = show(io, m, Typst(r));
+```
+
+Now, a `Reciprocal` is fully supported by Typstry.jl.
 
 ```jldoctest 1
 julia> r = Reciprocal(π);

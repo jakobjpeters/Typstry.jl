@@ -1,4 +1,5 @@
 
+using Base: Docs.Text
 using Documenter: HTML, DocMeta.setdocmeta!, deploydocs, makedocs
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Typstry
@@ -58,7 +59,7 @@ open(strings * ".typ"; truncate = true) do file
         else show(file, repr(v))
         end
 
-        print(file, ", `", t, "`,", is_vector || v isa AbstractMatrix ? "\n        " : " ")
+        print(file, ", `", v isa Text ? "Docs.Text" : t, "`,", is_vector || v isa AbstractMatrix ? "\n        " : " ")
         join_with(file, modes, ", ") do file, mode
             enclose((file, v) ->
                 show(IOContext(file, :mode => mode, :depth => 2), typst_mime, Typst(v)),

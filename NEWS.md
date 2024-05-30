@@ -10,11 +10,11 @@
     - Values may instead be wrapped in `Typst`
     - Formatting may be configured by implementing a custom `context`
 - Support `show(::IO, ::MIME"application/pdf", ::TypstString)`
-- Replace `typst_text` constructor with `TypstText` wrapper
+- Replace `typst_text` constructor with the `TypstText` wrapper
 - `show_typst`
-    - Implement `show_typst(x)` which prints to `stdout`
+    - Implement `show_typst(x)`, which prints to `stdout`
     - Implemented for `AbstractArray`, `Complex{Bool}`, `Tuple`, `Typst`, `TypstText`, and `Unsigned`
-    - `nothing` now corresponds to Typst's `none`
+    - `Nothing` now corresponds to the Typst `none`
     - `AbtractMatrix` and `AbstractVector` in `code` mode now correspond to a Typst array
     - `OrdinalRange{<:Integer, <:Integer}` and `StepRangeLen{<:Integer, <:Integer, <:Integer}`
         - `code` mode implicitily uses the Typst default `step` if it is equal to `1`
@@ -27,7 +27,7 @@
 
 ### Commands
 
-- Implement `render` to easily generate a Typst document
+- Easily `render` a Julia value to a Typst source file and compiled document
 - Increase coverage of the `Cmd` interface implementation for `TypstCommand`
 - Improve error handling
     - The Typst compiler prints error messages to `stderr`
@@ -35,7 +35,7 @@
 
 ### Bug Fixes
 
-- Patch incorrect output from an assumption in `repr(::MIME, ::TypstString)`
+- Patch an assumption in `repr(::MIME, ::AbstractString)` that is incorrect for `TypstString`
 - Format values in containers using `show(::IO, ::MIME"text/typst", ::Typst)`
 - `show_typst(io, ::AbstractString)` now correctly escapes double quotation marks and dollar signs.
 - `show_typst(io, ::Complex)`

@@ -537,7 +537,7 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 !!! info
     `...` indicates that the method may call
     [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref)
-    to format a value which may require additional settings.
+    to format a value, which may require additional settings.
 
 !!! warning
     This function's methods are incomplete.
