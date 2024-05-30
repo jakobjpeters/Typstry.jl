@@ -2571,10 +2571,15 @@
                 <g>
                     <g transform="translate(13 22.725)">
                         <g class="typst-text" transform="scale(1, -1)">
-                            <use xlink:href="#g16F61ABDA697970F05F6865E3E6299B1" x="0" fill="#000000"/>
-                            <use xlink:href="#gC300E7C25ABF39BA04343C12CD805860" x="7.706250000000001" fill="#000000"/>
-                            <use xlink:href="#g1D61BD48C97CD9CDE8CEA95E41CFA3C5" x="15.412500000000001" fill="#000000"/>
-                            <use xlink:href="#g73E0563052AE3E715B8FBC06D8D05BBC" x="23.118750000000002" fill="#000000"/>
+                            <use xlink:href="#gEB8F039E3B63D2A72EF43780109FA541" x="0" fill="#000000"/>
+                            <use xlink:href="#g4AE63B432FB13FA8F5965EA49FE49843" x="7.706250000000001" fill="#000000"/>
+                            <use xlink:href="#gC6B62F150F29F9C919CD64D58A0E05DD" x="15.412500000000001" fill="#000000"/>
+                            <use xlink:href="#gB0E6B2FDD1E4433D72B306AB78557EE2" x="23.118750000000002" fill="#000000"/>
+                            <use xlink:href="#g394FF7E9117330C9F478CCF8FA7F5F9" x="30.825000000000003" fill="#000000"/>
+                            <use xlink:href="#g16F61ABDA697970F05F6865E3E6299B1" x="38.53125" fill="#000000"/>
+                            <use xlink:href="#gC300E7C25ABF39BA04343C12CD805860" x="46.2375" fill="#000000"/>
+                            <use xlink:href="#g1D61BD48C97CD9CDE8CEA95E41CFA3C5" x="53.943749999999994" fill="#000000"/>
+                            <use xlink:href="#g73E0563052AE3E715B8FBC06D8D05BBC" x="61.64999999999999" fill="#000000"/>
                         </g>
                     </g>
                 </g>
@@ -3902,6 +3907,9 @@
         </symbol>
         <symbol id="g6C79601635928485EED8517FCDC1BD5B" overflow="visible">
             <path d="M 1.8312501 9.33125 L 6.74375 -1.1875 L 5.55625 -1.1875 L 0.6375 9.33125 L 1.8312501 9.33125 Z "/>
+        </symbol>
+        <symbol id="gEB8F039E3B63D2A72EF43780109FA541" overflow="visible">
+            <path d="M 2.7250001 1.0375 Q 4.31875 1.0375 4.9500003 1.821875 Q 5.58125 2.60625 5.58125 4.65625 Q 5.58125 6.725 4.953125 7.509375 Q 4.3250003 8.29375 2.7250001 8.29375 L 2.125 8.29375 L 2.125 1.0375 L 2.7250001 1.0375 Z M 2.75 9.33125 Q 4.8875003 9.33125 5.9 8.19375 Q 6.9125 7.05625 6.9125 4.65625 Q 6.9125 2.26875 5.9 1.134375 Q 4.8875003 0 2.75 0 L 0.85625 0 L 0.85625 9.33125 L 2.75 9.33125 Z "/>
         </symbol>
         <symbol id="g16F61ABDA697970F05F6865E3E6299B1" overflow="visible">
             <path d="M 0.29375002 9.33125 L 7.4125 9.33125 L 7.4125 8.26875 L 4.49375 8.26875 L 4.49375 0 L 3.2250001 0 L 3.2250001 8.26875 L 0.29375002 8.26875 L 0.29375002 9.33125 Z "/>
