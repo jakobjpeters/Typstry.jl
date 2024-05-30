@@ -10,8 +10,6 @@ julia> import Base: show
 
 julia> import Typstry: context, show_typst
 
-julia> using Base: Docs.Text
-
 julia> using Typstry
 ```
 
@@ -106,7 +104,7 @@ julia> println(TypstString(π; mode = markup))
 
 ### Consider both the Typst source text and rendered document formatting
 
-- A `Text` is documented to "render [its value] as plain text", and therefore corresponds to text in a rendered Typst document
+- A `Docs.Text` is documented to "render [its value] as plain text", and therefore corresponds to text in a rendered Typst document
 - A `TypstString` represents Typst source text, and is printed directly
 
 ```jldoctest 1
