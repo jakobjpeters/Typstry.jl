@@ -1,27 +1,4 @@
 
-# Internals
-
-"""
-    TypstText(::Any)
-
-A wrapper used by [`typst_text`](@ref) to construct a [`TypstString`](@ref) with `print` instead
-of [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref).
-
-# Examples
-```jldoctest
-julia> Typstry.TypstText("a")
-Typstry.TypstText("a")
-
-julia> Typstry.TypstText([1, 2, 3, 4])
-Typstry.TypstText("[1, 2, 3, 4]")
-```
-"""
-struct TypstText
-    text::String
-
-    TypstText(x) = new(string(x))
-end
-
 # `Typstry`
 
 """
@@ -45,7 +22,7 @@ math = 2
     Typst(::T)
 
 A wrapper used to pass values to
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref).
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
 
 ```jldoctest
 julia> Typst(1)
@@ -66,7 +43,7 @@ end
 Convert the value to a Typst formatted string.
 
 Optional Julia settings and Typst parameters are passed to
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref)
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref)
 in an `IOContext`. See also [`show_typst`](@ref) for a list of supported types.
 
 !!! info
@@ -85,11 +62,35 @@ typst"\\\"\\\\\\"a\\\\\\"\\\""
 struct TypstString <: AbstractString
     text::String
 
-    TypstString(x::TypstText; context...) = new(x.text)
-    TypstString(x; context...) = new(sprint(show, typst_mime, Typst(x); context = (context...,)))
+    TypstString(x; context...) =
+        new(sprint(show, typst_mime, maybe_wrap(x); context = (context...,)))
 end
 
 TypstString(x::TypstString; context...) = x
+
+"""
+    TypstText{T}
+    TypstText(::Any)
+
+A wrapper whose [`show_typst`](@ref) method uses `print`.
+
+!!! info
+    This may be used to insert control characters into a [`TypstString`](@ref).
+    Unescaped control characters in `TypstString`s may
+    break formatting in some environments, such as the REPL.
+
+# Examples
+```jldoctest
+julia> TypstText(1)
+TypstText{Int64}(1)
+
+julia> TypstText("a")
+TypstText{String}("a")
+```
+"""
+struct TypstText{T}
+    value::T
+end
 
 """
     @typst_str(s)
@@ -99,13 +100,12 @@ Construct a [`TypstString`](@ref).
 
 Control characters are escaped,
 except double quotation marks and backslashes in the same manner as `@raw_str`.
-Control characters may be inserted using [`typst_text`](@ref).
 Values may be interpolated by calling the `TypstString` constructor,
 except using a backslash instead of the type name.
 
 !!! tip
     Print directly to an `IO` using
-    [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref).
+    [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
 
     See also the performance tip to [Avoid string interpolation for I/O]
     (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
@@ -148,33 +148,6 @@ macro typst_str(s)
 end
 
 # Internals
-
-"""
-    examples
-
-A constant `Vector` of Julia values and their corresponding
-`Type`s implemented for [`show_typst`](@ref).
-"""
-const examples = [
-    [true, 1, Any[1.2, 1 // 2]] => AbstractArray,
-    'a' => AbstractChar,
-    1.2 => AbstractFloat,
-    Any[true 1; 1.2 1 // 2] => AbstractMatrix,
-    "a" => AbstractString,
-    true => Bool,
-    1 + 2im => Complex,
-    π => Irrational,
-    nothing => Nothing,
-    0:2:6 => OrdinalRange{<:Integer, <:Integer},
-    1 // 2 => Rational,
-    r"[a-z]" => Regex,
-    1 => Signed,
-    StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer},
-    text"[\"a\"]" => Text,
-    (true, 1, 1.2, 1 // 2) => Tuple,
-    typst"[\"a\"]" => TypstString,
-    0xff => Unsigned
-]
 
 """
     preamble
@@ -359,6 +332,26 @@ code::Mode = 0
 mode(io) = io[:mode]::Mode
 
 """
+    maybe_wrap(::Any)
+
+Wrap the value in [`Typst`](@ref) unless it is a [`TypstString`](@ref) or [`TypstText`](@ref).
+
+# Examples
+```jldoctest
+julia> Typstry.maybe_wrap(1)
+Typst{Int64}(1)
+
+julia> Typstry.maybe_wrap(TypstString(1))
+typst"1"
+
+julia> Typstry.maybe_wrap(TypstText(1))
+TypstText{Int64}(1)
+```
+"""
+maybe_wrap(x::Union{TypstString, TypstText}) = x
+maybe_wrap(x) = Typst(x)
+
+"""
     parenthesize(io)
 
 Return `io[:parenthesize]::Bool`.
@@ -483,7 +476,7 @@ math::Mode = 2
     context(x)
 
 Provide formatting data for
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst, TypstString})`](@ref).
+[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
 
 Implement this function for a custom type to specify its custom settings and parameters.
 Passing a value wrapped in [`Typst`](@ref) will `merge!` its custom context with defaults,
@@ -566,6 +559,7 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 | `Text`                                                    | `:mode`                                |                                                         |
 | `Typst`                                                   |                                        |                                                         |
 | `TypstString`                                             |                                        |                                                         |
+| `TypstText`                                               |                                        |                                                         |
 
 # Examples
 ```jldoctest
@@ -649,6 +643,7 @@ function show_typst(io, x::Text)
     print_quoted(io, repr(x)) # TODO: remove string allocation
 end
 show_typst(io, x::Typst) = show_typst(io, x.value)
+show_typst(io, x::TypstText) = print(io, x.value)
 function show_typst(io, x::Unsigned)
     code_mode(io)
     show(io, x)
@@ -682,27 +677,6 @@ Expr
 Set
 Symbol
 =#
-
-"""
-    typst_text(::Any)
-
-Construct a [`TypstString`](@ref) using `print` instead of
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Union{Typst,\u00A0TypstString})`](@ref).
-
-!!! warning
-    Unescaped control characters in `TypstString`s may
-    break formatting in some environments, such as the REPL.
-
-# Examples
-```jldoctest
-julia> typst_text("a")
-typst"a"
-
-julia> typst_text([1, 2, 3, 4])
-typst"[1, 2, 3, 4]"
-```
-"""
-typst_text(x) = TypstString(TypstText(x))
 
 # `Base`
 
@@ -827,14 +801,12 @@ function show(io::IO, ts::TypstString)
 end
 
 """
-    show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString})
+    show(::IO, ::MIME"text/typst", ::Typst)
 
 Print the Typst format.
 
 This method provides formatting data to [`show_typst`](@ref)
 specified by a default and custom [`context`](@ref).
-
-See also [`Typst`](@ref) and [`TypstString`](@ref).
 
 # Examples
 ```jldoctest
@@ -848,15 +820,15 @@ julia> show(IOContext(stdout, :mode => code), "text/typst", Typst("a"))
 "\\\"a\\\""
 ```
 """
-function show(io::IOContext, ::MIME"text/typst", t::Union{Typst, TypstString})
+function show(io::IOContext, ::MIME"text/typst", t::Typst)
     for (k, v) in context(t)
         io = IOContext(io, k => get(io, k, v))
     end
 
     show_typst(io, t)
 end
-show(io::IO, m::MIME"text/typst", t::Union{Typst, TypstString}) =
-    show(IOContext(io), m, t)
+show(io::IO, m::MIME"text/typst", t::Typst) = show(IOContext(io), m, t)
+show(io::IO, ::MIME"text/typst", t::Union{TypstString, TypstText}) = show_typst(io, t)
 
 """
     show(::IO, ::Union{
@@ -877,3 +849,33 @@ function show(io::IO, m::Union{
     render(ts; open = false, input = tempname(), output)
     print(io, read(output, String))
 end
+
+# Internals
+
+"""
+    examples
+
+A constant `Vector` of Julia values and their corresponding
+`Type`s implemented for [`show_typst`](@ref).
+"""
+const examples = [
+    [true, 1, Any[1.2, 1 // 2]] => AbstractArray,
+    'a' => AbstractChar,
+    1.2 => AbstractFloat,
+    Any[true 1; 1.2 1 // 2] => AbstractMatrix,
+    "a" => AbstractString,
+    true => Bool,
+    1 + 2im => Complex,
+    π => Irrational,
+    nothing => Nothing,
+    0:2:6 => OrdinalRange{<:Integer, <:Integer},
+    1 // 2 => Rational,
+    r"[a-z]" => Regex,
+    1 => Signed,
+    StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer},
+    text"[\"a\"]" => Text,
+    (true, 1, 1.2, 1 // 2) => Tuple,
+    typst"[\"a\"]" => TypstString,
+    TypstText([1, 2, 3, 4]) => TypstText,
+    0xff => Unsigned
+]

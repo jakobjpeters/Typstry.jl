@@ -9,6 +9,7 @@
     - Format may be specified by implementing a custom `context`
 - Support `show(::IO, ::MIME"application/pdf", ::TypstString)`
 - Formatting options in `TypstString` are now passed as keyword parameters instead of `Pair{Symbol}`s
+- Replace `typst_text` constructor with `TypstText` wrapper
 - `show_typst`
     - Implement `show_typst(x)` which prints to `stdout`
     - Implemented for `AbstractArray`, `Tuple`, `Typst`, and `Unsigned`

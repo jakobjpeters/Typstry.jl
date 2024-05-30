@@ -7,13 +7,13 @@
 Mode
 Typst
 TypstString
+TypstText
 @typst_str
 code
 markup
 math
 context
 show_typst
-typst_text
 ```
 
 ## `Base`
@@ -27,6 +27,6 @@ ncodeunits
 pointer
 repr
 show(::IO, ::TypstString)
-show(::IOContext, ::MIME"text/typst", ::Union{Typst, TypstString})
+show(::IOContext, ::MIME"text/typst", ::Typst)
 show(::IO, ::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"}, ::TypstString)
 ```

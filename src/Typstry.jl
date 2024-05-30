@@ -14,7 +14,7 @@ using Typst_jll: typst
 
 include("strings.jl")
 
-export Mode, Typst, TypstString, @typst_str, code, markup, math, context, show_typst, typst_text
+export Mode, Typst, TypstString, TypstText, @typst_str, code, markup, math, context, show_typst
 
 include("commands.jl")
 

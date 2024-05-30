@@ -53,6 +53,7 @@ open(strings * ".typ"; truncate = true) do file
         if is_vector print(file, "\"[true, 1, Any[1.2, 1//2]]\"")
         elseif v isa StepRangeLen print(file, "\"StepRangeLen(0, 2, 4)\"")
         elseif v isa Text print(file, "\"text\\\"[\\\\\\\"a\\\\\\\"]\\\"\"")
+        elseif v isa TypstText print(file, "\"TypstText([1, 2, 3, 4])\"")
         else show(file, repr(v))
         end
 

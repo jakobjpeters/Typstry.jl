@@ -4,7 +4,6 @@
 ## Strings
 
 ```@docs
-Typstry.TypstText
 Typstry.examples
 Typstry.preamble
 Typstry.typst_mime
@@ -16,6 +15,7 @@ Typstry.format
 Typstry.indent
 Typstry.join_with
 Typstry.math_pad
+Typstry.maybe_wrap
 Typstry.mode
 Typstry.parenthesize
 Typstry.print_parameters
