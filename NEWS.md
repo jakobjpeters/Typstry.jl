@@ -12,7 +12,7 @@
 - Replace `typst_text` constructor with `TypstText` wrapper
 - `show_typst`
     - Implement `show_typst(x)` which prints to `stdout`
-    - Implemented for `AbstractArray`, `Tuple`, `Typst`, and `Unsigned`
+    - Implemented for `AbstractArray`, `Tuple`, `Typst`, `TypstText`, and `Unsigned`
     - `nothing` now corresponds to Typst's `none`
     - `AbtractMatrix` and `AbstractVector` in `code` mode now correspond to a Typst array
     - `OrdinalRange{<:Integer, <:Integer}` and `StepRangeLen{<:Integer, <:Integer, <:Integer}`

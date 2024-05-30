@@ -536,30 +536,37 @@ with the same name as in Typst, except that dashes are replaced with underscores
 For additional information on settings and parameters, see also [`context`](@ref)
 and the [Typst Documentation](https://typst.app/docs/), respectively.
 
+!!! info
+    `...` indicates that the method may call
+    [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref)
+    to format a value which may require additional settings.
+
 !!! warning
     This function's methods are incomplete.
     Please file an issue or create a pull-request for missing methods.
 
-| Type                                                      | Settings                               | Parameters                                              |
-|:----------------------------------------------------------|:---------------------------------------|:--------------------------------------------------------|
-| `AbstractArray`                                           | `:block`, `:depth`, `:indent`, `:mode` | `:delim`, `:gap`                                        |
-| `AbstractChar`                                            | `:mode`                                |                                                         |
-| `AbstractFloat`                                           |                                        |                                                         |
-| `AbstractMatrix`                                          | `:block`, `:depth`, `:indent`, `:mode` | `:augment`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
-| `AbstractString`                                          | `:mode`                                |                                                         |
-| `Bool`                                                    | `:mode`                                |                                                         |
-| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`     |                                                         |
-| `Irrational`                                              | `:mode`                                |                                                         |
-| `Nothing`                                                 | `:mode`                                |                                                         |
-| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                |                                                         |
-| `Rational`                                                | `:block`, `:mode`, `:parenthesize`     |                                                         |
-| `Regex`                                                   | `:mode`                                |                                                         |
-| `Signed`                                                  |                                        |                                                         |
-| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                |                                                         |
-| `Text`                                                    | `:mode`                                |                                                         |
-| `Typst`                                                   |                                        |                                                         |
-| `TypstString`                                             |                                        |                                                         |
-| `TypstText`                                               |                                        |                                                         |
+| Type                                                      | Settings                                    | Parameters                                              |
+|:----------------------------------------------------------|:--------------------------------------------|:--------------------------------------------------------|
+| `AbstractArray`                                           | `:block`, `:depth`, `:indent`, `:mode`, ... | `:delim`, `:gap`                                        |
+| `AbstractChar`                                            | `:mode`                                     |                                                         |
+| `AbstractFloat`                                           |                                             |                                                         |
+| `AbstractMatrix`                                          | `:block`, `:depth`, `:indent`, `:mode`, ... | `:augment`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
+| `AbstractString`                                          | `:mode`                                     |                                                         |
+| `Bool`                                                    | `:mode`                                     |                                                         |
+| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`, ...     |                                                         |
+| `Irrational`                                              | `:mode`, ...                                |                                                         |
+| `Nothing`                                                 | `:mode`                                     |                                                         |
+| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`, ...                                |                                                         |
+| `Rational`                                                | `:block`, `:mode`, `:parenthesize`, ...     |                                                         |
+| `Regex`                                                   | `:mode`                                     |                                                         |
+| `Signed`                                                  |                                             |                                                         |
+| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`, ...                                |                                                         |
+| `Text`                                                    | `:mode`, ...                                |                                                         |
+| `Tuple`                                                   | `:block`, `:depth`, `:indent`, `:mode`, ... | `:delim`, `:gap`                                        |
+| `Typst`                                                   | ...                                         |                                                         |
+| `TypstString`                                             |                                             |                                                         |
+| `TypstText`                                               |                                             |                                                         |
+| `Unsigned`                                                | `:mode`                                     |                                                         |
 
 # Examples
 ```jldoctest
@@ -875,6 +882,7 @@ const examples = [
     StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer},
     text"[\"a\"]" => Text,
     (true, 1, 1.2, 1 // 2) => Tuple,
+    Typst(1) => Typst,
     typst"[\"a\"]" => TypstString,
     TypstText([1, 2, 3, 4]) => TypstText,
     0xff => Unsigned
