@@ -150,7 +150,7 @@ See also [`TypstCommand`](@ref).
 julia> typst`help` == typst`help`
 true
 
-julia> TypstCommand(["help"]) == TypstCommand(["help"]; ignorestatus = true)
+julia> typst`help` == TypstCommand(typst`help`; ignorestatus = true)
 false
 ```
 """
