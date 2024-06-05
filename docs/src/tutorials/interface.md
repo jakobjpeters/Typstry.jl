@@ -32,7 +32,7 @@ julia> show_typst(io, r::Reciprocal) =
                print(io, "#let reciprocal(n) = \$1 / #n\$")
            else
                print(io, "reciprocal(")
-               show_typst(io, round(r.n; digits = io[:digits]::Int))
+               show(io, MIME"text/typst"(), Typst(round(r.n; digits = io[:digits]::Int)))
                print(io, ")")
            end;
 ```
@@ -109,7 +109,7 @@ julia> println(TypstString(π; mode = markup))
 π
 ```
 
-### Consider both the Typst source text and rendered document formatting
+### Consider both the Typst source text and compiled document formatting
 
 - A `Docs.Text` is documented to "render [its value] as plain text", and therefore corresponds to text in a rendered Typst document
 - A `TypstString` represents Typst source text, and is printed directly
@@ -178,9 +178,9 @@ $vec(
 - Related Julia types may not be representable in the same Typst format
 
 ```jldoctest 1
-julia> println(TypstString(1:2:6; mode = code))
-range(1, 6, step: 2)
+julia> println(TypstString(0:2:6; mode = code))
+range(0, 7, step: 2)
 
-julia> println(TypstString(1:2.0:6; mode = code))
-(1.0, 3.0, 5.0)
+julia> println(TypstString(0:2.0:6; mode = code))
+(0.0, 2.0, 4.0, 6.0)
 ```

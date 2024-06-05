@@ -73,6 +73,9 @@ typst`compile input.typ output.pdf`
 
 ### Planned
 
+- Default `auto::Mode`?
+    - Automatically determine the Typst syntactic context
+    - Use a tree-sitter grammar or jll package
 - Implement Typst formatting for more types
     - `Base`
     - Standard Library

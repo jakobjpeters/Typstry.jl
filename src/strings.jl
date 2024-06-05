@@ -874,6 +874,7 @@ A constant `Vector` of Julia values and their corresponding
 `Type`s implemented for [`show_typst`](@ref).
 """
 const examples = [
+    text"[\"a\"]" => Text,
     [true, 1, Any[1.2, 1 // 2]] => AbstractArray,
     'a' => AbstractChar,
     1.2 => AbstractFloat,
@@ -889,7 +890,6 @@ const examples = [
     r"[a-z]" => Regex,
     1 => Signed,
     StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer},
-    text"[\"a\"]" => Text,
     (true, 1, 1.2, 1 // 2) => Tuple,
     Typst(1) => Typst,
     typst"[\"a\"]" => TypstString,
