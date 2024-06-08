@@ -859,7 +859,9 @@ show(io::IO, ::MIME"text/typst", t::Union{TypstString, TypstText}) = show_typst(
     }, ::TypstString)
 
 Print the Portable Document Format (PDF), Portable Network Graphics (PNG),
-or Scalable Vector Graphics (SVG) format using [`render`](@ref).
+or Scalable Vector Graphics (SVG) format.
+
+The `preamble` keyword parameter used by [`render`](@ref) may be specified in an `IOContext`.
 
 !!! note
     Environments, such as Pluto.jl notebooks,
@@ -868,8 +870,10 @@ or Scalable Vector Graphics (SVG) format using [`render`](@ref).
 function show(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
 }, ts::TypstString)
-    output = tempname() * "." * format(m)
-    render(ts; open = false, input = tempname(), output)
+    input = tempname()
+    output = tempname * "." * format(m)
+
+    render(ts; input, output, open = false, preamble = get(io, :preamble, preamble)::String)
     print(io, read(output, String))
 end
 

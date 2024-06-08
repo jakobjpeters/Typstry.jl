@@ -100,7 +100,7 @@ const julia_mono = artifact"JuliaMono"
         input = "input.typ",
         output = "output.pdf",
         open = true,
-        preamble = true,
+        preamble = \"\"\"$preamble\"\"\",
     context...)
 
 Render to a document using
@@ -111,11 +111,6 @@ source text and the `output` is the compiled document.
 The document format is inferred by the file extension of `output`,
 which may be `pdf`, `png`, or `svg`.
 The document may be automatically `open`ed by the default viewer.
-The Typst source text may begin with the following `preamble`:
-
-```typst
-$preamble
-```
 
 # Examples
 ```jldoctest
