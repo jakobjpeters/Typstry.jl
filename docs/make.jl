@@ -1,6 +1,8 @@
 
-using Base: Docs.Text
+using Base: Docs.Text, get_extension
+using Dates: Dates
 using Documenter: HTML, DocMeta.setdocmeta!, deploydocs, makedocs
+using LaTeXStrings: LaTeXStrings
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Typstry
 using Typstry: Typst, enclose, examples, join_with, preamble, typst_mime
@@ -10,6 +12,7 @@ const strings = joinpath(assets, "strings")
 const logo = joinpath(assets, "logo.svg")
 const modes = instances(Mode)
 const width, height = 210, 297
+const modules = [Typstry]
 
 mkpath(assets)
 Drawing(width, height, :svg, logo)
@@ -72,22 +75,24 @@ end
 
 run(TypstCommand(["compile", "--font-path=" * julia_mono, strings * ".typ", strings * ".svg"]))
 
-setdocmeta!(
-    Typstry,
-    :DocTestSetup,
-    :(using Typstry),
-    recursive = true
-)
+setdocmeta!(Typstry, :DocTestSetup, :(using Typstry); recursive = true)
+
+for extension in [:Dates, :LaTeXStrings, :Markdown]
+    _module = get_extension(Typstry, Symbol(extension, :Extension))
+    setdocmeta!(_module, :DocTestSetup, :(using Typstry; using $extension); recursive = true)
+    push!(modules, _module)
+end
 
 makedocs(;
+    modules,
     sitename = "Typstry.jl",
     format = HTML(edit_link = "main"),
-    modules = [Typstry],
     pages = [
         "Home" => "index.md",
         "Getting Started" => "getting_started.md",
         "Tutorials" => ["Interface" => "tutorials/interface.md"],
-        "Manual" => map(page -> uppercasefirst(page) => joinpath("manual", page * ".md"), ["strings", "commands", "internals"])
+        "Manual" => map(page -> uppercasefirst(page) => joinpath("manual", page * ".md"),
+            ["strings", "commands", "extensions", "internals"])
     ]
 )
 

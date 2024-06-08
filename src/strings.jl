@@ -225,9 +225,9 @@ julia> Typstry.depth(IOContext(stdout, :depth => 0))
 depth(io) = io[:depth]::Int
 
 """
-    enclose(f, io, x, left, right = reverse(left); context...)
+    enclose(f, io, x, left, right = reverse(left); kwargs...)
 
-Call `f(io,\u00A0x;\u00A0settings...)` between printing `left` and `right`, respectfully.
+Call `f(io,\u00A0x;\u00A0kwargs...)` between printing `left` and `right`, respectfully.
 
 # Examples
 ```jldoctest
@@ -274,9 +274,9 @@ julia> Typstry.indent(IOContext(stdout, :indent => ' ' ^ 4))
 indent(io) = io[:indent]::String
 
 """
-    join_with(f, io, xs, delimeter; settings...)
+    join_with(f, io, xs, delimeter; kwargs...)
 
-Similar to `join`, except printing with `f(io, x; settings...)`.
+Similar to `join`, except printing with `f(io, x; kwargs...)`.
 
 # Examples
 ```jldoctest
@@ -284,11 +284,11 @@ julia> Typstry.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = 
 -1x, -2x, -3x, -4x
 ```
 """
-function join_with(f, io, xs, delimeter; settings...)
+function join_with(f, io, xs, delimeter; kwargs...)
     _xs = Stateful(xs)
 
     for x in _xs
-        f(io, x; settings...)
+        f(io, x; kwargs...)
         isempty(_xs) || print(io, delimeter)
     end
 end
@@ -412,6 +412,20 @@ show_array(io, x) = enclose(io, x, "(", ")") do io, x
     join_with(_show_typst, io, x, ", ")
     length(x) == 1 && print(io, ",")
 end
+
+"""
+    show_raw(io, x)
+"""
+function show_raw(f, io, x, language)
+    _block = block(io)
+
+    mode(io) == math && print(io, "#")
+    print(io, "```", language, _block ? "\n" : " ")
+    f(io, x)
+    _block && println(io)
+    print(io, "```")
+end
+
 
 """
     show_vector(io, x)
@@ -545,6 +559,8 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 
 | Type                                                      | Settings                                    | Parameters                                              |
 |:----------------------------------------------------------|:--------------------------------------------|:--------------------------------------------------------|
+| `Docs.HTML`                                               | `:block`, `:mode`                           |                                                         |
+| `Docs.Text`                                               | `:mode`, ...                                |                                                         |
 | `AbstractArray`                                           | `:block`, `:depth`, `:indent`, `:mode`, ... | `:delim`, `:gap`                                        |
 | `AbstractChar`                                            | `:mode`                                     |                                                         |
 | `AbstractFloat`                                           |                                             |                                                         |
@@ -561,7 +577,6 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 | `Signed`                                                  |                                             |                                                         |
 | `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`, ...                                |                                                         |
 | `String`                                                  | `:mode`                                     |                                                         |
-| `Docs.Text`                                               | `:mode`, ...                                |                                                         |
 | `Tuple`                                                   | `:block`, `:depth`, `:indent`, `:mode`, ... | `:delim`, `:gap`                                        |
 | `Typst`                                                   | ...                                         |                                                         |
 | `TypstString`                                             |                                             |                                                         |
@@ -620,6 +635,7 @@ show_typst(io, x::Complex) = enclose(io, x, math_pad(io)) do io, x
         end
     end
 end
+show_typst(io, x::HTML) = show_raw((io, x) -> show(io, MIME"text/html"(), x), io, x, "html")
 show_typst(io, x::Irrational) =
     mode(io) == code ? _show_typst(io, Float64(x)) : print(io, x)
 function show_typst(io, ::Nothing)
@@ -682,14 +698,6 @@ show_typst(io, x::Union{
         end
     end :
     show_vector(io, x)
-#=
-AbstractDict
-AbstractIrrational
-AbstractSet
-Enum
-Expr
-Symbol
-=#
 
 # `Base`
 

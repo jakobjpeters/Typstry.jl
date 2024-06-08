@@ -21,6 +21,7 @@ Typstry.parenthesize
 Typstry.print_parameters
 Typstry.print_quoted
 Typstry.show_array
+Typstry.show_raw
 Typstry.show_vector
 Typstry.static_parse
 ```
@@ -31,3 +32,7 @@ Typstry.static_parse
 Typstry.typst_compiler
 Typstry.apply
 ```
+
+## Extensions
+
+### Dates

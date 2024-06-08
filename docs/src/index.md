@@ -78,8 +78,20 @@ typst`compile input.typ output.pdf`
     - Use a tree-sitter grammar or jll package
 - Implement Typst formatting for more types
     - `Base`
+        - `AbstractDict`
+        - `AbstractIrrational`
+        - `AbstractSet`
+        - `Enum`
+        - `Expr`
+        - `Symbol`
     - Standard Library
+        - Dates.jl
+        - LinearAlgebra.jl
+        - Markdown.jl
+            - `MD`
     - Package extensions
+        - LaTeXStrings.jl
+            - `LaTeXString`
 - Support rendering in more environments
     - IJulia.jl
     - Quarto?
