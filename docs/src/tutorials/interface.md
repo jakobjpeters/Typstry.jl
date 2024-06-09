@@ -96,6 +96,7 @@ julia> println(TypstString(r"[a-z]"))
 ### Choose the most semantically rich representation
 
 - This may vary across `Mode`s and domains
+    - Some modes may not have a meaningful representation, and should be formatted into a mode that does
 - Both Julia and Typst support Unicode characters, except unknown variables in Typst's `code` mode
 
 ```jldoctest 1

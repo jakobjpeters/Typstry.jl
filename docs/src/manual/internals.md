@@ -4,7 +4,6 @@
 ## Strings
 
 ```@docs
-Typstry.examples
 Typstry.preamble
 Typstry.typst_mime
 Typstry.block

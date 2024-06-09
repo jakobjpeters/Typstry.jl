@@ -498,7 +498,7 @@ such that the defaults may be overwritten.
 To be compatible with merging contexts and constructing an `IOContext`,
 methods must return an `AbstractDict{Symbol}`.
 
-| Setting         | Default                  | Type           | Description                                                                                                                                                                       |
+| Key             | Default                  | Type           | Description                                                                                                                                                                       |
 |:----------------|:-------------------------|:---------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `:block`        | `false`                  | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                                         |
 | `:depth`        | `0`                      | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                                         |
@@ -538,50 +538,50 @@ show_typst(x) = _show_typst(stdout, x)
 """
     show_typst(io, x)
 
-Print in Typst format with Julia settings and Typst parameters provided provided by an `IOContext`.
+Print in Typst format with Julia settings and Typst parameters provided by an `IOContext`.
 
 Implement this function for a custom type to specify its Typst formatting.
-Settings are used in Julia to format the [`TypstString`](@ref) and have varying types.
-Parameters are passed to a function in the Typst source file and must be a `String`
-with the same name as in Typst, except that dashes are replaced with underscores.
+Settings are used in Julia to format the [`TypstString`](@ref).
+Parameters are passed to a function in the Typst source file and have the same name as in Typst,
+except that dashes are replaced with underscores.
 
 For additional information on settings and parameters, see also [`context`](@ref)
 and the [Typst Documentation](https://typst.app/docs/), respectively.
 
 !!! info
-    `...` indicates that the method may call
+    Some types, particularly containers, may call
     [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref)
-    to format a value, which may require additional settings.
+    to format a value, which may use additional settings and parameters.
 
 !!! warning
     This function's methods are incomplete.
     Please file an issue or create a pull-request for missing methods.
 
-| Type                                                      | Settings                                    | Parameters                                              |
-|:----------------------------------------------------------|:--------------------------------------------|:--------------------------------------------------------|
-| `Docs.HTML`                                               | `:block`, `:mode`                           |                                                         |
-| `Docs.Text`                                               | `:mode`, ...                                |                                                         |
-| `AbstractArray`                                           | `:block`, `:depth`, `:indent`, `:mode`, ... | `:delim`, `:gap`                                        |
-| `AbstractChar`                                            | `:mode`                                     |                                                         |
-| `AbstractFloat`                                           |                                             |                                                         |
-| `AbstractMatrix`                                          | `:block`, `:depth`, `:indent`, `:mode`, ... | `:augment`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
-| `AbstractString`                                          | `:mode`                                     |                                                         |
-| `Bool`                                                    | `:mode`                                     |                                                         |
-| `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`          |                                                         |
-| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`, ...     |                                                         |
-| `Irrational`                                              | `:mode`, ...                                |                                                         |
-| `Nothing`                                                 | `:mode`                                     |                                                         |
-| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`, ...                                |                                                         |
-| `Rational`                                                | `:block`, `:mode`, `:parenthesize`, ...     |                                                         |
-| `Regex`                                                   | `:mode`                                     |                                                         |
-| `Signed`                                                  |                                             |                                                         |
-| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`, ...                                |                                                         |
-| `String`                                                  | `:mode`                                     |                                                         |
-| `Tuple`                                                   | `:block`, `:depth`, `:indent`, `:mode`, ... | `:delim`, `:gap`                                        |
-| `Typst`                                                   | ...                                         |                                                         |
-| `TypstString`                                             |                                             |                                                         |
-| `TypstText`                                               |                                             |                                                         |
-| `Unsigned`                                                | `:mode`                                     |                                                         |
+| Type                                                      | Settings                     | Parameters                                                        |
+|:----------------------------------------------------------|:-----------------------------|:------------------------------------------------------------------|
+| `Docs.HTML`                                               | `:mode`                      | `:block`                                                          |
+| `Docs.Text`                                               | `:mode`                      |                                                                   |
+| `AbstractArray`                                           | `:depth`, `:indent`, `:mode` | `:block`, `:delim`, `:gap`                                        |
+| `AbstractChar`                                            | `:mode`                      |                                                                   |
+| `AbstractFloat`                                           |                              |                                                                   |
+| `AbstractMatrix`                                          | `:depth`, `:indent`, `:mode` | `:augment`, `:block`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
+| `AbstractString`                                          | `:mode`                      |                                                                   |
+| `Bool`                                                    | `:mode`                      |                                                                   |
+| `Complex{Bool}`                                           | `:mode`, `:parenthesize`     | `:block`                                                          |
+| `Complex`                                                 | `:mode`, `:parenthesize`     | `:block`                                                          |
+| `Irrational`                                              | `:mode`                      |                                                                   |
+| `Nothing`                                                 | `:mode`                      |                                                                   |
+| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                      |                                                                   |
+| `Rational`                                                | `:mode`, `:parenthesize`     | `:block`                                                          |
+| `Regex`                                                   | `:mode`                      |                                                                   |
+| `Signed`                                                  |                              |                                                                   |
+| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                      |                                                                   |
+| `String`                                                  | `:mode`                      |                                                                   |
+| `Tuple`                                                   | `:depth`, `:indent`, `:mode` | `:block`, `:delim`, `:gap`                                        |
+| `Typst`                                                   |                              |                                                                   |
+| `TypstString`                                             |                              |                                                                   |
+| `TypstText`                                               |                              |                                                                   |
+| `Unsigned`                                                | `:mode`                      |                                                                   |
 
 # Examples
 ```jldoctest
@@ -876,35 +876,3 @@ function show(io::IO, m::Union{
     render(ts; input, output, open = false, preamble = get(io, :preamble, preamble)::String)
     print(io, read(output, String))
 end
-
-# Internals
-
-"""
-    examples
-
-A constant `Vector` of Julia values and their corresponding
-`Type`s implemented for [`show_typst`](@ref).
-"""
-const examples = [
-    text"[\"a\"]" => Text,
-    [true, 1, Any[1.2, 1 // 2]] => AbstractArray,
-    'a' => AbstractChar,
-    1.2 => AbstractFloat,
-    Any[true 1; 1.2 1 // 2] => AbstractMatrix,
-    "a" => AbstractString,
-    true => Bool,
-    im => Complex{Bool},
-    1 + 2im => Complex,
-    π => Irrational,
-    nothing => Nothing,
-    0:2:6 => OrdinalRange{<:Integer, <:Integer},
-    1 // 2 => Rational,
-    r"[a-z]" => Regex,
-    1 => Signed,
-    StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer},
-    (true, 1, 1.2, 1 // 2) => Tuple,
-    Typst(1) => Typst,
-    typst"[\"a\"]" => TypstString,
-    TypstText([1, 2, 3, 4]) => TypstText,
-    0xff => Unsigned
-]

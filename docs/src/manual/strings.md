@@ -13,7 +13,7 @@ code
 markup
 math
 context
-show_typst
+show_typst(::Any, ::AbstractChar)
 ```
 
 ## `Base`

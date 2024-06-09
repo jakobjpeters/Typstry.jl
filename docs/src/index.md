@@ -11,7 +11,7 @@ Typstry.jl is the interface to convert the computational power of Julia into bea
 
 ### What is Typst?
 
-Typst is an open-source and relatively new typesetting system (written in Rust 🚀),
+Typst is an open-source and relatively new typesetting system (written in Rust 🦀🚀),
 [designed to improve upon the performance and usability of LaTeX](https://typst.app/about).
 See also the Typst [repository](https://github.com/typst/typst) and
 [documentation](https://typst.app/docs) for examples and how to get started.
@@ -73,6 +73,11 @@ typst`compile input.typ output.pdf`
 
 ### Planned
 
+- Support rendering in more environments
+    - IJulia.jl
+    - Quarto?
+    - REPL Unicode?
+    - Other?
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
     - Use a tree-sitter grammar or jll package
@@ -83,20 +88,18 @@ typst`compile input.typ output.pdf`
         - `AbstractSet`
         - `Enum`
         - `Expr`
+        - `Mode`
         - `Symbol`
-    - Standard Library
-        - Dates.jl
-        - LinearAlgebra.jl
-        - Markdown.jl
-            - `MD`
     - Package extensions
-        - LaTeXStrings.jl
-            - `LaTeXString`
-- Support rendering in more environments
-    - IJulia.jl
-    - Quarto?
-    - REPL Unicode?
-    - Other?
+        - Standard Library
+            - Dates.jl
+                - `Period` --> `duration`
+            - LinearAlgebra.jl
+    - A symbolic `TypstFunction`?
+        - May faciliate Julia to Typst transpilation
+        - Examples
+            - `TypstString(TypstFunction(eval, 1 // 2; mode = code)) == typst"eval("(1 / 2)", mode: \"code\")"`
+            - `TypstString(TypstFunction(*, "a", "b"; mode = math)) == typst"(a) (b)"`
 
 ## Related Packages
 
@@ -112,3 +115,4 @@ typst`compile input.typ output.pdf`
 - [Latexify.jl](https://github.com/korsbo/Latexify.jl)
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
+- [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)

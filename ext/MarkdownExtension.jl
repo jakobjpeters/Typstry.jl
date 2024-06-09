@@ -6,6 +6,15 @@ using Base: Iterators.Stateful
 using Markdown: MD
 using Typstry: show_raw
 
+"""
+    show_typst(io, ::Markdown.MD)
+
+Print in Typst format for Markdown.jl.
+
+| Type          | Settings | Parameters |
+|:--------------|:---------|:-----------|
+| `Markdown.MD` | `:mode`  | `:block`   |
+"""
 show_typst(io, x::MD) = show_raw(io, x, "markdown") do io, x
     buffer = IOBuffer()
 
