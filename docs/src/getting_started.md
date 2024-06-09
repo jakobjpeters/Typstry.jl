@@ -65,7 +65,7 @@ This Typst source file was generated from Julia using `show` with the
 
 ```@eval
 using Markdown: parse
-parse("```typst\n" * read("assets/strings.typ", String) * "\n```")
+parse("```typst\n" * read("assets/examples.typ", String) * "\n```")
 ```
 
-![](assets/strings.svg)
+![examples](assets/examples.svg)

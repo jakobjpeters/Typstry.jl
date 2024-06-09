@@ -100,7 +100,9 @@ const julia_mono = artifact"JuliaMono"
         input = "input.typ",
         output = "output.pdf",
         open = true,
-        preamble = \"\"\"$preamble\"\"\",
+        preamble = \"\"\"
+            $(join(split(strip(Typstry.preamble), "\n"), "\n            "))
+        \"\"\",
     context...)
 
 Render to a document using

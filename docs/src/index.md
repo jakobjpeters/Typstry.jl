@@ -18,7 +18,7 @@ See also the Typst [repository](https://github.com/typst/typst) and
 
 ## Installation
 
-```julia
+```julia-repl
 julia> using Pkg: add
 
 julia> add("Typstry")

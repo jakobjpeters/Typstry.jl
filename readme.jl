@@ -6,6 +6,6 @@ write("README.md", "\n" * join((
     read("HEADER.md", String),
     delimiter * replace(
         last(split(read("docs/src/index.md", String), delimiter)),
-        "jldoctest" => "julia"
+        "jldoctest" => "julia-repl"
     )
 ), "\n"))

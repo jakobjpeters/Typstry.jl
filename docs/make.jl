@@ -8,7 +8,7 @@ using Typstry
 using Typstry: Typst, enclose, examples, join_with, preamble, typst_mime
 
 const assets = joinpath(@__DIR__, "src", "assets")
-const strings = joinpath(assets, "strings")
+const _examples = joinpath(assets, "examples.typ")
 const logo = joinpath(assets, "logo.svg")
 const modes = instances(Mode)
 const width, height = 210, 297
@@ -27,7 +27,7 @@ end
 
 finish()
 
-open(strings * ".typ"; truncate = true) do file
+open(_examples; truncate = true) do file
     println(file, "#import table: cell, header\n\n", preamble)
     join_with(print, file, [
         "#show cell: c => align(horizon, box(inset: 8pt,",
@@ -73,7 +73,7 @@ open(strings * ".typ"; truncate = true) do file
     println(file, "\n)")
 end
 
-run(TypstCommand(["compile", "--font-path=" * julia_mono, strings * ".typ", strings * ".svg"]))
+run(TypstCommand(["compile", "--font-path=" * julia_mono, "--format=svg", _examples]))
 
 setdocmeta!(Typstry, :DocTestSetup, :(using Typstry); recursive = true)
 
