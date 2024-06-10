@@ -3,7 +3,8 @@ module DatesExtension
 
 import Typstry: show_typst
 using Dates: Date, Time, DateTime, day, hour, minute, month, second, year
-using Typstry: _show_typst, code_mode, enclose, join_with
+using PrecompileTools: PrecompileTools, @compile_workload
+using Typstry: _show_typst, code_mode, enclose, join_with, workload
 
 # Internals
 
@@ -35,5 +36,15 @@ Print in Typst format for Dates.jl.
 | `DateTime` | `:mode`  |            |
 """
 show_typst(io, x::Union{Date, Time, DateTime}) = show_dates(io, x)
+
+# Internals
+
+const examples = [
+    Date(1) => Date,
+    DateTime(1) => DateTime,
+    Time(0) => Time
+]
+
+@compile_workload workload(examples)
 
 end # module

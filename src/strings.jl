@@ -876,3 +876,34 @@ function show(io::IO, m::Union{
     render(ts; input, output, open = false, preamble = get(io, :preamble, preamble)::String)
     print(io, read(output, String))
 end
+
+"""
+    examples
+
+A constant `Vector` of Julia values and their corresponding
+`Type`s implemented for [`show_typst`](@ref).
+"""
+const examples = [
+    html"<p>a</p>" => Docs.HTML,
+    text"[\"a\"]" => Docs.Text,
+    [true, 1, Any[1.2, 1 // 2]] => AbstractArray,
+    'a' => AbstractChar,
+    1.2 => AbstractFloat,
+    Any[true 1; 1.2 1 // 2] => AbstractMatrix,
+    "a" => AbstractString,
+    true => Bool,
+    im => Complex{Bool},
+    1 + 2im => Complex,
+    π => Irrational,
+    nothing => Nothing,
+    0:2:6 => OrdinalRange{<:Integer, <:Integer},
+    1 // 2 => Rational,
+    r"[a-z]" => Regex,
+    1 => Signed,
+    StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer},
+    (true, 1, 1.2, 1 // 2) => Tuple,
+    Typst(1) => Typst,
+    typst"[\"a\"]" => TypstString,
+    TypstText([1, 2, 3, 4]) => TypstText,
+    0xff => Unsigned
+]

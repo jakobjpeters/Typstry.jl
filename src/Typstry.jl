@@ -20,8 +20,15 @@ include("commands.jl")
 
 export TypstCommand, TypstError, @typst_cmd, julia_mono, render
 
-@compile_workload for (x, _) in examples
+# Internals
+
+"""
+    workload(examples)
+"""
+workload(examples) = for (x, _) in examples
     typst"\(x)"
 end
+
+@compile_workload workload(examples)
 
 end # module

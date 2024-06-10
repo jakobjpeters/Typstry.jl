@@ -9,40 +9,23 @@ using Typstry
 using Typstry: Typst, _show_typst, enclose, join_with, preamble, typst_mime
 
 const assets = joinpath(@__DIR__, "src", "assets")
+const examples = Pair{Any, Type}[]
 const _examples = joinpath(assets, "examples.typ")
 const logo = joinpath(assets, "logo.svg")
 const modes = instances(Mode)
 const width, height = 210, 297
 const modules = [Typstry]
-const examples = [
-    Dates.Date(1) => Dates.Date,
-    Dates.DateTime(1) => Dates.DateTime,
-    Dates.Time(0) => Dates.Time,
-    html"<p>a</p>" => Docs.HTML,
-    text"[\"a\"]" => Docs.Text,
-    L"a" => LaTeXStrings.LaTeXString,
-    md"# A" => Markdown.MD,
-    [true, 1, Any[1.2, 1 // 2]] => AbstractArray,
-    'a' => AbstractChar,
-    1.2 => AbstractFloat,
-    Any[true 1; 1.2 1 // 2] => AbstractMatrix,
-    "a" => AbstractString,
-    true => Bool,
-    im => Complex{Bool},
-    1 + 2im => Complex,
-    π => Irrational,
-    nothing => Nothing,
-    0:2:6 => OrdinalRange{<:Integer, <:Integer},
-    1 // 2 => Rational,
-    r"[a-z]" => Regex,
-    1 => Signed,
-    StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer},
-    (true, 1, 1.2, 1 // 2) => Tuple,
-    Typst(1) => Typst,
-    typst"[\"a\"]" => TypstString,
-    TypstText([1, 2, 3, 4]) => TypstText,
-    0xff => Unsigned
-]
+
+setdocmeta!(Typstry, :DocTestSetup, :(using Typstry); recursive = true)
+
+for extension in [:Dates, :LaTeXStrings, :Markdown]
+    _module = get_extension(Typstry, Symbol(extension, :Extension))
+    setdocmeta!(_module, :DocTestSetup, :(using Typstry; using $extension); recursive = true)
+    push!(modules, _module)
+    append!(examples, _module.examples)
+end
+
+append!(examples, Typstry.examples)
 
 mkpath(assets)
 Drawing(width, height, :svg, logo)
@@ -117,14 +100,6 @@ open(_examples; truncate = true) do file
 end
 
 run(TypstCommand(["compile", "--font-path=" * julia_mono, "--format=svg", _examples]))
-
-setdocmeta!(Typstry, :DocTestSetup, :(using Typstry); recursive = true)
-
-for extension in [:Dates, :LaTeXStrings, :Markdown]
-    _module = get_extension(Typstry, Symbol(extension, :Extension))
-    setdocmeta!(_module, :DocTestSetup, :(using Typstry; using $extension); recursive = true)
-    push!(modules, _module)
-end
 
 makedocs(; modules, sitename = "Typstry.jl", format = HTML(edit_link = "main"), pages = [
     "Home" => "index.md",

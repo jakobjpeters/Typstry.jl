@@ -3,8 +3,11 @@ module MarkdownExtension
 
 import Typstry: show_typst
 using Base: Iterators.Stateful
-using Markdown: MD
-using Typstry: show_raw
+using Markdown: MD, @md_str
+using PrecompileTools: PrecompileTools, @compile_workload
+using Typstry: show_raw, workload
+
+# Strings
 
 """
     show_typst(io, ::Markdown.MD)
@@ -27,5 +30,11 @@ show_typst(io, x::MD) = show_raw(io, x, "markdown") do io, x
         isempty(characters) || print(io, character)
     end
 end
+
+# Internals
+
+const examples = [md"# A" => MD]
+
+@compile_workload workload(examples)
 
 end # module
