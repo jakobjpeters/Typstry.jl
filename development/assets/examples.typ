@@ -16,6 +16,13 @@
         cell(colspan: 3, align: center)[`Mode`],
         `code`, `markup`, `math`
     ),
+    "Dates.Date(1)", `Dates.Date`, [#datetime(year: 1, month: 1, day: 1)], [#datetime(year: 1, month: 1, day: 1)], $#datetime(year: 1, month: 1, day: 1)$,
+    "Dates.DateTime(1)", `Dates.DateTime`, [#datetime(year: 1, month: 1, day: 1, hour: 0, minute: 0, second: 0)], [#datetime(year: 1, month: 1, day: 1, hour: 0, minute: 0, second: 0)], $#datetime(year: 1, month: 1, day: 1, hour: 0, minute: 0, second: 0)$,
+    "Dates.Time(1)", `Dates.Time`, [#datetime(hour: 0, minute: 0, second: 0)], [#datetime(hour: 0, minute: 0, second: 0)], $#datetime(hour: 0, minute: 0, second: 0)$,
+    "L\"a\"", `LaTeXStrings.LaTeXString`, [#```latex $a$```], [```latex $a$```], $#```latex $a$```$,
+    "md\"# a\"", `Markdown.MD`, [#```markdown # A```], [```markdown # A```], $#```markdown # A```$,
+    "html\"<p>a</p>\"", `Docs.HTML`, [#```html <p>a</p>```], [```html <p>a</p>```], $#```html <p>a</p>```$,
+    "text\"[\\\"a\\\"]\"", `Docs.Text`, [#"\"[\\\"a\\\"]\""], ["[\\\"a\\\"]"], $"\"[\\\"a\\\"]\""$,
     "[true, 1, Any[1.2, 1//2]]", `AbstractArray`,
         [#(true, 1, (1.2, 1 / 2))], [$vec(
             "true", 1, vec(
@@ -55,7 +62,6 @@
         )$], $vec(
             0, 2, 4, 6
         )$,
-    "text\"[\\\"a\\\"]\"", `Docs.Text`, [#"\"[\\\"a\\\"]\""], ["[\\\"a\\\"]"], $"\"[\\\"a\\\"]\""$,
     "(true, 1, 1.2, 1//2)", `Tuple`, [#(true, 1, 1.2, 1 / 2)], [$vec(
             "true", 1, 1.2, 1 / 2
         )$], $vec(
