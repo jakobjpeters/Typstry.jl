@@ -886,7 +886,7 @@ A constant `Vector` of Julia values and their corresponding
 const examples = [
     html"<p>a</p>" => Docs.HTML,
     text"[\"a\"]" => Docs.Text,
-    [true, 1, Any[1.2, 1 // 2]] => AbstractArray,
+    Any[true, 1, 1.2, 1 // 2] => AbstractArray,
     'a' => AbstractChar,
     1.2 => AbstractFloat,
     Any[true 1; 1.2 1 // 2] => AbstractMatrix,

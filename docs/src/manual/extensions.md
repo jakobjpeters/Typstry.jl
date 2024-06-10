@@ -1,5 +1,5 @@
 
-# Extensions
+# [Extensions](@id extensions_extensions)
 
 ## Dates.jl
 

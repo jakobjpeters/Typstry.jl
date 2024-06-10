@@ -56,16 +56,12 @@ julia> run(typst`compile input.typ output.pdf`);
 
 ## Examples
 
-This Typst source file was generated from Julia using `show` with the
-`text/typst` MIME type and compiled using a `TypstCommand`.
+These Typst documents were generated from Julia using `show` with
+the `text/typst` MIME type and compiled using a `TypstCommand`.
+Each row corresponds to a method of [`show_typst`](@ref).
+Sequential documents correspond to package [Extensions](@ref extensions_extensions).
 
-!!! note
-    Although many of the values are rendered similarly across modes,
-    the generated Typst source code may differ between them.
-
-```@eval
-using Markdown: parse
-parse("```typst\n" * read("assets/examples.typ", String) * "\n```")
-```
-
-![examples](assets/examples.svg)
+![Typstry.jl examples](assets/Typstry_examples.svg)
+![Dates.jl examples](assets/Dates_examples.svg)
+![LaTeXStrings.jl examples](assets/LaTeXStrings_examples.svg)
+![Markdown.jl examples](assets/Markdown_examples.svg)
