@@ -12,3 +12,7 @@
 ### Commands
 
 - `render` now supports a custom `preamble`
+
+## Bugs
+
+- `@typst_str` no longer errors during interpolation when `TypstString` isn't loaded

@@ -135,12 +135,13 @@ macro typst_str(s)
     last = lastindex(s)
 
     while (regex_match = match(r"(?<!\\)\\\(", s, current)) !== nothing
+        interpolation = :($Typstry.TypstString())
         current = prevind(s, regex_match.offset)
-        start = current + 2
+        start = current + 1
         previous <= current && push!(args, s[previous:current])
-        current = static_parse(s, start; filename, greedy = false)[2]
-        previous = current
-        push!(args, esc(static_parse("TypstString" * s[start: current - 1]; filename)))
+        previous = current = static_parse(s, start + 1; filename, greedy = false)[2]
+        append!(interpolation.args, static_parse(s[start:current - 1]; filename).args[2:end])
+        push!(args, esc(interpolation))
     end
 
     previous <= last && push!(args, s[previous:last])
