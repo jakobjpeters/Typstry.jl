@@ -11,6 +11,7 @@ Typstry.workload
 Typstry.examples
 Typstry.preamble
 Typstry.typst_mime
+Typstry.backticks
 Typstry.block
 Typstry.code_mode
 Typstry.depth

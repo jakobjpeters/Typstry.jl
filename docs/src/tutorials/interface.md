@@ -134,12 +134,12 @@ range(1, 5)
 
 julia> println(TypstString(1:4; mode = math))
 vec(
-    1, 2, 3, 4
+  1, 2, 3, 4
 )
 
 julia> println(TypstString(1:4; mode = markup))
 $vec(
-    1, 2, 3, 4
+  1, 2, 3, 4
 )$
 ```
 
@@ -168,9 +168,9 @@ $1 / 2$
 ```jldoctest 1
 julia> println(TypstString([true, 1, Any[1.2, 1 // 2]]))
 $vec(
-    "true", 1, vec(
-        1.2, 1 / 2
-    )
+  "true", 1, vec(
+    1.2, 1 / 2
+  )
 )$
 ```
 

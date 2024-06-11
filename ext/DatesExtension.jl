@@ -4,18 +4,18 @@ module DatesExtension
 import Typstry: show_typst
 using Dates: Date, Time, DateTime, day, hour, minute, month, second, year
 using PrecompileTools: PrecompileTools, @compile_workload
-using Typstry: _show_typst, code_mode, enclose, join_with, workload
+using Typstry: TypstString, code, code_mode, depth, indent, print_parameters, workload
 
 # Internals
 
 function show_date_time(io, x, fs...)
+    parameters = map(Symbol, fs)
+
     code_mode(io)
-    enclose((io, x; fs) -> begin
-        join_with((io, f; x) -> begin
-            print(io, f, ": ")
-            _show_typst(io, f(x))
-        end, io, fs, ", "; x)
-    end, io, x, "datetime(", ")"; fs)
+    print_parameters(IOContext(io, map(Pair, parameters,
+        map(f -> TypstString(f(x); mode = code), fs)
+    )...), "datetime", parameters, false)
+    print(io, indent(io) ^ depth(io), ")")
 end
 
 show_dates(io, x::Date) = show_date_time(io, x, year, month, day)
@@ -29,11 +29,11 @@ show_dates(io, x::DateTime) = show_date_time(io, x, year, month, day, hour, minu
 
 Print in Typst format for Dates.jl.
 
-| Type       | Settings | Parameters |
-|:-----------|:---------|:-----------|
-| `Date`     | `:mode`  |            |
-| `Time`     | `:mode`  |            |
-| `DateTime` | `:mode`  |            |
+| Type       | Settings           | Parameters |
+|:-----------|:-------------------|:-----------|
+| `Date`     | `:mode`, `:indent` |            |
+| `Time`     | `:mode`, `:indent` |            |
+| `DateTime` | `:mode`, `:indent` |            |
 """
 show_typst(io, x::Union{Date, Time, DateTime}) = show_dates(io, x)
 

@@ -34,11 +34,11 @@ julia> show_typst(IOContext(stdout, :mode => code), 'a')
 
 julia> show(stdout, "text/typst", Typst([true 1; 1.0 [Any[true 1; 1.0 nothing]]]))
 $mat(
+  "true", 1;
+  1.0, mat(
     "true", 1;
-    1.0, mat(
-        "true", 1;
-        1.0, #none
-    )
+    1.0, #none
+  )
 )$
 
 julia> TypstString(1 // 2; block = true)

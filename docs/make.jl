@@ -5,8 +5,8 @@ using Documenter: Documenter, DocMeta.setdocmeta!, deploydocs, makedocs
 using LaTeXStrings: LaTeXStrings, LaTeXString, @L_str
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Markdown: Markdown, MD, @md_str
+using Typstry: _show_typst, enclose, join_with, preamble, typst_mime
 using Typstry
-using Typstry: Typst, _show_typst, enclose, join_with, preamble, typst_mime
 
 const assets = joinpath(@__DIR__, "src", "assets")
 const examples = Vector{Pair{Any, Type}}[]
@@ -75,10 +75,7 @@ for (package, examples) in append!([("Typstry", Typstry.examples)], zip(extensio
 
     open(path; truncate = true) do file
         println(file, "#import \"template.typ\": f, template\n\n#show: document => template(document)\n\n= ", package, ".jl\n\n#f((")
-        join_with(file, examples, ",\n") do file, example
-            v, t = example
-            is_vector = v isa Vector
-
+        join_with(file, examples, ",\n") do file, (v, t)
             print(file, "    ")
             show(file,
                 if v isa Date "Date(1)"
