@@ -1,6 +1,6 @@
 
 using Base: Docs.HTML, Docs.Text, get_extension
-using Dates: Dates, Date, DateTime, Time
+using Dates: Dates, Date, DateTime, Day, Hour, Minute, Second, Time, Week
 using Documenter: Documenter, DocMeta.setdocmeta!, deploydocs, makedocs
 using LaTeXStrings: LaTeXStrings, LaTeXString, @L_str
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue

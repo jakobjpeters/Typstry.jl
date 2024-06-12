@@ -12,7 +12,7 @@
 - Typst parameters are now printed on their own lines using the `indent` and `depth` settings
 - `show_typst`
     - An `AbstractString` is no longer quoted and escaped in `code` and `math` mode
-    - Implemented for `Dates.Date`, `Dates.DateTime`, `Dates.Time`, `Docs.HTML`, `LaTeXStrings.LaTeXString`, `Markdown.MD`, and `VersionNumber`
+    - Implemented for `Dates.Date`, `Dates.DateTime`, `Dates.Day`, `Dates.Hour`, `Dates.Minute`, `Dates.Second`, `Dates.Time`, `Dates.Week`, `Docs.HTML`, `LaTeXStrings.LaTeXString`, `Markdown.MD`, and `VersionNumber`
 - The `show` methods for `TypstString` with a `application/pdf`, `image/png`, and `image/svg+xml` MIME types now support a custom `preamble`
 
 ### Commands

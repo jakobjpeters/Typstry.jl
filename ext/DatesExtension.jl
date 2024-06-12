@@ -2,47 +2,73 @@
 module DatesExtension
 
 import Typstry: show_typst
-using Dates: Date, Time, DateTime, day, hour, minute, month, second, year
+using Dates:
+    Date, DateTime, Day, Hour, Minute, Second, Time, Week,
+    day, hour, minute, month, second, year
 using PrecompileTools: PrecompileTools, @compile_workload
-using Typstry: TypstString, code, code_mode, depth, indent, print_parameters, workload
+using Typstry: TypstString, TypstText, code, code_mode, depth, indent, print_parameters, workload
 
 # Internals
 
-function show_date_time(io, x, fs...)
-    parameters = map(Symbol, fs)
+date_time(::Date) = year, month, day
+date_time(::Time) = hour, minute, second
+date_time(::DateTime) = year, month, day, hour, minute, second
 
-    code_mode(io)
-    print_parameters(IOContext(io, map(Pair, parameters,
-        map(f -> TypstString(f(x); mode = code), fs)
-    )...), "datetime", parameters, false)
-    print(io, indent(io) ^ depth(io), ")")
+duration(::Day) = :days
+duration(::Hour) = :hours
+duration(::Minute) = :minutes
+duration(::Second) = :seconds
+duration(::Week) = :weeks
+
+function dates(x::Union{Date, DateTime, Time})
+    fs = date_time(x)
+    "datetime", map(Symbol, fs), map(f -> f(x), fs)
 end
-
-show_dates(io, x::Date) = show_date_time(io, x, year, month, day)
-show_dates(io, x::Time) = show_date_time(io, x, hour, minute, second)
-show_dates(io, x::DateTime) = show_date_time(io, x, year, month, day, hour, minute, second)
+dates(x::Union{Day, Hour, Minute, Second, Week}) =
+    "duration", (duration(x),), (TypstText(first(split(string(x)))),)
 
 # Strings
 
 """
-    show_typst(io, ::Union{Date, Time, DateTime})
+    show_typst(io, ::Union{
+        Date, DateTime, Day, Hour, Minute, Second, Time, Week
+    })
 
 Print in Typst format for Dates.jl.
 
 | Type       | Settings           | Parameters |
 |:-----------|:-------------------|:-----------|
 | `Date`     | `:mode`, `:indent` |            |
-| `Time`     | `:mode`, `:indent` |            |
 | `DateTime` | `:mode`, `:indent` |            |
+| `Day`      | `:mode`, `:indent` |            |
+| `Hour`     |                    |            |
+| `Minute`   |                    |            |
+| `Second`   |                    |            |
+| `Time`     | `:mode`, `:indent` |            |
+| `Week`     |                    |            |
 """
-show_typst(io, x::Union{Date, Time, DateTime}) = show_dates(io, x)
+function show_typst(io, x::Union{
+    Date, DateTime, Day, Hour, Minute, Second, Time, Week
+})
+    f, keys, values = dates(x)
+    _values = map(value -> TypstString(value; mode = code), values)
+
+    code_mode(io)
+    print_parameters(IOContext(io, map(Pair, keys, _values)...), f, keys, false)
+    print(io, indent(io) ^ depth(io), ")")
+end
 
 # Internals
 
 const examples = [
     Date(1) => Date,
     DateTime(1) => DateTime,
-    Time(0) => Time
+    Day(1) => Day,
+    Hour(1) => Hour,
+    Minute(1) => Minute,
+    Second(1) => Second,
+    Time(0) => Time,
+    Week(1) => Week
 ]
 
 @compile_workload workload(examples)
