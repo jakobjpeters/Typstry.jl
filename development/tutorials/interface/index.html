@@ -5,7 +5,7 @@ julia&gt; import Typstry: context, show_typst
 
 julia&gt; using Typstry</code></pre><h2 id="Implementation"><a class="docs-heading-anchor" href="#Implementation">Implementation</a><a id="Implementation-1"></a><a class="docs-heading-anchor-permalink" href="#Implementation" title="Permalink"></a></h2><p>Consider this custom type.</p><pre><code class="language-julia-repl hljs">julia&gt; struct Reciprocal{N &lt;: Number}
            n::N
-       end</code></pre><p>Implement a <a href="../../manual/extensions/#Typstry.show_typst-Tuple{Any, Union{Dates.Date, Dates.DateTime, Dates.Time}}"><code>show_typst</code></a> method to specify its Typst formatting. Remember to <a href="https://docs.julialang.org/en/v1/manual/performance-tips/#Annotate-values-taken-from-untyped-locations">Annotate values taken from untyped locations</a>.</p><pre><code class="language-julia-repl hljs">julia&gt; show_typst(io, r::Reciprocal) =
+       end</code></pre><p>Implement a <a href="../../manual/extensions/#Typstry.show_typst-Tuple{Any, Union{Date, DateTime, Time}}"><code>show_typst</code></a> method to specify its Typst formatting. Remember to <a href="https://docs.julialang.org/en/v1/manual/performance-tips/#Annotate-values-taken-from-untyped-locations">Annotate values taken from untyped locations</a>.</p><pre><code class="language-julia-repl hljs">julia&gt; show_typst(io, r::Reciprocal) =
            if io[:mode]::Mode == markup
                print(io, &quot;#let reciprocal(n) = \$1 / #n\$&quot;)
            else
@@ -44,12 +44,12 @@ range(1, 5)
 
 julia&gt; println(TypstString(1:4; mode = math))
 vec(
-    1, 2, 3, 4
+  1, 2, 3, 4
 )
 
 julia&gt; println(TypstString(1:4; mode = markup))
 $vec(
-    1, 2, 3, 4
+  1, 2, 3, 4
 )$</code></pre><h3 id="Test-for-edge-cases"><a class="docs-heading-anchor" href="#Test-for-edge-cases">Test for edge cases</a><a id="Test-for-edge-cases-1"></a><a class="docs-heading-anchor-permalink" href="#Test-for-edge-cases" title="Permalink"></a></h3><ul><li><code>#1 / 2</code> is valid Typst source text, but is parsed partially in <code>code</code> mode as <code>(#1) / 2</code></li><li><code>1 / 2</code> may be ambiguous in a <code>math</code> mode expression</li><li><code>$1 / 2$</code> is not ambiguous in <code>markup</code> mode</li></ul><pre><code class="language-julia-repl hljs">julia&gt; println(TypstString(1 // 2; mode = code))
 (1 / 2)
 
@@ -59,11 +59,11 @@ julia&gt; println(TypstString(1 // 2; mode = math))
 julia&gt; println(TypstString(1 // 2; mode = markup))
 $1 / 2$</code></pre><h3 id="Format-values-in-containers-using-show-with-the-text/typst-MIME-type"><a class="docs-heading-anchor" href="#Format-values-in-containers-using-show-with-the-text/typst-MIME-type">Format values in containers using <code>show</code> with the <code>text/typst</code> MIME type</a><a id="Format-values-in-containers-using-show-with-the-text/typst-MIME-type-1"></a><a class="docs-heading-anchor-permalink" href="#Format-values-in-containers-using-show-with-the-text/typst-MIME-type" title="Permalink"></a></h3><ul><li>Values may require some of their <code>context</code></li><li>The <code>AbstractVector</code> method changes its <code>Mode</code> to <code>math</code> and increments its <code>depth</code></li></ul><pre><code class="language-julia-repl hljs">julia&gt; println(TypstString([true, 1, Any[1.2, 1 // 2]]))
 $vec(
-    &quot;true&quot;, 1, vec(
-        1.2, 1 / 2
-    )
+  &quot;true&quot;, 1, vec(
+    1.2, 1 / 2
+  )
 )$</code></pre><h3 id="Check-parametric-and-abstract-types"><a class="docs-heading-anchor" href="#Check-parametric-and-abstract-types">Check parametric and abstract types</a><a id="Check-parametric-and-abstract-types-1"></a><a class="docs-heading-anchor-permalink" href="#Check-parametric-and-abstract-types" title="Permalink"></a></h3><ul><li>Related Julia types may not be representable in the same Typst format</li></ul><pre><code class="language-julia-repl hljs">julia&gt; println(TypstString(0:2:6; mode = code))
 range(0, 7, step: 2)
 
 julia&gt; println(TypstString(0:2.0:6; mode = code))
-(0.0, 2.0, 4.0, 6.0)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../getting_started/">« Getting Started</a><a class="docs-footer-nextpage" href="../../manual/strings/">Strings »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Monday 10 June 2024 16:24">Monday 10 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+(0.0, 2.0, 4.0, 6.0)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../getting_started/">« Getting Started</a><a class="docs-footer-nextpage" href="../../manual/strings/">Strings »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Wednesday 12 June 2024 12:17">Wednesday 12 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
