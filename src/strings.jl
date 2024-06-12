@@ -511,7 +511,7 @@ context(x::Typst) = merge!(Dict(
     :mode => markup,
     :parenthesize => true
 ), context(x.value))
-context(x) = Dict{Symbol, Union{}}()
+context(::Any) = Dict{Symbol, Union{}}()
 
 _show_typst(io, x) = show(io, typst_mime, Typst(x))
 
@@ -581,6 +581,7 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 | `TypstString`                                             |                                        |                                                        |
 | `TypstText`                                               |                                        |                                                        |
 | `Unsigned`                                                | `:mode`                                |                                                        |
+| `VersionNumber`                                           | `:mode`                                |                                                        |
 ```
 """
 show_typst(io, x::AbstractChar) = mode(io) == code ?
@@ -676,6 +677,10 @@ show_typst(io, x::TypstText) = print(io, x.value)
 function show_typst(io, x::Unsigned)
     code_mode(io)
     show(io, x)
+end
+function show_typst(io, x::VersionNumber)
+    code_mode(io)
+    enclose((io, x) -> join_with(print, io, eachsplit(string(x), "."), ", "), io, x, "version(", ")")
 end
 show_typst(io, x::Union{AbstractArray, Tuple}) =
     mode(io) == code ? show_array(io, x) : show_vector(io, x)
@@ -903,7 +908,8 @@ const examples = [
     Typst(1) => Typst,
     typst"[\"a\"]" => TypstString,
     TypstText([1, 2, 3, 4]) => TypstText,
-    0xff => Unsigned
+    0xff => Unsigned,
+    v"1.2.3" => VersionNumber
 ]
 
 """
