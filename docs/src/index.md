@@ -116,3 +116,4 @@ typst`compile input.typ output.pdf`
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
+- [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
