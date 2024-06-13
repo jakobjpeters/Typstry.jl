@@ -3,7 +3,7 @@ module LaTeXStringsExtension
 
 import Typstry: show_typst
 using LaTeXStrings: LaTeXString, @L_str
-using PrecompileTools: PrecompileTools, @compile_workload
+using PrecompileTools: @compile_workload
 using Typstry: show_raw, workload
 
 # Strings
