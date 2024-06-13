@@ -24,8 +24,14 @@ function dates(x::Union{Date, DateTime, Time})
     fs = date_time(x)
     "datetime", map(Symbol, fs), map(f -> f(x), fs)
 end
-dates(x::Union{Day, Hour, Minute, Second, Week}) =
-    "duration", (duration(x),), (TypstText(first(split(string(x)))),)
+function dates(x::Union{Day, Hour, Minute, Second, Week})
+    buffer = IOBuffer()
+
+    print(buffer, x)
+    seekstart(buffer)
+
+    "duration", (duration(x),), (TypstText(readuntil(buffer, " ")),)
+end
 
 # Strings
 
@@ -41,11 +47,11 @@ Print in Typst format for Dates.jl.
 | `Date`     | `:mode`, `:indent` |            |
 | `DateTime` | `:mode`, `:indent` |            |
 | `Day`      | `:mode`, `:indent` |            |
-| `Hour`     |                    |            |
-| `Minute`   |                    |            |
-| `Second`   |                    |            |
+| `Hour`     | `:mode`, `:indent` |            |
+| `Minute`   | `:mode`, `:indent` |            |
+| `Second`   | `:mode`, `:indent` |            |
 | `Time`     | `:mode`, `:indent` |            |
-| `Week`     |                    |            |
+| `Week`     | `:mode`, `:indent` |            |
 """
 function show_typst(io, x::Union{
     Date, DateTime, Day, Hour, Minute, Second, Time, Week

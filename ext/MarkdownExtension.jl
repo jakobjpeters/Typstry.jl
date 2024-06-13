@@ -24,11 +24,7 @@ show_typst(io, x::MD) = show_raw(io, x, "markdown") do io, x
     print(buffer, x)
     seekstart(buffer)
 
-    characters = Stateful(readeach(buffer, Char))
-
-    for character in characters
-        isempty(characters) || print(io, character)
-    end
+    print(io, read(buffer, String)[begin:end - 1])
 end
 
 # Internals

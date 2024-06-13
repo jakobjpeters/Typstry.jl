@@ -84,7 +84,7 @@ so there may be multiple meaningful formats to choose from.
 
 ```jldoctest 1
 julia> println(TypstString(1))
-1
+#1
 
 julia> println(TypstString(nothing))
 #none
@@ -117,7 +117,7 @@ julia> println(TypstString(π; mode = markup))
 
 ```jldoctest 1
 julia> println(TypstString(text"[\"a\"]"))
-"[\\\"a\\\"]"
+#"[\"a\"]"
 
 julia> println(TypstString(typst"[\"a\"]"))
 ["a"]

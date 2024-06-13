@@ -24,7 +24,6 @@ Typstry.maybe_wrap
 Typstry.mode
 Typstry.parenthesize
 Typstry.print_parameters
-Typstry.print_quoted
 Typstry.show_array
 Typstry.show_raw
 Typstry.show_vector

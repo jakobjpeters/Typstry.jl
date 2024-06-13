@@ -53,7 +53,7 @@ in an `IOContext`. See also [`show_typst`](@ref) for a list of supported types.
 # Examples
 ```jldoctest
 julia> TypstString(1)
-typst"1"
+typst"#1"
 
 julia> TypstString(1 + 2im; mode = math)
 typst"(1 + 2i)"
@@ -114,10 +114,10 @@ except using a backslash instead of the type name.
 ```jldoctest
 julia> x = 1;
 
-julia> typst"\$ \\(x) / \\(x + 1) \$"
+julia> typst"\$ \\(x; mode = math) / \\(x + 1; mode = math) \$"
 typst"\$ 1 / 2 \$"
 
-julia> typst"\\(x // 2)"
+julia> typst"\\(x//2)"
 typst"\$1 / 2\$"
 
 julia> typst"\\(x // 2; mode = math)"
@@ -340,7 +340,7 @@ julia> Typstry.maybe_wrap(1)
 Typst{Int64}(1)
 
 julia> Typstry.maybe_wrap(TypstString(1))
-typst"1"
+typst"#1"
 
 julia> Typstry.maybe_wrap(TypstText(1))
 TypstText{Int64}(1)
@@ -388,20 +388,6 @@ function print_parameters(io, f, keys, final)
         println(io)
     end
 end
-
-"""
-    print_quoted(io, s)
-
-Print the string [`enclose`](@ref Typstry.enclose)d in double
-quotation marks and with interior double quotations marks escaped.
-
-# Examples
-```jldoctest
-julia> Typstry.print_quoted(stdout, TypstString("a"))
-"\\\"a\\\""
-```
-"""
-print_quoted(io, s) = enclose(escape_raw_string, io, s, "\"")
 
 """
     show_array(io, x)
@@ -564,7 +550,7 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 | `AbstractChar`                                            | `:mode`                                |                                                        |
 | `AbstractFloat`                                           | `:mode`                                |                                                        |
 | `AbstractMatrix`                                          | `:block`, `:depth`, `:indent`, `:mode` | `:augment`, :column_gap`, `:delim`, `:gap`, `:row_gap` |
-| `AbstractString`                                          |                                        |                                                        |
+| `AbstractString`                                          | `:mode`                                |                                                        |
 | `Bool`                                                    | `:mode`                                |                                                        |
 | `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`     |                                                        |
 | `Complex`                                                 | `:block`, `:mode`, `:parenthesize`     |                                                        |
@@ -573,20 +559,18 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 | `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                |                                                        |
 | `Rational`                                                | `:block`, `:mode`, `:parenthesize`     |                                                        |
 | `Regex`                                                   | `:mode`                                |                                                        |
-| `Signed`                                                  |                                        |                                                        |
+| `Signed`                                                  | `:mode`                                |                                                        |
 | `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                |                                                        |
 | `String`                                                  | `:mode`                                |                                                        |
 | `Tuple`                                                   | `:block`, `:depth`, `:indent`, `:mode` | `:delim`, `:gap`                                       |
 | `Typst`                                                   |                                        |                                                        |
 | `TypstString`                                             |                                        |                                                        |
-| `TypstText`                                               |                                        |                                                        |
+| `TypstText`                                               | `:mode`                                |                                                        |
 | `Unsigned`                                                | `:mode`                                |                                                        |
 | `VersionNumber`                                           | `:mode`                                |                                                        |
 ```
 """
-show_typst(io, x::AbstractChar) = mode(io) == code ?
-    enclose(show, io, x, "\"") :
-    show(io, x)
+show_typst(io, x::AbstractChar) = show_typst(io, string(x))
 show_typst(io, x::AbstractFloat) =
     if isinf(x)
         code_mode(io)
@@ -608,7 +592,10 @@ show_typst(io, x::AbstractMatrix) = mode(io) == code ?
         end, IOContext(io, :depth => _depth, :mode => math), eachrow(x), ";\n"; indent)
         print(io, "\n", indent ^ depth, ")")
     end, IOContext(io, :parenthesize => false), x, math_pad(io); indent = indent(io), depth = depth(io))
-show_typst(io, x::AbstractString) = show(io, x)
+function show_typst(io, x::AbstractString)
+    mode(io) == markup && print(io, "#")
+    enclose((io, x) -> escape_string(io, x, "\""), io, x, "\"")
+end
 function show_typst(io, x::Bool)
     _mode = mode(io)
 
@@ -637,8 +624,13 @@ show_typst(io, x::Complex) = enclose(io, x, math_pad(io)) do io, x
     end
 end
 show_typst(io, x::HTML) = show_raw((io, x) -> show(io, MIME"text/html"(), x), io, x, "html")
-show_typst(io, x::Irrational) =
-    mode(io) == code ? _show_typst(io, Float64(x)) : print(io, x)
+function show_typst(io, x::Irrational)
+    _mode = mode(io)
+
+    if _mode == code _show_typst(io, Float64(x))
+    else print(io, x)
+    end
+end
 function show_typst(io, ::Nothing)
     code_mode(io)
     print(io, "none")
@@ -663,28 +655,27 @@ function show_typst(io, x::Regex)
         print(buffer, x)
         seek(buffer, 1)
 
-        for c in readeach(buffer, Char)
-            print(io, c)
-        end
+        print(io, read(buffer, String))
     end
 end
-function show_typst(io, x::Text) # TODO: remove allocations
-    s = string(x)
-    mode(io) == markup ? show(io, escape_string(s, "\"\$")) : print_quoted(io, repr(s))
+function show_typst(io, x::Signed)
+    mode(io) == markup && print(io, "#")
+    show(io, x)
 end
+show_typst(io, x::Text) = _show_typst(io, string(x))
 show_typst(io, x::Typst) = show_typst(io, x.value)
+show_typst(io, x::TypstString) = print(io, x)
 show_typst(io, x::TypstText) = print(io, x.value)
 function show_typst(io, x::Unsigned)
     code_mode(io)
     show(io, x)
 end
-function show_typst(io, x::VersionNumber)
+function show_typst(io, x::VersionNumber) # TODO: remove allocation
     code_mode(io)
     enclose((io, x) -> join_with(print, io, eachsplit(string(x), "."), ", "), io, x, "version(", ")")
 end
 show_typst(io, x::Union{AbstractArray, Tuple}) =
     mode(io) == code ? show_array(io, x) : show_vector(io, x)
-show_typst(io, x::Union{Signed, TypstString}) = print(io, x)
 show_typst(io, x::Union{
     OrdinalRange{<:Integer, <:Integer},
     StepRangeLen{<:Integer, <:Integer, <:Integer}
@@ -695,12 +686,12 @@ show_typst(io, x::Union{
         _show_typst(io, first(x))
         print(io, ", ")
         _show_typst(io, last(x) + 1)
+
         if _step != 1
             print(io, ", step: ")
             _show_typst(io, _step)
         end
-    end :
-    show_vector(io, x)
+    end : show_vector(io, x)
 
 # `Base`
 
@@ -821,7 +812,7 @@ typst"a"
 """
 function show(io::IO, ts::TypstString)
     print(io, "typst")
-    print_quoted(io, ts.text)
+    enclose(escape_raw_string, io, ts.text, "\"")
 end
 
 """
@@ -840,10 +831,10 @@ julia> show(stdout, "text/typst", typst"a")
 a
 
 julia> show(stdout, "text/typst", Typst("a"))
-"a"
+#"a"
 
-julia> show(IOContext(stdout, :mode => code), "text/typst", Typst(Text("a")))
-"\\\"a\\\""
+julia> show(stdout, "text/typst", Typst(Text("a")))
+#"a"
 ```
 """
 show(io::IO, m::MIME"text/typst", t::Typst) = show(IOContext(io), m, t)

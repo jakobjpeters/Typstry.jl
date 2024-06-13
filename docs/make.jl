@@ -40,7 +40,7 @@ end
 finish()
 
 open(template; truncate = true) do file
-    println(file, "#import table: cell, header\n\n#let template(document) = {")
+    println(file, "\n#import table: cell, header\n\n#let template(document) = {")
 
     for x in split(preamble, "\n")
         println(file, "    ", x[2:end])
@@ -49,8 +49,13 @@ open(template; truncate = true) do file
     join_with(print, file, [
         "    show cell: c => align(horizon, box(inset: 8pt,",
         "    if c.y < 2 { strong(c) }",
-        "    else if c.x == 0 { raw(c.body.text, lang: \"julia\") }",
-        "    else { c }",
+        "    else {",
+        "        let x = c.x",
+        "        if x in (3, 5, 6, 7) { c }",
+        "        else { raw({ if x == 6 { \"\" } else { c.body.text } }, lang: {",
+        "            if x < 2 { \"julia\" } else if x == 2 { \"typc\" } else { \"typ\" }",
+        "        } ) }",
+        "    }",
         "))\n",
         "document\n"
     ], "\n    ")
@@ -66,7 +71,7 @@ open(template; truncate = true) do file
     end
 
     print(file, "    ")
-    join(file, map(mode -> "cell(colspan: 2)[`$mode`]", modes), ", ")
+    join(file, map(mode -> "cell(colspan: 2)[$(uppercasefirst(string(mode)))]", modes), ", ")
     println(file, "\n), ..examples)")
 end
 
@@ -90,23 +95,18 @@ for (package, examples) in append!([("Typstry", Typstry.examples)], zip(extensio
                 else repr(v)
                 end
             )
-            print(file, ", `")
+            print(file, ", \"")
 
             if v isa HTML print(file, "Docs.HTML")
             elseif v isa Text print(file, "Docs.Text")
             else print(file, t)
             end
 
-            print(file, "`,", v isa Union{Vector, Matrix} ? "\n        " : " ")
+            print(file, "\",", v isa Union{Vector, Matrix} ? "\n        " : " ")
             join_with(file, modes, ", ") do file, mode
-                ts = TypstString(v; mode, depth = 2)
-
-                print(file, "````typ")
-                mode == markup || print(file, "c")
-                print(file, " ")
-                _show_typst(file, ts)
-                print(file, " ````, [")
-                enclose(_show_typst, file, ts, (
+                _show_typst(IOContext(file, :mode => code), String(TypstString(v; mode)))
+                print(file, ", [")
+                enclose(_show_typst, file, TypstString(v; mode, depth = 2), (
                     if mode == code; ("#", "")
                     elseif mode == markup; ("", "")
                     else ("\$", "\$")
