@@ -101,7 +101,7 @@ const julia_mono = artifact"JuliaMono"
         output = "output.pdf",
         open = true,
         preamble = \"\"\"
-            $(join(split(strip(Typstry.preamble), "\n"), "\n            "))
+            $(join(split(strip(preamble), "\n"), "\n            "))
         \"\"\",
     context...)
 
@@ -123,10 +123,10 @@ function render(x;
     input = "input.typ",
     output = "output.pdf",
     open = true,
-    preamble = true,
+    preamble = preamble,
 context...)
     Base.open(input; truncate = true) do file
-        preamble && println(file, Typstry.preamble)
+        _show_typst(file, preamble)
         _show_typst(IOContext(file, context...), x)
         println(file)
     end
