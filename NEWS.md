@@ -6,7 +6,7 @@
 ### Strings
 
 - New default context `backticks = 3`
-- The default value for the `indent` context is now `typst"  "`, to correspond with Typst's default indentation
+- The `indent` settings has been changed to `tab_size = 2`, to correspond with Typst's default parameter
 - Typst parameters are now printed on their own lines using the `indent` and `depth` settings
 - `show_typst`
     - `Signed` in `markup` mode is now converted to a `code` mode integer

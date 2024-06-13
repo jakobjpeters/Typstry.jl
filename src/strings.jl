@@ -259,17 +259,17 @@ format(::MIME"image/svg+xml") = "svg"
 """
     indent(io)
 
-Return `io[:indent]::TypstString`.
+Return `" " ^ io[:tab_size]::Int`.
 
 See also [`TypstString`](@ref).
 
 # Examples
 ```jldoctest
-julia> Typstry.indent(IOContext(stdout, :indent => typst"  "))
-typst"  "
+julia> Typstry.indent(IOContext(stdout, :tab_size => 2))
+"  "
 ```
 """
-indent(io) = io[:indent]::TypstString
+indent(io) = " " ^ io[:tab_size]
 
 """
     join_with(f, io, xs, delimeter; kwargs...)
@@ -368,7 +368,7 @@ parenthesize(io) = io[:parenthesize]::Bool
 # Examples
 ```jldoctest
 julia> Typstry.print_parameters(
-           IOContext(stdout, :depth => 0, :indent => typst"  ", :delim => typst"\\\"(\\\""),
+           IOContext(stdout, :depth => 0, :tab_size => 2, :delim => typst"\\\"(\\\""),
        "vec", [:delim, :gap], true)
 vec(
   delim: "(",
@@ -485,17 +485,17 @@ methods must return an `AbstractDict{Symbol}`.
 | `:backticks`    | `3`                   | `Int`          | The number of backticks to enclose raw text markup, which may be increased to insert nested raw text.                                                                             |
 | `:block`        | `false`               | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                                         |
 | `:depth`        | `0`                   | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                                         |
-| `:indent`       | `typst"\u00A0\u00A0"` | `TypstString`  | The horizontal spacing used by some elements with multi-line Typst formatting, which is repeated for each level of `depth`                                                        |
 | `:mode`         | `markup`              | [`Mode`](@ref) | The current Typst syntactical context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs. |
 | `:parenthesize` | `true`                | `Bool`         | Whether to enclose some mathematical elements in parentheses to specify their operator precedence and avoid ambiguity.                                                            |
+| `:tab_size`     | `2`                   | `Int`          | The number of spaces used by some elements with multi-line Typst formatting, which is repeated for each level of `depth`                                                          |
 """
 context(x::Typst) = merge!(Dict(
     :backticks => 3,
     :block => false,
     :depth => 0,
-    :indent => typst"  ",
     :mode => markup,
-    :parenthesize => true
+    :parenthesize => true,
+    :tab_size => 2
 ), context(x.value))
 context(::Any) = Dict{Symbol, Union{}}()
 
@@ -542,32 +542,32 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
     This function's methods are incomplete.
     Please file an issue or create a pull-request for missing methods.
 
-| Type                                                      | Settings                               | Parameters                                             |
-|:----------------------------------------------------------|:---------------------------------------|:-------------------------------------------------------|
-| `Docs.HTML`                                               | `:block`, `:indent`, :mode`            |                                                        |
-| `Docs.Text`                                               | `:mode`                                |                                                        |
-| `AbstractArray`                                           | `:block`, `:depth`, `:indent`, `:mode` | :delim`, `:gap`                                        |
-| `AbstractChar`                                            | `:mode`                                |                                                        |
-| `AbstractFloat`                                           | `:mode`                                |                                                        |
-| `AbstractMatrix`                                          | `:block`, `:depth`, `:indent`, `:mode` | `:augment`, :column_gap`, `:delim`, `:gap`, `:row_gap` |
-| `AbstractString`                                          | `:mode`                                |                                                        |
-| `Bool`                                                    | `:mode`                                |                                                        |
-| `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`     |                                                        |
-| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`     |                                                        |
-| `Irrational`                                              | `:mode`                                |                                                        |
-| `Nothing`                                                 | `:mode`                                |                                                        |
-| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                |                                                        |
-| `Rational`                                                | `:block`, `:mode`, `:parenthesize`     |                                                        |
-| `Regex`                                                   | `:mode`                                |                                                        |
-| `Signed`                                                  | `:mode`                                |                                                        |
-| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                |                                                        |
-| `String`                                                  | `:mode`                                |                                                        |
-| `Tuple`                                                   | `:block`, `:depth`, `:indent`, `:mode` | `:delim`, `:gap`                                       |
-| `Typst`                                                   |                                        |                                                        |
-| `TypstString`                                             |                                        |                                                        |
-| `TypstText`                                               | `:mode`                                |                                                        |
-| `Unsigned`                                                | `:mode`                                |                                                        |
-| `VersionNumber`                                           | `:mode`                                |                                                        |
+| Type                                                      | Settings                                 | Parameters                                             |
+|:----------------------------------------------------------|:-----------------------------------------|:-------------------------------------------------------|
+| `Docs.HTML`                                               | `:block`, `:indent`, :mode`              |                                                        |
+| `Docs.Text`                                               | `:mode`                                  |                                                        |
+| `AbstractArray`                                           | `:block`, `:depth`, `:mode`, `:tab_size` | :delim`, `:gap`                                        |
+| `AbstractChar`                                            | `:mode`                                  |                                                        |
+| `AbstractFloat`                                           | `:mode`                                  |                                                        |
+| `AbstractMatrix`                                          | `:block`, `:depth`, `:mode`, `:tab_size` | `:augment`, :column_gap`, `:delim`, `:gap`, `:row_gap` |
+| `AbstractString`                                          | `:mode`                                  |                                                        |
+| `Bool`                                                    | `:mode`                                  |                                                        |
+| `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`       |                                                        |
+| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`       |                                                        |
+| `Irrational`                                              | `:mode`                                  |                                                        |
+| `Nothing`                                                 | `:mode`                                  |                                                        |
+| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                  |                                                        |
+| `Rational`                                                | `:block`, `:mode`, `:parenthesize`       |                                                        |
+| `Regex`                                                   | `:mode`                                  |                                                        |
+| `Signed`                                                  | `:mode`                                  |                                                        |
+| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                  |                                                        |
+| `String`                                                  | `:mode`                                  |                                                        |
+| `Tuple`                                                   | `:block`, `:depth`, `:mode`, `:tab_size` | `:delim`, `:gap`                                       |
+| `Typst`                                                   |                                          |                                                        |
+| `TypstString`                                             |                                          |                                                        |
+| `TypstText`                                               | `:mode`                                  |                                                        |
+| `Unsigned`                                                | `:mode`                                  |                                                        |
+| `VersionNumber`                                           | `:mode`                                  |                                                        |
 ```
 """
 show_typst(io, x::AbstractChar) = show_typst(io, string(x))
