@@ -6,7 +6,10 @@ import Base:
     getindex, hash, ignorestatus, isvalid, iterate, keys, lastindex,
     length, ncodeunits, pointer, repr, run, setenv, show, showerror
 using Artifacts: @artifact_str
-using Base: Docs.HTML, Docs.Text, Iterators.Stateful, Meta.parse, escape_raw_string, escape_string
+using Base: escape_raw_string, escape_string
+using .Docs: HTML, Text
+using .Iterators: Stateful
+using .Meta: parse
 using PrecompileTools: @compile_workload
 using Typst_jll: typst
 
