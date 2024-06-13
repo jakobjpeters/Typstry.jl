@@ -42,8 +42,8 @@ julia> using Typstry
 ## Showcase
 
 ```julia-repl
-julia> show_typst(IOContext(stdout, :mode => code), 'a')
-"'a'"
+julia> show_typst(IOContext(stdout, :mode => code), true)
+true
 
 julia> show(stdout, "text/typst", Typst([true 1; 1.0 [Any[true 1; 1.0 nothing]]]))
 $mat(
@@ -111,8 +111,8 @@ typst`compile input.typ output.pdf`
     - A symbolic `TypstFunction`?
         - May faciliate Julia to Typst transpilation
         - Examples
-            - `TypstString(TypstFunction(eval, 1 // 2; mode = code)) == typst"eval("(1 / 2)", mode: \"code\")"`
-            - `TypstString(TypstFunction(*, "a", "b"; mode = math)) == typst"(a) (b)"`
+            - `TypstString(TypstFunction(eval, :(1//2); mode = code)) == typst"eval("(1 / 2)", mode: \"code\")"`
+            - `TypstString(TypstFunction(*, :a, :b; mode = math)) == typst"(a) (b)"`
 
 ## Related Packages
 
@@ -129,3 +129,4 @@ typst`compile input.typ output.pdf`
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
+- [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
