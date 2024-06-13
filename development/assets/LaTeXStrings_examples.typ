@@ -5,6 +5,6 @@
 = LaTeXStrings.jl
 
 #f((
-    "L\"a\"", `LaTeXString`, ````typc ```latex $a$ ``` ````, [#```latex $a$ ```], ````typ ```latex $a$ ``` ````, [```latex $a$ ```], ````typc #```latex $a$ ``` ````, [$#```latex $a$ ```$]
+    "L\"a\"", "LaTeXString", "```latex $a$ ```", [#```latex $a$ ```], "```latex $a$ ```", [```latex $a$ ```], "#```latex $a$ ```", [$#```latex $a$ ```$]
 ))
 

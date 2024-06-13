@@ -5,67 +5,34 @@
 = Dates.jl
 
 #f((
-    "Date(1)", `Date`, ````typc datetime(
+    "Date(1)", "Date", "datetime(\n  year: 1,\n  month: 1,\n  day: 1\n)", [#datetime(
       year: 1,
       month: 1,
       day: 1
-    ) ````, [#datetime(
+    )], "#datetime(\n  year: 1,\n  month: 1,\n  day: 1\n)", [#datetime(
       year: 1,
       month: 1,
       day: 1
-    )], ````typ #datetime(
-      year: 1,
-      month: 1,
-      day: 1
-    ) ````, [#datetime(
-      year: 1,
-      month: 1,
-      day: 1
-    )], ````typc #datetime(
-      year: 1,
-      month: 1,
-      day: 1
-    ) ````, [$#datetime(
+    )], "#datetime(\n  year: 1,\n  month: 1,\n  day: 1\n)", [$#datetime(
       year: 1,
       month: 1,
       day: 1
     )$],
-    "DateTime(1)", `DateTime`, ````typc datetime(
+    "DateTime(1)", "DateTime", "datetime(\n  year: 1,\n  month: 1,\n  day: 1,\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [#datetime(
       year: 1,
       month: 1,
       day: 1,
       hour: 0,
       minute: 0,
       second: 0
-    ) ````, [#datetime(
+    )], "#datetime(\n  year: 1,\n  month: 1,\n  day: 1,\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [#datetime(
       year: 1,
       month: 1,
       day: 1,
       hour: 0,
       minute: 0,
       second: 0
-    )], ````typ #datetime(
-      year: 1,
-      month: 1,
-      day: 1,
-      hour: 0,
-      minute: 0,
-      second: 0
-    ) ````, [#datetime(
-      year: 1,
-      month: 1,
-      day: 1,
-      hour: 0,
-      minute: 0,
-      second: 0
-    )], ````typc #datetime(
-      year: 1,
-      month: 1,
-      day: 1,
-      hour: 0,
-      minute: 0,
-      second: 0
-    ) ````, [$#datetime(
+    )], "#datetime(\n  year: 1,\n  month: 1,\n  day: 1,\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [$#datetime(
       year: 1,
       month: 1,
       day: 1,
@@ -73,94 +40,52 @@
       minute: 0,
       second: 0
     )$],
-    "Day(1)", `Day`, ````typc duration(
+    "Day(1)", "Day", "duration(\n  days: 1\n)", [#duration(
       days: 1
-    ) ````, [#duration(
+    )], "#duration(\n  days: 1\n)", [#duration(
       days: 1
-    )], ````typ #duration(
-      days: 1
-    ) ````, [#duration(
-      days: 1
-    )], ````typc #duration(
-      days: 1
-    ) ````, [$#duration(
+    )], "#duration(\n  days: 1\n)", [$#duration(
       days: 1
     )$],
-    "Hour(1)", `Hour`, ````typc duration(
+    "Hour(1)", "Hour", "duration(\n  hours: 1\n)", [#duration(
       hours: 1
-    ) ````, [#duration(
+    )], "#duration(\n  hours: 1\n)", [#duration(
       hours: 1
-    )], ````typ #duration(
-      hours: 1
-    ) ````, [#duration(
-      hours: 1
-    )], ````typc #duration(
-      hours: 1
-    ) ````, [$#duration(
+    )], "#duration(\n  hours: 1\n)", [$#duration(
       hours: 1
     )$],
-    "Minute(1)", `Minute`, ````typc duration(
+    "Minute(1)", "Minute", "duration(\n  minutes: 1\n)", [#duration(
       minutes: 1
-    ) ````, [#duration(
+    )], "#duration(\n  minutes: 1\n)", [#duration(
       minutes: 1
-    )], ````typ #duration(
-      minutes: 1
-    ) ````, [#duration(
-      minutes: 1
-    )], ````typc #duration(
-      minutes: 1
-    ) ````, [$#duration(
+    )], "#duration(\n  minutes: 1\n)", [$#duration(
       minutes: 1
     )$],
-    "Second(1)", `Second`, ````typc duration(
+    "Second(1)", "Second", "duration(\n  seconds: 1\n)", [#duration(
       seconds: 1
-    ) ````, [#duration(
+    )], "#duration(\n  seconds: 1\n)", [#duration(
       seconds: 1
-    )], ````typ #duration(
-      seconds: 1
-    ) ````, [#duration(
-      seconds: 1
-    )], ````typc #duration(
-      seconds: 1
-    ) ````, [$#duration(
+    )], "#duration(\n  seconds: 1\n)", [$#duration(
       seconds: 1
     )$],
-    "Time(0)", `Time`, ````typc datetime(
+    "Time(0)", "Time", "datetime(\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [#datetime(
       hour: 0,
       minute: 0,
       second: 0
-    ) ````, [#datetime(
+    )], "#datetime(\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [#datetime(
       hour: 0,
       minute: 0,
       second: 0
-    )], ````typ #datetime(
-      hour: 0,
-      minute: 0,
-      second: 0
-    ) ````, [#datetime(
-      hour: 0,
-      minute: 0,
-      second: 0
-    )], ````typc #datetime(
-      hour: 0,
-      minute: 0,
-      second: 0
-    ) ````, [$#datetime(
+    )], "#datetime(\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [$#datetime(
       hour: 0,
       minute: 0,
       second: 0
     )$],
-    "Week(1)", `Week`, ````typc duration(
+    "Week(1)", "Week", "duration(\n  weeks: 1\n)", [#duration(
       weeks: 1
-    ) ````, [#duration(
+    )], "#duration(\n  weeks: 1\n)", [#duration(
       weeks: 1
-    )], ````typ #duration(
-      weeks: 1
-    ) ````, [#duration(
-      weeks: 1
-    )], ````typc #duration(
-      weeks: 1
-    ) ````, [$#duration(
+    )], "#duration(\n  weeks: 1\n)", [$#duration(
       weeks: 1
     )$]
 ))

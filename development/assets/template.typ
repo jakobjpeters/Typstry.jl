@@ -1,3 +1,4 @@
+
 #import table: cell, header
 
 #let template(document) = {
@@ -6,8 +7,13 @@
     
     show cell: c => align(horizon, box(inset: 8pt,
         if c.y < 2 { strong(c) }
-        else if c.x == 0 { raw(c.body.text, lang: "julia") }
-        else { c }
+        else {
+            let x = c.x
+            if x in (3, 5, 6, 7) { c }
+            else { raw({ if x == 6 { "" } else { c.body.text } }, lang: {
+                if x < 2 { "julia" } else if x == 2 { "typc" } else { "typ" }
+            } ) }
+        }
     ))
 
     document
@@ -18,5 +24,5 @@
     cell(colspan: 6)[Typst],
     [Value],
     [Type],
-    cell(colspan: 2)[`code`], cell(colspan: 2)[`markup`], cell(colspan: 2)[`math`]
+    cell(colspan: 2)[Code], cell(colspan: 2)[Markup], cell(colspan: 2)[Math]
 ), ..examples)

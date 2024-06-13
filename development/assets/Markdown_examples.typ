@@ -5,6 +5,6 @@
 = Markdown.jl
 
 #f((
-    "md\"# a\"", `MD`, ````typc ```markdown # A ``` ````, [#```markdown # A ```], ````typ ```markdown # A ``` ````, [```markdown # A ```], ````typc #```markdown # A ``` ````, [$#```markdown # A ```$]
+    "md\"# a\"", "MD", "```markdown # A ```", [#```markdown # A ```], "```markdown # A ```", [```markdown # A ```], "#```markdown # A ```", [$#```markdown # A ```$]
 ))
 
