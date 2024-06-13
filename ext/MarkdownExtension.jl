@@ -2,7 +2,6 @@
 module MarkdownExtension
 
 import Typstry: show_typst
-using Base: Iterators.Stateful
 using Markdown: MD, @md_str
 using PrecompileTools: @compile_workload
 using Typstry: show_raw, workload

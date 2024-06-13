@@ -5,7 +5,7 @@ import Typstry: show_typst
 using Dates:
     Date, DateTime, Day, Hour, Minute, Second, Time, Week,
     day, hour, minute, month, second, year
-using PrecompileTools: PrecompileTools, @compile_workload
+using PrecompileTools: @compile_workload
 using Typstry: TypstString, TypstText, code, code_mode, depth, indent, print_parameters, workload
 
 # Internals
