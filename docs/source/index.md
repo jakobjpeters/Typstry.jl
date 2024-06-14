@@ -82,7 +82,7 @@ typst`compile input.typ output.pdf`
     - Automatically determine the Typst syntactic context
     - Use a tree-sitter grammar or jll package
 - Documenter.jl backend and docstrings
-    - Requires Typst to [output HTML](https://github.com/typst/typst/issues/114)
+    - Requires Typst to [output HTML](https://github.com/typst/typst/issues/721)
 - Implement Typst formatting for more types
     - `Base`
         - `AbstractDict`
