@@ -15,7 +15,22 @@ using Markdown: Markdown
 using Test: @testset, @test, detect_ambiguities, detect_unbound_args
 using Typstry
 
-const MarkdownExtension = get_extension(Typstry, :MarkdownExtension)
+setdocmeta!(
+    Typstry,
+    :DocTestSetup,
+    :(using Typstry),
+    recursive = true
+)
+
+_doctest(_module, name) = doctest(_module; manual = "source", testset = "$name.jl Doctests")
+
+_doctest(Typstry, "Typstry")
+
+for extension in [:Dates, :LaTeXStrings, :Markdown]
+    _module = get_extension(Typstry, Symbol(extension, "Extension"))
+    setdocmeta!(_module, :DocTestSetup, :(using Typstry; using $extension); recursive = true)
+    _doctest(_module, extension)
+end
 
 @testset "ExplicitImports.jl" begin
     @test isnothing(check_all_explicit_imports_are_public(Typstry; ignore = (:MD, :Stateful,
@@ -28,16 +43,7 @@ const MarkdownExtension = get_extension(Typstry, :MarkdownExtension)
     @test isnothing(check_no_stale_explicit_imports(Typstry))
 end
 
-@testset "`detect_ambiguities` and `detect_unbound_args`" begin
+@testset "Test.jl" begin
     @test isempty(detect_ambiguities(Typstry))
     @test isempty(detect_unbound_args(Typstry))
 end
-
-setdocmeta!(
-    Typstry,
-    :DocTestSetup,
-    :(using Typstry),
-    recursive = true
-)
-
-doctest(Typstry)

@@ -2,9 +2,3 @@
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Luxor = "ae8d54c2-7ccd-5906-9d76-62fc9837b5bc"
-Typst_jll = "eb4b1da6-20f6-5c66-9826-fdb8ad410d0e"
-
-[compat]
-Documenter = "1"
-Luxor = "3 - 4"
-Typst_jll = "0.11"

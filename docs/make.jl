@@ -1,16 +1,16 @@
 
 using Base: get_extension
 using Dates: Dates, Date, DateTime, Day, Hour, Minute, Second, Time, Week
+using Documenter: Documenter, Docs, DocMeta, deploydocs, makedocs
 using .Docs: HTML, Text
 using .DocMeta: setdocmeta!
-using Documenter: Documenter, deploydocs, makedocs
 using LaTeXStrings: LaTeXStrings, LaTeXString, @L_str
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Markdown: Markdown, MD, @md_str
 using Typstry: _show_typst, enclose, join_with, preamble, typst_mime
 using Typstry
 
-const assets = joinpath(@__DIR__, "src", "assets")
+const assets = joinpath(@__DIR__, "source", "assets")
 const examples = Vector{Pair{Any, Type}}[]
 const logo = joinpath(assets, "logo.svg")
 const modes = instances(Mode)
@@ -19,11 +19,13 @@ const modules = [Typstry]
 const extensions = ["Dates", "LaTeXStrings", "Markdown"]
 const template = joinpath(assets, "template.typ")
 
-setdocmeta!(Typstry, :DocTestSetup, :(using Typstry); recursive = true)
+_setdocmeta!(_module, x) = setdocmeta!(_module, :DocTestSetup, x; recursive = true)
+
+_setdocmeta!(Typstry, :(using Typstry))
 
 for extension in extensions
     _module = get_extension(Typstry, Symbol(extension, :Extension))
-    setdocmeta!(_module, :DocTestSetup, :(using Typstry; using $extension); recursive = true)
+    _setdocmeta!(_module, :(using Typstry; using $extension))
     push!(modules, _module)
     push!(examples, _module.examples)
 end
@@ -124,16 +126,17 @@ for (package, examples) in append!([("Typstry", Typstry.examples)], zip(extensio
     run(TypstCommand(["compile", "--font-path=" * julia_mono, "--format=svg", path]))
 end
 
-makedocs(; modules, sitename = "Typstry.jl", format = Documenter.HTML(edit_link = "main"), pages = [
-    "Home" => "index.md",
-    "Getting Started" => "getting_started.md",
-    "Tutorials" => ["Interface" => "tutorials/interface.md"],
-    "Manual" => map(page -> uppercasefirst(page) => joinpath("manual", page * ".md"),
-        ["strings", "commands", "extensions", "internals"])
-])
-
-deploydocs(;
-    devbranch = "main",
-    devurl = "development",
-    repo = "github.com/jakobjpeters/Typstry.jl.git"
+makedocs(; modules,
+    format = Documenter.HTML(edit_link = "main"),
+    pages = [
+        "Home" => "index.md",
+        "Getting Started" => "getting_started.md",
+        "Tutorials" => ["Interface" => "tutorials/interface.md"],
+        "Manual" => map(page -> uppercasefirst(page) => joinpath("manual", page * ".md"),
+            ["strings", "commands", "extensions", "internals"])
+    ],
+    sitename = "Typstry.jl",
+    source = "source"
 )
+
+deploydocs(; devurl = "development", repo = "github.com/jakobjpeters/Typstry.jl.git")

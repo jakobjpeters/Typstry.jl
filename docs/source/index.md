@@ -81,6 +81,9 @@ typst`compile input.typ output.pdf`
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
     - Use a tree-sitter grammar or jll package
+- Documenter.jl
+    - Backend
+    - Docstrings
 - Implement Typst formatting for more types
     - `Base`
         - `AbstractDict`
@@ -116,4 +119,5 @@ typst`compile input.typ output.pdf`
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
+    - Supports Typstry.jl
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
