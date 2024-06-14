@@ -5,6 +5,7 @@ version = "0.2.0"
 
 [deps]
 Artifacts = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+DispatchDoctor = "8d63f2c5-f18a-4cf2-ba9d-b3f60fc568c8"
 PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 Typst_jll = "eb4b1da6-20f6-5c66-9826-fdb8ad410d0e"
 

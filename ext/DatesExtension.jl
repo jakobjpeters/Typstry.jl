@@ -6,7 +6,9 @@ using Dates:
     Date, DateTime, Day, Hour, Minute, Second, Time, Week,
     day, hour, minute, month, second, year
 using PrecompileTools: @compile_workload
-using Typstry: TypstString, TypstText, code, code_mode, depth, indent, print_parameters, workload
+using Typstry: TypstString, TypstText, @stable_disable, code, code_mode, depth, indent, print_parameters, workload
+
+@stable_disable begin
 
 # Internals
 
@@ -78,5 +80,7 @@ const examples = [
 ]
 
 @compile_workload workload(examples)
+
+end # @stable_disable
 
 end # module

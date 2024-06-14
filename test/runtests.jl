@@ -12,23 +12,24 @@ using Dates: Dates
 using Documenter: DocMeta.setdocmeta!, doctest
 using LaTeXStrings: LaTeXStrings
 using Markdown: Markdown
+using Preferences: set_preferences!
 using Test: @testset, @test, detect_ambiguities, detect_unbound_args
 using Typstry
 
-setdocmeta!(
-    Typstry,
-    :DocTestSetup,
-    :(using Typstry),
-    recursive = true
-)
+set_preferences!("Typstry", "instability_check" => "error")
 
 _doctest(_module, name) = doctest(_module; manual = "source", testset = "$name.jl Doctests")
 
+_setdocmeta!(_module, x) = setdocmeta!(_module, :DocTestSetup,
+    :(using Preferences: set_preferences!; using Typstry; $x; set_preferences!("Typstry", "instability_check" => "error"));
+recursive = true)
+
+_setdocmeta!(Typstry, nothing)
 _doctest(Typstry, "Typstry")
 
 for extension in [:Dates, :LaTeXStrings, :Markdown]
     _module = get_extension(Typstry, Symbol(extension, "Extension"))
-    setdocmeta!(_module, :DocTestSetup, :(using Typstry; using $extension); recursive = true)
+    _setdocmeta!(_module, :(using $extension))
     _doctest(_module, extension)
 end
 

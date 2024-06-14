@@ -2,6 +2,7 @@
 # Internals
 
 ```@docs
+Typstry.@stable_disable
 Typstry.workload
 ```
 

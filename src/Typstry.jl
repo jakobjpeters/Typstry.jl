@@ -10,10 +10,24 @@ using Base: escape_raw_string, escape_string
 using .Docs: HTML, Text
 using .Iterators: Stateful
 using .Meta: parse
+using DispatchDoctor: @stable, @unstable
 using PrecompileTools: @compile_workload
 using Typst_jll: typst
 
 @static isdefined(Base, :setcpuaffinity) && import Base: setcpuaffinity
+
+# Internals
+
+"""
+    @stable_disable(x)
+
+Equivalent to `DispatchDoctor.@stable default_mode = "disable" x`.
+"""
+macro stable_disable(x)
+    :(@stable default_mode = "disable" $(esc(x)))
+end
+
+#
 
 include("strings.jl")
 
@@ -34,4 +48,4 @@ end
 
 @compile_workload workload(examples)
 
-end # module
+end # Typstry
