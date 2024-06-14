@@ -22,6 +22,7 @@ MarkdownExtension = "Markdown"
 [compat]
 Artifacts = "1.9"
 Dates = "1.9"
+DispatchDoctor = "0.4"
 LaTeXStrings = "1"
 Markdown = "1.9"
 PrecompileTools = "1"

@@ -1,4 +1,5 @@
 
+using Aqua: test_all
 using Base: get_extension
 using ExplicitImports:
     check_all_explicit_imports_are_public,
@@ -23,6 +24,8 @@ _doctest(_module, name) = doctest(_module; manual = "source", testset = "$name.j
 _setdocmeta!(_module, x) = setdocmeta!(_module, :DocTestSetup,
     :(using Preferences: set_preferences!; using Typstry; $x; set_preferences!("Typstry", "instability_check" => "error"));
 recursive = true)
+
+test_all(Typstry)
 
 _setdocmeta!(Typstry, nothing)
 _doctest(Typstry, "Typstry")
