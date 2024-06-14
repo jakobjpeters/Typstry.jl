@@ -81,9 +81,8 @@ typst`compile input.typ output.pdf`
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
     - Use a tree-sitter grammar or jll package
-- Documenter.jl
-    - Backend
-    - Docstrings
+- Documenter.jl backend and docstrings
+    - Requires Typst to [output HTML](https://github.com/typst/typst/issues/114)
 - Implement Typst formatting for more types
     - `Base`
         - `AbstractDict`

@@ -319,11 +319,6 @@ See also [`TypstCommand`](@ref).
 !!! info
     If the Typst compiler throws an error, it will be printed to `stderr`.
     Then, a Julia [`TypstError`](@ref) will be thrown unless the [`ignorestatus`](@ref) flag is set.
-
-# Examples
-```jldoctest
-julia> run(typst`compile input.typ output.pdf`);
-```
 """
 function run(tc::TypstCommand, args...; kwargs...)
     process = run(ignorestatus(Cmd(`$(tc.compiler) $(tc.parameters)`)), args...; kwargs...)
