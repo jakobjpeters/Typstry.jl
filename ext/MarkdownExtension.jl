@@ -15,9 +15,9 @@ using Typstry: @stable_disable, show_raw, workload
 
 Print in Typst format for Markdown.jl.
 
-| Type          | Settings | Parameters |
-|:--------------|:---------|:-----------|
-| `Markdown.MD` | `:mode`  | `:block`   |
+| Type          | Settings                                 | Parameters |
+|:--------------|:-----------------------------------------|:-----------|
+| `Markdown.MD` | `:block`, `:depth`, `:mode`, `:tab_size` |            |
 """
 show_typst(io, x::MD) = show_raw(io, x, "markdown") do io, x
     buffer = IOBuffer()

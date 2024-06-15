@@ -84,7 +84,7 @@ so there may be multiple meaningful formats to choose from.
 
 ```jldoctest 1
 julia> println(TypstString(1))
-#1
+$1$
 
 julia> println(TypstString(nothing))
 #none
@@ -107,7 +107,7 @@ julia> println(TypstString(π; mode = math))
 π
 
 julia> println(TypstString(π; mode = markup))
-π
+$π$
 ```
 
 ### Consider both the Typst source text and compiled document formatting
@@ -117,7 +117,7 @@ julia> println(TypstString(π; mode = markup))
 
 ```jldoctest 1
 julia> println(TypstString(text"[\"a\"]"))
-#"[\"a\"]"
+["a"]
 
 julia> println(TypstString(typst"[\"a\"]"))
 ["a"]
@@ -185,3 +185,5 @@ range(0, 7, step: 2)
 julia> println(TypstString(0:2.0:6; mode = code))
 (0.0, 2.0, 4.0, 6.0)
 ```
+
+### Prefer simplicity

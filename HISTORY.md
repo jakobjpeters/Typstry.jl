@@ -37,7 +37,7 @@
 
 - Patch an assumption in `repr(::MIME, ::AbstractString)` that is incorrect for `TypstString`
 - Format values in containers using `show(::IO, ::MIME"text/typst", ::Typst)`
-- `show_typst(io, ::AbstractString)` now correctly escapes double quotation marks and dollar signs.
+- `show_typst(io, ::AbstractString)` now correctly escapes double quotation marks ~~and dollar signs~~.
 - `show_typst(io, ::Complex)`
     - Fix `Complex{Bool}`
     - Handle negative imaginary part

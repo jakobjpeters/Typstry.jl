@@ -55,7 +55,7 @@ in an `IOContext`. See also [`show_typst`](@ref) for a list of supported types.
 # Examples
 ```jldoctest
 julia> TypstString(1)
-typst"#1"
+typst"\$1\$"
 
 julia> TypstString(1 + 2im; mode = math)
 typst"(1 + 2i)"
@@ -198,7 +198,7 @@ block(io) = io[:block]::Bool
 
 Print the number sign, unless `mode(io) == code`.
 
-# See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
+See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
 
 # Examples
 ```jldoctest
@@ -298,7 +298,12 @@ function join_with(f, io, xs, delimeter; kwargs...)
 end
 
 """
-    math_pad(io, x)
+    math_mode(f, io, x; kwargs...)
+"""
+math_mode(f, io, x; kwargs...) = enclose(f, io, x, math_pad(io); kwargs...)
+
+"""
+    math_pad(io)
 
 Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
 [`block`](@ref Typstry.block) and [`mode`](@ref Typstry.mode) settings.
@@ -346,7 +351,7 @@ julia> Typstry.maybe_wrap(1)
 Typst{Int64}(1)
 
 julia> Typstry.maybe_wrap(TypstString(1))
-typst"#1"
+typst"\$1\$"
 
 julia> Typstry.maybe_wrap(TypstText(1))
 TypstText{Int64}(1)
@@ -404,21 +409,32 @@ show_array(io, x) = enclose(io, x, "(", ")") do io, x
 end
 
 """
-    show_raw(io, x)
+    show_raw(f, io, x, language)
 """
 function show_raw(f, io, x, language)
     _backticks, _block = "`" ^ backticks(io), block(io)
 
     mode(io) == math && print(io, "#")
     print(io, _backticks, language)
-    enclose(f, io, x, _block ? "\n" : " ")
+
+    if _block
+        _indent, _depth = indent(io), depth(io)
+
+        print(io, "\n")
+        for line in eachsplit(sprint(f, x), "\n")
+            println(io, _indent, line)
+        end
+        print(io, _indent ^ _depth, "\n")
+    else enclose(f, io, x, " ")
+    end
+
     print(io, _backticks)
 end
 
 """
     show_vector(io, x)
 """
-show_vector(io, x) = enclose(io, x, math_pad(io)) do io, x
+show_vector(io, x) = math_mode(io, x) do io, x
     _depth, _indent = depth(io), indent(io)
     __depth = _depth + 1
 
@@ -550,13 +566,13 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 
 | Type                                                      | Settings                                 | Parameters                                             |
 |:----------------------------------------------------------|:-----------------------------------------|:-------------------------------------------------------|
-| `Docs.HTML`                                               | `:block`, `:indent`, :mode`              |                                                        |
+| `Docs.HTML`                                               | `:block`, `:depth`, `:mode`, `:tab_size` |                                                        |
 | `Docs.Text`                                               | `:mode`                                  |                                                        |
 | `AbstractArray`                                           | `:block`, `:depth`, `:mode`, `:tab_size` | :delim`, `:gap`                                        |
-| `AbstractChar`                                            | `:mode`                                  |                                                        |
+| `AbstractChar`                                            |                                          |                                                        |
 | `AbstractFloat`                                           | `:mode`                                  |                                                        |
 | `AbstractMatrix`                                          | `:block`, `:depth`, `:mode`, `:tab_size` | `:augment`, :column_gap`, `:delim`, `:gap`, `:row_gap` |
-| `AbstractString`                                          | `:mode`                                  |                                                        |
+| `AbstractString`                                          |                                          |                                                        |
 | `Bool`                                                    | `:mode`                                  |                                                        |
 | `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`       |                                                        |
 | `Complex`                                                 | `:block`, `:mode`, `:parenthesize`       |                                                        |
@@ -584,11 +600,12 @@ show_typst(io, x::AbstractFloat) =
     elseif isnan(x)
         code_mode(io)
         print(io, "calc.nan")
-    else print(io, x)
+    elseif mode(io) == code print(io, x)
+    else enclose(print, io, x, math_pad(io))
     end
 show_typst(io, x::AbstractMatrix) = mode(io) == code ?
     show_array(io, x) :
-    enclose((io, x; indent, depth) -> begin
+    math_mode((io, x; indent, depth) -> begin
         _depth = depth + 1
 
         print_parameters(io, "mat", [:augment, :column_gap, :delim, :gap, :row_gap], true)
@@ -597,19 +614,11 @@ show_typst(io, x::AbstractMatrix) = mode(io) == code ?
             join_with(_show_typst, io, x, ", ")
         end, IOContext(io, :depth => _depth, :mode => math), eachrow(x), ";\n"; indent)
         print(io, "\n", indent ^ depth, ")")
-    end, IOContext(io, :parenthesize => false), x, math_pad(io); indent = indent(io), depth = depth(io))
-function show_typst(io, x::AbstractString)
-    mode(io) == markup && print(io, "#")
-    enclose((io, x) -> escape_string(io, x, "\""), io, x, "\"")
-end
-function show_typst(io, x::Bool)
-    _mode = mode(io)
-
-    _mode == markup && print(io, "#")
-    _mode == math ? enclose(print, io, x, "\"") : print(io, x)
-end
+    end, IOContext(io, :parenthesize => false), x; indent = indent(io), depth = depth(io))
+show_typst(io, x::AbstractString) = enclose((io, x) -> escape_string(io, x, "\""), io, x, "\"")
+show_typst(io, x::Bool) = mode(io) == math ? enclose(print, io, x, "\"") : print(io, x)
 show_typst(io, x::Complex{Bool}) = _show_typst(io, Complex(Int(real(x)), Int(imag(x))))
-show_typst(io, x::Complex) = enclose(io, x, math_pad(io)) do io, x
+show_typst(io, x::Complex) = math_mode(io, x) do io, x
     enclose(IOContext(io, :mode => math, :parenthesize => false), x,
         (mode(io) == math && parenthesize(io) ? ("(", ")") : ("", ""))...) do io, x
         imaginary = imag(x)
@@ -630,13 +639,9 @@ show_typst(io, x::Complex) = enclose(io, x, math_pad(io)) do io, x
     end
 end
 show_typst(io, x::HTML) = show_raw((io, x) -> show(io, MIME"text/html"(), x), io, x, "html")
-function show_typst(io, x::Irrational)
-    _mode = mode(io)
-
-    if _mode == code _show_typst(io, Float64(x))
-    else print(io, x)
-    end
-end
+show_typst(io, x::Irrational) = mode(io) == code ?
+    _show_typst(io, Float64(x)) :
+    math_mode(print, io, x)
 function show_typst(io, ::Nothing)
     code_mode(io)
     print(io, "none")
@@ -664,11 +669,12 @@ function show_typst(io, x::Regex)
         print(io, read(buffer, String))
     end
 end
-function show_typst(io, x::Signed)
-    mode(io) == markup && print(io, "#")
-    show(io, x)
-end
-show_typst(io, x::Text) = _show_typst(io, string(x))
+show_typst(io, x::Signed) = mode(io) == code ?
+    print(io, x) :
+    enclose(print, io, x, math_pad(io))
+show_typst(io, x::Text) = mode(io) == markup ?
+    print(io, x) :
+    _show_typst(io, string(x))
 show_typst(io, x::Typst) = show_typst(io, x.value)
 show_typst(io, x::TypstString) = print(io, x)
 show_typst(io, x::TypstText) = print(io, x.value)
@@ -837,10 +843,10 @@ julia> show(stdout, "text/typst", typst"a")
 a
 
 julia> show(stdout, "text/typst", Typst("a"))
-#"a"
+"a"
 
 julia> show(stdout, "text/typst", Typst(Text("a")))
-#"a"
+a
 ```
 """
 show(io::IO, m::MIME"text/typst", t::Typst) = show(IOContext(io), m, t)

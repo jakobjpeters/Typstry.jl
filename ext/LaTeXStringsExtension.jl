@@ -15,9 +15,9 @@ using Typstry: @stable_disable, show_raw, workload
 
 Print in Typst format for LaTeXStrings.jl.
 
-| Type          | Settings | Parameters |
-|:--------------|:---------|:-----------|
-| `LaTeXString` | `:mode`  | `:block`   |
+| Type          | Settings                                 | Parameters |
+|:--------------|:-----------------------------------------|:-----------|
+| `LaTeXString` | `:block`, `:depth`, `:mode`, `:tab_size` |            |
 """
 show_typst(io, x::LaTeXString) = show_raw(print, io, x, "latex")
 

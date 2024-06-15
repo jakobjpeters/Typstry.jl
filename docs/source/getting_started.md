@@ -13,7 +13,7 @@ Print Julia values in [`Typst`](@ref) format using `show` with the `text/typst` 
 
 ```jldoctest 1
 julia> show(stdout, "text/typst", Typst(π))
-π
+$π$
 ```
 
 Some methods use an `IOContext` to configure the formatting.
@@ -28,12 +28,12 @@ Instead of printing, create a [`TypstString`](@ref) using its constructor or
 
 ```jldoctest 1
 julia> TypstString(π)
-typst"π"
+typst"$π$"
 
 julia> TypstString(π; mode = code)
 typst"3.141592653589793"
 
-julia> typst"$ \(pi) approx \(pi; mode = code) $"
+julia> typst"$ \(pi; mode = math) approx \(pi; mode = code) $"
 typst"$ π approx 3.141592653589793 $"
 ```
 

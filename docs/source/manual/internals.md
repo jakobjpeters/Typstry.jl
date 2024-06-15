@@ -20,6 +20,7 @@ Typstry.enclose
 Typstry.format
 Typstry.indent
 Typstry.join_with
+Typstry.math_mode
 Typstry.math_pad
 Typstry.maybe_wrap
 Typstry.mode
