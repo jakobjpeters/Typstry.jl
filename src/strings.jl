@@ -619,13 +619,13 @@ show_typst(io, x::AbstractString) = enclose((io, x) -> escape_string(io, x, "\""
 show_typst(io, x::Bool) = mode(io) == math ? enclose(print, io, x, "\"") : print(io, x)
 show_typst(io, x::Complex{Bool}) = _show_typst(io, Complex(Int(real(x)), Int(imag(x))))
 show_typst(io, x::Complex) = math_mode(io, x) do io, x
-    enclose(IOContext(io, :mode => math, :parenthesize => false), x,
-        (mode(io) == math && parenthesize(io) ? ("(", ")") : ("", ""))...) do io, x
-        imaginary = imag(x)
-        _real, _imaginary = real(x), abs(imaginary)
-        __real, __imaginary = _real == 0, _imaginary == 0
-        ___imaginary = signbit(imaginary)
+    imaginary = imag(x)
+    _real, _imaginary = real(x), abs(imaginary)
+    __real, __imaginary = _real == 0, _imaginary == 0
+    ___imaginary = signbit(imaginary)
+    _enclose = __real || __imaginary || !(mode(io) == math && parenthesize(io)) ? ("", "") : ("(", ")")
 
+    enclose(IOContext(io, :mode => math), x, _enclose...) do io, x
         __real && !__imaginary || _show_typst(io, _real)
 
         if _imaginary != 0

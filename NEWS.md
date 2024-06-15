@@ -13,6 +13,7 @@
     - `AbstractFloat`, `Irrational`, and `Signed` in `markup` mode are now enclosed with `$`
     - `Bool` in `markup` mode is no longer prefixed by `#`
     - An `AbstractChar` and `AbstractString` in `code` and `math` mode are no longer escaped and quoted
+    - A `Complex` is no longer parenthesized when a term is zero
 - The `show` methods for `TypstString` with a `application/pdf`, `image/png`, and `image/svg+xml` MIME types now support a custom `preamble`
 
 ### Commands
