@@ -4,9 +4,9 @@ using Dates: Dates, Date, DateTime, Day, Hour, Minute, Second, Time, Week
 using Documenter: Documenter, Docs, DocMeta, deploydocs, makedocs
 using .Docs: HTML, Text
 using .DocMeta: setdocmeta!
-using LaTeXStrings: LaTeXStrings, LaTeXString, @L_str
+using LaTeXStrings: LaTeXStrings, LaTeXString
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
-using Markdown: Markdown, MD, @md_str
+using Markdown: Markdown, MD
 using Typstry: _show_typst, enclose, join_with, preamble, typst_mime
 using Typstry
 
