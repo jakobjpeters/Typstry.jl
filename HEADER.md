@@ -1,7 +1,9 @@
 
-<p align="center"><img height="200px" src="docs/source/assets/logo.svg"/></p>
-
 <div align="center">
+
+<p><img height="200px" src="docs/source/assets/logo.svg"/></p>
+
+# Typstry.jl
 
 [![Documentation stable](https://img.shields.io/badge/Documentation-stable-blue.svg)](https://jakobjpeters.github.io/Typstry.jl/)
 [![Documentation development](https://img.shields.io/badge/Documentation-development-blue.svg)](https://jakobjpeters.github.io/Typstry.jl/development/)
@@ -13,5 +15,3 @@
 [![Dependents](https://juliahub.com/docs/General/Typstry/stable/deps.svg)](https://juliahub.com/ui/Packages/General/Typstry?t=2)
 
 </div>
-
-# Typstry.jl
