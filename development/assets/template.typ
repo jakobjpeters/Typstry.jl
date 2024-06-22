@@ -9,9 +9,9 @@
         if c.y < 2 { strong(c) }
         else {
             let x = c.x
-            if x in (3, 5, 6, 7) { c }
-            else { raw({ if x == 6 { "" } else { c.body.text } }, lang: {
-                if x < 2 { "julia" } else if x == 2 { "typc" } else { "typ" }
+            if x in (3, 5, 7) { c }
+            else { raw({ c.body.text }, lang: {
+                if x < 2 { "julia" } else if x == 4 { "typ" } else { "typc" }
             } ) }
         }
     ))
