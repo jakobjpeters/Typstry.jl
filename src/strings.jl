@@ -453,6 +453,31 @@ in the current Julia version (at least v1.10).
 @unstable static_parse(args...; filename, kwargs...) = @static VERSION < v"1.10" ?
     parse(args...; kwargs...) : parse(args...; filename, kwargs...)
 
+## Dates.jl
+
+date_time(::Date) = year, month, day
+date_time(::Time) = hour, minute, second
+date_time(::DateTime) = year, month, day, hour, minute, second
+
+duration(::Day) = :days
+duration(::Hour) = :hours
+duration(::Minute) = :minutes
+duration(::Second) = :seconds
+duration(::Week) = :weeks
+
+function dates(x::Union{Date, DateTime, Time})
+    fs = date_time(x)
+    "datetime", map(Symbol, fs), map(f -> f(x), fs)
+end
+function dates(x::Union{Day, Hour, Minute, Second, Week})
+    buffer = IOBuffer()
+
+    print(buffer, x)
+    seekstart(buffer)
+
+    "duration", (duration(x),), (TypstText(readuntil(buffer, " ")),)
+end
+
 # `Typstry`
 
 @doc """
@@ -566,8 +591,6 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 
 | Type                                                      | Settings                                 | Parameters                                             |
 |:----------------------------------------------------------|:-----------------------------------------|:-------------------------------------------------------|
-| `Docs.HTML`                                               | `:block`, `:depth`, `:mode`, `:tab_size` |                                                        |
-| `Docs.Text`                                               | `:mode`                                  |                                                        |
 | `AbstractArray`                                           | `:block`, `:depth`, `:mode`, `:tab_size` | :delim`, `:gap`                                        |
 | `AbstractChar`                                            |                                          |                                                        |
 | `AbstractFloat`                                           | `:mode`                                  |                                                        |
@@ -590,6 +613,16 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 | `TypstText`                                               | `:mode`                                  |                                                        |
 | `Unsigned`                                                | `:mode`                                  |                                                        |
 | `VersionNumber`                                           | `:mode`                                  |                                                        |
+| `Docs.HTML`                                               | `:block`, `:depth`, `:mode`, `:tab_size` |                                                        |
+| `Docs.Text`                                               | `:mode`                                  |                                                        |
+| `Dates.Date`                                              | `:mode`, `:indent`                       |                                                        |
+| `Dates.DateTime`                                          | `:mode`, `:indent`                       |                                                        |
+| `Dates.Day`                                               | `:mode`, `:indent`                       |                                                        |
+| `Dates.Hour`                                              | `:mode`, `:indent`                       |                                                        |
+| `Dates.Minute`                                            | `:mode`, `:indent`                       |                                                        |
+| `Dates.Second`                                            | `:mode`, `:indent`                       |                                                        |
+| `Dates.Time`                                              | `:mode`, `:indent`                       |                                                        |
+| `Dates.Week`                                              | `:mode`, `:indent`                       |                                                        |
 ```
 """
 show_typst(io, x::AbstractChar) = show_typst(io, string(x))
@@ -704,6 +737,16 @@ show_typst(io, x::Union{
             _show_typst(io, _step)
         end
     end : show_vector(io, x)
+function show_typst(io, x::Union{
+    Date, DateTime, Day, Hour, Minute, Second, Time, Week
+})
+    f, keys, values = dates(x)
+    _values = map(value -> TypstString(value; mode = code), values)
+
+    code_mode(io)
+    print_parameters(IOContext(io, map(Pair, keys, _values)...), f, keys, false)
+    print(io, indent(io) ^ depth(io), ")")
+end
 
 # `Base`
 
@@ -890,8 +933,6 @@ A constant `Vector` of Julia values and their corresponding
 `Type`s implemented for [`show_typst`](@ref).
 """
 const examples = [
-    html"<p>a</p>" => Docs.HTML,
-    text"[\"a\"]" => Docs.Text,
     Any[true, 1, 1.2, 1 // 2] => AbstractArray,
     'a' => AbstractChar,
     1.2 => AbstractFloat,
@@ -912,7 +953,17 @@ const examples = [
     typst"[\"a\"]" => TypstString,
     TypstText([1, 2, 3, 4]) => TypstText,
     0xff => Unsigned,
-    v"1.2.3" => VersionNumber
+    v"1.2.3" => VersionNumber,
+    html"<p>a</p>" => HTML,
+    text"[\"a\"]" => Text,
+    Date(1) => Date,
+    DateTime(1) => DateTime,
+    Day(1) => Day,
+    Hour(1) => Hour,
+    Minute(1) => Minute,
+    Second(1) => Second,
+    Time(0) => Time,
+    Week(1) => Week
 ]
 
 """

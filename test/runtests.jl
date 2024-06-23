@@ -16,7 +16,6 @@ test_strings(x, s; kwargs...) = @test TypstString(x; kwargs...).text == s
 @testset "Typstry" begin
     for description in [
         "Aqua",
-        "DatesExtension",
         "Documenter",
         "ExplicitImports",
         "LaTeXStringsExtension",

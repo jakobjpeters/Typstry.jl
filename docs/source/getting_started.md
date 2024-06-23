@@ -62,6 +62,5 @@ Each row corresponds to a method of [`show_typst`](@ref).
 Sequential documents correspond to package [Extensions](@ref extensions_extensions).
 
 ![Typstry.jl examples](assets/Typstry_examples.svg)
-![Dates.jl examples](assets/Dates_examples.svg)
 ![LaTeXStrings.jl examples](assets/LaTeXStrings_examples.svg)
 ![Markdown.jl examples](assets/Markdown_examples.svg)

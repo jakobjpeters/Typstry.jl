@@ -10,7 +10,7 @@ using LaTeXStrings: LaTeXStrings
 using Preferences: set_preferences!
 using Typstry
 
-const extensions = [:Dates, :LaTeXStrings, :Markdown]
+const extensions = [:LaTeXStrings, :Markdown]
 
 function _test(_module, x)
     setdocmeta!(_module, :DocTestSetup, quote

@@ -1,6 +1,6 @@
 
 using Base: get_extension
-using Dates: Dates, Date, DateTime, Day, Hour, Minute, Second, Time, Week
+using Dates: Dates
 using Documenter: Documenter, Docs, DocMeta, deploydocs, makedocs
 using .Docs: HTML, Text
 using .DocMeta: setdocmeta!
@@ -16,7 +16,7 @@ const logo = joinpath(assets, "logo.svg")
 const modes = instances(Mode)
 const width, height = 210, 297
 const modules = [Typstry]
-const extensions = ["Dates", "LaTeXStrings", "Markdown"]
+const extensions = ["LaTeXStrings", "Markdown"]
 const template = joinpath(assets, "template.typ")
 
 _setdocmeta!(_module, x) = setdocmeta!(_module, :DocTestSetup, x; recursive = true)
@@ -87,8 +87,8 @@ for (package, examples) in append!([("Typstry", Typstry.examples)], zip(extensio
         join_with(file, examples, ",\n") do file, (v, t)
             print(file, "    ")
             show(file,
-                if v isa Date "Date(1)"
-                elseif v isa DateTime "DateTime(1)"
+                if v isa Dates.Date "Dates.Date(1)"
+                elseif v isa Dates.DateTime "Dates.DateTime(1)"
                 elseif v isa HTML "html\"<p>a</p>\""
                 elseif v isa Text "text\"[\\\"a\\\"]\""
                 elseif v isa LaTeXString "L\"a\""

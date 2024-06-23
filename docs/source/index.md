@@ -89,13 +89,11 @@ typst`compile input.typ output.pdf`
         - `AbstractIrrational`
         - `AbstractSet`
         - `Enum`
+            - `Mode`
         - `Expr`
-        - `Mode`
         - `Symbol`
     - Package extensions
         - Standard Library
-            - Dates.jl
-                - `Period` --> `duration`
             - LinearAlgebra.jl
     - A symbolic `TypstFunction`?
         - May faciliate Julia to Typst transpilation
@@ -111,6 +109,7 @@ typst`compile input.typ output.pdf`
 - [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
 - [Typst_jll.jl](https://github.com/JuliaBinaryWrappers/Typst_jll.jl)
+    - Dependency of Typstry.jl
 
 ### LaTeX
 
@@ -118,5 +117,5 @@ typst`compile input.typ output.pdf`
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
-    - Supports Typstry.jl
+    - Dependent of Typstry.jl
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
