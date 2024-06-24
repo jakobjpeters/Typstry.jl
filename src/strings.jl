@@ -695,11 +695,8 @@ function show_typst(io, x::Regex)
     code_mode(io)
     enclose(io, x, "regex(", ")") do io, x
         buffer = IOBuffer()
-
         print(buffer, x)
-        seek(buffer, 1)
-
-        print(io, read(buffer, String))
+        write(io, take!(buffer)[2:end])
     end
 end
 show_typst(io, x::Signed) = mode(io) == code ?
@@ -920,10 +917,12 @@ function show(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
 }, ts::TypstString)
     input = tempname()
-    output = tempname * "." * format(m)
+    output = input * "." * format(m)
 
-    render(ts; input, output, open = false, preamble = get(io, :preamble, preamble)::String)
-    print(io, read(output, String))
+    render(ts; input, output, open = false, preamble = get(io, :preamble, preamble)::TypstString)
+    write(io, read(output))
+
+    nothing
 end
 
 """

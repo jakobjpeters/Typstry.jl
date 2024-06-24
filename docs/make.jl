@@ -19,13 +19,16 @@ const modules = [Typstry]
 const extensions = ["LaTeXStrings", "Markdown"]
 const template = joinpath(assets, "template.typ")
 
-_setdocmeta!(_module, x) = setdocmeta!(_module, :DocTestSetup, x; recursive = true)
+_setdocmeta!(_module, x) = setdocmeta!(_module, :DocTestSetup, quote
+    using Typstry
+    $x
+end; recursive = true)
 
-_setdocmeta!(Typstry, :(using Typstry))
+_setdocmeta!(Typstry, nothing)
 
 for extension in extensions
     _module = get_extension(Typstry, Symbol(extension, :Extension))
-    _setdocmeta!(_module, :(using Typstry; using $extension))
+    _setdocmeta!(_module, :(using $(Symbol(extension))))
     push!(modules, _module)
     push!(examples, _module.examples)
 end
