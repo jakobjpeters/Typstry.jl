@@ -387,10 +387,10 @@ Print a [`TypstError`](@ref) when failing to [`run`](@ref) a [`TypstCommand`](@r
 # Examples
 ```jldoctest
 julia> showerror(stdout, TypstError(typst``))
-TypstError: failed to `run` a `TypstCommand([""]))`
+TypstError: failed to `run` a `TypstCommand([""])`
 ```
 """
 showerror(io::IO, te::TypstError) = print(io,
-    "TypstError: failed to `run` a `", TypstCommand, "(", te.command.parameters, "))`")
+    "TypstError: failed to `run` a `", TypstCommand, "(", te.command.parameters, ")`")
 
 end # @stable_disable
