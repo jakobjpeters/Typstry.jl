@@ -106,6 +106,7 @@ Control characters are escaped,
 except double quotation marks and backslashes in the same manner as `@raw_str`.
 Values may be interpolated by calling the `TypstString` constructor,
 except using a backslash instead of the type name.
+Interpolation syntax may be escaped in the same manner as quotation marks.
 
 !!! tip
     Print directly to an `IO` using
@@ -138,13 +139,16 @@ macro typst_str(s)
     previous = current = firstindex(s)
     last = lastindex(s)
 
-    while (regex_match = match(r"(?<!\\)\\\(", s, current)) !== nothing
-        interpolation = :($Typstry.TypstString())
-        current = prevind(s, regex_match.offset)
-        start = current + 1
+    while (regex_match = match(r"(?:^|[^\\])(?:\\\\)*(\\)\(", s, current)) !== nothing
+        start = only(regex_match.offsets)
+        current = prevind(s, start)
+
         previous <= current && push!(args, s[previous:current])
-        previous = current = static_parse(s, start + 1; filename, greedy = false)[2]
-        append!(interpolation.args, static_parse(s[start:current - 1]; filename).args[2:end])
+
+        previous = current = static_parse(s, nextind(s, start); filename, greedy = false)[2]
+        interpolation = :($Typstry.TypstString())
+
+        append!(interpolation.args, static_parse(s[start:prevind(s, current)]; filename).args[2:end])
         push!(args, esc(interpolation))
     end
 
