@@ -65,8 +65,6 @@ struct TypstError <: Exception
     command::TypstCommand
 end
 
-end # @stable_disable
-
 """
     @typst_cmd(s)
     typst`s`
@@ -87,8 +85,6 @@ typst`compile input.typ output.typ`
 macro typst_cmd(parameters)
     :(TypstCommand(map(string, split($parameters, " "))))
 end
-
-@stable_disable begin
 
 """
     julia_mono

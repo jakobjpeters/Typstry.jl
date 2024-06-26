@@ -527,9 +527,9 @@ such that the defaults may be overwritten.
 To be compatible with merging contexts and constructing an `IOContext`,
 methods must return an `AbstractDict{Symbol}`.
 
-| Key             | Default               | Type           | Description                                                                                                                                                                       |
+| Setting         | Default               | Type           | Description                                                                                                                                                                       |
 |:----------------|:----------------------|:---------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `:backticks`    | `3`                   | `Int`          | The number of backticks to enclose raw text markup, which may be increased to insert nested raw text.                                                                             |
+| `:backticks`    | `3`                   | `Int`          | The number of backticks to enclose raw text markup, which may be increased to disambiguiate nested raw text.                                                                             |
 | `:block`        | `false`               | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                                         |
 | `:depth`        | `0`                   | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                                         |
 | `:mode`         | `markup`              | [`Mode`](@ref) | The current Typst syntactical context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs. |
@@ -572,10 +572,10 @@ show_typst(x) = _show_typst(stdout, x)
 Print in Typst format with Julia settings and Typst parameters provided by an `IOContext`.
 
 Implement this function for a custom type to specify its Typst formatting.
-Settings are used in Julia to format the [`TypstString`](@ref).
-Parameters are passed to a function in the Typst source file and must be a [`TypstString`](@ref)
+A setting is a value used in Julia, whose type varies across settings.
+A parameter is passed directly to a Typst function and must be a [`TypstString`](@ref)
 with the same name as in Typst, except that dashes are replaced with underscores.
-Some settings, such as `block`, correspond with a parameter but may be used in Julia and have a different type.
+Some settings, such as `block`, correspond with a parameter but may be used in Julia.
 
 For additional information on settings and parameters, see also [`context`](@ref)
 and the [Typst Documentation](https://typst.app/docs/), respectively.

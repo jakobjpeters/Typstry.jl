@@ -10,29 +10,34 @@ DocTestSetup = :(using Typstry)
 ### Strings
 
 Print Julia values in [`Typst`](@ref) format using `show` with the `text/typst` MIME type.
+This formatting is also used to create a [`TypstString`](@ref).
 
 ```jldoctest 1
 julia> show(stdout, "text/typst", Typst(π))
 $π$
+
+julia> TypstString(π)
+typst"$π$"
 ```
 
-Some methods use an `IOContext` to configure the formatting.
+Methods of [`show_typst`](@ref) are used to specify the Typst formatting,
+which may use Julia settings and Typst parameters.
+A setting is a value used in Julia, whereas a parameter is passed directly to a Typst function.
+Settings each have a default value, whereas the default values of parameters are handled by Typst functions.
+This [`context`](@ref) may instead be specified in `show` using an `IOContext` and in `TypstString` using keyword parameters.
 
 ```jldoctest 1
 julia> show(IOContext(stdout, :mode => code), "text/typst", Typst(π))
 3.141592653589793
-```
-
-Instead of printing, create a [`TypstString`](@ref) using its constructor or
-[`@typst_str`](@ref) with formatted interpolation.
-
-```jldoctest 1
-julia> TypstString(π)
-typst"$π$"
 
 julia> TypstString(π; mode = code)
 typst"3.141592653589793"
+```
 
+Use [`@typst_str`](@ref) to directly write Typst source text.
+This also supports formatted interpolation by calling the `TypstString` constructor.
+
+```jldoctest 1
 julia> typst"$ \(pi; mode = math) approx \(pi; mode = code) $"
 typst"$ π approx 3.141592653589793 $"
 ```
