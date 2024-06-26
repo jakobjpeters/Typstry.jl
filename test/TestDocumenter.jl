@@ -8,7 +8,7 @@ using Logging: Debug, Info, disable_logging
 using Markdown: Markdown
 using LaTeXStrings: LaTeXStrings
 using Preferences: set_preferences!
-using Typstry
+using Typstry: Typstry
 
 const extensions = [:LaTeXStrings, :Markdown]
 

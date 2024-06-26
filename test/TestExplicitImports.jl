@@ -10,7 +10,7 @@ using ExplicitImports:
     check_no_self_qualified_accesses,
     check_no_stale_explicit_imports
 using Test: @test
-using Typstry
+using Typstry: Typstry
 
 function test()
     @test isnothing(check_all_explicit_imports_are_public(Typstry; ignore = (:MD, :Stateful,

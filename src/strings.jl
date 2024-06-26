@@ -374,18 +374,18 @@ true
 parenthesize(io) = io[:parenthesize]::Bool
 
 """
-    print_parameters(io, f, keys, final)
+    show_parameters(io, f, keys, final)
 
 # Examples
 ```jldoctest
-julia> Typstry.print_parameters(
+julia> Typstry.show_parameters(
            IOContext(stdout, :depth => 0, :tab_size => 2, :delim => typst"\\\"(\\\""),
        "vec", [:delim, :gap], true)
 vec(
   delim: "(",
 ```
 """
-function print_parameters(io, f, keys, final)
+function show_parameters(io, f, keys, final)
     pairs = filter(!isempty ∘ last, map(key -> key => get(io, key, typst"")::TypstString, keys))
 
     println(io, f, "(")
@@ -421,10 +421,12 @@ function show_raw(f, io, x, language)
         _indent, _depth = indent(io), depth(io)
 
         print(io, "\n")
+
         for line in eachsplit(sprint(f, x), "\n")
-            println(io, _indent, line)
+            println(io, _indent ^ (_depth + 1), line)
         end
-        print(io, _indent ^ _depth, "\n")
+
+        print(io, _indent ^ _depth)
     else enclose(f, io, x, " ")
     end
 
@@ -438,7 +440,7 @@ show_vector(io, x) = math_mode(io, x) do io, x
     _depth, _indent = depth(io), indent(io)
     __depth = _depth + 1
 
-    print_parameters(io, "vec", [:delim, :gap], true)
+    show_parameters(io, "vec", [:delim, :gap], true)
     print(io, _indent ^ __depth)
     join_with(_show_typst, IOContext(io, :depth => __depth, :mode => math, :parenthesize => false), x, ", "),
     print(io, "\n", _indent ^ _depth, ")")
@@ -641,7 +643,7 @@ show_typst(io, x::AbstractMatrix) = mode(io) == code ?
     math_mode((io, x; indent, depth) -> begin
         _depth = depth + 1
 
-        print_parameters(io, "mat", [:augment, :column_gap, :delim, :gap, :row_gap], true)
+        show_parameters(io, "mat", [:augment, :column_gap, :delim, :gap, :row_gap], true)
         join_with((io, x; indent) -> begin
             print(io, indent ^ _depth)
             join_with(_show_typst, io, x, ", ")
@@ -741,7 +743,7 @@ function show_typst(io, x::Union{
     _values = map(value -> TypstString(value; mode = code), values)
 
     code_mode(io)
-    print_parameters(IOContext(io, map(Pair, keys, _values)...), f, keys, false)
+    show_parameters(IOContext(io, map(Pair, keys, _values)...), f, keys, false)
     print(io, indent(io) ^ depth(io), ")")
 end
 

@@ -25,8 +25,8 @@ Typstry.math_pad
 Typstry.maybe_wrap
 Typstry.mode
 Typstry.parenthesize
-Typstry.print_parameters
 Typstry.show_array
+Typstry.show_parameters
 Typstry.show_raw
 Typstry.show_vector
 Typstry.static_parse

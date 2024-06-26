@@ -2,7 +2,7 @@
 module TestAqua
 
 using Aqua: test_all, test_ambiguities
-using Typstry
+using Typstry: Typstry
 
 function test()
     test_all(Typstry; ambiguities = false)

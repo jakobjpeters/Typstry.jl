@@ -4,6 +4,7 @@ using Typstry
 module TestTypstry
 
 using Test: @test, @testset
+using Typstry: Mode, TypstString
 
 test_modes(x, ss) = @testset "modes" begin
     for (mode, s) in zip(instances(Mode), ss)
