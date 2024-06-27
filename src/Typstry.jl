@@ -19,19 +19,6 @@ using Typst_jll: typst
 
 @static isdefined(Base, :setcpuaffinity) && import Base: setcpuaffinity
 
-# Internals
-
-"""
-    @stable_disable(x)
-
-Equivalent to `DispatchDoctor.@stable default_mode = "disable" x`.
-"""
-macro stable_disable(x)
-    :(@stable default_mode = "disable" $(esc(x)))
-end
-
-#
-
 include("strings.jl")
 
 export Mode, Typst, TypstString, TypstText, @typst_str, code, markup, math, context, show_typst

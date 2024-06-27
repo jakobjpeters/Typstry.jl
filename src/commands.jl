@@ -1,5 +1,5 @@
 
-@stable_disable begin
+@stable begin
 
 # Internals
 
@@ -389,4 +389,4 @@ TypstError: failed to `run` a `TypstCommand([""])`
 showerror(io::IO, te::TypstError) = print(io,
     "TypstError: failed to `run` a `", TypstCommand, "(", te.command.parameters, ")`")
 
-end # @stable_disable
+end # @stable

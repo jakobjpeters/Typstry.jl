@@ -6,7 +6,6 @@ ExplicitImports = "7d51a73a-1435-4ff3-83d9-f097790105c7"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
-Preferences = "21216c6a-2e73-6563-6e65-726566657250"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [extras]

@@ -1,5 +1,5 @@
 
-@stable_disable begin
+@stable begin
 
 # `Typstry`
 
@@ -94,7 +94,7 @@ struct TypstText{T}
     value::T
 end
 
-end # @stable_disable
+end # @stable
 
 """
     @typst_str(s)
@@ -146,7 +146,7 @@ macro typst_str(s)
         previous <= current && push!(args, s[previous:current])
 
         previous = current = static_parse(s, nextind(s, start); filename, greedy = false)[2]
-        interpolation = :($Typstry.TypstString())
+        interpolation = :($TypstString())
 
         append!(interpolation.args, static_parse(s[start:prevind(s, current)]; filename).args[2:end])
         push!(args, esc(interpolation))
@@ -156,7 +156,7 @@ macro typst_str(s)
     :(TypstString(TypstText($_s)))
 end
 
-@stable_disable begin
+@stable begin
 
 # Internals
 
@@ -989,4 +989,4 @@ const preamble = typst"""
 #set text(16pt, font: "JuliaMono")
 """
 
-end # @stable_disable
+end # @stable
