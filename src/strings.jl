@@ -908,24 +908,23 @@ show(io::IO, ::MIME"text/typst", t::Union{TypstString, TypstText}) = show_typst(
 """
     show(::IO, ::Union{
         MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-    }, ::TypstString)
+    }, ::Union{Typst, TypstString, TypstText})
 
 Print the Portable Document Format (PDF), Portable Network Graphics (PNG),
 or Scalable Vector Graphics (SVG) format.
 
 The `preamble` keyword parameter used by [`render`](@ref) may be specified in an `IOContext`.
 
-!!! note
-    Environments, such as Pluto.jl notebooks,
-    may use these methods to `display` a [`TypstString`](@ref).
+Environments, such as Pluto.jl notebooks, may use these methods to `display`
+[`Typst`](@ref)s, [`TypstString`](@ref)s, and [`TypstText`](@ref)s.
 """
 function show(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, ts::TypstString)
+}, t::Union{Typst, TypstString, TypstText})
     input = tempname()
     output = input * "." * format(m)
 
-    render(ts; input, output, open = false, preamble = get(io, :preamble, preamble)::TypstString)
+    render(t; input, output, open = false, preamble = get(io, :preamble, preamble)::TypstString)
     write(io, read(output))
 
     nothing
