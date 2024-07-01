@@ -13,7 +13,6 @@ using .Meta: parse
 using Dates:
     Date, DateTime, Day, Hour, Minute, Second, Time, Week,
     day, hour, minute, month, second, year
-using DispatchDoctor: @stable, @unstable
 using PrecompileTools: @compile_workload
 using Typst_jll: typst
 

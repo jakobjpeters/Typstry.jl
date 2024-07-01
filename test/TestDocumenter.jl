@@ -7,31 +7,18 @@ using Documenter: DocMeta.setdocmeta!, doctest
 using Logging: Debug, Info, disable_logging
 using Markdown: Markdown
 using LaTeXStrings: LaTeXStrings
-using Preferences: set_preferences!
 using Typstry: Typstry
 
-const extensions = [:LaTeXStrings, :Markdown]
-
 function _test(_module, x)
-    setdocmeta!(_module, :DocTestSetup, quote
-        using Preferences: set_preferences!
-        using Typstry
-        $x
-
-        set_preferences!("Typstry", "instability_check" => "error")
-    end; recursive = true)
-
-    # TODO: errors print twice
+    setdocmeta!(_module, :DocTestSetup, :(using Typstry; $x); recursive = true)
     doctest(_module; manual = "source", testset = "`$_module` Doctests")
 end
 
 function test()
-    set_preferences!("Typstry", "instability_check" => "error")
     disable_logging(Info)
-
     _test(Typstry, nothing)
 
-    for extension in extensions
+    for extension in [:LaTeXStrings, :Markdown]
         _extension = Symbol(extension, "Extension")
         _module = get_extension(Typstry, _extension)
 

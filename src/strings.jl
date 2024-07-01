@@ -1,6 +1,4 @@
 
-@stable begin
-
 # `Typstry`
 
 """
@@ -94,8 +92,6 @@ struct TypstText{T}
     value::T
 end
 
-end # @stable
-
 """
     @typst_str(s)
     typst"s"
@@ -158,8 +154,6 @@ macro typst_str(s)
     current ≤ final && push!(args, s[current:final])
     :(TypstString(TypstText($_s)))
 end
-
-@stable begin
 
 # Internals
 
@@ -459,7 +453,7 @@ end
 Call `Meta.parse` with the `filename` if it is supported
 in the current Julia version (at least v1.10).
 """
-@unstable static_parse(args...; filename, kwargs...) = @static VERSION < v"1.10" ?
+static_parse(args...; filename, kwargs...) = @static VERSION < v"1.10" ?
     parse(args...; kwargs...) : parse(args...; filename, kwargs...)
 
 ## Dates.jl
@@ -545,7 +539,7 @@ methods must return an `AbstractDict{Symbol}`.
 | `:parenthesize` | `true`                | `Bool`         | Whether to enclose some mathematical elements in parentheses to specify their operator precedence and avoid ambiguity.                                                            |
 | `:tab_size`     | `2`                   | `Int`          | The number of spaces used by some elements with multi-line Typst formatting, which is repeated for each level of `depth`                                                          |
 """
-@unstable context(x::Typst) = merge!(Dict(
+context(x::Typst) = merge!(Dict(
     :backticks => 3,
     :block => false,
     :depth => 0,
@@ -991,5 +985,3 @@ const preamble = typst"""
 #set page(margin: 1em, height: auto, width: auto, fill: white)
 #set text(16pt, font: "JuliaMono")
 """
-
-end # @stable

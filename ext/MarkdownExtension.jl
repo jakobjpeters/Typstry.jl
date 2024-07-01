@@ -2,12 +2,9 @@
 module MarkdownExtension
 
 import Typstry: show_typst
-using DispatchDoctor: @stable
 using Markdown: MD, @md_str
 using PrecompileTools: @compile_workload
 using Typstry: show_raw, workload
-
-@stable begin
 
 # Strings
 
@@ -34,7 +31,5 @@ end
 const examples = [md"# A" => MD]
 
 @compile_workload workload(examples)
-
-end # @stable
 
 end # module
