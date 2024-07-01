@@ -136,23 +136,26 @@ macro typst_str(s)
     _s = Expr(:string)
     args = _s.args
     filename = __source__.file
-    previous = current = firstindex(s)
-    last = lastindex(s)
+    current = firstindex(s)
+    final = lastindex(s)
 
-    while (regex_match = match(r"(?:^|[^\\])(?:\\\\)*(\\)\(", s, current)) !== nothing
-        start = only(regex_match.offsets)
-        current = prevind(s, start)
+    while (regex_match = match(r"(?:^|[^\\])(\\+)(\()", s, current)) ≢ nothing
+        backslashes, start = length(first(regex_match.captures)), last(regex_match.offsets)
+        interpolate, previous = isodd(backslashes), prevind(s, start)
 
-        previous <= current && push!(args, s[previous:current])
+        current < previous && push!(args, s[current:prevind(s, previous, interpolate + backslashes ÷ 2)])
 
-        previous = current = static_parse(s, nextind(s, start); filename, greedy = false)[2]
-        interpolation = :($TypstString())
+        if interpolate
+            current = last(static_parse(s, start; filename, greedy = false))
+            interpolation = :($TypstString())
 
-        append!(interpolation.args, static_parse(s[start:prevind(s, current)]; filename).args[2:end])
-        push!(args, esc(interpolation))
+            append!(interpolation.args, static_parse(s[previous:prevind(s, current)]; filename).args[2:end])
+            push!(args, esc(interpolation))
+        else current = start
+        end
     end
 
-    previous <= last && push!(args, s[previous:last])
+    current ≤ final && push!(args, s[current:final])
     :(TypstString(TypstText($_s)))
 end
 
@@ -215,7 +218,7 @@ julia> Typstry.code_mode(IOContext(stdout, :mode => math))
 #
 ```
 """
-code_mode(io) = if mode(io) != code print(io, "#") end
+code_mode(io) = if mode(io) ≠ code print(io, "#") end
 
 """
     depth(io)
@@ -667,7 +670,7 @@ show_typst(io, x::Complex) = math_mode(io, x) do io, x
     enclose(IOContext(io, :mode => math), x, _enclose...) do io, x
         __real && !__imaginary || _show_typst(io, _real)
 
-        if _imaginary != 0
+        if _imaginary ≠ 0
             if !__real enclose(print, io, ___imaginary ? "-" : "+", " ")
             elseif ___imaginary print(io, "-")
             end
@@ -735,7 +738,7 @@ show_typst(io, x::Union{
         print(io, ", ")
         _show_typst(io, last(x) + 1)
 
-        if _step != 1
+        if _step ≠ 1
             print(io, ", step: ")
             _show_typst(io, _step)
         end
@@ -870,7 +873,8 @@ typst"a"
 """
 function show(io::IO, ts::TypstString)
     print(io, "typst")
-    enclose(escape_raw_string, io, ts.text, "\"")
+    enclose((io, text) -> escape_raw_string(io, replace(text,
+        r"(?:^|[^\\])(\\+)\(" => s"\1\1(")), io, ts.text, "\"")
 end
 
 """
