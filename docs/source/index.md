@@ -101,7 +101,7 @@ typst`compile input.typ output.pdf`
             - `TypstString(TypstFunction(eval, :(1//2); mode = code)) == typst"eval("(1 / 2)", mode: \"code\")"`
             - `TypstString(TypstFunction(*, :a, :b; mode = math)) == typst"(a) (b)"`
 
-## Related Packages
+## Similar Packages
 
 ### Typst
 
@@ -116,6 +116,7 @@ typst`compile input.typ output.pdf`
 - [Latexify.jl](https://github.com/korsbo/Latexify.jl)
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
+- [LibTeXPrintf.jl](https://github.com/JuliaStrings/LibTeXPrintf.jl)
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
     - Dependent of Typstry.jl
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
