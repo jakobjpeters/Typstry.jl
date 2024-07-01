@@ -9,7 +9,7 @@ using Artifacts: @artifact_str
 using Base: escape_raw_string, escape_string
 using .Docs: HTML, Text
 using .Iterators: Stateful
-using .Meta: parse
+using .Meta: isexpr, parse
 using Dates:
     Date, DateTime, Day, Hour, Minute, Second, Time, Week,
     day, hour, minute, month, second, year

@@ -17,6 +17,7 @@
 - The `show` methods with the `applicatoin/pdf`, `image/png`, and `image/svg+xml` MIME types
     - Can be given a custom `preamble`
     - Support `Typst` and `TypstText`
+- Improved error handling for interpolating incomplete expressions into a `@typst_str`
 
 ### Commands
 
@@ -25,7 +26,7 @@
 ## Bug Fixes
 
 - `@typst_str`
-    - No longer error during interpolation when `TypstString` isn't loaded
+    - No longer errors during interpolation when `TypstString` isn't loaded
     - Handle interpolation and escaped interpolation in the same manner as double quotation marks
         - `print` and `show` now correspond
 - `AbstractFloat` values that satisfy `isinf` and `isnan` now correspond to `calc.inf` and `calc.nan`, respectively

@@ -142,7 +142,8 @@ macro typst_str(s)
         current < previous && push!(args, s[current:prevind(s, previous, interpolate + backslashes ÷ 2)])
 
         if interpolate
-            current = last(static_parse(s, start; filename, greedy = false))
+            x, current = static_parse(s, start; filename, greedy = false)
+            isexpr(x, :incomplete) && throw(first(x.args))
             interpolation = :($TypstString())
 
             append!(interpolation.args, static_parse(s[previous:prevind(s, current)]; filename).args[2:end])
