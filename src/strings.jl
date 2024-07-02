@@ -459,16 +459,27 @@ static_parse(args...; filename, kwargs...) = @static VERSION < v"1.10" ?
 
 ## Dates.jl
 
+"""
+    date_time(::Union{Date, Time, DateTime})
+"""
 date_time(::Date) = year, month, day
 date_time(::Time) = hour, minute, second
 date_time(::DateTime) = year, month, day, hour, minute, second
 
+"""
+    duration(::Union{Day, Hour, Minute, Second, Week})
+"""
 duration(::Day) = :days
 duration(::Hour) = :hours
 duration(::Minute) = :minutes
 duration(::Second) = :seconds
 duration(::Week) = :weeks
 
+"""
+    dates(::Union{
+        Date, DateTime, Day, Hour, Minute, Second, Time, Week
+    })
+"""
 function dates(x::Union{Date, DateTime, Time})
     fs = date_time(x)
     "datetime", map(Symbol, fs), map(f -> f(x), fs)

@@ -31,6 +31,18 @@ Typstry.show_vector
 Typstry.static_parse
 ```
 
+### Dates.jl
+
+!!! info
+    A Dates.jl package extension would currently print warnings during precompilation.
+    See also [julia issue #52511](https://github.com/JuliaLang/julia/issues/52511)
+
+```@docs
+Typstry.date_time
+Typstry.duration
+Typstry.dates
+```
+
 ## Commands
 
 ```@docs
