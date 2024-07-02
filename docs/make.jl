@@ -7,11 +7,12 @@ using .DocMeta: setdocmeta!
 using LaTeXStrings: LaTeXStrings, LaTeXString
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Markdown: Markdown, MD
-using Typstry: _show_typst, enclose, join_with, preamble, typst_mime
+using Typstry: Strings, Commands.preamble
+using .Strings: examples, _show_typst, enclose, join_with, typst_mime
 using Typstry
 
 const assets = joinpath(@__DIR__, "source", "assets")
-const examples = Vector{Pair{Any, Type}}[]
+const _examples = Vector{Pair{Any, Type}}[]
 const logo = joinpath(assets, "logo.svg")
 const modes = instances(Mode)
 const width, height = 210, 297
@@ -30,7 +31,7 @@ for extension in extensions
     _module = get_extension(Typstry, Symbol(extension, :Extension))
     _setdocmeta!(_module, :(using $(Symbol(extension))))
     push!(modules, _module)
-    push!(examples, _module.examples)
+    push!(_examples, _module.examples)
 end
 
 mkpath(assets)
@@ -82,7 +83,7 @@ open(template; truncate = true) do file
     println(file, "\n), ..examples)")
 end
 
-for (package, examples) in append!([("Typstry", Typstry.examples)], zip(extensions, examples))
+for (package, examples) in append!([("Typstry", examples)], zip(extensions, _examples))
     path = joinpath(assets, package * "_examples.typ")
 
     open(path; truncate = true) do file

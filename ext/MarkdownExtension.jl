@@ -3,8 +3,7 @@ module MarkdownExtension
 
 import Typstry: show_typst
 using Markdown: MD, @md_str
-using PrecompileTools: @compile_workload
-using Typstry: show_raw, workload
+using Typstry: Strings.show_raw, compile_workload
 
 # Strings
 
@@ -30,6 +29,6 @@ end
 
 const examples = [md"# A" => MD]
 
-@compile_workload workload(examples)
+compile_workload(examples)
 
 end # module

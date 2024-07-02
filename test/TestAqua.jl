@@ -1,12 +1,10 @@
 
 module TestAqua
 
-using Aqua: test_all, test_ambiguities
+using Aqua: test_all
 using Typstry: Typstry
 
-function test()
-    test_all(Typstry; ambiguities = false)
-    test_ambiguities(Typstry)
-end
+# TODO: test package extensions
+test() = redirect_stdout(() -> test_all(Typstry), devnull)
 
 end # TestAqua

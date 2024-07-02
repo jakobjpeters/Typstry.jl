@@ -1,4 +1,15 @@
 
+module Strings
+
+import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show
+using Base: escape_raw_string
+using .Docs: HTML, Text
+using .Iterators: Stateful
+using .Meta: isexpr, parse
+using Dates:
+    Date, DateTime, Day, Hour, Minute, Second, Time, Week,
+    day, hour, minute, month, second, year
+
 # `Typstry`
 
 """
@@ -51,6 +62,7 @@ in an `IOContext`. See also [`show_typst`](@ref) for a list of supported types.
     However, the interface is unspecified, which may result in unexpected behavior.
 
 # Examples
+
 ```jldoctest
 julia> TypstString(1)
 typst"\$1\$"
@@ -80,6 +92,7 @@ A wrapper whose [`show_typst`](@ref) method uses `print`.
     break formatting in some environments, such as the REPL.
 
 # Examples
+
 ```jldoctest
 julia> TypstText(1)
 TypstText{Int64}(1)
@@ -112,6 +125,7 @@ Interpolation syntax may be escaped in the same manner as quotation marks.
     (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
 
 # Examples
+
 ```jldoctest
 julia> x = 1;
 
@@ -162,8 +176,9 @@ end
     typst_mime
 
 # Examples
+
 ```jldoctest
-julia> Typstry.typst_mime
+julia> Typstry.Strings.typst_mime
 MIME type text/typst
 ```
 """
@@ -175,8 +190,9 @@ const typst_mime = MIME"text/typst"()
 Return to `io[:backticks]::Int`.
 
 # Examples
+
 ```jldoctest
-julia> Typstry.backticks(IOContext(stdout, :backticks => 3))
+julia> Typstry.Strings.backticks(IOContext(stdout, :backticks => 3))
 3
 ```
 """
@@ -188,8 +204,9 @@ backticks(io) = io[:backticks]::Int
 Return `io[:block]::Bool`.
 
 # Examples
+
 ```jldoctest
-julia> Typstry.block(IOContext(stdout, :block => true))
+julia> Typstry.Strings.block(IOContext(stdout, :block => true))
 true
 ```
 """
@@ -200,16 +217,17 @@ block(io) = io[:block]::Bool
 
 Print the number sign, unless `mode(io) == code`.
 
-See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
+See also [`Mode`](@ref) and [`mode`](@ref Typstry.Strings.mode).
 
 # Examples
-```jldoctest
-julia> Typstry.code_mode(IOContext(stdout, :mode => code))
 
-julia> Typstry.code_mode(IOContext(stdout, :mode => markup))
+```jldoctest
+julia> Typstry.Strings.code_mode(IOContext(stdout, :mode => code))
+
+julia> Typstry.Strings.code_mode(IOContext(stdout, :mode => markup))
 #
 
-julia> Typstry.code_mode(IOContext(stdout, :mode => math))
+julia> Typstry.Strings.code_mode(IOContext(stdout, :mode => math))
 #
 ```
 """
@@ -221,8 +239,9 @@ code_mode(io) = if mode(io) ≠ code print(io, "#") end
 Return `io[:depth]::Int`.
 
 # Examples
+
 ```jldoctest
-julia> Typstry.depth(IOContext(stdout, :depth => 0))
+julia> Typstry.Strings.depth(IOContext(stdout, :depth => 0))
 0
 ```
 """
@@ -234,8 +253,9 @@ depth(io) = io[:depth]::Int
 Call `f(io,\u00A0x;\u00A0kwargs...)` between printing `left` and `right`, respectfully.
 
 # Examples
+
 ```jldoctest
-julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
+julia> Typstry.Strings.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
 \$ 1x \$
 ```
 """
@@ -249,14 +269,15 @@ end
     format(::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"})
 
 # Examples
+
 ```jldoctest
-julia> Typstry.format(MIME"application/pdf"())
+julia> Typstry.Strings.format(MIME"application/pdf"())
 "pdf"
 
-julia> Typstry.format(MIME"image/png"())
+julia> Typstry.Strings.format(MIME"image/png"())
 "png"
 
-julia> Typstry.format(MIME"image/svg+xml"())
+julia> Typstry.Strings.format(MIME"image/svg+xml"())
 "svg"
 ```
 """
@@ -272,8 +293,9 @@ Return `" " ^ io[:tab_size]::Int`.
 See also [`TypstString`](@ref).
 
 # Examples
+
 ```jldoctest
-julia> Typstry.indent(IOContext(stdout, :tab_size => 2))
+julia> Typstry.Strings.indent(IOContext(stdout, :tab_size => 2))
 "  "
 ```
 """
@@ -285,8 +307,9 @@ indent(io) = " " ^ io[:tab_size]
 Similar to `join`, except printing with `f(io, x; kwargs...)`.
 
 # Examples
+
 ```jldoctest
-julia> Typstry.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
+julia> Typstry.Strings.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
 -1x, -2x, -3x, -4x
 ```
 """
@@ -308,17 +331,18 @@ math_mode(f, io, x; kwargs...) = enclose(f, io, x, math_pad(io); kwargs...)
     math_pad(io)
 
 Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
-[`block`](@ref Typstry.block) and [`mode`](@ref Typstry.mode) settings.
+[`block`](@ref Typstry.Strings.block) and [`mode`](@ref Typstry.Strings.mode) settings.
 
 # Examples
+
 ```jldoctest
-julia> Typstry.math_pad(IOContext(stdout, :mode => math))
+julia> Typstry.Strings.math_pad(IOContext(stdout, :mode => math))
 ""
 
-julia> Typstry.math_pad(IOContext(stdout, :block => true, :mode => markup))
+julia> Typstry.Strings.math_pad(IOContext(stdout, :block => true, :mode => markup))
 "\\\$ "
 
-julia> Typstry.math_pad(IOContext(stdout, :block => false, :mode => markup))
+julia> Typstry.Strings.math_pad(IOContext(stdout, :block => false, :mode => markup))
 "\\\$"
 ```
 """
@@ -335,8 +359,9 @@ Return `io[:mode]::Mode`.
 See also [`Mode`](@ref).
 
 # Examples
+
 ```jldoctest
-julia> Typstry.mode(IOContext(stdout, :mode => code))
+julia> Typstry.Strings.mode(IOContext(stdout, :mode => code))
 code::Mode = 0
 ```
 """
@@ -348,14 +373,15 @@ mode(io) = io[:mode]::Mode
 Wrap the value in [`Typst`](@ref) unless it is a [`TypstString`](@ref) or [`TypstText`](@ref).
 
 # Examples
+
 ```jldoctest
-julia> Typstry.maybe_wrap(1)
+julia> Typstry.Strings.maybe_wrap(1)
 Typst{Int64}(1)
 
-julia> Typstry.maybe_wrap(TypstString(1))
+julia> Typstry.Strings.maybe_wrap(TypstString(1))
 typst"\$1\$"
 
-julia> Typstry.maybe_wrap(TypstText(1))
+julia> Typstry.Strings.maybe_wrap(TypstText(1))
 TypstText{Int64}(1)
 ```
 """
@@ -368,8 +394,9 @@ maybe_wrap(x) = Typst(x)
 Return `io[:parenthesize]::Bool`.
 
 # Examples
+
 ```jldoctest
-julia> Typstry.parenthesize(IOContext(stdout, :parenthesize => true))
+julia> Typstry.Strings.parenthesize(IOContext(stdout, :parenthesize => true))
 true
 ```
 """
@@ -379,8 +406,9 @@ parenthesize(io) = io[:parenthesize]::Bool
     show_parameters(io, f, keys, final)
 
 # Examples
+
 ```jldoctest
-julia> Typstry.show_parameters(
+julia> Typstry.Strings.show_parameters(
            IOContext(stdout, :depth => 0, :tab_size => 2, :delim => typst"\\\"(\\\""),
        "vec", [:delim, :gap], true)
 vec(
@@ -501,6 +529,7 @@ end
 A Typst syntactical [`Mode`](@ref) prefixed by the number sign.
 
 # Examples
+
 ```jldoctest
 julia> code
 code::Mode = 0
@@ -569,6 +598,7 @@ _show_typst(io, x) = show(io, typst_mime, Typst(x))
 Print to `stdout` in Typst format with the default and custom [`context`](@ref)s.
 
 # Examples
+
 ```jldoctest
 julia> show_typst(1 // 2)
 \$1 / 2\$
@@ -768,6 +798,7 @@ end
 See also [`TypstString`](@ref).
 
 # Examples
+
 ```jldoctest
 julia> IOBuffer(typst"a")
 IOBuffer(data=UInt8[...], readable=true, writable=false, seekable=true, append=false, size=1, maxsize=Inf, ptr=1, mark=-1)
@@ -782,6 +813,7 @@ IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 See also [`TypstString`](@ref).
 
 # Examples
+
 ```jldoctest
 julia> codeunit(typst"a")
 UInt8
@@ -799,6 +831,7 @@ codeunit(ts::TypstString, i::Integer) = codeunit(ts.text, i)
 See also [`TypstString`](@ref).
 
 # Examples
+
 ```jldoctest
 julia> isvalid(typst"a", 1)
 true
@@ -813,6 +846,7 @@ isvalid(ts::TypstString, i::Integer) = isvalid(ts.text, i::Integer)
 See also [`TypstString`](@ref).
 
 # Examples
+
 ```jldoctest
 julia> iterate(typst"a")
 ('a', 2)
@@ -830,6 +864,7 @@ iterate(ts::TypstString, i::Integer) = iterate(ts.text, i)
 See also [`TypstString`](@ref).
 
 # Examples
+
 ```jldoctest
 julia> ncodeunits(typst"a")
 1
@@ -855,6 +890,7 @@ See also [`TypstString`](@ref).
     the `MIME` type `istextmime` and the parameter is an `AbstractString`.
 
 # Examples
+
 ```jldoctest
 julia> repr("text/plain", typst"a")
 "typst\\\"a\\\""
@@ -872,6 +908,7 @@ repr(m::MIME, ts::TypstString; kwargs...) = sprint(show, m, ts; kwargs...)
 See also [`TypstString`](@ref).
 
 # Examples
+
 ```jldoctest
 julia> show(stdout, typst"a")
 typst"a"
@@ -894,6 +931,7 @@ specified by a default and custom [`context`](@ref).
 See also [`TypstString`](@ref) and [`TypstText`](@ref).
 
 # Examples
+
 ```jldoctest
 julia> show(stdout, "text/typst", typst"a")
 a
@@ -915,30 +953,7 @@ function show(io::IOContext, ::MIME"text/typst", t::Typst)
 end
 show(io::IO, ::MIME"text/typst", t::Union{TypstString, TypstText}) = show_typst(io, t)
 
-"""
-    show(::IO, ::Union{
-        MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-    }, ::Union{Typst, TypstString, TypstText})
-
-Print the Portable Document Format (PDF), Portable Network Graphics (PNG),
-or Scalable Vector Graphics (SVG) format.
-
-The `preamble` keyword parameter used by [`render`](@ref) may be specified in an `IOContext`.
-
-Environments, such as Pluto.jl notebooks, may use these methods to `display`
-[`Typst`](@ref)s, [`TypstString`](@ref)s, and [`TypstText`](@ref)s.
-"""
-function show(io::IO, m::Union{
-    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, t::Union{Typst, TypstString, TypstText})
-    input = tempname()
-    output = input * "." * format(m)
-
-    render(t; input, output, open = false, preamble = get(io, :preamble, preamble)::TypstString)
-    write(io, read(output))
-
-    nothing
-end
+# Internals
 
 """
     examples
@@ -980,20 +995,4 @@ const examples = [
     Week(1) => Week
 ]
 
-"""
-    preamble
-
-A constant used at the beginning of Typst source files generated by
-[`show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstString)`](@ref).
-
-# Examples
-```jldoctest
-julia> println(Typstry.preamble)
-#set page(margin: 1em, height: auto, width: auto, fill: white)
-#set text(16pt, font: "JuliaMono")
-```
-"""
-const preamble = typst"""
-#set page(margin: 1em, height: auto, width: auto, fill: white)
-#set text(16pt, font: "JuliaMono")
-"""
+end # Strings

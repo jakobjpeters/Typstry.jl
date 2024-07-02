@@ -13,8 +13,9 @@ using Test: @test
 using Typstry: Typstry
 
 function test()
-    @test isnothing(check_all_explicit_imports_are_public(Typstry; ignore = (:MD, :Stateful,
-        :code_mode, :depth, :escape_raw_string, :indent, :parse, :print_parameters, :show_raw, :workload)))
+    @test isnothing(check_all_explicit_imports_are_public(Typstry; ignore = (
+        :MD, :Stateful, :code_mode, :compile_workload, :depth, :escape_raw_string,
+    :indent, :parse, :print_parameters, :show_raw, :workload)))
 
     for check in (
         check_all_explicit_imports_via_owners,

@@ -5,8 +5,7 @@ using Base: get_extension, disable_logging
 using Dates: Dates
 using Documenter: DocMeta.setdocmeta!, doctest
 using Logging: Debug, Info, disable_logging
-using Markdown: Markdown
-using LaTeXStrings: LaTeXStrings
+using ..TestTypstry: names, modules
 using Typstry: Typstry
 
 function _test(_module, x)
@@ -16,13 +15,11 @@ end
 
 function test()
     disable_logging(Info)
+
     _test(Typstry, nothing)
 
-    for extension in [:LaTeXStrings, :Markdown]
-        _extension = Symbol(extension, "Extension")
-        _module = get_extension(Typstry, _extension)
-
-        _test(_module, :(using $extension))
+    for (name, _module) in zip(names, modules)
+        _test(_module, :(using $name))
     end
 
     disable_logging(Debug)

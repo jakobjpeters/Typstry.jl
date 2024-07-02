@@ -3,8 +3,7 @@ module LaTeXStringsExtension
 
 import Typstry: show_typst
 using LaTeXStrings: LaTeXString, @L_str
-using PrecompileTools: @compile_workload
-using Typstry: show_raw, workload
+using Typstry: Strings.show_raw, compile_workload
 
 # Strings
 
@@ -23,6 +22,6 @@ show_typst(io, x::LaTeXString) = show_raw(print, io, x, "latex")
 
 const examples = [L"a" => LaTeXString]
 
-@compile_workload workload(examples)
+compile_workload(examples)
 
 end # module
