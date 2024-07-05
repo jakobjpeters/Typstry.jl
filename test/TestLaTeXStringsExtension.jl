@@ -7,15 +7,13 @@ using Typstry
 
 const latex = L"a"
 
-function test()
-    test_modes(latex, [
-        "```latex \$a\$ ```",
-        "```latex \$a\$ ```",
-        "#```latex \$a\$ ```"
-    ])
+test_modes(latex, [
+    "```latex \$a\$ ```",
+    "```latex \$a\$ ```",
+    "#```latex \$a\$ ```"
+])
 
-    test_strings(latex, "````latex\n        \$a\$\n    ````";
-        backticks = 4, block = true, depth = 1, tab_size = 4)
-end
+test_strings(latex, "````latex\n        \$a\$\n    ````";
+    backticks = 4, block = true, depth = 1, tab_size = 4)
 
 end # TestLaTeXStringsExtension

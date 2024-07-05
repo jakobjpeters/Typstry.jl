@@ -8,21 +8,19 @@ using Logging: Debug, Info, disable_logging
 using ..TestTypstry: names, modules
 using Typstry: Typstry
 
-function _test(_module, x)
+function test(_module, x)
     setdocmeta!(_module, :DocTestSetup, :(using Typstry; $x); recursive = true)
     doctest(_module; manual = "source", testset = "`$_module` Doctests")
 end
 
-function test()
-    disable_logging(Info)
+disable_logging(Info)
 
-    _test(Typstry, nothing)
+test(Typstry, nothing)
 
-    for (name, _module) in zip(names, modules)
-        _test(_module, :(using $name))
-    end
-
-    disable_logging(Debug)
+for (name, _module) in zip(names, modules)
+    test(_module, :(using $name))
 end
+
+disable_logging(Debug)
 
 end # TestDocumenter
