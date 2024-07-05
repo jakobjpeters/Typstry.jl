@@ -741,7 +741,8 @@ function show_typst(io, x::Regex)
     enclose(io, x, "regex(", ")") do io, x
         buffer = IOBuffer()
         print(buffer, x)
-        write(io, take!(buffer)[2:end])
+        seek(buffer, 1)
+        write(io, read(buffer))
     end
 end
 show_typst(io, x::Signed) = mode(io) == code ?
