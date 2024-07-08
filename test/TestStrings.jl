@@ -55,9 +55,8 @@ const pairs = [
     typst"ab\(x)cd\\(x)ef" => "ab1cd\\(x)ef"
 ]
 
-test_pairs(f) = for pair in pairs
-    @test f(pair...)
-end
+test_pairs(f) = @test all(splat(f), pairs)
+test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
 
 @testset "`Typstry`" begin
     @testset "`Mode`" begin
@@ -76,7 +75,7 @@ end
 
     @testset "`TypstText`" begin end
 
-    @testset "`@typst_str`" begin test_pairs((ts, s) -> ts == sprint(print, ts) == s) end
+    @testset "`@typst_str`" begin end
 
     @testset "`context`" begin
         @test context(1) == Dict{Symbol, Union{}}()
@@ -89,33 +88,37 @@ end
 end
 
 @testset "`Base`" begin
-    @testset "`IOBuffer`" begin
-        for pair in pairs
-            ==(map(read ∘ IOBuffer, pair)...)
+    @testset "`AbstractString` Interface" begin
+        @testset "`IOBuffer`" begin test_equal(read ∘ IOBuffer) end
+
+        @testset "`codeunit`" begin test_pairs((ts, s) ->
+            codeunit(ts) == codeunit(s) && all(i -> codeunit(ts, i) == codeunit(s, i), eachindex(ts))
+        ) end
+
+        @testset "`isvalid`" begin end
+
+        @testset "`iterate`" begin test_pairs((ts, s) ->
+            iterate(ts) == iterate(s) && all(i -> iterate(ts, i) == iterate(s, i), eachindex(ts))
+        ) end
+
+        @testset "`ncodeunits`" begin test_equal(ncodeunits) end
+
+        @testset "`pointer`" begin end
+
+        @testset "`repr`" begin
+            test_pairs((ts, s) -> repr(MIME"text/typst"(), ts) === eval(parse(repr(ts))) === ts)
         end
+
+        @testset "`show`" begin end
     end
 
-    @testset "`codeunit`" begin test_pairs((ts, s) ->
-        codeunit(ts) == codeunit(s) && all(i -> codeunit(ts, i) == codeunit(s, i), eachindex(ts))
-    ) end
+    @testset "`Symbol`" begin test_equal(Symbol) end
 
-    @testset "`isvalid`" begin end
+    @testset "`==`" begin test_equal(identity) end
 
-    @testset "`iterate`" begin test_pairs((ts, s) ->
-        iterate(ts) == iterate(s) && all(i -> iterate(ts, i) == iterate(s, i), eachindex(ts))
-    ) end
+    @testset "`length`" begin test_equal(length) end
 
-    @testset "`length`" begin test_pairs((ts, s) -> length(ts) == length(s)) end
-
-    @testset "`ncodeunits`" begin test_pairs((ts, s) -> ncodeunits(ts) == ncodeunits(s)) end
-
-    @testset "`pointer`" begin end
-
-    @testset "`repr`" begin
-        test_pairs((ts, s) -> repr(MIME"text/typst"(), ts) === eval(parse(repr(ts))) === ts)
-    end
-
-    @testset "`show`" begin end
+    @testset "`print`" begin test_pairs((ts, s) -> ts == sprint(print, ts) == s) end
 end
 
 end # TestStrings
