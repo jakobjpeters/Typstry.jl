@@ -15,10 +15,7 @@ const tc_ignorestatus = ignorestatus(tc_error)
 
     @testset "`@typst_cmd`" begin end
 
-    @testset "`julia_mono`" begin
-        # TODO: write more tests
-        @test julia_mono isa String
-    end
+    @testset "`julia_mono`" begin @test julia_mono isa String end
 
     @testset "`render`" begin end
 end

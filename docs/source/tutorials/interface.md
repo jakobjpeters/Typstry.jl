@@ -185,5 +185,3 @@ range(0, 7, step: 2)
 julia> println(TypstString(0:2.0:6; mode = code))
 (0.0, 2.0, 4.0, 6.0)
 ```
-
-### Prefer simplicity

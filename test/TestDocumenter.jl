@@ -4,7 +4,7 @@ module TestDocumenter
 using Base: get_extension, disable_logging
 using Dates: Dates
 using Documenter: DocMeta.setdocmeta!, doctest
-using Logging: Debug, Info, disable_logging
+using Logging: Debug, Warn, disable_logging
 using ..TestTypstry: names, modules
 using Typstry: Typstry
 
@@ -13,7 +13,7 @@ function test(_module, x)
     doctest(_module; manual = "source", testset = "`$_module` Doctests")
 end
 
-disable_logging(Info)
+disable_logging(Warn)
 
 test(Typstry, nothing)
 

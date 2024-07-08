@@ -66,6 +66,9 @@ the `text/typst` MIME type and compiled using a `TypstCommand`.
 Each row corresponds to a method of [`show_typst`](@ref).
 Sequential documents correspond to package [Extensions](@ref extensions_extensions).
 
+!!! tip
+    Open these images in a new tab or another viewer.
+
 ![Typstry.jl examples](assets/Typstry_examples.svg)
 ![LaTeXStrings.jl examples](assets/LaTeXStrings_examples.svg)
 ![Markdown.jl examples](assets/Markdown_examples.svg)
