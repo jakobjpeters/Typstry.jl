@@ -143,11 +143,10 @@ typst"\\\\(x)"
 ```
 """
 macro typst_str(s)
+    filename = __source__.file
+    current, final = firstindex(s), lastindex(s)
     _s = Expr(:string)
     args = _s.args
-    filename = __source__.file
-    current = firstindex(s)
-    final = lastindex(s)
 
     while (regex_match = match(r"(?:^|[^\\])(\\+)(\()", s, current)) ≢ nothing
         backslashes, start = length(first(regex_match.captures)), last(regex_match.offsets)
@@ -918,7 +917,7 @@ typst"a"
 function show(io::IO, ts::TypstString)
     print(io, "typst")
     enclose((io, text) -> escape_raw_string(io, replace(text,
-        r"(?:^|[^\\])(\\+)\(" => s"\1\1(")), io, ts.text, "\"")
+        r"(^|[^\\])(\\+)\(" => s"\1\2\2(")), io, ts.text, "\"")
 end
 
 """
