@@ -8,6 +8,7 @@ using Typstry
 
 # TODO: test characters with multiple codeunits
 # TODO: test string escaping in `@typst_str`, `show`, `print`, `regex`, `TypstText`, etc
+# TODO: remove unnesessary methods (`IOBuffer`, `codeunit`, `pointer`)?
 
 struct X end
 

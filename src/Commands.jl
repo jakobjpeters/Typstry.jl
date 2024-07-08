@@ -114,7 +114,7 @@ typst`compile input.typ output.typ`
 ```
 """
 macro typst_cmd(parameters)
-    :(TypstCommand(map(string, split($parameters, " "))))
+    :(TypstCommand($(isempty(parameters) ? String[] : map(string, split(parameters, " ")))))
 end
 
 """
@@ -455,7 +455,7 @@ Print a [`TypstError`](@ref) when failing to [`run`](@ref) a [`TypstCommand`](@r
 
 ```jldoctest
 julia> showerror(stdout, TypstError(typst``))
-TypstError: failed to `run` a `TypstCommand([""])`
+TypstError: failed to `run` a `TypstCommand(String[])`
 ```
 """
 showerror(io::IO, te::TypstError) = print(io,

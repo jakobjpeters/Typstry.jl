@@ -5,7 +5,7 @@ using Test: @test, @testset, @test_throws, @test_warn
 using Typstry
 
 const tc = typst`help`
-const tc_error = typst``
+const tc_error = typst`a`
 const tc_ignorestatus = ignorestatus(tc_error)
 
 @testset "`Typstry`" begin

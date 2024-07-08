@@ -29,5 +29,6 @@
     - No longer errors during interpolation when `TypstString` isn't loaded
     - Handle interpolation and escaped interpolation in the same manner as double quotation marks
         - `print` and `show` now correspond
+- A `@typst_cmd` with no parameters no longer inserts an empty parameter
 - `AbstractFloat` values that satisfy `isinf` and `isnan` now correspond to `calc.inf` and `calc.nan`, respectively
 - `AbstractString` and `Text` no longer escape `$`
