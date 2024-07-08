@@ -6,6 +6,8 @@ using .Meta: parse
 using Test: @test, @testset
 using Typstry
 
+# TODO: test characters with multiple codeunits
+
 struct X end
 
 const default_context = Dict(
@@ -23,34 +25,33 @@ const x_context = Dict(:x => 1)
 context(::X) = x_context
 show_typst(io, ::X) = print(io, 1)
 
-const empty_ts = typst""
-const tss = [
-    empty_ts,
-    typst"x",
-    typst"(x)",
-    typst"a(x)b",
-    typst"ab(x)cd",
-    typst"\(x)",
-    typst"a\(x)b",
-    typst"ab\(x)cd",
-    typst"\\(x)",
-    typst"a\\(x)b",
-    typst"ab\\(x)cd",
-    typst"\\\(x)",
-    typst"a\\\(x)b",
-    typst"ab\\\(x)cd",
-    typst"\\\\(x)",
-    typst"a\\\\(x)b",
-    typst"ab\\\\(x)cd",
-    typst"\(x)\(x)",
-    typst"a\(x)b\(x)c",
-    typst"ab\(x)cd\(x)ef",
-    typst"\\(x)\(x)",
-    typst"a\\(x)b\(x)c",
-    typst"ab\\(x)cd\(x)ef",
-    typst"\(x)\\(x)",
-    typst"a\(x)b\\(x)c",
-    typst"ab\(x)cd\\(x)ef"
+const pairs = [
+    typst"" => "",
+    typst"x" => "x",
+    typst"(x)" => "(x)",
+    typst"a(x)b" => "a(x)b",
+    typst"ab(x)cd" => "ab(x)cd",
+    typst"\(x)" => "1",
+    typst"a\(x)b" => "a1b",
+    typst"ab\(x)cd" => "ab1cd",
+    typst"\\(x)" => "\\(x)",
+    typst"a\\(x)b" => "a\\(x)b",
+    typst"ab\\(x)cd" => "ab\\(x)cd",
+    typst"\\\(x)" => "\\1",
+    typst"a\\\(x)b" => "a\\1b",
+    typst"ab\\\(x)cd" => "ab\\1cd",
+    typst"\\\\(x)" => "\\\\(x)",
+    typst"a\\\\(x)b" => "a\\\\(x)b",
+    typst"ab\\\\(x)cd" => "ab\\\\(x)cd",
+    typst"\(x)\(x)" => "11",
+    typst"a\(x)b\(x)c" => "a1b1c",
+    typst"ab\(x)cd\(x)ef" => "ab1cd1ef",
+    typst"\\(x)\(x)" => "\\(x)1",
+    typst"a\\(x)b\(x)c" => "a\\(x)b1c",
+    typst"ab\\(x)cd\(x)ef" => "ab\\(x)cd1ef",
+    typst"\(x)\\(x)" => "1\\(x)",
+    typst"a\(x)b\\(x)c" => "a1b\\(x)c",
+    typst"ab\(x)cd\\(x)ef" => "ab1cd\\(x)ef"
 ]
 
 @testset "`Typstry`" begin
@@ -71,34 +72,7 @@ const tss = [
     @testset "`TypstText`" begin end
 
     @testset "`@typst_str`" begin
-        for (ts, s) in zip(tss, [
-            "",
-            "x",
-            "(x)",
-            "a(x)b",
-            "ab(x)cd",
-            "1",
-            "a1b",
-            "ab1cd",
-            "\\(x)",
-            "a\\(x)b",
-            "ab\\(x)cd",
-            "\\1",
-            "a\\1b",
-            "ab\\1cd",
-            "\\\\(x)",
-            "a\\\\(x)b",
-            "ab\\\\(x)cd",
-            "11",
-            "a1b1c",
-            "ab1cd1ef",
-            "\\(x)1",
-            "a\\(x)b1c",
-            "ab\\(x)cd1ef",
-            "1\\(x)",
-            "a1b\\(x)c",
-            "ab1cd\\(x)ef"
-        ])
+        for (ts, s) in pairs
             @test ts == sprint(print, ts) == s
         end
     end
@@ -114,9 +88,22 @@ const tss = [
 end
 
 @testset "`Base`" begin
-    @testset "`IOBuffer`" begin end
+    @testset "`IOBuffer`" begin
+        for pair in pairs
+            ==(map(read ∘ IOBuffer, pair)...)
+        end
+    end
 
-    @testset "`codeunit`" begin end
+    @testset "`codeunit`" begin
+        for (ts, s) in pairs
+            @test codeunit(ts) == codeunit(s)
+            @test length(ts) == length(s)
+
+            for i in eachindex(ts)
+                @test codeunit(ts, i) == codeunit(s, i)
+            end
+        end
+    end
 
     @testset "`isvalid`" begin end
 
@@ -127,10 +114,8 @@ end
     @testset "`pointer`" begin end
 
     @testset "`repr`" begin
-        @test repr(MIME"text/typst"(), empty_ts) === empty_ts
-
-        for ts in tss
-            @test eval(parse(repr(ts))) === ts
+        for (ts, s) in pairs
+            @test repr(MIME"text/typst"(), ts) === eval(parse(repr(ts))) === ts
         end
     end
 
