@@ -54,6 +54,10 @@ const pairs = [
     typst"ab\(x)cd\\(x)ef" => "ab1cd\\(x)ef"
 ]
 
+test_pairs(f) = for pair in pairs
+    @test f(pair...)
+end
+
 @testset "`Typstry`" begin
     @testset "`Mode`" begin
         @test Mode <: Enum
@@ -71,11 +75,7 @@ const pairs = [
 
     @testset "`TypstText`" begin end
 
-    @testset "`@typst_str`" begin
-        for (ts, s) in pairs
-            @test ts == sprint(print, ts) == s
-        end
-    end
+    @testset "`@typst_str`" begin test_pairs((ts, s) -> ts == sprint(print, ts) == s) end
 
     @testset "`context`" begin
         @test context(1) == Dict{Symbol, Union{}}()
@@ -94,29 +94,22 @@ end
         end
     end
 
-    @testset "`codeunit`" begin
-        for (ts, s) in pairs
-            @test codeunit(ts) == codeunit(s)
-            @test length(ts) == length(s)
-
-            for i in eachindex(ts)
-                @test codeunit(ts, i) == codeunit(s, i)
-            end
-        end
-    end
+    @testset "`codeunit`" begin test_pairs() do ts, s
+        codeunit(ts) == codeunit(s) && all(i -> codeunit(ts, i) == codeunit(s, i), eachindex(ts))
+    end end
 
     @testset "`isvalid`" begin end
 
     @testset "`iterate`" begin end
+
+    @testset "`length`" begin test_pairs((ts, s) -> length(ts) == length(s)) end
 
     @testset "`ncodeunits`" begin end
 
     @testset "`pointer`" begin end
 
     @testset "`repr`" begin
-        for (ts, s) in pairs
-            @test repr(MIME"text/typst"(), ts) === eval(parse(repr(ts))) === ts
-        end
+        test_pairs((ts, s) -> repr(MIME"text/typst"(), ts) === eval(parse(repr(ts))) === ts)
     end
 
     @testset "`show`" begin end
