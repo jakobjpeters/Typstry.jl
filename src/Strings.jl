@@ -148,7 +148,7 @@ macro typst_str(s)
     _s = Expr(:string)
     args = _s.args
 
-    while (regex_match = match(r"(?:^|[^\\])(\\+)(\()", s, current)) ≢ nothing
+    while (regex_match = match(r"(\\+)(\()", s, current)) ≢ nothing
         backslashes, start = length(first(regex_match.captures)), last(regex_match.offsets)
         interpolate, previous = isodd(backslashes), prevind(s, start)
 
