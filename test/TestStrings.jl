@@ -7,6 +7,7 @@ using Test: @test, @testset
 using Typstry
 
 # TODO: test characters with multiple codeunits
+# TODO: test string escaping in `@typst_str`, `show`, `print`, `regex`, `TypstText`, etc
 
 struct X end
 
@@ -94,17 +95,19 @@ end
         end
     end
 
-    @testset "`codeunit`" begin test_pairs() do ts, s
+    @testset "`codeunit`" begin test_pairs((ts, s) ->
         codeunit(ts) == codeunit(s) && all(i -> codeunit(ts, i) == codeunit(s, i), eachindex(ts))
-    end end
+    ) end
 
     @testset "`isvalid`" begin end
 
-    @testset "`iterate`" begin end
+    @testset "`iterate`" begin test_pairs((ts, s) ->
+        iterate(ts) == iterate(s) && all(i -> iterate(ts, i) == iterate(s, i), eachindex(ts))
+    ) end
 
     @testset "`length`" begin test_pairs((ts, s) -> length(ts) == length(s)) end
 
-    @testset "`ncodeunits`" begin end
+    @testset "`ncodeunits`" begin test_pairs((ts, s) -> ncodeunits(ts) == ncodeunits(s)) end
 
     @testset "`pointer`" begin end
 
@@ -116,4 +119,3 @@ end
 end
 
 end # TestStrings
-
