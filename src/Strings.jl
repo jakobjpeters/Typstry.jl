@@ -265,26 +265,6 @@ function enclose(f, io, x, left, right = reverse(left); context...)
 end
 
 """
-    format(::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"})
-
-# Examples
-
-```jldoctest
-julia> Typstry.Strings.format(MIME"application/pdf"())
-"pdf"
-
-julia> Typstry.Strings.format(MIME"image/png"())
-"png"
-
-julia> Typstry.Strings.format(MIME"image/svg+xml"())
-"svg"
-```
-"""
-format(::MIME"application/pdf") = "pdf"
-format(::MIME"image/png") = "png"
-format(::MIME"image/svg+xml") = "svg"
-
-"""
     indent(io)
 
 Return `" " ^ io[:tab_size]::Int`.

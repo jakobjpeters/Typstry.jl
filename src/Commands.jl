@@ -30,6 +30,26 @@ function apply(f, tc, args...; kwargs...)
     _tc
 end
 
+"""
+    format(::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"})
+
+# Examples
+
+```jldoctest
+julia> Typstry.Commands.format(MIME"application/pdf"())
+"pdf"
+
+julia> Typstry.Commands.format(MIME"image/png"())
+"png"
+
+julia> Typstry.Commands.format(MIME"image/svg+xml"())
+"svg"
+```
+"""
+format(::MIME"application/pdf") = "pdf"
+format(::MIME"image/png") = "png"
+format(::MIME"image/svg+xml") = "svg"
+
 # `Typstry`
 
 """

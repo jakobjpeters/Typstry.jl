@@ -15,7 +15,6 @@ Typstry.Strings.block
 Typstry.Strings.code_mode
 Typstry.Strings.depth
 Typstry.Strings.enclose
-Typstry.Strings.format
 Typstry.Strings.indent
 Typstry.Strings.join_with
 Typstry.Strings.math_mode
@@ -47,4 +46,5 @@ Typstry.Strings.dates
 ```@docs
 Typstry.Commands.typst_compiler
 Typstry.Commands.apply
+Typstry.Commands.format
 ```
