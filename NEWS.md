@@ -21,6 +21,7 @@
 
 ### Commands
 
+- `preamble` is now exported
 - `render` now supports a custom `preamble`
 
 ## Bug Fixes

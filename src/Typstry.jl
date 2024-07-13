@@ -8,8 +8,8 @@ using .Strings: Mode, Typst, TypstString, TypstText, @typst_str, code, markup, m
 export Mode, Typst, TypstString, TypstText, @typst_str, code, markup, math, context, show_typst
 
 include("Commands.jl")
-using .Commands: TypstCommand, TypstError, @typst_cmd, julia_mono, render
-export TypstCommand, TypstError, @typst_cmd, julia_mono, render
+using .Commands: TypstCommand, TypstError, @typst_cmd, julia_mono, preamble, render
+export TypstCommand, TypstError, @typst_cmd, julia_mono, preamble, render
 
 """
     compile_workload(examples)

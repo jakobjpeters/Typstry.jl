@@ -45,7 +45,6 @@ Typstry.Strings.dates
 ## Commands
 
 ```@docs
-Typstry.Commands.preamble
 Typstry.Commands.typst_compiler
 Typstry.Commands.apply
 ```
