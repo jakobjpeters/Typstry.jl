@@ -1,0 +1,1 @@
+{"0":{"result":{"mime":"text/typst","failed":false,"data":"$1 / x$"},"stdout":"","logs":[],"code":"using Typstry; typst\"$1 / x$\""}}
