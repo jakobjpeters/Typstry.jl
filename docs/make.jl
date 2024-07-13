@@ -7,7 +7,7 @@ using .DocMeta: setdocmeta!
 using LaTeXStrings: LaTeXStrings, LaTeXString
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Markdown: Markdown, MD
-using Typstry: Strings, Commands.preamble
+using Typstry: Strings, preamble
 using .Strings: examples, _show_typst, enclose, join_with, typst_mime
 using Typstry
 
@@ -19,6 +19,8 @@ const width, height = 210, 297
 const modules = [Typstry]
 const extensions = ["LaTeXStrings", "Markdown"]
 const template = joinpath(assets, "template.typ")
+
+pages(folder, names) = uppercasefirst(folder) => map(name -> joinpath(folder, name * ".md"), names)
 
 _setdocmeta!(_module, x) = setdocmeta!(_module, :DocTestSetup, quote
     using Typstry
@@ -135,9 +137,8 @@ makedocs(; modules,
     pages = [
         "Home" => "index.md",
         "Getting Started" => "getting_started.md",
-        "Tutorials" => ["Interface" => "tutorials/interface.md"],
-        "Manual" => map(page -> uppercasefirst(page) => joinpath("manual", page * ".md"),
-            ["strings", "commands", "extensions", "internals"])
+        pages("tutorials", ["interface", "packages"]),
+        pages("manual", ["strings", "commands", "extensions", "internals"]),
     ],
     sitename = "Typstry.jl",
     source = "source"

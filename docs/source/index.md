@@ -108,12 +108,14 @@ typst`compile input.typ output.pdf`
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
 - [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
+- [TypstJlyFish.jl](https://github.com/andreasKroepelin/TypstJlyfish.jl)
 - [Typst_jll.jl](https://github.com/JuliaBinaryWrappers/Typst_jll.jl)
     - Dependency of Typstry.jl
 
 ### LaTeX
 
 - [Latexify.jl](https://github.com/korsbo/Latexify.jl)
+- [LaTeXEntities.jl](https://github.com/JuliaString/LaTeX_Entities.jl)
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
 - [LibTeXPrintf.jl](https://github.com/JuliaStrings/LibTeXPrintf.jl)

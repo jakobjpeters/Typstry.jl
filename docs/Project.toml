@@ -1,4 +1,18 @@
 [deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 Luxor = "ae8d54c2-7ccd-5906-9d76-62fc9837b5bc"
+MakieTeX = "6d554a22-29e7-47bd-aee5-0c5f06619414"
+TypstJlyfish = "95e5b356-b122-4883-a78a-3c8c946b7332"
+
+[compat]
+CairoMakie = "0.12.2"
+Documenter = "1"
+Luxor = "3 - 4"
+MakieTeX = "0.4.1"
+TypstJlyfish = "0.1.0"
+
+[extras]
+Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
