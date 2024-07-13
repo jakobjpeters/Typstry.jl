@@ -953,8 +953,6 @@ function show(io::IOContext, ::MIME"text/typst", t::Typst)
 end
 show(io::IO, ::MIME"text/typst", t::Union{TypstString, TypstText}) = show_typst(io, t)
 
-import Base: codeunit, isvalid, ncodeunits, nextind, prevind, thisind
-
 # Internals
 
 """
