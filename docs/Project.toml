@@ -8,7 +8,7 @@ MakieTeX = "6d554a22-29e7-47bd-aee5-0c5f06619414"
 TypstJlyfish = "95e5b356-b122-4883-a78a-3c8c946b7332"
 
 [compat]
-CairoMakie = "0.12.2"
+CairoMakie = "=0.12.2"
 Documenter = "1"
 Luxor = "3 - 4"
 MakieTeX = "0.4.1"
