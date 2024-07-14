@@ -1,7 +1,7 @@
 
-# Interface
+# The Julia to Typst Interface
 
-This tutorial illustrates the Julia to Typst interface.
+This guide illustrates how to implement Typst formatting for custom types.
 
 ## Setup
 

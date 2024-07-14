@@ -5,9 +5,9 @@ DocTestSetup = :(using Typstry)
 
 # Getting Started
 
-## Basics
+This tutorial demonstrates the basic features of Typstry.jl and how to use them.
 
-### Strings
+## Strings
 
 Print Julia values in [`Typst`](@ref) format using `show` with the `text/typst` MIME type.
 This formatting is also used to create a [`TypstString`](@ref).
@@ -42,7 +42,7 @@ julia> typst"$ \(pi; mode = math) approx \(pi; mode = code) $"
 typst"$ π approx 3.141592653589793 $"
 ```
 
-### Commands
+## Commands
 
 Use [`render`](@ref) to easily generate a Typst source file and compile it into a document.
 
@@ -58,17 +58,3 @@ typst`help`
 
 julia> run(typst`compile input.typ output.pdf`);
 ```
-
-## Examples
-
-These Typst documents were generated from Julia using `show` with
-the `text/typst` MIME type and compiled using a `TypstCommand`.
-Each row corresponds to a method of [`show_typst`](@ref).
-Sequential documents correspond to package [Extensions](@ref extensions_extensions).
-
-!!! tip
-    Open these images in a new tab or another viewer.
-
-![Typstry.jl examples](assets/Typstry_examples.svg)
-![LaTeXStrings.jl examples](assets/LaTeXStrings_examples.svg)
-![Markdown.jl examples](assets/Markdown_examples.svg)

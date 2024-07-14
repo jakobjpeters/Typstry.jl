@@ -1,6 +1,11 @@
 
 # Strings
 
+```@eval
+using Markdown, Typstry
+Markdown.parse("This reference documents " * lowercasefirst(split(string(@doc Typstry.Strings), "\n")[5]))
+```
+
 ## `Typstry`
 
 ```@docs

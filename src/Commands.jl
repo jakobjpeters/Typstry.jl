@@ -1,4 +1,17 @@
 
+"""
+    Commands
+
+A custom command corresponding to the Typst compiler
+and its implementation of the `Cmd` interface.
+
+# Examples
+
+```jldoctest
+julia> Typstry.Commands
+Typstry.Commands
+```
+"""
 module Commands
 
 import Base:
@@ -153,19 +166,19 @@ const preamble = typst"""
         input = "input.typ",
         output = "output.pdf",
         open = true,
-        preamble = \"\"\"
-            $(join(split(strip(preamble), "\n"), "\n            "))
-        \"\"\",
+        preamble = Typstry.preamble,
     context...)
 
 Render to a document using
 [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
 
-This generates two files: the `input` is the Typst
-source text and the `output` is the compiled document.
-The document format is inferred by the file extension of `output`,
-which may be `pdf`, `png`, or `svg`.
+This first generates the `input` file containing Typst source text
+with the [`preamble`](@ref) and formatted value.
+Then it is compiled into the `output` document,
+whose format is inferred by its file extension to be `pdf`, `png`, or `svg`.
 The document may be automatically `open`ed by the default viewer.
+
+See also [`preamble`](@ref).
 
 # Examples
 

@@ -20,7 +20,7 @@ const modules = [Typstry]
 const extensions = ["LaTeXStrings", "Markdown"]
 const template = joinpath(assets, "template.typ")
 
-pages(folder, names) = uppercasefirst(folder) => map(name -> joinpath(folder, name * ".md"), names)
+pages(folder, names) = titlecase(replace(folder, "_" => " ")) => map(name -> joinpath(folder, name * ".md"), names)
 
 _setdocmeta!(_module, x) = setdocmeta!(_module, :DocTestSetup, quote
     using Typstry
@@ -136,9 +136,9 @@ makedocs(; modules,
     format = Documenter.HTML(edit_link = "main"),
     pages = [
         "Home" => "index.md",
-        "Getting Started" => "getting_started.md",
-        pages("tutorials", ["interface", "packages"]),
-        pages("manual", ["strings", "commands", "extensions", "internals"]),
+        pages("tutorials", ["getting_started"]),
+        pages("guides", ["typst_formatting_examples", "the_julia_to_typst_interface", "interoperability"]),
+        pages("references", ["strings", "commands", "package_extensions", "internals"])
     ],
     sitename = "Typstry.jl",
     source = "source"

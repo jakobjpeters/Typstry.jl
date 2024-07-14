@@ -1,4 +1,18 @@
 
+"""
+    Strings
+
+The Julia to Typst interface,
+a custom string corresponding to Typst source text,
+and its implementation of the `String` interface.
+
+# Examples
+
+```jldoctest
+julia> Typstry.Strings
+Typstry.Strings
+```
+"""
 module Strings
 
 import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show
@@ -18,6 +32,8 @@ using Dates:
 An `Enum`erated type used to specify that the current Typst syntactical
 context is [`code`](@ref), [`markup`](@ref), or [`math`](@ref).
 
+# Examples
+
 ```jldoctest
 julia> Mode
 Enum Mode:
@@ -34,6 +50,8 @@ math = 2
 
 A wrapper used to pass values to
 [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
+
+# Examples
 
 ```jldoctest
 julia> Typst(1)
@@ -613,41 +631,40 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
     This function's methods are incomplete.
     Please file an issue or create a pull-request for missing methods.
 
-| Type                                                      | Settings                                 | Parameters                                             |
-|:----------------------------------------------------------|:-----------------------------------------|:-------------------------------------------------------|
-| `AbstractArray`                                           | `:block`, `:depth`, `:mode`, `:tab_size` | :delim`, `:gap`                                        |
-| `AbstractChar`                                            |                                          |                                                        |
-| `AbstractFloat`                                           | `:mode`                                  |                                                        |
-| `AbstractMatrix`                                          | `:block`, `:depth`, `:mode`, `:tab_size` | `:augment`, :column_gap`, `:delim`, `:gap`, `:row_gap` |
-| `AbstractString`                                          |                                          |                                                        |
-| `Bool`                                                    | `:mode`                                  |                                                        |
-| `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`       |                                                        |
-| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`       |                                                        |
-| `Irrational`                                              | `:mode`                                  |                                                        |
-| `Nothing`                                                 | `:mode`                                  |                                                        |
-| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                  |                                                        |
-| `Rational`                                                | `:block`, `:mode`, `:parenthesize`       |                                                        |
-| `Regex`                                                   | `:mode`                                  |                                                        |
-| `Signed`                                                  | `:mode`                                  |                                                        |
-| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                  |                                                        |
-| `String`                                                  | `:mode`                                  |                                                        |
-| `Tuple`                                                   | `:block`, `:depth`, `:mode`, `:tab_size` | `:delim`, `:gap`                                       |
-| `Typst`                                                   |                                          |                                                        |
-| `TypstString`                                             |                                          |                                                        |
-| `TypstText`                                               | `:mode`                                  |                                                        |
-| `Unsigned`                                                | `:mode`                                  |                                                        |
-| `VersionNumber`                                           | `:mode`                                  |                                                        |
-| `Docs.HTML`                                               | `:block`, `:depth`, `:mode`, `:tab_size` |                                                        |
-| `Docs.Text`                                               | `:mode`                                  |                                                        |
-| `Dates.Date`                                              | `:mode`, `:indent`                       |                                                        |
-| `Dates.DateTime`                                          | `:mode`, `:indent`                       |                                                        |
-| `Dates.Day`                                               | `:mode`, `:indent`                       |                                                        |
-| `Dates.Hour`                                              | `:mode`, `:indent`                       |                                                        |
-| `Dates.Minute`                                            | `:mode`, `:indent`                       |                                                        |
-| `Dates.Second`                                            | `:mode`, `:indent`                       |                                                        |
-| `Dates.Time`                                              | `:mode`, `:indent`                       |                                                        |
-| `Dates.Week`                                              | `:mode`, `:indent`                       |                                                        |
-```
+| Type                                                      | Settings                                 | Parameters                                              |
+|:----------------------------------------------------------|:-----------------------------------------|:--------------------------------------------------------|
+| `AbstractArray`                                           | `:block`, `:depth`, `:mode`, `:tab_size` | `:delim`, `:gap`                                        |
+| `AbstractChar`                                            |                                          |                                                         |
+| `AbstractFloat`                                           | `:mode`                                  |                                                         |
+| `AbstractMatrix`                                          | `:block`, `:depth`, `:mode`, `:tab_size` | `:augment`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
+| `AbstractString`                                          |                                          |                                                         |
+| `Bool`                                                    | `:mode`                                  |                                                         |
+| `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`       |                                                         |
+| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`       |                                                         |
+| `Irrational`                                              | `:mode`                                  |                                                         |
+| `Nothing`                                                 | `:mode`                                  |                                                         |
+| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                  |                                                         |
+| `Rational`                                                | `:block`, `:mode`, `:parenthesize`       |                                                         |
+| `Regex`                                                   | `:mode`                                  |                                                         |
+| `Signed`                                                  | `:mode`                                  |                                                         |
+| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                  |                                                         |
+| `String`                                                  | `:mode`                                  |                                                         |
+| `Tuple`                                                   | `:block`, `:depth`, `:mode`, `:tab_size` | `:delim`, `:gap`                                        |
+| `Typst`                                                   |                                          |                                                         |
+| `TypstString`                                             |                                          |                                                         |
+| `TypstText`                                               | `:mode`                                  |                                                         |
+| `Unsigned`                                                | `:mode`                                  |                                                         |
+| `VersionNumber`                                           | `:mode`                                  |                                                         |
+| `Docs.HTML`                                               | `:block`, `:depth`, `:mode`, `:tab_size` |                                                         |
+| `Docs.Text`                                               | `:mode`                                  |                                                         |
+| `Dates.Date`                                              | `:mode`, `:indent`                       |                                                         |
+| `Dates.DateTime`                                          | `:mode`, `:indent`                       |                                                         |
+| `Dates.Day`                                               | `:mode`, `:indent`                       |                                                         |
+| `Dates.Hour`                                              | `:mode`, `:indent`                       |                                                         |
+| `Dates.Minute`                                            | `:mode`, `:indent`                       |                                                         |
+| `Dates.Second`                                            | `:mode`, `:indent`                       |                                                         |
+| `Dates.Time`                                              | `:mode`, `:indent`                       |                                                         |
+| `Dates.Week`                                              | `:mode`, `:indent`                       |                                                         |
 """
 show_typst(io, x::AbstractChar) = show_typst(io, string(x))
 show_typst(io, x::AbstractFloat) =
