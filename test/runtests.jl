@@ -18,7 +18,7 @@ test_modes(x, ss) = @testset "modes" begin
     end
 end
 
-test_strings(x, s; kwargs...) = @test TypstString(x; kwargs...).text == s
+test_strings(x, s; kwargs...) = @test TypstString(x; kwargs...) == s
 
 @testset "Typstry" begin
     for (description, descriptions) in [

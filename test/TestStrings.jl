@@ -4,6 +4,7 @@ module TestStrings
 import Typstry: context, show_typst
 using .Meta: parse
 using Test: @test, @testset
+using ..TestTypstry: test_strings
 using Typstry
 
 # TODO: test string escaping in `@typst_str`, `show`, `print`, `regex`, `TypstText`, etc
@@ -24,7 +25,7 @@ const x = X()
 const x_context = Dict(:x => 1)
 
 context(::X) = x_context
-show_typst(io, ::X) = print(io, 1)
+show_typst(io, ::X) = print(io, io[:x]::Int)
 
 const pairs = [
     typst"" => ""
@@ -71,9 +72,12 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
         @test string(typst_int) == "Typst{Int64}(1)"
     end
 
-    @testset "`TypstString`" begin end
+    @testset "`TypstString`" begin
+        test_strings(TypstString(x), "1")
+        test_strings(TypstString(x; x = 2), "2")
+    end
 
-    @testset "`TypstText`" begin end
+    @testset "`TypstText`" begin @test TypstText(x) isa TypstText{X} end
 
     @testset "`@typst_str`" begin end
 
