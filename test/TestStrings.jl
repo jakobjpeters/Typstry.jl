@@ -6,7 +6,6 @@ using .Meta: parse
 using Test: @test, @testset
 using Typstry
 
-# TODO: test characters with multiple codeunits
 # TODO: test string escaping in `@typst_str`, `show`, `print`, `regex`, `TypstText`, etc
 # TODO: remove unnesessary methods (`IOBuffer`, `codeunit`, `pointer`)?
 
@@ -28,32 +27,32 @@ context(::X) = x_context
 show_typst(io, ::X) = print(io, 1)
 
 const pairs = [
-    typst"" => "",
-    typst"x" => "x",
-    typst"(x)" => "(x)",
-    typst"a(x)b" => "a(x)b",
-    typst"ab(x)cd" => "ab(x)cd",
-    typst"\(x)" => "1",
-    typst"a\(x)b" => "a1b",
-    typst"ab\(x)cd" => "ab1cd",
-    typst"\\(x)" => "\\(x)",
-    typst"a\\(x)b" => "a\\(x)b",
-    typst"ab\\(x)cd" => "ab\\(x)cd",
-    typst"\\\(x)" => "\\1",
-    typst"a\\\(x)b" => "a\\1b",
-    typst"ab\\\(x)cd" => "ab\\1cd",
-    typst"\\\\(x)" => "\\\\(x)",
-    typst"a\\\\(x)b" => "a\\\\(x)b",
-    typst"ab\\\\(x)cd" => "ab\\\\(x)cd",
-    typst"\(x)\(x)" => "11",
-    typst"a\(x)b\(x)c" => "a1b1c",
-    typst"ab\(x)cd\(x)ef" => "ab1cd1ef",
-    typst"\\(x)\(x)" => "\\(x)1",
-    typst"a\\(x)b\(x)c" => "a\\(x)b1c",
-    typst"ab\\(x)cd\(x)ef" => "ab\\(x)cd1ef",
-    typst"\(x)\\(x)" => "1\\(x)",
-    typst"a\(x)b\\(x)c" => "a1b\\(x)c",
-    typst"ab\(x)cd\\(x)ef" => "ab1cd\\(x)ef"
+    typst"" => ""
+    typst"x" => "x"
+    typst"(x)" => "(x)"
+    typst"𝒂(x)𝒃" => "𝒂(x)𝒃"
+    typst"𝒂𝒃(x)𝒄𝒅" => "𝒂𝒃(x)𝒄𝒅"
+    typst"\(x)" => "1"
+    typst"𝒂\(x)𝒃" => "𝒂1𝒃"
+    typst"𝒂𝒃\(x)𝒄𝒅" => "𝒂𝒃1𝒄𝒅"
+    typst"\\(x)" => "\\(x)"
+    typst"𝒂\\(x)𝒃" => "𝒂\\(x)𝒃"
+    typst"𝒂𝒃\\(x)𝒄𝒅" => "𝒂𝒃\\(x)𝒄𝒅"
+    typst"\\\(x)" => "\\1"
+    typst"𝒂\\\(x)𝒃" => "𝒂\\1𝒃"
+    typst"𝒂𝒃\\\(x)𝒄𝒅" => "𝒂𝒃\\1𝒄𝒅"
+    typst"\\\\(x)" => "\\\\(x)"
+    typst"𝒂\\\\(x)𝒃" => "𝒂\\\\(x)𝒃"
+    typst"𝒂𝒃\\\\(x)𝒄𝒅" => "𝒂𝒃\\\\(x)𝒄𝒅"
+    typst"\(x)\(x)" => "11"
+    typst"𝒂\(x)𝒃\(x)𝒄" => "𝒂1𝒃1𝒄"
+    typst"𝒂𝒃\(x)𝒄𝒅\(x)𝒆𝒇" => "𝒂𝒃1𝒄𝒅1𝒆𝒇"
+    typst"\\(x)\(x)" => "\\(x)1"
+    typst"𝒂\\(x)𝒃\(x)𝒄" => "𝒂\\(x)𝒃1𝒄"
+    typst"𝒂𝒃\\(x)𝒄𝒅\(x)𝒆𝒇" => "𝒂𝒃\\(x)𝒄𝒅1𝒆𝒇"
+    typst"\(x)\\(x)" => "1\\(x)"
+    typst"𝒂\(x)𝒃\\(x)𝒄" => "𝒂1𝒃\\(x)𝒄"
+    typst"𝒂𝒃\(x)𝒄𝒅\\(x)𝒆𝒇" => "𝒂𝒃1𝒄𝒅\\(x)𝒆𝒇"
 ]
 
 test_pairs(f) = @test all(splat(f), pairs)

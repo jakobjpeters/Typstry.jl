@@ -14,7 +14,7 @@
     - `Bool` in `markup` mode is no longer prefixed by `#`
     - An `AbstractChar` and `AbstractString` in `code` and `math` mode are no longer escaped and quoted
     - A `Complex` is no longer parenthesized when a term is zero
-- The `show` methods with the `applicatoin/pdf`, `image/png`, and `image/svg+xml` MIME types
+- The `show` methods with the `application/pdf`, `image/png`, and `image/svg+xml` MIME types
     - Can be given a custom `preamble`
     - Support `Typst` and `TypstText`
 - Improved error handling for interpolating incomplete expressions into a `@typst_str`
@@ -32,4 +32,4 @@
         - `print` and `show` now correspond
 - A `@typst_cmd` with no parameters no longer inserts an empty parameter
 - `AbstractFloat` values that satisfy `isinf` and `isnan` now correspond to `calc.inf` and `calc.nan`, respectively
-- `AbstractString` and `Text` no longer escape `$`
+- `AbstractString` and `Docs.Text` no longer escape `$`
