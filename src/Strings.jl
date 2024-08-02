@@ -192,6 +192,8 @@ end
 """
     typst_mime
 
+Equivalent to `MIME"text/typst"()`.
+
 # Examples
 
 ```jldoctest
@@ -492,7 +494,17 @@ date_time(::Time) = hour, minute, second
 date_time(::DateTime) = year, month, day, hour, minute, second
 
 """
-    duration(::Union{Day, Hour, Minute, Second, Week})
+    duration(::Union{Dates.Day, Dates.Hour, Dates.Minute, Dates.Second, Dates.Week})
+
+# Examples
+
+```jldoctest
+julia> Typstry.Strings.duration(Dates.Day(1))
+:days
+
+julia> Typstry.Strings.duration(Dates.Hour(1))
+:hours
+```
 """
 duration(::Day) = :days
 duration(::Hour) = :hours
@@ -502,8 +514,19 @@ duration(::Week) = :weeks
 
 """
     dates(::Union{
-        Date, DateTime, Day, Hour, Minute, Second, Time, Week
+        Dates.Date, Dates.DateTime, Dates.Day, Dates.Hour,
+        Dates.Minute, Dates.Second, Dates.Time, Dates.Week
     })
+
+# Examples
+
+```jldoctest
+julia> Typstry.Strings.dates(Date(1))
+("datetime", (:year, :month, :day), (1, 1, 1))
+
+julia> Typstry.Strings.dates(Day(1))
+("duration", (:days,), (TypstText{String}("1"),))
+```
 """
 function dates(x::Union{Date, DateTime, Time})
     fs = date_time(x)

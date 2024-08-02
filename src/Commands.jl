@@ -46,6 +46,8 @@ end
 """
     format(::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"})
 
+Return the image format acronym corresponding to the given `MIME`.
+
 # Examples
 
 ```jldoctest
@@ -70,7 +72,7 @@ format(::MIME"image/svg+xml") = "svg"
     TypstCommand(::TypstCommand; kwargs...)
     TypstCommand(::TypstCommand, ignorestatus, flags, env, dir, cpus = nothing)
 
-The Typst compiler.
+The Typst compiler and its parameters.
 
 !!! info
     This type implements the `Cmd` interface.
