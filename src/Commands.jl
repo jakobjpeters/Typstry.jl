@@ -70,7 +70,6 @@ format(::MIME"image/svg+xml") = "svg"
 """
     TypstCommand(::Vector{String})
     TypstCommand(::TypstCommand; kwargs...)
-    TypstCommand(::TypstCommand, ignorestatus, flags, env, dir, cpus = nothing)
 
 The Typst compiler and its parameters.
 
@@ -97,9 +96,6 @@ mutable struct TypstCommand
     TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
         new(Cmd(tc.compiler; kwargs...), tc.parameters, ignorestatus)
 end
-
-TypstCommand(tc::TypstCommand, ignorestatus, flags, env, dir, cpus = nothing) =
-    TypstCommand(tc; ignorestatus, flags, env, dir, cpus)
 
 """
     TypstError <: Exception

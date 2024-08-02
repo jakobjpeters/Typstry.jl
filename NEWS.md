@@ -23,6 +23,7 @@
 
 - `preamble` is now exported
 - `render` now supports a custom `preamble`
+- Removed unnecessary `TypstCommand` constructor
 
 ## Bug Fixes
 
