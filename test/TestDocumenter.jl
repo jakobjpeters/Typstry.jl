@@ -9,16 +9,16 @@ using ..TestTypstry: names, modules
 using Typstry: Typstry
 
 function test(_module, x)
-    setdocmeta!(_module, :DocTestSetup, :(using Typstry; $x); recursive = true)
+    setdocmeta!(_module, :DocTestSetup, :(using Typstry; using $x: $x); recursive = true)
     doctest(_module; manual = "source", testset = "`$_module` Doctests")
 end
 
 disable_logging(Warn)
 
-test(Typstry, nothing)
+test(Typstry, :Dates)
 
 for (name, _module) in zip(names, modules)
-    test(_module, :(using $name))
+    test(_module, name)
 end
 
 disable_logging(Debug)

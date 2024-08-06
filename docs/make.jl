@@ -24,14 +24,14 @@ pages(folder, names) = titlecase(replace(folder, "_" => " ")) => map(name -> joi
 
 _setdocmeta!(_module, x) = setdocmeta!(_module, :DocTestSetup, quote
     using Typstry
-    $x
+    using $x: $x
 end; recursive = true)
 
-_setdocmeta!(Typstry, nothing)
+_setdocmeta!(Typstry, :Dates)
 
 for extension in extensions
     _module = get_extension(Typstry, Symbol(extension, :Extension))
-    _setdocmeta!(_module, :(using $(Symbol(extension))))
+    _setdocmeta!(_module, Symbol(extension))
     push!(modules, _module)
     push!(_examples, _module.examples)
 end

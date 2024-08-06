@@ -487,7 +487,7 @@ static_parse(args...; filename, kwargs...) = @static VERSION < v"1.10" ?
 ## Dates.jl
 
 """
-    date_time(::Union{Date, Time, DateTime})
+    date_time(::Union{Dates.Date, Dates.Time, Dates.DateTime})
 """
 date_time(::Date) = year, month, day
 date_time(::Time) = hour, minute, second
@@ -521,10 +521,10 @@ duration(::Week) = :weeks
 # Examples
 
 ```jldoctest
-julia> Typstry.Strings.dates(Date(1))
+julia> Typstry.Strings.dates(Dates.Date(1))
 ("datetime", (:year, :month, :day), (1, 1, 1))
 
-julia> Typstry.Strings.dates(Day(1))
+julia> Typstry.Strings.dates(Dates.Day(1))
 ("duration", (:days,), (TypstText{String}("1"),))
 ```
 """
