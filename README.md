@@ -63,7 +63,7 @@ typst"$ (1 + 2i) $"
 julia> TypstCommand(["help"])
 typst`help`
 
-julia> addenv(typst`compile input.typ output.pdf`, "TYPST_FONT_PATHS" => julia_mono)
+julia> typst`compile input.typ output.pdf`
 typst`compile input.typ output.pdf`
 ```
 
@@ -76,7 +76,7 @@ typst`compile input.typ output.pdf`
     - Implement formatting for custom types
 - Construct Typst strings
     - Interpolate formatted values
-    - Render in Pluto.jl notebooks
+    - Render in IJulia.jl, Pluto.jl, and QuartoRunner.jl notebooks
 
 ### Commands
 
@@ -88,7 +88,6 @@ typst`compile input.typ output.pdf`
 
 - Support rendering in more environments
     - IJulia.jl
-    - Quarto?
     - REPL Unicode?
     - Other?
 - Default `auto::Mode`?
@@ -102,13 +101,11 @@ typst`compile input.typ output.pdf`
         - `AbstractIrrational`
         - `AbstractSet`
         - `Enum`
+            - `Mode`
         - `Expr`
-        - `Mode`
         - `Symbol`
     - Package extensions
         - Standard Library
-            - Dates.jl
-                - `Period` --> `duration`
             - LinearAlgebra.jl
     - A symbolic `TypstFunction`?
         - May faciliate Julia to Typst transpilation
@@ -116,20 +113,25 @@ typst`compile input.typ output.pdf`
             - `TypstString(TypstFunction(eval, :(1//2); mode = code)) == typst"eval("(1 / 2)", mode: \"code\")"`
             - `TypstString(TypstFunction(*, :a, :b; mode = math)) == typst"(a) (b)"`
 
-## Related Packages
+## Similar Packages
 
 ### Typst
 
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
 - [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
+- [TypstJlyFish.jl](https://github.com/andreasKroepelin/TypstJlyfish.jl)
+    - Interoperable with Typstry.jl
 - [Typst_jll.jl](https://github.com/JuliaBinaryWrappers/Typst_jll.jl)
+    - Dependency of Typstry.jl
 
 ### LaTeX
 
 - [Latexify.jl](https://github.com/korsbo/Latexify.jl)
+- [LaTeXEntities.jl](https://github.com/JuliaString/LaTeX_Entities.jl)
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
+- [LibTeXPrintf.jl](https://github.com/JuliaStrings/LibTeXPrintf.jl)
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
-    - Supports Typstry.jl
+    - Dependent of Typstry.jl
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
