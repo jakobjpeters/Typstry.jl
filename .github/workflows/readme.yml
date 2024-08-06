@@ -6,8 +6,8 @@ on:
       - 'main'
     paths:
       - 'HEADER.md'
-      - 'docs/src/index.md'
-      - 'docs/src/assets/logo.svg'
+      - 'docs/source/index.md'
+      - 'docs/source/assets/logo.svg'
       - '.github/workflows/readme.yml'
 jobs:
   build:

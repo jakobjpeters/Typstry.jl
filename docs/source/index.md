@@ -50,7 +50,7 @@ typst"$ (1 + 2i) $"
 julia> TypstCommand(["help"])
 typst`help`
 
-julia> addenv(typst`compile input.typ output.pdf`, "TYPST_FONT_PATHS" => julia_mono)
+julia> typst`compile input.typ output.pdf`
 typst`compile input.typ output.pdf`
 ```
 
@@ -63,7 +63,7 @@ typst`compile input.typ output.pdf`
     - Implement formatting for custom types
 - Construct Typst strings
     - Interpolate formatted values
-    - Render in Pluto.jl notebooks
+    - Render in IJulia.jl, Pluto.jl, and QuartoRunner.jl notebooks
 
 ### Commands
 
@@ -75,7 +75,6 @@ typst`compile input.typ output.pdf`
 
 - Support rendering in more environments
     - IJulia.jl
-    - Quarto?
     - REPL Unicode?
     - Other?
 - Default `auto::Mode`?
@@ -109,6 +108,7 @@ typst`compile input.typ output.pdf`
 - [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
 - [TypstJlyFish.jl](https://github.com/andreasKroepelin/TypstJlyfish.jl)
+    - Interoperable with Typstry.jl
 - [Typst_jll.jl](https://github.com/JuliaBinaryWrappers/Typst_jll.jl)
     - Dependency of Typstry.jl
 
