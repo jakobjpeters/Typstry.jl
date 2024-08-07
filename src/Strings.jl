@@ -640,6 +640,7 @@ Implement this function for a custom type to specify its Typst formatting.
 A setting is a value used in Julia, whose type varies across settings.
 A parameter is passed directly to a Typst function and must be a [`TypstString`](@ref)
 with the same name as in Typst, except that dashes are replaced with underscores.
+Settings each have a default value, whereas the default values of parameters are handled by Typst functions.
 Some settings, such as `block`, correspond with a parameter but may be used in Julia.
 
 For additional information on settings and parameters, see also [`context`](@ref)
