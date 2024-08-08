@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
-      - run: julia --color=yes readme.jl
+      - run: julia --color=yes scripts/readme.jl
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
