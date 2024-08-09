@@ -22,16 +22,16 @@ test_strings(x, s; kwargs...) = @test TypstString(x; kwargs...) == s
 
 @testset "Typstry" begin
     for (description, descriptions) in [
-        "Packages" => ["Aqua", "Documenter", "ExplicitImports"],
+        "Utilities" => ["Aqua", "Documenter", "ExplicitImports"],
         "Interface" => ["Strings", "Commands"],
-        "Extensions" => map(string, names)
+        "Extensions" => map(string, names),
+        "Interoperability" => ["MakieTeX", "TypstJlyfish"]
     ]
         @info "Testing $description"
         @testset "$description" begin
             for _description in descriptions
-                @testset "$_description" include("Test" * _description * (
-                    description == "Extensions" ? "Extension" : ""
-                ) * ".jl")
+                @testset "$_description" include(joinpath(lowercasefirst(description),
+                    "Test" * _description * (description == "Extensions" ? "Extension" : "") * ".jl"))
             end
         end
     end

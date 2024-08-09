@@ -17,51 +17,26 @@ See also this [pull request](https://github.com/JuliaLang/IJulia.jl/pull/1114).
 !!! note
     This package re-exports [`@typst_str`](@ref) and [`TypstString`](@ref).
 
-```@setup 1
-using Logging: Info, Debug, Warn, disable_logging # hide
-disable_logging(Warn) # hide
-```
-
-```@repl 1
-using CairoMakie, MakieTeX, Typstry
-disable_logging(Debug) # hide
-f = Figure(; size = (100, 100));
-LTeX(f[1, 1], TypstDocument(preamble * typst"$ 1 / x $"); scale = 2);
-save("makie_tex.svg", f);
-```
+`````@eval
+using Markdown: Markdown
+module X
+include("../scripts/include_makie_tex.jl")
+const s = read("../../../scripts/makie_tex.jl", String)
+end
+Markdown.parse("```julia-repl$(join(map(s -> "\njulia> " * s, split(strip(X.s), "\n")), "\n"))\n```")
+`````
 
 ![MakieTeX.jl](makie_tex.svg)
 
 ### TypstJlyfish.jl
 
-```````@eval
-using Logging: Debug, Info, disable_logging
+`````@eval
+module X
 using Markdown: Markdown
-using TypstJlyfish: compile
-using Typstry: @typst_str, julia_mono, preamble
-s = preamble * typst"""
-#import "@preview/jlyfish:0.1.0": *
-#read-julia-output(json("typst_jlyfish.json"))
-#jl-pkg("Typstry")
-#jl(`using Typstry; typst"$1 / x$"`)
-"""
-write("typst_jlyfish.typ", s)
-disable_logging(Info)
-redirect_stderr(() -> compile("typst_jlyfish.typ";
-    evaluation_file = "typst_jlyfish.json",
-    typst_compile_args = "--format=svg --font-path=$julia_mono"
-), devnull)
-disable_logging(Debug)
-Markdown.parse("`````typst\n" * s * "\n`````")
-```````
-
-```julia-repl
-julia> using TypstJlyfish, Typstry
-
-julia> TypstJlyfish.compile("typst_jlyfish.typ";
-           evaluation_file = "typst_jlyfish.json",
-           typst_compile_args = "--format=svg --font-path=$julia_mono"
-       )
-```
+include("../scripts/typst_jlyfish.jl")
+const md = Markdown.parse("```typst\n$ts```\n```julia-repl\njulia> $_using\n\njulia> $compile\n```")
+end
+X.md
+`````
 
 ![TypstJlyfish.jl](typst_jlyfish.svg)

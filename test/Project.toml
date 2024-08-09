@@ -1,12 +1,21 @@
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 ExplicitImports = "7d51a73a-1435-4ff3-83d9-f097790105c7"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+MakieTeX = "6d554a22-29e7-47bd-aee5-0c5f06619414"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+TypstJlyfish = "95e5b356-b122-4883-a78a-3c8c946b7332"
+Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
+
+[compat]
+CairoMakie = "=0.12.2"
+MakieTeX = "0.4.1"
+TypstJlyfish = "0.1.0"
 
 [extras]
 Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
