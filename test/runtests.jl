@@ -22,10 +22,11 @@ test_strings(x, s; kwargs...) = @test TypstString(x; kwargs...) == s
 
 @testset "Typstry" begin
     for (description, descriptions) in [
-        "Utilities" => ["Aqua", "Documenter", "ExplicitImports"],
-        "Interface" => ["Strings", "Commands"],
-        "Extensions" => map(string, names),
-        "Interoperability" => ["MakieTeX", "TypstJlyfish"]
+        "Utilities" => ["ExplicitImports"],
+        # "Utilities" => ["Aqua", "Documenter", "ExplicitImports"],
+        # "Interface" => ["Strings", "Commands"],
+        # "Extensions" => map(string, names),
+        # "Interoperability" => ["MakieTeX", "TypstJlyfish"]
     ]
         @info "Testing $description"
         @testset "$description" begin

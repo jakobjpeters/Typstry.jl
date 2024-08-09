@@ -14,6 +14,8 @@ Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
 
 [compat]
 CairoMakie = "=0.12.2"
+Documenter = "1"
+ExplicitImports = "1.6"
 MakieTeX = "0.4.1"
 TypstJlyfish = "0.1.0"
 

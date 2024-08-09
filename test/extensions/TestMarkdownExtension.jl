@@ -2,10 +2,11 @@
 module TestMarkdownExtension
 
 using ..TestTypstry: test_modes, test_strings
-using Markdown: Markdown
+using Markdown: @md_str
 using Typstry
 
-const markdown = Markdown.parse("a\\\nb")
+const markdown = md"""a\
+b"""
 
 test_modes(markdown, [
     "```markdown a\nb ```",
