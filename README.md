@@ -76,12 +76,12 @@ typst`compile input.typ output.pdf`
     - Implement formatting for custom types
 - Construct Typst strings
     - Interpolate formatted values
-    - Render in IJulia.jl, Pluto.jl, and QuartoRunner.jl notebooks
 
 ### Commands
 
 - Construct Typst commands
 - Render documents using the Typst compiler
+    - Display in IJulia.jl, Pluto.jl, and QuartoRunner.jl notebooks
     - Use the [JuliaMono](https://github.com/cormullion/juliamono) typeface
 
 ### Planned
@@ -134,3 +134,4 @@ typst`compile input.typ output.pdf`
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
     - Dependent of Typstry.jl
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
+- [MathTeXEngine.jl](https://github.com/Kolaru/MathTeXEngine.jl)
