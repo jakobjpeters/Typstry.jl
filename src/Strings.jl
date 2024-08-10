@@ -173,11 +173,11 @@ macro typst_str(s)
         current < previous && push!(args, s[current:prevind(s, previous, interpolate + backslashes ÷ 2)])
 
         if interpolate
-            x, current = static_parse(s, start; filename, greedy = false)
+            x, current = parse(s, start; filename, greedy = false)
             isexpr(x, :incomplete) && throw(first(x.args))
             interpolation = :($TypstString())
 
-            append!(interpolation.args, static_parse(s[previous:prevind(s, current)]; filename).args[2:end])
+            append!(interpolation.args, parse(s[previous:prevind(s, current)]; filename).args[2:end])
             push!(args, esc(interpolation))
         else current = start
         end
@@ -474,15 +474,6 @@ show_vector(io, x) = math_mode(io, x) do io, x
     join_with(_show_typst, IOContext(io, :depth => __depth, :mode => math, :parenthesize => false), x, ", "),
     print(io, "\n", _indent ^ _depth, ")")
 end
-
-"""
-    static_parse(args...; filename, kwargs...)
-
-Call `Meta.parse` with the `filename` if it is supported
-in the current Julia version (at least v1.10).
-"""
-static_parse(args...; filename, kwargs...) = @static VERSION < v"1.10" ?
-    parse(args...; kwargs...) : parse(args...; filename, kwargs...)
 
 ## Dates.jl
 

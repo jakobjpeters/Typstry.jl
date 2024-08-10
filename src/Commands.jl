@@ -16,13 +16,11 @@ module Commands
 
 import Base:
     ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus,
-    iterate, keys, lastindex, length, run, setenv, show, showerror
+    iterate, keys, lastindex, length, run, setcpuaffinity, setenv, show, showerror
 using ..Typstry: Strings, Typst, TypstString, TypstText, @typst_str
 using .Strings: enclose, join_with, _show_typst
 using Artifacts: @artifact_str
 using Typst_jll: typst
-
-@static isdefined(Base, :setcpuaffinity) && import Base: setcpuaffinity
 
 # Internals
 
@@ -402,25 +400,19 @@ function run(tc::TypstCommand, args...; kwargs...)
     process
 end
 
-@static if isdefined(Base, :setcpuaffinity)
-    setcpuaffinity(tc::TypstCommand, cpus) = TypstCommand(tc; cpus)
+"""
+    setcpuaffinity(::TypstCommand, cpus)
 
-    @doc """
-        setcpuaffinity(::TypstCommand, cpus)
+See also [`TypstCommand`](@ref).
 
-    See also [`TypstCommand`](@ref).
+# Examples
 
-    !!! compat
-        Requires at least Julia v0.8.
-
-    # Examples
-    
-    ```jldoctest
-    julia> setcpuaffinity(typst`help`, nothing)
-    typst`help`
-    ```
-    """ setcpuaffinity
-end
+```jldoctest
+julia> setcpuaffinity(typst`help`, nothing)
+typst`help`
+```
+"""
+setcpuaffinity(tc::TypstCommand, cpus) = TypstCommand(tc; cpus)
 
 """
     setenv(::TypstCommand, args...; kwargs...)
