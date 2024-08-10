@@ -87,7 +87,6 @@ typst`compile input.typ output.pdf`
 ### Planned
 
 - Support rendering in more environments
-    - IJulia.jl
     - REPL Unicode?
     - Other?
 - Default `auto::Mode`?
@@ -108,7 +107,7 @@ typst`compile input.typ output.pdf`
         - Standard Library
             - LinearAlgebra.jl
     - A symbolic `TypstFunction`?
-        - May faciliate Julia to Typst transpilation
+        - May faciliate partial Julia to Typst transpilation
         - Examples
             - `TypstString(TypstFunction(eval, :(1//2); mode = code)) == typst"eval("(1 / 2)", mode: \"code\")"`
             - `TypstString(TypstFunction(*, :a, :b; mode = math)) == typst"(a) (b)"`
