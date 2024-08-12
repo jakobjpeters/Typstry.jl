@@ -122,3 +122,4 @@ typst`compile input.typ output.pdf`
     - Dependent of Typstry.jl
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
 - [MathTeXEngine.jl](https://github.com/Kolaru/MathTeXEngine.jl)
+- [tectonic_jll.jl](https://github.com/JuliaBinaryWrappers/tectonic_jll.jl)
