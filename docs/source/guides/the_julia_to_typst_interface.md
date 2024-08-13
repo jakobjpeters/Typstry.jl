@@ -117,7 +117,7 @@ $π$
 
 ```jldoctest 1
 julia> println(TypstString(text"[\"a\"]"))
-["a"]
+#"[\"a\"]"
 
 julia> println(TypstString(typst"[\"a\"]"))
 ["a"]
@@ -145,8 +145,7 @@ $vec(
 
 ### Test for edge cases
 
-- `#1 / 2` is valid Typst source text, but is parsed partially in `code` mode as `(#1) / 2`
-- `1 / 2` may be ambiguous in a `math` mode expression
+- `1 / 2` may be ambiguous in `code` and `math` mode expressions
 - `$1 / 2$` is not ambiguous in `markup` mode
 
 ```jldoctest 1
@@ -166,10 +165,10 @@ $1 / 2$
 - The `AbstractVector` method changes its `Mode` to `math` and increments its `depth`
 
 ```jldoctest 1
-julia> println(TypstString([true, 1, Any[1.2, 1 // 2]]))
+julia> println(TypstString([true, Any[1, 1.2]]))
 $vec(
-  "true", 1, vec(
-    1.2, 1 / 2
+  "true", vec(
+    1, 1.2
   )
 )$
 ```

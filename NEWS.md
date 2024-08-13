@@ -34,3 +34,4 @@
 - A `@typst_cmd` with no parameters no longer inserts an empty parameter
 - `AbstractFloat` values that satisfy `isinf` and `isnan` now correspond to `calc.inf` and `calc.nan`, respectively
 - `AbstractString` and `Docs.Text` no longer escape `$`
+- `Docs.Text` incorrect in `markup` mode

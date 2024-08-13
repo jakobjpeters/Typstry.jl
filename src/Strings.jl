@@ -752,9 +752,10 @@ end
 show_typst(io, x::Signed) = mode(io) == code ?
     print(io, x) :
     enclose(print, io, x, math_pad(io))
-show_typst(io, x::Text) = mode(io) == markup ?
-    print(io, x) :
+function show_typst(io, x::Text)
+    code_mode(io)
     _show_typst(io, string(x))
+end
 show_typst(io, x::Typst) = show_typst(io, x.value)
 show_typst(io, x::TypstString) = print(io, x)
 show_typst(io, x::TypstText) = print(io, x.value)
@@ -943,7 +944,7 @@ julia> show(stdout, "text/typst", Typst("a"))
 "a"
 
 julia> show(stdout, "text/typst", Typst(Text("a")))
-a
+#"a"
 ```
 """
 show(io::IO, m::MIME"text/typst", t::Typst) = show(IOContext(io), m, t)
