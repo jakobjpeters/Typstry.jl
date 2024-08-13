@@ -69,7 +69,7 @@ end
     TypstString <: AbstractString
     TypstString(::Any; context...)
 
-Convert the value to a Typst formatted string.
+Format the value as a Typst formatted string.
 
 Optional Julia settings and Typst parameters are passed to
 [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref)
@@ -77,7 +77,7 @@ in an `IOContext`. See also [`show_typst`](@ref) for a list of supported types.
 
 !!! info
     This type implements the `String` interface.
-    However, the interface is unspecified, which may result in unexpected behavior.
+    However, the interface is undocumented, which may result in unexpected behavior.
 
 # Examples
 
@@ -124,7 +124,7 @@ struct TypstText{T}
 end
 
 """
-    @typst_str(s)
+    @typst_str("s")
     typst"s"
 
 Construct a [`TypstString`](@ref).
@@ -629,7 +629,7 @@ A setting is a value used in Julia, whose type varies across settings.
 A parameter is passed directly to a Typst function and must be a [`TypstString`](@ref)
 with the same name as in Typst, except that dashes are replaced with underscores.
 Settings each have a default value, whereas the default values of parameters are handled by Typst functions.
-Some settings, such as `block`, correspond with a parameter but may be used in Julia.
+Some settings, such as `block`, correspond with a parameter but may also be used in Julia.
 
 For additional information on settings and parameters, see also [`context`](@ref)
 and the [Typst Documentation](https://typst.app/docs/), respectively.
@@ -890,8 +890,8 @@ See also [`TypstString`](@ref).
 
 !!! info
     This method patches incorrect output from the assumption in `repr`
-    that the parameter is already in the requested `MIME` type when
-    the `MIME` type `istextmime` and the parameter is an `AbstractString`.
+    that the parameter is already in the requested `MIME` type when the
+    `MIME` type satisfies `istextmime` and the parameter is an `AbstractString`.
 
 # Examples
 
@@ -927,12 +927,12 @@ end
 """
     show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString, TypstText})
 
-Print the [`Typst`](@ref) format.
+Print in Typst format.
 
 This method provides formatting data to [`show_typst`](@ref)
 specified by a default and custom [`context`](@ref).
 
-See also [`TypstString`](@ref) and [`TypstText`](@ref).
+See also [`Typst`](@ref), [`TypstString`](@ref), and [`TypstText`](@ref).
 
 # Examples
 

@@ -161,8 +161,10 @@ $1 / 2$
 
 ### Format values in containers using `show` with the `text/typst` MIME type
 
-- Values may require some of their `context`
-- The `AbstractVector` method changes its `Mode` to `math` and increments its `depth`
+- Values may require their `context`
+- The `AbstractVector` method
+    - Encloses source text in dollar signs, so it changes its `Mode` to `math`
+    - Formats its elements with an indent, so it increments its `depth`
 
 ```jldoctest 1
 julia> println(TypstString([true, Any[1, 1.2]]))
