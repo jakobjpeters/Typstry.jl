@@ -8,7 +8,6 @@ This guide illustrates how to use Typstry.jl in compatible notebooks and package
 IJulia.jl, Pluto.jl, and QuartoNotebookRunner.jl each [`render`](@ref) [`Typst`](@ref)s and [`TypstText`](@ref)s.
 Pluto.jl and QuartoNotebookRunner.jl also `render` [`TypstString`](@ref)s,
 whereas IJulia.jl will support them in its next feature release.
-See also this [pull request](https://github.com/JuliaLang/IJulia.jl/pull/1114).
 
 ## Packages
 

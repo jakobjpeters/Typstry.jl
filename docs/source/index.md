@@ -88,9 +88,13 @@ typst`compile input.typ output.pdf`
     - Package extensions
         - Standard Library
             - LinearAlgebra.jl
-    - A symbolic `TypstFunction`?
-        - May faciliate partial Julia to Typst transpilation
-        - `@typst(a * b) == TypstString(TypstFunction(*, :a, :b; mode = math)) == typst"(a b)"`
+    - Partial Julia to Typst transpilation
+        - ```
+          @typst(a * b) ==
+          TypstString(:(a * b)) ==
+          TypstString(TypstFunction(*, :a, :b)) ==
+          typst"(a b)"
+          ```
 
 ## Similar Packages
 

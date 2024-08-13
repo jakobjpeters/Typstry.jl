@@ -130,7 +130,7 @@ end
 """
     julia_mono
 
-An constant artifact containing the
+A constant `String` file path to the
 [JuliaMono](https://github.com/cormullion/juliamono) typeface.
 
 Use with a [`TypstCommand`](@ref) and one of [`addenv`](@ref),
@@ -141,7 +141,7 @@ const julia_mono = artifact"JuliaMono"
 """
     preamble
 
-A constant used at the beginning of Typst source files.
+A constant [`TypstString`](@ref) used at the beginning of Typst source files.
 
 # Examples
 
@@ -447,9 +447,8 @@ Print the Portable Document Format (PDF), Portable Network Graphics (PNG),
 or Scalable Vector Graphics (SVG) format.
 
 The `preamble` keyword parameter used by [`render`](@ref) may be specified in an `IOContext`.
-
-Environments, such as Pluto.jl notebooks, may use these methods to `display`
-[`Typst`](@ref)s, [`TypstString`](@ref)s, and [`TypstText`](@ref)s.
+Environments, such as Pluto.jl notebooks, may use these methods to `display` values of type
+[`Typst`](@ref), [`TypstString`](@ref), and [`TypstText`](@ref).
 
 # Examples
 
