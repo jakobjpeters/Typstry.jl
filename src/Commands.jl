@@ -123,7 +123,7 @@ julia> typst`compile input.typ output.typ`
 typst`compile input.typ output.typ`
 ```
 """
-macro typst_cmd(parameters)
+macro typst_cmd(parameters::String)
     :(TypstCommand($(isempty(parameters) ? String[] : map(string, split(parameters, " ")))))
 end
 

@@ -160,7 +160,7 @@ julia> typst"\\\\(x)"
 typst"\\\\(x)"
 ```
 """
-macro typst_str(s)
+macro typst_str(s::String)
     filename = __source__.file
     current, final = firstindex(s), lastindex(s)
     _s = Expr(:string)
