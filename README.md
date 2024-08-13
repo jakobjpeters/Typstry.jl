@@ -86,14 +86,9 @@ typst`compile input.typ output.pdf`
 
 ### Planned
 
-- Support rendering in more environments
-    - REPL Unicode?
-    - Other?
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
     - Use a tree-sitter grammar or jll package
-- Documenter.jl backend and docstrings
-    - Requires Typst to [output HTML](https://github.com/typst/typst/issues/721)
 - Implement Typst formatting for more types
     - `Base`
         - `AbstractDict`
@@ -106,11 +101,13 @@ typst`compile input.typ output.pdf`
     - Package extensions
         - Standard Library
             - LinearAlgebra.jl
-    - A symbolic `TypstFunction`?
-        - May faciliate partial Julia to Typst transpilation
-        - Examples
-            - `TypstString(TypstFunction(eval, :(1//2); mode = code)) == typst"eval("(1 / 2)", mode: \"code\")"`
-            - `TypstString(TypstFunction(*, :a, :b; mode = math)) == typst"(a) (b)"`
+    - Partial Julia to Typst transpilation
+        - ```
+          @typst(a * b) ==
+          TypstString(:(a * b)) ==
+          TypstString(TypstFunction(*, :a, :b)) ==
+          typst"(a b)"
+          ```
 
 ## Similar Packages
 
@@ -135,3 +132,4 @@ typst`compile input.typ output.pdf`
     - Dependent of Typstry.jl
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
 - [MathTeXEngine.jl](https://github.com/Kolaru/MathTeXEngine.jl)
+- [tectonic_jll.jl](https://github.com/JuliaBinaryWrappers/tectonic_jll.jl)
