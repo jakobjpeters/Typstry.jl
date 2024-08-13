@@ -101,12 +101,17 @@ typst`compile input.typ output.pdf`
 ### Typst
 
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
-- [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
 - [TypstJlyFish.jl](https://github.com/andreasKroepelin/TypstJlyfish.jl)
     - Interoperable with Typstry.jl
 - [Typst_jll.jl](https://github.com/JuliaBinaryWrappers/Typst_jll.jl)
     - Dependency of Typstry.jl
+
+#### Typst and LaTeX
+
+- [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
+    - Dependent of Typstry.jl
+- [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 
 ### LaTeX
 
@@ -115,8 +120,6 @@ typst`compile input.typ output.pdf`
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
 - [LibTeXPrintf.jl](https://github.com/JuliaStrings/LibTeXPrintf.jl)
-- [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
-    - Dependent of Typstry.jl
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
 - [MathTeXEngine.jl](https://github.com/Kolaru/MathTeXEngine.jl)
 - [tectonic_jll.jl](https://github.com/JuliaBinaryWrappers/tectonic_jll.jl)
