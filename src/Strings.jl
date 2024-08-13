@@ -21,7 +21,7 @@ using .Docs: HTML, Text
 using .Iterators: Stateful
 using .Meta: isexpr, parse
 using Dates:
-    Date, DateTime, Day, Hour, Minute, Second, Time, Week,
+    Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
     day, hour, minute, month, second, year
 
 # `Typstry`
@@ -485,7 +485,7 @@ date_time(::Time) = hour, minute, second
 date_time(::DateTime) = year, month, day, hour, minute, second
 
 """
-    duration(::Union{Dates.Day, Dates.Hour, Dates.Minute, Dates.Second, Dates.Week})
+    duration(::Dates.Period)
 
 # Examples
 
@@ -504,10 +504,7 @@ duration(::Second) = :seconds
 duration(::Week) = :weeks
 
 """
-    dates(::Union{
-        Dates.Date, Dates.DateTime, Dates.Day, Dates.Hour,
-        Dates.Minute, Dates.Second, Dates.Time, Dates.Week
-    })
+    dates(::Union{Dates.Date, Dates.DateTime, Dates.Period, Dates.Time})
 
 # Examples
 
@@ -523,7 +520,7 @@ function dates(x::Union{Date, DateTime, Time})
     fs = date_time(x)
     "datetime", map(Symbol, fs), map(f -> f(x), fs)
 end
-function dates(x::Union{Day, Hour, Minute, Second, Week})
+function dates(x::Period)
     buffer = IOBuffer()
 
     print(buffer, x)
@@ -674,12 +671,8 @@ and the [Typst Documentation](https://typst.app/docs/), respectively.
 | `Docs.Text`                                               | `:mode`                                  |                                                         |
 | `Dates.Date`                                              | `:mode`, `:indent`                       |                                                         |
 | `Dates.DateTime`                                          | `:mode`, `:indent`                       |                                                         |
-| `Dates.Day`                                               | `:mode`, `:indent`                       |                                                         |
-| `Dates.Hour`                                              | `:mode`, `:indent`                       |                                                         |
-| `Dates.Minute`                                            | `:mode`, `:indent`                       |                                                         |
-| `Dates.Second`                                            | `:mode`, `:indent`                       |                                                         |
+| `Dates.Period`                                            | `:mode`, `:indent`                       |                                                         |
 | `Dates.Time`                                              | `:mode`, `:indent`                       |                                                         |
-| `Dates.Week`                                              | `:mode`, `:indent`                       |                                                         |
 """
 show_typst(io, x::AbstractChar) = show_typst(io, string(x))
 show_typst(io, x::AbstractFloat) =
@@ -791,9 +784,7 @@ show_typst(io, x::Union{
             _show_typst(io, _step)
         end
     end : show_vector(io, x)
-function show_typst(io, x::Union{
-    Date, DateTime, Day, Hour, Minute, Second, Time, Week
-})
+function show_typst(io, x::Union{Date, DateTime, Period, Time})
     f, keys, values = dates(x)
     _values = map(value -> TypstString(value; mode = code), values)
 
@@ -999,12 +990,8 @@ const examples = [
     text"[\"a\"]" => Text,
     Date(1) => Date,
     DateTime(1) => DateTime,
-    Day(1) => Day,
-    Hour(1) => Hour,
-    Minute(1) => Minute,
-    Second(1) => Second,
-    Time(0) => Time,
-    Week(1) => Week
+    Day(1) => Period,
+    Time(0) => Time
 ]
 
 end # Strings
