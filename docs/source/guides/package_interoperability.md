@@ -18,24 +18,35 @@ whereas IJulia.jl will support them in its next feature release.
 
 `````@eval
 using Markdown: Markdown
-module X
-include("../scripts/include_makie_tex.jl")
-const s = read("../../../scripts/makie_tex.jl", String)
-end
-Markdown.parse("```julia-repl$(join(map(s -> "\njulia> " * s, split(strip(X.s), "\n")), "\n"))\n```")
-`````
+Markdown.parse("""```julia-repl
+julia> using CairoMakie, MakieTeX
 
-![MakieTeX.jl](makie_tex.svg)
+julia> f = Figure(; size = (100, 100))
+
+julia> LTeX(f[1, 1], TypstDocument(typst"\$ 1 / x \$"))
+
+julia> save("makie_tex.svg", f)
+```""")
+`````
 
 ### TypstJlyfish.jl
 
 `````@eval
-module X
 using Markdown: Markdown
-include("../scripts/typst_jlyfish.jl")
-const md = Markdown.parse("```typst\n$ts```\n```julia-repl\njulia> $_using\n\njulia> $compile\n```")
-end
-X.md
-`````
+using Typstry:  preamble
+Markdown.parse("""```typst
+$preamble#import "@preview/jlyfish:0.1.0": *
+#read-julia-output(json("typst_jlyfish.json"))
+#jl-pkg("Typstry")
+#jl(`using Typstry; typst"\$1 / x\$"`)
+```
 
-![TypstJlyfish.jl](typst_jlyfish.svg)
+```julia-repl
+julia> using TypstJlyfish, Typstry
+
+julia> TypstJlyfish.compile("typst_jlyfish.typ";
+           evaluation_file = "typst_jlyfish.json",
+           typst_compile_args = "--format=svg --font-path=\$julia_mono"
+       )
+```""")
+`````
