@@ -1,7 +1,7 @@
 authors = ["Jakob Peters <jakobj.peters@gmail.com>"]
 name = "Typstry"
 uuid = "f0ed7684-a786-439e-b1e3-3b82803b501e"
-version = "0.2.0"
+version = "0.3.0"
 
 [compat]
 Artifacts = "1"
