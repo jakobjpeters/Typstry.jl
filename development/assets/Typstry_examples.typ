@@ -51,7 +51,7 @@
     "0xff", "Unsigned", "0xff", [#0xff], "#0xff", [#0xff], "#0xff", [$#0xff$],
     "v\"1.2.3\"", "VersionNumber", "version(1, 2, 3)", [#version(1, 2, 3)], "#version(1, 2, 3)", [#version(1, 2, 3)], "#version(1, 2, 3)", [$#version(1, 2, 3)$],
     "html\"<p>a</p>\"", "Docs.HTML", "```html <p>a</p> ```", [#```html <p>a</p> ```], "```html <p>a</p> ```", [```html <p>a</p> ```], "#```html <p>a</p> ```", [$#```html <p>a</p> ```$],
-    "text\"[\\\"a\\\"]\"", "Docs.Text", "\"[\\\"a\\\"]\"", [#"[\"a\"]"], "[\"a\"]", [["a"]], "\"[\\\"a\\\"]\"", [$"[\"a\"]"$],
+    "text\"[\\\"a\\\"]\"", "Docs.Text", "\"[\\\"a\\\"]\"", [#"[\"a\"]"], "#\"[\\\"a\\\"]\"", [#"[\"a\"]"], "#\"[\\\"a\\\"]\"", [$#"[\"a\"]"$],
     "Dates.Date(1)", "Dates.Date", "datetime(\n  year: 1,\n  month: 1,\n  day: 1\n)", [#datetime(
       year: 1,
       month: 1,
@@ -87,33 +87,12 @@
       minute: 0,
       second: 0
     )$],
-    "Dates.Day(1)", "Dates.Day", "duration(\n  days: 1\n)", [#duration(
+    "Dates.Day(1)", "Dates.Period", "duration(\n  days: 1\n)", [#duration(
       days: 1
     )], "#duration(\n  days: 1\n)", [#duration(
       days: 1
     )], "#duration(\n  days: 1\n)", [$#duration(
       days: 1
-    )$],
-    "Dates.Hour(1)", "Dates.Hour", "duration(\n  hours: 1\n)", [#duration(
-      hours: 1
-    )], "#duration(\n  hours: 1\n)", [#duration(
-      hours: 1
-    )], "#duration(\n  hours: 1\n)", [$#duration(
-      hours: 1
-    )$],
-    "Dates.Minute(1)", "Dates.Minute", "duration(\n  minutes: 1\n)", [#duration(
-      minutes: 1
-    )], "#duration(\n  minutes: 1\n)", [#duration(
-      minutes: 1
-    )], "#duration(\n  minutes: 1\n)", [$#duration(
-      minutes: 1
-    )$],
-    "Dates.Second(1)", "Dates.Second", "duration(\n  seconds: 1\n)", [#duration(
-      seconds: 1
-    )], "#duration(\n  seconds: 1\n)", [#duration(
-      seconds: 1
-    )], "#duration(\n  seconds: 1\n)", [$#duration(
-      seconds: 1
     )$],
     "Dates.Time(0)", "Dates.Time", "datetime(\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [#datetime(
       hour: 0,
@@ -127,13 +106,6 @@
       hour: 0,
       minute: 0,
       second: 0
-    )$],
-    "Dates.Week(1)", "Dates.Week", "duration(\n  weeks: 1\n)", [#duration(
-      weeks: 1
-    )], "#duration(\n  weeks: 1\n)", [#duration(
-      weeks: 1
-    )], "#duration(\n  weeks: 1\n)", [$#duration(
-      weeks: 1
     )$]
 ))
 
