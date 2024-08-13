@@ -19,7 +19,8 @@
     - `OrdinalRange{<:Integer, <:Integer}` and `StepRangeLen{<:Integer, <:Integer, <:Integer}`
         - `code` mode implicitily uses the Typst default `step` if it is equal to `1`
         - `markup` and `math` mode now correspond to a Typst vector
-    - ~The `Docs.Text` format is simpler in `markup` mode~
+    - The `Docs.Text` format is simpler in `markup` mode
+        - This introduced a bug, which is patched in v0.3.0
     - New default setting `parenthesize = true`
         - Used for `Complex` and `Rational`
     - Rename the `inline` setting to `block` for consistency with Typst's `equation` function
