@@ -921,7 +921,7 @@ typst"a"
 function show(io::IO, ts::TypstString)
     print(io, "typst")
     enclose((io, text) -> escape_raw_string(io, replace(text,
-        r"(^|[^\\])(\\+)\(" => s"\1\2\2(")), io, ts.text, "\"")
+        r"(\\+)\(" => s"\1\1(")), io, ts.text, "\"")
 end
 
 """
