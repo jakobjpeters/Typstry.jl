@@ -86,13 +86,13 @@ typst`help`
 ```
 """
 mutable struct TypstCommand
+    const parameters::Vector{String}
     compiler::Cmd
-    parameters::Vector{String}
     ignore_status::Bool
 
-    TypstCommand(parameters::Vector{String}) = new(typst_compiler, parameters, false)
+    TypstCommand(parameters::Vector{String}) = new(parameters, typst_compiler, false)
     TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
-        new(Cmd(tc.compiler; kwargs...), tc.parameters, ignorestatus)
+        new(tc.parameters, Cmd(tc.compiler; kwargs...), ignorestatus)
 end
 
 """
