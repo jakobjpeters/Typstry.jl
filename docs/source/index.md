@@ -118,6 +118,7 @@ typst`compile input.typ output.pdf`
 - [Latexify.jl](https://github.com/korsbo/Latexify.jl)
 - [LaTeXEntities.jl](https://github.com/JuliaString/LaTeX_Entities.jl)
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
+- [LaTeXTabulars.jl](https://github.com/tpapp/LaTeXTabulars.jl)
 - [LatexPrint.jl](https://github.com/scheinerman/LatexPrint.jl)
 - [LibTeXPrintf.jl](https://github.com/JuliaStrings/LibTeXPrintf.jl)
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
