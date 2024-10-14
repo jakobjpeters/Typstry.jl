@@ -29,9 +29,6 @@ julia> using Typstry
 ## Showcase
 
 ```jldoctest
-julia> show_typst(IOContext(stdout, :mode => code), true)
-true
-
 julia> show(stdout, "text/typst", Typst([true 1; 1.0 [Any[true 1; 1.0 nothing]]]))
 $mat(
   "true", 1;
@@ -52,6 +49,8 @@ typst`help`
 
 julia> typst`compile input.typ output.pdf`
 typst`compile input.typ output.pdf`
+
+julia> render(1:4);
 ```
 
 ## Features
