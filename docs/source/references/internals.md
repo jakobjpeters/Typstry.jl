@@ -29,6 +29,7 @@ Typstry.Strings.show_array
 Typstry.Strings.show_parameters
 Typstry.Strings.show_raw
 Typstry.Strings.show_vector
+Typstry.Strings.escape
 ```
 
 ### Dates.jl

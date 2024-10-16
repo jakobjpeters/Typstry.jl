@@ -29,7 +29,9 @@ show_typst(io, ::X) = print(io, io[:x]::Int)
 
 const pairs = [
     typst"" => ""
-    typst"x" => "x"
+    typst"\\" => "\\" # \
+    typst"\ " => "\\ "
+    typst"\\ " => "\\\\ "
     typst"(x)" => "(x)"
     typst"𝒂(x)𝒃" => "𝒂(x)𝒃"
     typst"𝒂𝒃(x)𝒄𝒅" => "𝒂𝒃(x)𝒄𝒅"

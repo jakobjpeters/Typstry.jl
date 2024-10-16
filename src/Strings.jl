@@ -16,7 +16,6 @@ Typstry.Strings
 module Strings
 
 import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show
-using Base: escape_raw_string
 using .Docs: HTML, Text
 using .Iterators: Stateful
 using .Meta: isexpr, parse
@@ -183,7 +182,7 @@ macro typst_str(s::String)
         end
     end
 
-    current ≤ final && push!(args, s[current:final])
+    current > final || push!(args, s[current:final])
     :(TypstString(TypstText($_s)))
 end
 
@@ -474,6 +473,23 @@ show_vector(io, x) = math_mode(io, x) do io, x
     join_with(_show_typst, IOContext(io, :depth => __depth, :mode => math, :parenthesize => false), x, ", "),
     print(io, "\n", _indent ^ _depth, ")")
 end
+
+"""
+    escape(io, n)
+
+Print `\\` to `io` `n` times.
+
+# Examples
+
+```jldoctest
+julia> julia> Typstry.Strings.escape(stdout, 2)
+\\
+```
+"""
+escape(io, n) =
+    for _ in 1:n
+        print(io, '\\')
+    end
 
 ## Dates.jl
 
@@ -919,9 +935,33 @@ typst"a"
 ```
 """
 function show(io::IO, ts::TypstString)
-    print(io, "typst")
-    enclose((io, text) -> escape_raw_string(io, replace(text,
-        r"(\\+)\(" => s"\1\1(")), io, ts.text, "\"")
+    text = ts.text
+
+    if all(isprint, text)
+        escapes = 0
+
+        print(io, "typst\"")
+
+        for c in text
+            if c == '\\' escapes += 1
+            else
+                if c == '\"' escape(io, escapes + 1)
+                elseif c == '(' escape(io, escapes)
+                end
+
+                escapes = 0
+            end
+
+            print(io, c)
+        end
+
+        escape(io, escapes)
+        print(io, "\"")
+    else
+        print(io, TypstString, "(", TypstText, "(")
+        show(io, text)
+        print(io, "))")
+    end
 end
 
 """
