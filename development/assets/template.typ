@@ -11,7 +11,7 @@
             let x = c.x
             if x in (3, 5, 7) { c }
             else { raw({ c.body.text }, lang: {
-                if x < 2 { "julia" } else if x == 4 { "typ" } else { "typc" }
+                if x < 2 { "julia" } else if x == 2 { "typc" } else if x == 4 { "typ" } else { "typm" }
             } ) }
         }
     ))
