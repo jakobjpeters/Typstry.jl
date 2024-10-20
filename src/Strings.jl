@@ -482,8 +482,8 @@ Print `\\` to `io` `n` times.
 # Examples
 
 ```jldoctest
-julia> julia> Typstry.Strings.escape(stdout, 2)
-\\
+julia> Typstry.Strings.escape(stdout, 2)
+\\\\
 ```
 """
 escape(io, n) =
