@@ -161,7 +161,7 @@ const preamble = typst"""
         input = "input.typ",
         output = "output.pdf",
         open = true,
-        preamble = Typstry.preamble,
+        preamble = preamble,
     context...)
 
 Render to a document using

@@ -40,12 +40,6 @@ typst"$ π approx 3.141592653589793 $"
 
 ## Commands
 
-Easily generate a Typst source file and compile it into a document using [`render`](@ref).
-
-```jldoctest 1
-julia> render(Any[true 1; 1.2 1 // 2]);
-```
-
 Use the Typst command-line interface by [`run`](@ref)ning a
 [`TypstCommand`](@ref) created with its constructor or [`@typst_cmd`](@ref).
 
@@ -53,5 +47,12 @@ Use the Typst command-line interface by [`run`](@ref)ning a
 julia> TypstCommand(["help"])
 typst`help`
 
-julia> run(typst`compile input.typ output.pdf`);
+julia> typst`compile input.typ output.pdf`
+typst`compile input.typ output.pdf`
+```
+
+Easily generate a Typst source file and compile it into a document using [`render`](@ref).
+
+```jldoctest 1
+julia> render(Any[true 1; 1.2 1 // 2]);
 ```
