@@ -15,7 +15,7 @@ Typstry.Strings
 """
 module Strings
 
-import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show
+import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show, showerror
 using .Docs: HTML, Text
 using .Iterators: Stateful
 using .Meta: isexpr, parse
@@ -24,6 +24,25 @@ using Dates:
     day, hour, minute, month, second, year
 
 # `Typstry`
+
+"""
+    ContextError <: Exception
+    ContextError(::Type, ::Type, ::Symbol)
+
+An `Exception` indicating that a [`context`](@ref) key returned a value of an incorrect type.
+
+# Examples
+
+```jldoctest
+julia> ContextError(Mode, String, :mode)
+ContextError(Mode, String, :mode)
+```
+"""
+struct ContextError <: Exception
+    expected::Type
+    received::Type
+    key::Symbol
+end
 
 """
     Mode
@@ -91,22 +110,18 @@ typst"(1 + 2i)"
 struct TypstString <: AbstractString
     text::String
 
-    TypstString(x; context...) =
-        new(sprint(show, typst_mime, maybe_wrap(x); context = (context...,)))
+    TypstString(t::Typst; context...) =
+        new(sprint(show, typst_mime, t; context = (context...,)))
 end
 
 TypstString(x::TypstString; context...) = x
+TypstString(x; context...) = TypstString(Typst(x); context...)
 
 """
     TypstText{T}
     TypstText(::Any)
 
 A wrapper whose [`show_typst`](@ref) method uses `print`.
-
-!!! info
-    This may be used to insert control characters into a [`TypstString`](@ref).
-    Unescaped control characters in `TypstString`s may
-    break formatting in some environments, such as the REPL.
 
 # Examples
 
@@ -205,8 +220,6 @@ const typst_mime = MIME"text/typst"()
 """
     backticks(io)
 
-Return to `io[:backticks]::Int`.
-
 # Examples
 
 ```jldoctest
@@ -214,12 +227,10 @@ julia> Typstry.Strings.backticks(IOContext(stdout, :backticks => 3))
 3
 ```
 """
-backticks(io) = io[:backticks]::Int
+backticks(io) = unwrap(io, Int, :backticks)
 
 """
     block(io)
-
-Return `io[:block]::Bool`.
 
 # Examples
 
@@ -228,7 +239,7 @@ julia> Typstry.Strings.block(IOContext(stdout, :block => true))
 true
 ```
 """
-block(io) = io[:block]::Bool
+block(io) = unwrap(io, Bool, :block)
 
 """
     code_mode(io)
@@ -254,8 +265,6 @@ code_mode(io) = if mode(io) ≠ code print(io, "#") end
 """
     depth(io)
 
-Return `io[:depth]::Int`.
-
 # Examples
 
 ```jldoctest
@@ -263,7 +272,7 @@ julia> Typstry.Strings.depth(IOContext(stdout, :depth => 0))
 0
 ```
 """
-depth(io) = io[:depth]::Int
+depth(io) = unwrap(io, Int, :depth)
 
 """
     enclose(f, io, x, left, right = reverse(left); kwargs...)
@@ -284,11 +293,24 @@ function enclose(f, io, x, left, right = reverse(left); context...)
 end
 
 """
+    escape(io, n)
+
+Print `\\` to `io` `n` times.
+
+# Examples
+
+```jldoctest
+julia> Typstry.Strings.escape(stdout, 2)
+\\\\
+```
+"""
+escape(io, n) =
+    for _ in 1:n
+        print(io, '\\')
+    end
+
+"""
     indent(io)
-
-Return `" " ^ io[:tab_size]::Int`.
-
-See also [`TypstString`](@ref).
 
 # Examples
 
@@ -297,7 +319,7 @@ julia> Typstry.Strings.indent(IOContext(stdout, :tab_size => 2))
 "  "
 ```
 """
-indent(io) = " " ^ io[:tab_size]
+indent(io) = " " ^ unwrap(io, Int, :tab_size)
 
 """
     join_with(f, io, xs, delimeter; kwargs...)
@@ -352,10 +374,6 @@ math_pad(io) =
 """
     mode(io)
 
-Return `io[:mode]::Mode`.
-
-See also [`Mode`](@ref).
-
 # Examples
 
 ```jldoctest
@@ -363,33 +381,10 @@ julia> Typstry.Strings.mode(IOContext(stdout, :mode => code))
 code::Mode = 0
 ```
 """
-mode(io) = io[:mode]::Mode
-
-"""
-    maybe_wrap(::Any)
-
-Wrap the value in [`Typst`](@ref) unless it is a [`TypstString`](@ref) or [`TypstText`](@ref).
-
-# Examples
-
-```jldoctest
-julia> Typstry.Strings.maybe_wrap(1)
-Typst{Int64}(1)
-
-julia> Typstry.Strings.maybe_wrap(TypstString(1))
-typst"\$1\$"
-
-julia> Typstry.Strings.maybe_wrap(TypstText(1))
-TypstText{Int64}(1)
-```
-"""
-maybe_wrap(x::Union{TypstString, TypstText}) = x
-maybe_wrap(x) = Typst(x)
+mode(io) = unwrap(io, Mode, :mode)
 
 """
     parenthesize(io)
-
-Return `io[:parenthesize]::Bool`.
 
 # Examples
 
@@ -398,7 +393,7 @@ julia> Typstry.Strings.parenthesize(IOContext(stdout, :parenthesize => true))
 true
 ```
 """
-parenthesize(io) = io[:parenthesize]::Bool
+parenthesize(io) = unwrap(io, Bool, :parenthesize)
 
 """
     show_parameters(io, f, keys, final)
@@ -414,7 +409,7 @@ vec(
 ```
 """
 function show_parameters(io, f, keys, final)
-    pairs = filter(!isempty ∘ last, map(key -> key => get(io, key, typst"")::TypstString, keys))
+    pairs = map(key -> key => unwrap(io, TypstString, key), filter(key -> haskey(io, key), keys))
 
     println(io, f, "(")
     join_with(io, pairs, ",\n") do io, (key, value)
@@ -475,21 +470,12 @@ show_vector(io, x) = math_mode(io, x) do io, x
 end
 
 """
-    escape(io, n)
-
-Print `\\` to `io` `n` times.
-
-# Examples
-
-```jldoctest
-julia> Typstry.Strings.escape(stdout, 2)
-\\\\
-```
+    unwrap(io, type, key)
 """
-escape(io, n) =
-    for _ in 1:n
-        print(io, '\\')
-    end
+function unwrap(io, type, key)
+    value = io[key]
+    value isa type ? value : throw(ContextError(type, typeof(value), key))
+end
 
 ## Dates.jl
 
@@ -860,8 +846,8 @@ true
 isvalid(ts::TypstString, i::Integer) = isvalid(ts.text, i::Integer)
 
 """
-    iterate(::TypstString, ::Integer)
     iterate(::TypstString)
+    iterate(::TypstString, ::Integer)
 
 See also [`TypstString`](@ref).
 
@@ -965,6 +951,19 @@ function show(io::IO, ts::TypstString)
 end
 
 """
+    show(::IO, ::MIME"text/plain", ::ContextError)
+
+# Examples
+
+```jldoctest
+julia> show(stdout, "text/plain", ContextError(Mode, String, :mode))
+ContextError(Mode, String, :mode)
+```
+"""
+show(io::IO, ::MIME"text/plain", ce::ContextError) =
+    print(io, ContextError, "(", ce.expected, ", ", ce.received, ", :", ce.key, ")")
+
+"""
     show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString, TypstText})
 
 Print in Typst format.
@@ -996,6 +995,20 @@ function show(io::IOContext, ::MIME"text/typst", t::Typst)
     show_typst(io, t)
 end
 show(io::IO, ::MIME"text/typst", t::Union{TypstString, TypstText}) = show_typst(io, t)
+
+"""
+    showerror(::IO, ::ContextError)
+
+# Examples
+
+```jldoctest
+julia> showerror(stdout, ContextError(Mode, String, :mode))
+ContextError: the `context` key `:mode` expected a value of type `Mode` but received `String`
+```
+"""
+showerror(io::IO, ce::ContextError) = print(io, "ContextError: the `",
+    context, "` key `:", ce.key, "` expected a value of type `",
+ce.expected, "` but received `", ce.received, "`")
 
 # Internals
 

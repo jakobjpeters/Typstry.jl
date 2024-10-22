@@ -36,6 +36,7 @@ run
 setcpuaffinity
 setenv
 show(::IO, ::MIME"text/plain", ::TypstCommand)
+show(::IO, ::MIME"text/plain", ::TypstError)
 show(::IO, ::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"}, ::Union{Typst, TypstString, TypstText})
-showerror
+showerror(::IO, ::TypstError)
 ```

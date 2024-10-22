@@ -100,6 +100,12 @@ end
     TypstError(::TypstCommand)
 
 An `Exception` indicating a failure to [`run`](@ref) a [`TypstCommand`](@ref).
+
+# Examples
+```jldoctest
+julia> TypstError(typst``)
+TypstError(typst``)
+```
 """
 struct TypstError <: Exception
     command::TypstCommand
@@ -437,6 +443,22 @@ typst`help`
 show(io::IO, ::MIME"text/plain", tc::TypstCommand) = enclose((io, parameters) -> join_with(
     (io, parameter) -> printstyled(io, parameter; underline = true),
 io, parameters, " "), io, tc.parameters, "typst`", "`")
+
+"""
+    show(::IO, ::MIME"text/plain", ::TypstError)
+
+# Examples
+
+```jldoctest
+julia> show(stdout, "text/plain", TypstError(typst``))
+TypstError(typst``)
+```
+"""
+function show(io::IO, m::MIME"text/plain", te::TypstError)
+    print(io, TypstError, "(")
+    show(io, m, te.command)
+    print(io, ")")
+end
 
 """
     show(::IO, ::Union{

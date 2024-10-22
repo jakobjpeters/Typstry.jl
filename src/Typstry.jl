@@ -4,8 +4,8 @@ module Typstry
 using PrecompileTools: @compile_workload
 
 include("Strings.jl")
-using .Strings: Mode, Typst, TypstString, TypstText, @typst_str, code, markup, math, context, show_typst
-export Mode, Typst, TypstString, TypstText, @typst_str, code, markup, math, context, show_typst
+using .Strings: ContextError, Mode, Typst, TypstString, TypstText, @typst_str, code, markup, math, context, show_typst
+export ContextError, Mode, Typst, TypstString, TypstText, @typst_str, code, markup, math, context, show_typst
 
 include("Commands.jl")
 using .Commands: TypstCommand, TypstError, @typst_cmd, julia_mono, preamble, render

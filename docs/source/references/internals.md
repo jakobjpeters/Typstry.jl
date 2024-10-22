@@ -18,18 +18,18 @@ Typstry.Strings.block
 Typstry.Strings.code_mode
 Typstry.Strings.depth
 Typstry.Strings.enclose
+Typstry.Strings.escape
 Typstry.Strings.indent
 Typstry.Strings.join_with
 Typstry.Strings.math_mode
 Typstry.Strings.math_pad
-Typstry.Strings.maybe_wrap
 Typstry.Strings.mode
 Typstry.Strings.parenthesize
 Typstry.Strings.show_array
 Typstry.Strings.show_parameters
 Typstry.Strings.show_raw
 Typstry.Strings.show_vector
-Typstry.Strings.escape
+Typstry.Strings.unwrap
 ```
 
 ### Dates.jl

@@ -72,6 +72,7 @@ julia> render(1:4);
 
 ### Planned
 
+- Seperate the choice of Typst representation from the `mode`
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
     - Use a tree-sitter grammar or jll package
@@ -92,7 +93,7 @@ julia> render(1:4);
           @typst(a * b) ==
           TypstString(:(a * b)) ==
           TypstString(TypstFunction(*, :a, :b)) ==
-          typst"(a b)"
+          typst"$ a b $"
           ```
 
 ## Similar Packages

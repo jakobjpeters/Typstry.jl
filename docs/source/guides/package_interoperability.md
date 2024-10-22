@@ -11,6 +11,8 @@ whereas IJulia.jl will support them in its next feature release.
 
 ## Packages
 
+### Literate.jl
+
 ### MakieTeX.jl
 
 !!! note

@@ -9,6 +9,7 @@ Markdown.parse("This reference documents " * lowercasefirst(split(string(@doc Ty
 ## `Typstry`
 
 ```@docs
+ContextError
 Mode
 Typst
 TypstString
@@ -32,5 +33,7 @@ ncodeunits
 pointer
 repr
 show(::IO, ::TypstString)
+show(::IO, ::MIME"text/plain", ::ContextError)
 show(::IO, ::MIME"text/typst", ::Typst)
+showerror(::IO, ::ContextError)
 ```
