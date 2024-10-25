@@ -3,7 +3,7 @@
 DocTestSetup = :(using Typstry)
 ```
 
-# Home
+# Index
 
 ## Introduction
 
