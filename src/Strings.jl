@@ -428,7 +428,7 @@ end
 """
 show_array(io, x) = enclose(io, x, "(", ")") do io, x
     join_with(_show_typst, IOContext(io, :parenthesize => false), x, ", ")
-    length(x) == 1 && print(io, ",")
+    if length(x) == 1 print(io, ",") end
 end
 
 """
@@ -600,7 +600,8 @@ context(x::Typst) = merge!(Dict(
 ), context(x.value))
 context(::Any) = Dict{Symbol, Union{}}()
 
-_show_typst(io, x) = show(io, typst_mime, Typst(x))
+_show_typst(io, x::Typst) = show(io, typst_mime, x)
+_show_typst(io, x) = _show_typst(io, Typst(x))
 
 """
     show_typst(x)

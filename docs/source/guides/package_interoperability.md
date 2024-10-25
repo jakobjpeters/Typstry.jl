@@ -9,7 +9,13 @@ IJulia.jl, Pluto.jl, and QuartoNotebookRunner.jl each [`render`](@ref) [`Typst`]
 Pluto.jl and QuartoNotebookRunner.jl also `render` [`TypstString`](@ref)s,
 whereas IJulia.jl will support them in its next feature release.
 
-## Packages
+## Typst Packages
+
+Compiling a document which imports a Typst package can be achieved in exactly the
+same manner as compiling a standard Typst source file with the command-line interface.
+For example, `typst"#import \"@namespace/name:version\""`.
+
+## Julia Packages
 
 ### Literate.jl
 
