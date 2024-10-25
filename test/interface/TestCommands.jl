@@ -18,6 +18,21 @@ const tc_ignorestatus = ignorestatus(tc_error)
     @testset "`julia_mono`" begin @test julia_mono isa String end
 
     @testset "`render`" begin end
+
+    @testset "`compile`" begin
+        mktempdir() do tmpdir
+            infile = joinpath(tmpdir, "test.typ")
+            outfile1 = joinpath(tmpdir, "test.pdf")
+            outfile2 = joinpath(tmpdir, "out.pdf")
+            write(infile, "= Test Document\n")
+            compile(infile)
+            @test isfile(outfile1)
+            compile(infile, outfile2)
+            @test isfile(outfile2)
+        end
+    end
+
+    @testset "`watch`" begin end
 end
 
 @testset "`Base`" begin

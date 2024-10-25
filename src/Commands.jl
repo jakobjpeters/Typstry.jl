@@ -532,4 +532,36 @@ TypstError: failed to `run` a `TypstCommand(String[])`
 showerror(io::IO, te::TypstError) = print(io,
     "TypstError: failed to `run` a `", TypstCommand, "(", te.command.parameters, ")`")
 
+"""
+    compile(args...)
+
+Run `typst compile` with the provided `args`.
+
+# Examples
+
+    compile("input.typ")
+    compile("input.typ", "output.pdf")
+"""
+compile(args...) = (run(TypstCommand(["compile", args...])); nothing)
+
+"""
+    watch(args...)
+
+Run `typst watch` with the provided `args`. This will repeat
+compilation of the input file every time it is changed. Use Ctrl-C to
+quit the command.
+
+# Examples
+
+    watch("input.typ")
+    watch("input.typ", "output.pdf")
+"""
+function watch(args...)
+    try
+        run(TypstCommand(["watch", args...]))
+    catch e
+        e isa InterruptException || rethrow(e)
+    end
+end
+
 end # Commands
