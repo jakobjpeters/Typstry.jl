@@ -22,6 +22,7 @@ using .Meta: isexpr, parse
 using Dates:
     Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
     day, hour, minute, month, second, year
+using ..Typstry: unwrap
 
 # `Typstry`
 
@@ -467,14 +468,6 @@ show_vector(io, x) = math_mode(io, x) do io, x
     print(io, _indent ^ __depth)
     join_with(_show_typst, IOContext(io, :depth => __depth, :mode => math, :parenthesize => false), x, ", "),
     print(io, "\n", _indent ^ _depth, ")")
-end
-
-"""
-    unwrap(io, type, key)
-"""
-function unwrap(io, type, key)
-    value = io[key]
-    value isa type ? value : throw(ContextError(type, typeof(value), key))
 end
 
 ## Dates.jl

@@ -3,6 +3,15 @@ module Typstry
 
 using PrecompileTools: @compile_workload
 
+_unwrap(type, key, value::T) where T = value isa type ? value : throw(ContextError(type, T, key))
+
+"""
+    unwrap(io, type, key)
+    unwrap(io, type, key, default)
+"""
+unwrap(io, type, key) = _unwrap(type, key, io[key])
+unwrap(io, type, key, default) = _unwrap(type, key, get(io, key, default))
+
 include("Strings.jl")
 using .Strings: ContextError, Mode, Typst, TypstString, TypstText, @typst_str, code, markup, math, context, show_typst
 export ContextError, Mode, Typst, TypstString, TypstText, @typst_str, code, markup, math, context, show_typst

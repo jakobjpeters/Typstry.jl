@@ -5,6 +5,7 @@ This reference documents non-public utilities.
 
 ```@docs
 Typstry.compile_workload
+Typstry.unwrap
 ```
 
 ## Strings
@@ -29,7 +30,6 @@ Typstry.Strings.show_array
 Typstry.Strings.show_parameters
 Typstry.Strings.show_raw
 Typstry.Strings.show_vector
-Typstry.Strings.unwrap
 ```
 
 ### Dates.jl

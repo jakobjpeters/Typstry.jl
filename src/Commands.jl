@@ -21,6 +21,7 @@ using ..Typstry: Strings, Typst, TypstString, TypstText, @typst_str
 using .Strings: enclose, join_with, _show_typst
 using Artifacts: @artifact_str
 using Typst_jll: typst
+using ..Typstry: unwrap
 
 # Internals
 
@@ -484,7 +485,7 @@ function show(io::IO, m::Union{
     input = tempname()
     output = input * "." * format(m)
 
-    render(t; input, output, open = false, preamble = get(io, :preamble, preamble)::TypstString)
+    render(t; input, output, open = false, preamble = unwrap(io, TypstString, :preamble, preamble))
     write(io, read(output))
 
     nothing
