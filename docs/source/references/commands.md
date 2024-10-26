@@ -15,6 +15,7 @@ TypstError
 julia_mono
 preamble
 render
+set_preamble
 ```
 
 ## `Base`

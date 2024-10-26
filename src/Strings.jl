@@ -16,13 +16,13 @@ Typstry.Strings
 module Strings
 
 import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show, showerror
+using ..Typstry: unwrap
 using .Docs: HTML, Text
 using .Iterators: Stateful
 using .Meta: isexpr, parse
 using Dates:
     Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
     day, hour, minute, month, second, year
-using ..Typstry: unwrap
 
 # `Typstry`
 

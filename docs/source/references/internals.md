@@ -48,6 +48,7 @@ Typstry.Strings.dates
 
 ```@docs
 Typstry.Commands
+Typstry.Commands.default_preamble
 Typstry.Commands.typst_compiler
 Typstry.Commands.apply
 Typstry.Commands.format

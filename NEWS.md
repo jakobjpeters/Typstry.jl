@@ -5,6 +5,7 @@
 
 - Support Typst version 0.12
 - Throw a `ContextError` for context values of an incorrect type
+- The `preamble` used in `render` and some `show` methods can now be specified using `set_preamble`
 
 ### Bug Fixes
 
