@@ -3,7 +3,7 @@
 DocTestSetup = :(using Typstry)
 ```
 
-# Index
+# Typstry.jl
 
 ## Introduction
 
@@ -88,6 +88,7 @@ julia> render(1:4);
     - Package extensions
         - Standard Library
             - LinearAlgebra.jl
+            - DataFrames.jl
     - Partial Julia to Typst transpilation
         - ```
           @typst(a * b) ==
@@ -107,7 +108,7 @@ julia> render(1:4);
 - [Typst_jll.jl](https://github.com/JuliaBinaryWrappers/Typst_jll.jl)
     - Dependency of Typstry.jl
 
-#### Typst and LaTeX
+### Typst and LaTeX
 
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
     - Dependent of Typstry.jl
