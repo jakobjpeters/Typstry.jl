@@ -20,7 +20,7 @@ LaTeXStringsExtension = "LaTeXStrings"
 MarkdownExtension = "Markdown"
 
 [compat]
-Artifacts = "1.10"
+Artifacts = "1.10, 1"
 Dates = "1.10"
 LaTeXStrings = "1.1"
 Markdown = "1.10"
