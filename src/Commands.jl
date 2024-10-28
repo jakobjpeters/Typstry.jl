@@ -28,18 +28,10 @@ using Typst_jll: typst
 """
     default_preamble
 """
-const default_preamble = typst"""
+const default_preamble = """
 #set page(margin: 1em, height: auto, width: auto, fill: white)
 #set text(16pt, font: "JuliaMono")
 """
-
-"""
-    typst_compiler
-
-A constant `Cmd` that is the Typst compiler given
-by Typst_jll.jl with no additional parameters.
-"""
-const typst_compiler = typst()
 
 """
     apply(f, tc, args...; kwargs...)
@@ -80,6 +72,8 @@ format(::MIME"image/svg+xml") = "svg"
 
 The Typst compiler and its parameters.
 
+Keyword parameters have the same semantics as for a `Cmd`.
+
 !!! info
     This type implements the `Cmd` interface.
     However, the interface is undocumented, which may result in unexpected behavior.
@@ -96,12 +90,12 @@ typst`help`
 """
 mutable struct TypstCommand
     const parameters::Vector{String}
+    const ignore_status::Bool
     compiler::Cmd
-    ignore_status::Bool
 
-    TypstCommand(parameters::Vector{String}) = new(parameters, typst_compiler, false)
+    TypstCommand(parameters) = new(parameters, false, typst())
     TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
-        new(tc.parameters, Cmd(tc.compiler; kwargs...), ignorestatus)
+        new(tc.parameters, ignorestatus, Cmd(tc.compiler; kwargs...))
 end
 
 """
@@ -171,10 +165,11 @@ TypstString(TypstText("#set page(margin: 1em, height: auto, width: auto, fill: w
 const preamble = TypstString(TypstText(@load_preference "preamble" default_preamble))
 
 """
-    render(x;
+    render(value;
         input = "input.typ",
         output = "output.pdf",
         open = true,
+        ignorestatus = true,
         preamble = preamble,
     context...)
 
@@ -182,10 +177,11 @@ Render to a document using
 [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
 
 This first generates the `input` file containing
-the [`preamble`](@ref) and formatted value.
+the [`preamble`](@ref) and formatted `value`.
 Then it is compiled to the `output` document,
 whose format is inferred by its file extension to be `pdf`, `png`, or `svg`.
 The document may be automatically `open`ed by the default viewer.
+The [`ignorestatus`](@ref) flag may be set.
 
 # Examples
 
@@ -193,20 +189,21 @@ The document may be automatically `open`ed by the default viewer.
 julia> render(Any[true 1; 1.2 1 // 2]);
 ```
 """
-function render(x;
+function render(value;
     input = "input.typ",
     output = "output.pdf",
     open = true,
+    ignorestatus = true,
     preamble = preamble,
 context...)
     Base.open(input; truncate = true) do file
         _show_typst(file, preamble)
-        _show_typst(IOContext(file, context...), x)
+        _show_typst(IOContext(file, context...), value)
         println(file)
     end
-
-    run(addenv(TypstCommand(["compile", input, output, "--open"][begin:end - !open]),
-        "TYPST_FONT_PATHS" => julia_mono))
+    run(addenv(TypstCommand(TypstCommand(
+        ["compile", input, output, "--open"][begin:end - !open]);
+    ignorestatus), "TYPST_FONT_PATHS" => julia_mono))
 end
 
 """
@@ -322,7 +319,7 @@ getindex(tc::TypstCommand, i) = i == 1 ? only(tc.compiler) : tc.parameters[i - 1
 See also [`TypstCommand`](@ref).
 """
 hash(tc::TypstCommand, h::UInt) =
-    foldr(hash, (TypstCommand, tc.compiler, tc.parameters, tc.ignore_status, h))
+    hash((TypstCommand, tc.compiler, tc.parameters, tc.ignore_status), h)
 
 """
     ignorestatus(::TypstCommand)
@@ -419,7 +416,7 @@ See also [`TypstCommand`](@ref).
 """
 function run(tc::TypstCommand, args...; kwargs...)
     process = run(ignorestatus(Cmd(`$(tc.compiler) $(tc.parameters)`)), args...; kwargs...)
-    success(process) || tc.ignore_status || throw(TypstError(tc))
+    tc.ignore_status || success(process) || throw(TypstError(tc))
     process
 end
 
@@ -498,7 +495,7 @@ Environments, such as Pluto.jl notebooks, may use these methods to `display` val
 # Examples
 
 ```jldoctest
-julia> show(IOContext(devnull, :preamble => typst""), "image/svg+xml", Typst(1));
+julia> show(IOContext(devnull, :preamble => typst""), "image/svg+xml", Typst(1))
 ```
 """
 function show(io::IO, m::Union{
@@ -507,7 +504,8 @@ function show(io::IO, m::Union{
     input = tempname()
     output = input * "." * format(m)
 
-    render(t; input, output, open = false, preamble = unwrap(io, TypstString, :preamble, preamble))
+    render(t; input, output, open = false, ignorestatus = false,
+        preamble = unwrap(io, TypstString, :preamble, preamble))
     write(io, read(output))
 
     nothing
