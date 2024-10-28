@@ -20,10 +20,7 @@ LaTeXStringsExtension = "LaTeXStrings"
 MarkdownExtension = "Markdown"
 
 [compat]
-Artifacts = "1.10"
-Dates = "1.10"
 LaTeXStrings = "1.1"
-Markdown = "1.10"
 PrecompileTools = "1.0.1"
 Preferences = "1.0"
 Typst_jll = "0.2, 0.3, 0.7, 0.8, 0.10, 0.11, 0.12"
