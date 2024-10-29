@@ -19,20 +19,23 @@ const tc_ignorestatus = ignorestatus(tc_error)
 
     @testset "`render`" begin end
 
-    @testset "`compile`" begin
+    @testset "`typst`" begin
         mktempdir() do tmpdir
             infile = joinpath(tmpdir, "test.typ")
             outfile1 = joinpath(tmpdir, "test.pdf")
             outfile2 = joinpath(tmpdir, "out.pdf")
             write(infile, "= Test Document\n")
-            compile(infile)
+            typst(["compile", infile])
             @test isfile(outfile1)
-            compile(infile, outfile2)
+            typst(["c", infile, outfile2])
             @test isfile(outfile2)
+            # Only check that it runs without error.
+            redirect_stdout(devnull) do
+                typst("--help")
+                typst("fonts --variants")
+            end
         end
     end
-
-    @testset "`watch`" begin end
 end
 
 @testset "`Base`" begin

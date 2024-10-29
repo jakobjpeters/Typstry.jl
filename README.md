@@ -83,9 +83,9 @@ julia> render(1:4);
 - Render documents using the Typst compiler
     - Display in IJulia.jl, Pluto.jl, and QuartoRunner.jl notebooks
     - Use the [JuliaMono](https://github.com/cormullion/juliamono) typeface
-- Convenience functions to run `typst compile` and `typst watch`:
-    - `compile("input.typ", "output.pdf")`
-    - `watch("input.typ", "output.pdf")`
+- Emulation of Typst command line interface.
+    - `typst("w input.typ output.pdf")`
+    - `typst(["compile", infile, outfile])
 
 ### Planned
 

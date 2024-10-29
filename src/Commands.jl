@@ -21,7 +21,7 @@ using ..Typstry: Strings, Typst, TypstString, TypstText, @typst_str, unwrap
 using .Strings: enclose, join_with, _show_typst
 using Artifacts: @artifact_str
 using Preferences: @load_preference, @set_preferences!
-using Typst_jll: typst
+import Typst_jll
 
 # Internals
 
@@ -67,7 +67,7 @@ format(::MIME"image/svg+xml") = "svg"
 # `Typstry`
 
 """
-    TypstCommand(::Vector{String})
+    TypstCommand(::AbstractVector{<:AbstractString})
     TypstCommand(::TypstCommand; kwargs...)
 
 The Typst compiler and its parameters.
@@ -93,7 +93,7 @@ mutable struct TypstCommand
     const ignore_status::Bool
     compiler::Cmd
 
-    TypstCommand(parameters) = new(parameters, false, typst())
+    TypstCommand(parameters) = new(parameters, false, Typst_jll.typst())
     TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
         new(tc.parameters, ignorestatus, Cmd(tc.compiler; kwargs...))
 end
@@ -533,35 +533,48 @@ showerror(io::IO, te::TypstError) = print(io,
     "TypstError: failed to `run` a `", TypstCommand, "(", te.command.parameters, ")`")
 
 """
-    compile(args...)
+    typst(parameters::AbstractVector{<:AbstractString}; catch_interrupt = true, ignorestatus = true)
 
-Run `typst compile` with the provided `args`.
+Run `typst` with the provided `parameters`. When `catch_interrupt` is true,
+CTRL-C quietly quits the command. When `ignorestatus` is true, a typst
+failure will not imply a julia error.
 
-# Examples
-
-    compile("input.typ")
-    compile("input.typ", "output.pdf")
-"""
-compile(args...) = (run(TypstCommand(["compile", args...])); nothing)
-
-"""
-    watch(args...)
-
-Run `typst watch` with the provided `args`. This will repeat
-compilation of the input file every time it is changed. Use Ctrl-C to
-quit the command.
+Use `TypstCommand` if you need to capture output.
 
 # Examples
 
-    watch("input.typ")
-    watch("input.typ", "output.pdf")
+    typst(["compile", "my document.typ"])
+    typst(["watch", "input.typ", "output.pdf"])
+    typst(["--version"])
+
+---
+
+    typst(args::AbstractString)
+
+Convenience method intended for interactive use, emulating the typst
+command line interface. Be aware, however, that it strictly splits
+`args` on spaces and does not provide any shell-style escape
+mechanism, so if you have filenames with spaces you should use the
+previous method.
+
+# Examples
+
+    typst("c my_document.typ")
+    typst("watch input.typ output.pdf")
 """
-function watch(args...)
-    try
-        run(TypstCommand(["watch", args...]))
-    catch e
-        e isa InterruptException || rethrow(e)
+function typst(parameters::AbstractVector{<:AbstractString};
+               catch_interrupt = true, ignorestatus = true)
+    tc = addenv(TypstCommand(TypstCommand([parameters...]); ignorestatus),
+                "TYPST_FONT_PATHS" => julia_mono)
+    if catch_interrupt
+        try run(tc)
+        catch e e isa InterruptException || rethrow()
+        end
+    else run(tc)
     end
+    nothing
 end
+
+typst(args::AbstractString) = typst(split(args))
 
 end # Commands
