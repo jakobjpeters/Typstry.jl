@@ -21,7 +21,7 @@ using ..Typstry: Strings, Typst, TypstString, TypstText, @typst_str, unwrap
 using .Strings: enclose, join_with, _show_typst
 using Artifacts: @artifact_str
 using Preferences: @load_preference, @set_preferences!
-using Typst_jll: typst
+import Typst_jll
 
 # Internals
 
@@ -67,7 +67,7 @@ format(::MIME"image/svg+xml") = "svg"
 # `Typstry`
 
 """
-    TypstCommand(::Vector{String})
+    TypstCommand(::AbstractVector{<:AbstractString})
     TypstCommand(::TypstCommand; kwargs...)
 
 The Typst compiler and its parameters.
@@ -93,7 +93,7 @@ mutable struct TypstCommand
     const ignore_status::Bool
     compiler::Cmd
 
-    TypstCommand(parameters) = new(parameters, false, typst())
+    TypstCommand(parameters) = new(parameters, false, Typst_jll.typst())
     TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
         new(tc.parameters, ignorestatus, Cmd(tc.compiler; kwargs...))
 end
@@ -531,5 +531,40 @@ TypstError: failed to `run` a `TypstCommand(String[])`
 """
 showerror(io::IO, te::TypstError) = print(io,
     "TypstError: failed to `run` a `", TypstCommand, "(", te.command.parameters, ")`")
+
+"""
+    typst(args::AbstractString; catch_interrupt = true, ignorestatus = true)
+
+Convenience function intended for interactive use, emulating the typst
+command line interface. Be aware, however, that it strictly splits
+`args` on spaces and does not provide any shell-style escape
+mechanism, so it will not work if there are, e.g., filenames with
+spaces.
+
+When `catch_interrupt` is true, CTRL-C quietly quits the
+command. When `ignorestatus` is true, a typst failure will not imply a
+julia error.
+
+Use `TypstCommand` if you need to capture output.
+
+# Examples
+
+    typst("c document.typ")
+    typst("watch input.typ output.pdf")
+"""
+function typst(args::AbstractString;
+               catch_interrupt = true, ignorestatus = true)
+    tc = addenv(TypstCommand(TypstCommand(split(args)); ignorestatus),
+                "TYPST_FONT_PATHS" => julia_mono)
+    if catch_interrupt
+        try run(tc)
+        catch e e isa InterruptException || rethrow()
+        end
+    else run(tc)
+    end
+    nothing
+end
+
+typst() = typst(split(args))
 
 end # Commands
