@@ -533,38 +533,28 @@ showerror(io::IO, te::TypstError) = print(io,
     "TypstError: failed to `run` a `", TypstCommand, "(", te.command.parameters, ")`")
 
 """
-    typst(parameters::AbstractVector{<:AbstractString}; catch_interrupt = true, ignorestatus = true)
+    typst(args::AbstractString; catch_interrupt = true, ignorestatus = true)
 
-Run `typst` with the provided `parameters`. When `catch_interrupt` is true,
-CTRL-C quietly quits the command. When `ignorestatus` is true, a typst
-failure will not imply a julia error.
+Convenience function intended for interactive use, emulating the typst
+command line interface. Be aware, however, that it strictly splits
+`args` on spaces and does not provide any shell-style escape
+mechanism, so it will not work if there are, e.g., filenames with
+spaces.
+
+When `catch_interrupt` is true, CTRL-C quietly quits the
+command. When `ignorestatus` is true, a typst failure will not imply a
+julia error.
 
 Use `TypstCommand` if you need to capture output.
 
 # Examples
 
-    typst(["compile", "my document.typ"])
-    typst(["watch", "input.typ", "output.pdf"])
-    typst(["--version"])
-
----
-
-    typst(args::AbstractString)
-
-Convenience method intended for interactive use, emulating the typst
-command line interface. Be aware, however, that it strictly splits
-`args` on spaces and does not provide any shell-style escape
-mechanism, so if you have filenames with spaces you should use the
-previous method.
-
-# Examples
-
-    typst("c my_document.typ")
+    typst("c document.typ")
     typst("watch input.typ output.pdf")
 """
-function typst(parameters::AbstractVector{<:AbstractString};
+function typst(args::AbstractString;
                catch_interrupt = true, ignorestatus = true)
-    tc = addenv(TypstCommand(TypstCommand([parameters...]); ignorestatus),
+    tc = addenv(TypstCommand(TypstCommand(split(args)); ignorestatus),
                 "TYPST_FONT_PATHS" => julia_mono)
     if catch_interrupt
         try run(tc)
@@ -575,6 +565,6 @@ function typst(parameters::AbstractVector{<:AbstractString};
     nothing
 end
 
-typst(args::AbstractString) = typst(split(args))
+typst() = typst(split(args))
 
 end # Commands

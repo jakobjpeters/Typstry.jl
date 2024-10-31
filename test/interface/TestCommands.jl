@@ -25,9 +25,11 @@ const tc_ignorestatus = ignorestatus(tc_error)
             outfile1 = joinpath(tmpdir, "test.pdf")
             outfile2 = joinpath(tmpdir, "out.pdf")
             write(infile, "= Test Document\n")
-            typst(["compile", infile])
+            cd(tmpdir) do
+                typst("compile test.typ")
+                typst("c test.typ out.pdf")
+            end
             @test isfile(outfile1)
-            typst(["c", infile, outfile2])
             @test isfile(outfile2)
             # Only check that it runs without error.
             redirect_stdout(devnull) do
