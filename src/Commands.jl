@@ -460,9 +460,15 @@ julia> show(stdout, "text/plain", typst`help`)
 typst`help`
 ```
 """
-show(io::IO, ::MIME"text/plain", tc::TypstCommand) = enclose((io, parameters) -> join_with(
-    (io, parameter) -> printstyled(io, parameter; underline = true),
-io, parameters, " "), io, tc.parameters, "typst`", "`")
+function show(io::IO, ::MIME"text/plain", tc::TypstCommand)
+    parameters = tc.parameters
+
+    all(parameter -> all(isprint, parameter), parameters) ?
+        enclose((io, parameters) -> join_with(
+            (io, parameter) -> printstyled(io, parameter; underline = true),
+        io, parameters, " "), io, tc.parameters, "typst`", "`") :
+        print(TypstCommand, "(", parameters, ")")
+end
 
 """
     show(::IO, ::MIME"text/plain", ::TypstError)
