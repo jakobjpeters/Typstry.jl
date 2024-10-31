@@ -3,7 +3,6 @@ module TestLaTeXStringsExtension
 
 using ..TestTypstry: test_modes, test_strings
 using LaTeXStrings: @L_str
-using Typstry
 
 const latex = L"a"
 

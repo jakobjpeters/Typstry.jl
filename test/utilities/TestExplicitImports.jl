@@ -1,6 +1,7 @@
 
 module TestExplicitImports
 
+import Typstry
 using ExplicitImports:
     check_all_explicit_imports_are_public,
     check_all_explicit_imports_via_owners,
@@ -10,10 +11,9 @@ using ExplicitImports:
     check_no_self_qualified_accesses,
     check_no_stale_explicit_imports
 using Test: @test
-using Typstry: Typstry
 
-@test isnothing(check_all_explicit_imports_are_public(Typstry; ignore = (
-    :MD, :Stateful, :compile_workload, :parse)))
+@test isnothing(check_all_explicit_imports_are_public(Typstry;
+    ignore = (:MD, :Stateful, :compile_workload, :parse)))
 
 for check in [
     check_all_explicit_imports_via_owners,

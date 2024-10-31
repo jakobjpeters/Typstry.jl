@@ -1,12 +1,12 @@
 
+import Dates, Documenter, LaTeXStrings, Markdown
 using Base: get_extension
-using Dates: Dates
-using Documenter: Documenter, Docs, DocMeta, deploydocs, makedocs
+using Documenter: Docs, DocMeta, deploydocs, makedocs
 using .Docs: HTML, Text
 using .DocMeta: setdocmeta!
-using LaTeXStrings: LaTeXStrings, LaTeXString
+using LaTeXStrings: LaTeXString
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
-using Markdown: Markdown, MD
+using Markdown: MD
 using Typstry: Strings, preamble
 using .Strings: examples, _show_typst, enclose, join_with, typst_mime
 using Typstry

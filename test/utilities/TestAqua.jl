@@ -1,8 +1,8 @@
 
 module TestAqua
 
+import Typstry
 using Aqua: test_all, test_deps_compat
-using Typstry: Typstry
 
 # TODO: test package extensions
 redirect_stdout(devnull) do

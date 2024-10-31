@@ -16,6 +16,7 @@ julia_mono
 preamble
 render
 set_preamble
+typst
 ```
 
 ## `Base`

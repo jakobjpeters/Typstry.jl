@@ -3,11 +3,10 @@ using Typstry
 
 module TestTypstry
 
+import LaTeXStrings, Markdown, Typstry
 using Base: get_extension
-using LaTeXStrings: LaTeXStrings
-using Markdown: Markdown
 using Test: @test, @testset
-using Typstry: Typstry, Mode, TypstString
+using Typstry: Mode, TypstString
 
 const names = [:LaTeXStrings, :Markdown]
 const modules = map(name -> get_extension(Typstry, Symbol(name, :Extension)), names)

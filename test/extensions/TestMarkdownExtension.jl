@@ -3,7 +3,6 @@ module TestMarkdownExtension
 
 using ..TestTypstry: test_modes, test_strings
 using Markdown: @md_str
-using Typstry
 
 const markdown = md"""a\
 b"""
