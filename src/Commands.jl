@@ -230,13 +230,12 @@ end
 
 Convenience function intended for interactive use, emulating the typst
 command line interface. Be aware, however, that it strictly splits
-on spaces and does not provide any shell-style escape
-mechanism, so it will not work if there are, e.g., filenames with
-spaces.
+on spaces and does not provide any shell-style escape mechanism,
+so it will not work if there are, e.g., filenames with spaces.
 
-When `catch_interrupt` is true, CTRL-C quietly quits the
-command. When [`ignorestatus`](@ref) is true, a Typst failure will not imply a
-julia error. The `font_path` enables the use of [`julia_mono`](@ref) by default.
+When `catch_interrupt` is true, CTRL-C quietly quits the command.
+When [`ignorestatus`](@ref) is true, a Typst failure will not imply a julia error.
+The `font_path` enables the use of the [`julia_mono`](@ref) typeface by default.
 """
 function typst(parameters::AbstractString; catch_interrupt = true, ignorestatus = true,
         font_path = get(ENV, "TYPST_FONT_PATHS", julia_mono))
