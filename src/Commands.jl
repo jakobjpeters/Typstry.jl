@@ -233,12 +233,6 @@ spaces.
 When `catch_interrupt` is true, CTRL-C quietly quits the
 command. When `ignorestatus` is true, a Typst failure will not imply a
 julia error.
-
-# Examples
-
-```jldoctest
-julia> typst("compile input.typ output.pdf")
-```
 """
 function typst(args::AbstractString; catch_interrupt = true, ignorestatus = true)
     tc = addenv(TypstCommand(TypstCommand(split(args));
