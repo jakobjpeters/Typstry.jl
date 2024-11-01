@@ -182,6 +182,7 @@ Then it is compiled to the `output` document,
 whose format is inferred by its file extension to be `pdf`, `png`, or `svg`.
 The document may be automatically `open`ed by the default viewer.
 The [`ignorestatus`](@ref) flag may be set.
+This supports using the [`julia_mono`](@ref) typeface.
 
 # Examples
 
@@ -222,11 +223,7 @@ function set_preamble(ts::TypstString = default_preamble)
 end
 
 """
-    typst(::AbstractString;
-        catch_interrupt = true,
-        ignorestatus = true
-        font_path = get(ENV, "TYPST_FONT_PATHS", julia_mono)
-    )
+    typst(::AbstractString; catch_interrupt = true, ignorestatus = true)
 
 Convenience function intended for interactive use, emulating the typst
 command line interface. Be aware, however, that it strictly splits
@@ -235,12 +232,13 @@ so it will not work if there are, e.g., filenames with spaces.
 
 When `catch_interrupt` is true, CTRL-C quietly quits the command.
 When [`ignorestatus`](@ref) is true, a Typst failure will not imply a julia error.
-The `font_path` enables the use of the [`julia_mono`](@ref) typeface by default.
+
+If the `"TYPST_FONT_PATHS"` environment variable is not set,
+it is temporarily set to [`julia_mono`](@ref).
 """
-function typst(parameters::AbstractString; catch_interrupt = true, ignorestatus = true,
-        font_path = get(ENV, "TYPST_FONT_PATHS", julia_mono))
-    tc = addenv(TypstCommand(TypstCommand(split(parameters));
-        ignorestatus), "TYPST_FONT_PATHS" => font_path)
+function typst(parameters::AbstractString; catch_interrupt = true, ignorestatus = true)
+    tc = addenv(TypstCommand(TypstCommand(split(parameters)); ignorestatus),
+        "TYPST_FONT_PATHS" => get(ENV, "TYPST_FONT_PATHS", julia_mono))
     if catch_interrupt
         try run(tc)
         catch e e isa InterruptException || rethrow()
@@ -526,6 +524,7 @@ or Scalable Vector Graphics (SVG) format.
 The `preamble` keyword parameter used by [`render`](@ref) may be specified in an `IOContext`.
 Environments, such as Pluto.jl notebooks, may use these methods to `display` values of type
 [`Typst`](@ref), [`TypstString`](@ref), and [`TypstText`](@ref).
+This supports using the [`julia_mono`](@ref) typeface.
 
 # Examples
 

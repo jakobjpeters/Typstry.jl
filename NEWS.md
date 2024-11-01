@@ -4,7 +4,7 @@
 ## v0.4.0
 
 - Support Typst version 0.12
-- Throw a `ContextError` for context values of an incorrect type
+- Throw a `ContextError` for `context` values of an incorrect type
 - The `preamble` used in `render` and some `show` methods can now be specified using `set_preamble`
 - `render` now supports the `ignorestatus = true` keyword parameter
 - Emulation of Typst command line interface via the `typst` function
