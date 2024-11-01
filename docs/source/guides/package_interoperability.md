@@ -40,21 +40,18 @@ julia> save("makie_tex.svg", f)
 ### TypstJlyfish.jl
 
 `````@eval
-using Markdown: Markdown
-using Typstry:  preamble
-Markdown.parse("""```typst
-$preamble#import "@preview/jlyfish:0.1.0": *
+import Markdown
+Markdown.parse("""
+```typst
+#import "@preview/jlyfish:0.1.0": *
 #read-julia-output(json("typst_jlyfish.json"))
 #jl-pkg("Typstry")
 #jl(`using Typstry; typst"\$1 / x\$"`)
 ```
-
 ```julia-repl
 julia> using TypstJlyfish, Typstry
 
-julia> TypstJlyfish.compile("typst_jlyfish.typ";
-           evaluation_file = "typst_jlyfish.json",
-           typst_compile_args = "--format=svg --font-path=\$julia_mono"
-       )
-```""")
+julia> TypstJlyfish.compile("typst_jlyfish.typ"; evaluation_file = "typst_jlyfish.json")
+```
+""")
 `````
