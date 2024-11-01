@@ -202,7 +202,7 @@ context...)
         println(file)
     end
     run(TypstCommand(TypstCommand(
-        ["compile", input, output, "--font-path=$julia_mono", "--open"][begin:end - !open]);
+        ["compile", input, output, "--font-path=$julia_mono", "--open"][begin:(end - !open)]);
     ignorestatus))
 end
 
