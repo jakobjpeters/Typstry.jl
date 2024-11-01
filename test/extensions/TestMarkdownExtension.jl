@@ -8,8 +8,8 @@ const markdown = md"""a\
 b"""
 
 test_modes(markdown, [
-    "```markdown a\nb ```",
-    "```markdown a\nb ```",
+    "```markdown a\nb ```"
+    "```markdown a\nb ```"
     "#```markdown a\nb ```"
 ])
 
