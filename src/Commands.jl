@@ -201,9 +201,9 @@ context...)
         _show_typst(IOContext(file, context...), value)
         println(file)
     end
-    run(addenv(TypstCommand(TypstCommand(
-        ["compile", input, output, "--open"][begin:end - !open]);
-    ignorestatus), "TYPST_FONT_PATHS" => julia_mono))
+    run(TypstCommand(TypstCommand(
+        ["compile", input, output, "--font-path=$julia_mono", "--open"][begin:end - !open]);
+    ignorestatus))
 end
 
 """
@@ -222,7 +222,11 @@ function set_preamble(ts::TypstString = default_preamble)
 end
 
 """
-    typst(::AbstractString; catch_interrupt = true, ignorestatus = true)
+    typst(::AbstractString;
+        catch_interrupt = true,
+        ignorestatus = true
+        font_path = get(ENV, "TYPST_FONT_PATHS", julia_mono)
+    )
 
 Convenience function intended for interactive use, emulating the typst
 command line interface. Be aware, however, that it strictly splits
@@ -231,12 +235,13 @@ mechanism, so it will not work if there are, e.g., filenames with
 spaces.
 
 When `catch_interrupt` is true, CTRL-C quietly quits the
-command. When `ignorestatus` is true, a Typst failure will not imply a
-julia error.
+command. When [`ignorestatus`](@ref) is true, a Typst failure will not imply a
+julia error. The `font_path` enables the use of [`julia_mono`](@ref) by default.
 """
-function typst(args::AbstractString; catch_interrupt = true, ignorestatus = true)
-    tc = addenv(TypstCommand(TypstCommand(split(args));
-        ignorestatus), "TYPST_FONT_PATHS" => julia_mono)
+function typst(parameters::AbstractString; catch_interrupt = true, ignorestatus = true,
+        font_path = get(ENV, "TYPST_FONT_PATHS", julia_mono))
+    tc = addenv(TypstCommand(TypstCommand(split(parameters));
+        ignorestatus), "TYPST_FONT_PATHS" => font_path)
     if catch_interrupt
         try run(tc)
         catch e e isa InterruptException || rethrow()

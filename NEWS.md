@@ -14,3 +14,4 @@
 - If a `TypstCommand` or `TypstString` contains any characters that satisfy `!isprint`,
 their `show` methods now print a format that preserves those characters
 - Account for a [Typst bug with single-letter strings in `math` mode](https://github.com/typst/typst/issues/274#issue-1639854848)
+- The `"TYPST_FONT_PATHS"` environment variable is no longer overridden in `render`
