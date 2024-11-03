@@ -5,10 +5,11 @@ on:
     branches:
       - 'main'
     paths:
-      - 'HEADER.md'
-      - 'docs/source/index.md'
-      - 'docs/source/assets/logo.svg'
       - '.github/workflows/readme.yml'
+      - 'HEADER.md'
+      - 'docs/source/assets/logo.svg'
+      - 'docs/source/index.md'
+      - 'scripts/readme.jl'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,5 +20,5 @@ jobs:
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git diff --quiet || (git add . && git commit -m "Regenerate README.md")
+          git diff --quiet || (git add . && git commit -m "Regenerate `README.md`")
           git push
