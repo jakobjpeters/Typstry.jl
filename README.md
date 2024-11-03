@@ -131,6 +131,7 @@ julia> render(1:4);
 ### LaTeX
 
 - [Latexify.jl](https://github.com/korsbo/Latexify.jl)
+- [LaTeXCompilers.jl](https://github.com/tpapp/LaTeXCompilers.jl)
 - [LaTeXEntities.jl](https://github.com/JuliaString/LaTeX_Entities.jl)
 - [LaTeXStrings.jl](https://github.com/JuliaStrings/LaTeXStrings.jl)
 - [LaTeXTabulars.jl](https://github.com/tpapp/LaTeXTabulars.jl)
