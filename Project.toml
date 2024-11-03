@@ -20,6 +20,7 @@ LaTeXStringsExtension = "LaTeXStrings"
 MarkdownExtension = "Markdown"
 
 [compat]
+Artifacts = "1"
 LaTeXStrings = "1.1"
 PrecompileTools = "1.0.1"
 Preferences = "1.0"
