@@ -47,12 +47,3 @@ function join_with(f, io, xs, delimeter; kwargs...)
         isempty(_xs) || print(io, delimeter)
     end
 end
-
-_unwrap(type, key, value::T) where T = value isa type ? value : throw(ContextError(type, T, key))
-
-"""
-    unwrap(io, type, key)
-    unwrap(io, type, key, default)
-"""
-unwrap(io, type, key) = _unwrap(type, key, io[key])
-unwrap(io, type, key, default) = _unwrap(type, key, get(io, key, default))
