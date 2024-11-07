@@ -17,8 +17,8 @@ module Commands
 import Base:
     ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus,
     iterate, keys, lastindex, length, run, setcpuaffinity, setenv, show, showerror
-using ..Typstry: Strings, Typst, TypstString, TypstText, @typst_str, unwrap
-using .Strings: enclose, join_with, _show_typst
+using ..Typstry: Strings, Typst, TypstString, TypstText, @typst_str, enclose, join_with, unwrap
+using .Strings: _show_typst
 using Artifacts: @artifact_str
 import Typst_jll
 

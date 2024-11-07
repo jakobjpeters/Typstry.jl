@@ -16,9 +16,8 @@ Typstry.Strings
 module Strings
 
 import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show, showerror
-using ..Typstry: unwrap
+using ..Typstry: enclose, join_with, unwrap
 using .Docs: HTML, Text
-using .Iterators: Stateful
 using .Meta: isexpr, parse
 using Dates:
     Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
@@ -276,24 +275,6 @@ julia> Typstry.Strings.depth(IOContext(stdout, :depth => 0))
 depth(io) = unwrap(io, Int, :depth)
 
 """
-    enclose(f, io, x, left, right = reverse(left); kwargs...)
-
-Call `f(io,\u00A0x;\u00A0kwargs...)` between printing `left` and `right`, respectfully.
-
-# Examples
-
-```jldoctest
-julia> Typstry.Strings.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
-\$ 1x \$
-```
-"""
-function enclose(f, io, x, left, right = reverse(left); context...)
-    print(io, left)
-    f(io, x; context...)
-    print(io, right)
-end
-
-"""
     escape(io, n)
 
 Print `\\` to `io` `n` times.
@@ -321,27 +302,6 @@ julia> Typstry.Strings.indent(IOContext(stdout, :tab_size => 2))
 ```
 """
 indent(io) = " " ^ unwrap(io, Int, :tab_size)
-
-"""
-    join_with(f, io, xs, delimeter; kwargs...)
-
-Similar to `join`, except printing with `f(io, x; kwargs...)`.
-
-# Examples
-
-```jldoctest
-julia> Typstry.Strings.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
--1x, -2x, -3x, -4x
-```
-"""
-function join_with(f, io, xs, delimeter; kwargs...)
-    _xs = Stateful(xs)
-
-    for x in _xs
-        f(io, x; kwargs...)
-        isempty(_xs) || print(io, delimeter)
-    end
-end
 
 """
     math_mode(f, io, x; kwargs...)
