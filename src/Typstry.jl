@@ -1,6 +1,9 @@
 
 module Typstry
 
+using .Iterators: Stateful
+using PrecompileTools: @compile_workload
+
 include("utilities.jl")
 
 include("Strings.jl")

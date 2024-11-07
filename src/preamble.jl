@@ -1,7 +1,4 @@
 
-using Preferences: @load_preference, @set_preferences!
-using ..Typstry: TypstString, TypstText
-
 """
     default_preamble
 """
