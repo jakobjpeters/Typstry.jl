@@ -15,7 +15,7 @@ Typstry.Strings
 """
 module Strings
 
-import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show, showerror
+import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show
 using ..Typstry: enclose, join_with, unwrap
 using .Docs: HTML, Text
 using .Meta: isexpr, parse
@@ -24,25 +24,6 @@ using Dates:
     day, hour, minute, month, second, year
 
 # `Typstry`
-
-"""
-    ContextError <: Exception
-    ContextError(::Type, ::Type, ::Symbol)
-
-An `Exception` indicating that a [`context`](@ref) key returned a value of an incorrect type.
-
-# Examples
-
-```jldoctest
-julia> ContextError(Mode, String, :mode)
-ContextError(Mode, String, :mode)
-```
-"""
-struct ContextError <: Exception
-    expected::Type
-    received::Type
-    key::Symbol
-end
 
 """
     Mode
@@ -239,19 +220,6 @@ context(x::Typst) = merge!(Dict(
 context(::Any) = Dict{Symbol, Union{}}()
 
 """
-    show(::IO, ::MIME"text/plain", ::ContextError)
-
-# Examples
-
-```jldoctest
-julia> show(stdout, "text/plain", ContextError(Mode, String, :mode))
-ContextError(Mode, String, :mode)
-```
-"""
-show(io::IO, ::MIME"text/plain", ce::ContextError) =
-    print(io, ContextError, "(", ce.expected, ", ", ce.received, ", :", ce.key, ")")
-
-"""
     show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString, TypstText})
 
 Print in Typst format.
@@ -283,20 +251,6 @@ function show(io::IOContext, ::MIME"text/typst", t::Union{Typst, TypstString, Ty
 
     show_typst(io, t)
 end
-
-"""
-    showerror(::IO, ::ContextError)
-
-# Examples
-
-```jldoctest
-julia> showerror(stdout, ContextError(Mode, String, :mode))
-ContextError: the `context` key `:mode` expected a value of type `Mode` but received `String`
-```
-"""
-showerror(io::IO, ce::ContextError) = print(io, "ContextError: the `",
-    context, "` key `:", ce.key, "` expected a value of type `",
-ce.expected, "` but received `", ce.received, "`")
 
 # Internals
 

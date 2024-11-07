@@ -181,7 +181,7 @@ function show(io::IO, m::Union{
     output = input * "." * format(m)
 
     render(t; input, output, open = false, ignorestatus = false,
-        preamble = unwrap(io, TypstString, :preamble, preamble))
+        preamble = unwrap(io, :preamble, preamble))
     write(io, read(output))
 
     nothing
