@@ -70,7 +70,7 @@ end
 
     @testset "`run`" begin
         # TODO: write more tests
-        @test_throws TypstError redirect_stderr(() -> run(tc_error), devnull)
+        @test_throws TypstCommandError redirect_stderr(() -> run(tc_error), devnull)
         @test_warn "error" try run(tc_error) catch end
     end
 

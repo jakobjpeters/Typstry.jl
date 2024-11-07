@@ -142,7 +142,7 @@ hash(tc::TypstCommand, h::UInt) =
     ignorestatus(::TypstCommand)
 
 Return a [`TypstCommand`](@ref) that does not throw a
-[`TypstError`](@ref) if the Typst compiler throws an error.
+[`TypstCommandError`](@ref) if the Typst compiler throws an error.
 
 Errors thrown by the Typst compiler are printed to `stderr` regardless.
 
@@ -229,11 +229,12 @@ See also [`TypstCommand`](@ref).
 
 !!! info
     Errors thrown by the Typst compiler will be printed to `stderr`.
-    Then, a Julia [`TypstError`](@ref) will be thrown unless the [`ignorestatus`](@ref) flag is set.
+    Then, a Julia [`TypstCommandError`](@ref) will be
+    thrown unless the [`ignorestatus`](@ref) flag is set.
 """
 function run(tc::TypstCommand, args...; kwargs...)
     process = run(ignorestatus(Cmd(`$(tc.compiler) $(tc.parameters)`)), args...; kwargs...)
-    tc.ignore_status || success(process) || throw(TypstError(tc))
+    tc.ignore_status || success(process) || throw(TypstCommandError(tc))
     process
 end
 
