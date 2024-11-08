@@ -15,7 +15,9 @@ Typstry.Commands
 module Commands
 
 import Base: show
-using ..Typstry: Utilities, TypstContext, TypstString, TypstText, Typst, Strings._show_typst
+using ..Typstry: Strings, Utilities, TypstContext, TypstString, TypstText, Typst
+using .Strings: TypstContexts, ShowTypst._show_typst
+using .TypstContexts: context, merge_contexts!
 using .Utilities: ContextErrors.unwrap
 using Artifacts: @artifact_str
 
@@ -26,9 +28,6 @@ typst_command_error(tc) = TypstCommandError(tc)
 
 include("TypstCommands.jl")
 using .TypstCommands: TypstCommand
-
-include("Preamble.jl")
-using .Preamble: preamble
 
 include("TypstCommandErrors.jl")
 using .TypstCommandErrors: TypstCommandError
@@ -92,14 +91,16 @@ Use with a [`TypstCommand`](@ref) and one of [`addenv`](@ref),
 """
 const julia_mono = artifact"JuliaMono"
 
+render!(tc) = merge_contexts!(tc, context)
+
 """
     render(value;
         input = "input.typ",
         output = "output.pdf",
         open = true,
         ignorestatus = true,
-        preamble = preamble,
-    context...)
+        context = TypstContext()
+    )
 
 Render to a document using
 [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
@@ -123,12 +124,12 @@ function render(value;
     output = "output.pdf",
     open = true,
     ignorestatus = true,
-    preamble = preamble,
     context = TypstContext()
 )
     Base.open(input; truncate = true) do file
-        _show_typst(file, context, preamble)
-        _show_typst(file, context, value)
+        tc = render!(context)
+        print(file, unwrap(tc, TypstString, :preamble))
+        _show_typst(file, tc, value)
         println(file)
     end
     run(TypstCommand(TypstCommand(
@@ -188,7 +189,7 @@ function show(io::IO, m::Union{
     output = input * "." * format(m)
 
     render(t; input, output, open = false, ignorestatus = false,
-        preamble = unwrap(io, :preamble, preamble))
+        context = unwrap(io, :typst_context, TypstContext()))
     write(io, read(output))
 
     nothing

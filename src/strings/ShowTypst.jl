@@ -6,7 +6,7 @@ using Dates:
     day, hour, minute, month, second, year
 using ..Strings:
     TypstContexts, Utilities, TypstStrings.TypstString, Typst, TypstText,
-    @typst_str, code, markup, math, unwrap
+    code, markup, math, ContextErrors.unwrap
 using .TypstContexts: TypstContext, context, default_context, merge_contexts!
 using .Utilities: enclose, join_with
 
@@ -165,7 +165,6 @@ function dates(x::Period)
     "duration", (duration(x),), (TypstText(readuntil(buffer, " ")),)
 end
 
-
 function _show_typst(io, tc, x)
     _tc = TypstContext(x)
     merge!(merge_contexts!(_tc, context), tc)
@@ -173,60 +172,6 @@ function _show_typst(io, tc, x)
 end
 _show_typst(io, x; kwargs...) = _show_typst(io, TypstContext(; kwargs...), x)
 
-"""
-    show_typst(::IO = stdout, ::TypstContext = TypstContext(), x)
-
-Print in Typst format with Julia settings and Typst parameters provided by an `IOContext`.
-
-Implement this function for a custom type to specify its Typst formatting.
-A setting is a value used in Julia, whose type varies across settings.
-A parameter is passed directly to a Typst function and must be a [`TypstString`](@ref)
-with the same name as in Typst, except that dashes are replaced with underscores.
-Settings each have a default value, whereas the default values of parameters are handled by Typst functions.
-Some settings, such as `block`, correspond with a parameter but may also be used in Julia.
-
-For additional information on settings and parameters, see also [`context`](@ref)
-and the [Typst Documentation](https://typst.app/docs/), respectively.
-
-!!! info
-    Some types, particularly containers, may call
-    [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref)
-    to format a value, which may use additional settings and parameters.
-
-!!! warning
-    This function's methods are incomplete.
-    Please file an issue or create a pull-request for missing methods.
-
-| Type                                                      | Settings                                 | Parameters                                              |
-|:----------------------------------------------------------|:-----------------------------------------|:--------------------------------------------------------|
-| `AbstractArray`                                           | `:block`, `:depth`, `:mode`, `:tab_size` | `:delim`, `:gap`                                        |
-| `AbstractChar`                                            |                                          |                                                         |
-| `AbstractFloat`                                           | `:mode`                                  |                                                         |
-| `AbstractMatrix`                                          | `:block`, `:depth`, `:mode`, `:tab_size` | `:augment`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
-| `AbstractString`                                          |                                          |                                                         |
-| `Bool`                                                    | `:mode`                                  |                                                         |
-| `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`       |                                                         |
-| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`       |                                                         |
-| `Irrational`                                              | `:mode`                                  |                                                         |
-| `Nothing`                                                 | `:mode`                                  |                                                         |
-| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                  |                                                         |
-| `Rational`                                                | `:block`, `:mode`, `:parenthesize`       |                                                         |
-| `Regex`                                                   | `:mode`                                  |                                                         |
-| `Signed`                                                  | `:mode`                                  |                                                         |
-| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                  |                                                         |
-| `Tuple`                                                   | `:block`, `:depth`, `:mode`, `:tab_size` | `:delim`, `:gap`                                        |
-| `Typst`                                                   |                                          |                                                         |
-| `TypstString`                                             |                                          |                                                         |
-| `TypstText`                                               |                                          |                                                         |
-| `Unsigned`                                                | `:mode`                                  |                                                         |
-| `VersionNumber`                                           | `:mode`                                  |                                                         |
-| `Docs.HTML`                                               | `:block`, `:depth`, `:mode`, `:tab_size` |                                                         |
-| `Docs.Text`                                               | `:mode`                                  |                                                         |
-| `Dates.Date`                                              | `:mode`, `:indent`                       |                                                         |
-| `Dates.DateTime`                                          | `:mode`, `:indent`                       |                                                         |
-| `Dates.Period`                                            | `:mode`, `:indent`                       |                                                         |
-| `Dates.Time`                                              | `:mode`, `:indent`                       |                                                         |
-"""
 show_typst(io, tc, x::AbstractChar) = show_typst(io, tc, string(x))
 show_typst(io, tc, x::AbstractFloat) =
     if isinf(x)
@@ -350,5 +295,60 @@ function show_typst(io, tc, x::Union{Date, DateTime, Period, Time})
 end
 show_typst(tc, x) = _show_typst(stdout, tc, x)
 show_typst(x) = show_typst(TypstContext(), x)
+
+@doc """
+    show_typst(::IO = stdout, ::TypstContext, x)
+    show_typst(::TypstContext = TypstContext(), x)
+
+Print in Typst format with Julia settings and Typst
+parameters provided by the [`TypstContext`](@ref).
+
+Implement the three-parameter form of this function
+for a custom type to specify its Typst formatting.
+A setting is a value used in Julia, whose type varies across settings.
+A parameter is passed directly to a Typst function and must be a [`TypstString`](@ref)
+with the same name as in Typst, except that dashes are replaced with underscores.
+Settings each have a default value specified by [`context`](@ref),
+whereas the default values of parameters are handled in Typst functions.
+Some settings, such as `block`, correspond with a parameter but may also be used in Julia.
+
+!!! tip
+    Please create an issue or pull-request to implement new methods.
+
+!!! info
+    Some types, particularly containers, may call
+    [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref)
+    to format a value, which may use additional settings and parameters.
+
+| Type                                                      | Settings                                 | Parameters                                              |
+|:----------------------------------------------------------|:-----------------------------------------|:--------------------------------------------------------|
+| `AbstractArray`                                           | `:block`, `:depth`, `:mode`, `:tab_size` | `:delim`, `:gap`                                        |
+| `AbstractChar`                                            |                                          |                                                         |
+| `AbstractFloat`                                           | `:mode`                                  |                                                         |
+| `AbstractMatrix`                                          | `:block`, `:depth`, `:mode`, `:tab_size` | `:augment`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
+| `AbstractString`                                          |                                          |                                                         |
+| `Bool`                                                    | `:mode`                                  |                                                         |
+| `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`       |                                                         |
+| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`       |                                                         |
+| `Irrational`                                              | `:mode`                                  |                                                         |
+| `Nothing`                                                 | `:mode`                                  |                                                         |
+| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                  |                                                         |
+| `Rational`                                                | `:block`, `:mode`, `:parenthesize`       |                                                         |
+| `Regex`                                                   | `:mode`                                  |                                                         |
+| `Signed`                                                  | `:mode`                                  |                                                         |
+| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                  |                                                         |
+| `Tuple`                                                   | `:block`, `:depth`, `:mode`, `:tab_size` | `:delim`, `:gap`                                        |
+| `Typst`                                                   |                                          |                                                         |
+| `TypstString`                                             |                                          |                                                         |
+| `TypstText`                                               |                                          |                                                         |
+| `Unsigned`                                                | `:mode`                                  |                                                         |
+| `VersionNumber`                                           | `:mode`                                  |                                                         |
+| `Docs.HTML`                                               | `:block`, `:depth`, `:mode`, `:tab_size` |                                                         |
+| `Docs.Text`                                               | `:mode`                                  |                                                         |
+| `Dates.Date`                                              | `:mode`, `:indent`                       |                                                         |
+| `Dates.DateTime`                                          | `:mode`, `:indent`                       |                                                         |
+| `Dates.Period`                                            | `:mode`, `:indent`                       |                                                         |
+| `Dates.Time`                                              | `:mode`, `:indent`                       |                                                         |
+""" show_typst
 
 end # ShowTypst

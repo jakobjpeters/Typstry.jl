@@ -18,7 +18,8 @@ module Strings
 import Base: show
 using Dates: Date, DateTime, Day, Period, Time
 using ..Typstry: Utilities
-using .Utilities: ContextErrors.unwrap
+using .Utilities: ContextErrors
+using .ContextErrors: unwrap
 using .Docs: HTML, Text
 using .Meta: isexpr, parse
 using PrecompileTools: @compile_workload
@@ -86,6 +87,15 @@ struct TypstText{T}
     value::T
 end
 
+include("TypstContexts.jl")
+using .TypstContexts: TypstContext, context
+
+include("TypstStrings.jl")
+using .TypstStrings: TypstString
+
+include("ShowTypst.jl")
+using .ShowTypst: _show_typst
+
 """
     @typst_str("s")
     typst"s"
@@ -149,15 +159,6 @@ macro typst_str(s::String)
     current > final || push!(args, s[current:final])
     :(TypstString(TypstText($_s)))
 end
-
-include("TypstContexts.jl")
-using .TypstContexts: TypstContext
-
-include("TypstStrings.jl")
-using .TypstStrings: TypstString
-
-include("ShowTypst.jl")
-using .ShowTypst: _show_typst
 
 # `Typstry`
 
@@ -261,5 +262,10 @@ const examples = [
     Day(1) => Period
     Time(0) => Time
 ]
+
+get!(context.context, :preamble, TypstString(TypstText("""
+#set page(margin: 1em, height: auto, width: auto, fill: white)
+#set text(16pt, font: "JuliaMono")
+""")))
 
 end # Strings
