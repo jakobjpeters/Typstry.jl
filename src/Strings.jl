@@ -190,7 +190,7 @@ math::Mode = 2
 ```
 """ math
 
-@doc """
+"""
     show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString, TypstText})
 
 Print in Typst format using [`show_typst`](@ref) and
