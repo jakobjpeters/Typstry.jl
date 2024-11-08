@@ -16,7 +16,7 @@ Print in Typst format for LaTeXStrings.jl.
 |:--------------|:-----------------------------------------|:-----------|
 | `LaTeXString` | `:block`, `:depth`, `:mode`, `:tab_size` |            |
 """
-show_typst(io, x::LaTeXString) = show_raw(print, io, x, "latex")
+show_typst(io, tc, x::LaTeXString) = show_raw(print, io, tc, x, "latex")
 
 # Internals
 

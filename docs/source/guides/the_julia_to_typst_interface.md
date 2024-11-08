@@ -8,7 +8,7 @@ This guide illustrates how to implement Typst formatting for custom types.
 ```jldoctest 1
 julia> import Base: show
 
-julia> import Typstry: context, show_typst
+julia> import Typstry: TypstContext, show_typst
 
 julia> using Typstry
 ```
@@ -27,12 +27,12 @@ Implement a [`show_typst`](@ref) method to specify its Typst formatting. Remembe
 [Annotate values taken from untyped locations](https://docs.julialang.org/en/v1/manual/performance-tips/#Annotate-values-taken-from-untyped-locations).
 
 ```jldoctest 1
-julia> show_typst(io, r::Reciprocal) =
-           if io[:mode]::Mode == markup
+julia> show_typst(io, tc, r::Reciprocal) =
+           if tc[:mode]::Mode == markup
                print(io, "#let reciprocal(n) = \$1 / #n\$")
            else
                print(io, "reciprocal(")
-               show(io, MIME"text/typst"(), Typst(round(r.n; digits = io[:digits]::Int)))
+               show(io, MIME"text/typst"(), Typst(round(r.n; digits = tc[:digits]::Int)))
                print(io, ")")
            end;
 ```
@@ -45,11 +45,11 @@ Instead, implement a custom [`context`](@ref) which overrides default,
 but not user specifications.
 
 ```jldoctest 1
-julia> context(::Reciprocal) = Dict(:digits => 2);
+julia> TypstContext(::Reciprocal) = TypstContext(; digits = 2);
 ```
 
 Those two methods are a complete implementation of the Julia to Typst interface.
-The following method is optional:
+The following method is optional, and provides `show_typst` with the [`context`](@ref):
 
 ```jldoctest 1
 julia> show(io::IO, m::MIME"text/typst", r::Reciprocal) = show(io, m, Typst(r));

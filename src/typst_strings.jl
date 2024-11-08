@@ -41,7 +41,7 @@ struct TypstString <: AbstractString
     text::String
 
     TypstString(t::Union{Typst, TypstString, TypstText}; context...) =
-        new(sprint(show, typst_mime, t; context = (context...,)))
+        new(sprint(show, typst_mime, t; context = :typst_context => TypstContext(; context...)))
 end
 
 TypstString(x; context...) = TypstString(Typst(x); context...)

@@ -21,7 +21,7 @@ import Typst_jll
 using ..Typstry: Strings, Typst, TypstString, TypstText, @typst_str, enclose, join_with, unwrap
 using .Strings: _show_typst
 using Artifacts: @artifact_str
-using Preferences: @load_preference, @set_preferences!
+using Preferences: @load_preference
 
 include("typst_commands.jl")
 include("typst_command_errors.jl")

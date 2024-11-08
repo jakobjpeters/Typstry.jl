@@ -16,12 +16,13 @@ Typstry.Strings
 module Strings
 
 import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show
-using ..Typstry: enclose, join_with, unwrap
+using ..Typstry: enclose, join_with, set_preference, unwrap
 using .Docs: HTML, Text
 using .Meta: isexpr, parse
 using Dates:
     Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
     day, hour, minute, month, second, year
+using Preferences: @load_preference
 
 # `Typstry`
 
@@ -148,6 +149,7 @@ macro typst_str(s::String)
     :(TypstString(TypstText($_s)))
 end
 
+include("typst_contexts.jl")
 include("typst_strings.jl")
 include("show_typst.jl")
 
@@ -189,37 +191,6 @@ math::Mode = 2
 """ math
 
 """
-    context(x)
-
-Provide formatting data for
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
-
-Implement this function for a custom type to specify its custom settings and parameters.
-Passing a value wrapped in [`Typst`](@ref) will `merge!` its custom context with defaults,
-such that the defaults may be overwritten.
-To be compatible with merging contexts and constructing an `IOContext`,
-methods must return an `AbstractDict{Symbol}`.
-
-| Setting         | Default               | Type           | Description                                                                                                                                                                       |
-|:----------------|:----------------------|:---------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `:backticks`    | `3`                   | `Int`          | The number of backticks to enclose raw text markup, which may be increased to disambiguiate nested raw text.                                                                             |
-| `:block`        | `false`               | `Bool`         | When `:mode => math`, specifies whether the enclosing dollar signs are padded with a space to render the element inline or its own block.                                         |
-| `:depth`        | `0`                   | `Int`          | The current level of nesting within container types to specify the degree of indentation.                                                                                         |
-| `:mode`         | `markup`              | [`Mode`](@ref) | The current Typst syntactical context where `code` follows the number sign, `markup` is at the top-level and enclosed in square brackets, and `math` is enclosed in dollar signs. |
-| `:parenthesize` | `true`                | `Bool`         | Whether to enclose some mathematical elements in parentheses to specify their operator precedence and avoid ambiguity.                                                            |
-| `:tab_size`     | `2`                   | `Int`          | The number of spaces used by some elements with multi-line Typst formatting, which is repeated for each level of `depth`                                                          |
-"""
-context(x::Typst) = merge!(Dict(
-    :backticks => 3,
-    :block => false,
-    :depth => 0,
-    :mode => markup,
-    :parenthesize => true,
-    :tab_size => 2
-), context(x.value))
-context(::Any) = Dict{Symbol, Union{}}()
-
-"""
     show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString, TypstText})
 
 Print in Typst format.
@@ -242,15 +213,10 @@ julia> show(stdout, "text/typst", Typst(Text("a")))
 #"a"
 ```
 """
-show(io::IO, m::MIME"text/typst", t::Union{Typst, TypstString, TypstText}) =
-    show(IOContext(io), m, t)
-function show(io::IOContext, ::MIME"text/typst", t::Union{Typst, TypstString, TypstText})
-    for (k, v) in context(t)
-        io = IOContext(io, k => get(io, k, v))
-    end
-
-    show_typst(io, t)
-end
+show(io::IO, ::MIME"text/typst", t::Union{Typst, TypstString, TypstText}) =
+    _show_typst(io, t)
+show(io::IOContext, ::MIME"text/typst", t::Union{Typst, TypstString, TypstText}) =
+    _show_typst(io, unwrap(io, :typst_context, TypstContext()), t)
 
 # Internals
 
