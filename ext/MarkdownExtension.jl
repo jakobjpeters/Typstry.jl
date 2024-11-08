@@ -5,8 +5,6 @@ import Typstry: show_typst
 using Markdown: MD, @md_str
 using Typstry: compile_workload, show_raw
 
-# Strings
-
 """
     show_typst(io, ::Markdown.MD)
 
@@ -24,8 +22,6 @@ show_typst(io, tc, x::MD) = show_raw(io, tc, x, "markdown") do io, x
 
     print(io, read(buffer, String)[begin:end - 1])
 end
-
-# Internals
 
 const examples = [md"# A" => MD]
 

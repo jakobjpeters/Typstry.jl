@@ -1,22 +1,25 @@
 
 """
     TypstContext <: AbstractDict{Symbol, Any}
+    TypstContext(::Any)
     TypstContext(; kwargs...)
 
 Provide formatting data for [`show_typst`](@ref).
 
+Implement a method of this constructor for a custom type to specify its custom settings and parameters.
+
 # Interfaces
 
-This type implements the dictionary, iteration, interfaces.
+This type implements the dictionary and iteration interfaces.
 However, it is immutable such that it does not support inserting, deleting, or setting a key-value pair.
 
 - `eltype(::TypstContext)`
-- `get(::TypstContext, ::Symbol, default)`
-- `get(::Union{Function, Type}, ::TypstContext, ::Symbol)`
-- `iterate(::TypstContext, state)`
+- `get(::TypstContext,\u00A0::Symbol,\u00A0default)`
+- `get(::Union{Function, Type},\u00A0::TypstContext,\u00A0::Symbol)`
+- `iterate(::TypstContext,\u00A0state)`
 - `iterate(::TypstContext)`
 - `length(::TypstContext)`
-- `show(::IO, ::TypstContext)`
+- `show(::IO,\u00A0::TypstContext)`
 """
 struct TypstContext <: AbstractDict{Symbol, Any}
     context::Dict{Symbol, Any}
@@ -24,19 +27,7 @@ struct TypstContext <: AbstractDict{Symbol, Any}
     TypstContext(; kwargs...) = new(Dict(kwargs))
 end
 
-"""
-    TypstContext(::Typst)
-
-Return the `TypstContext` of the value wrapped in [`Typst`](@ref).
-"""
-TypstContext(x::Typst) = TypstContext(x.value)
-
-"""
-    TypstContext(::Any)
-
-Implement a method of this constructor for a custom type to specify its custom settings and parameters.
-"""
-TypstContext(x) = TypstContext()
+TypstContext(_) = TypstContext()
 
 eltype(tc::TypstContext) = eltype(tc.context)
 
@@ -71,11 +62,6 @@ const default_context = TypstContext(;
     parenthesize = true,
     tab_size = 2
 )
-
-"""
-    merge_contexts(tc, context)
-"""
-merge_contexts!(tc, context) = mergewith!((x, _) -> x, tc.context, context)
 
 """
     context

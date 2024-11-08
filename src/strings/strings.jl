@@ -1,167 +1,8 @@
 
-"""
-    Mode
-
-An `Enum`erated type used to specify that the current Typst syntactical
-context is [`code`](@ref), [`markup`](@ref), or [`math`](@ref).
-
-# Examples
-
-```jldoctest
-julia> Mode
-Enum Mode:
-code = 0
-markup = 1
-math = 2
-```
-"""
-@enum Mode code markup math
-
-"""
-    Typst{T}
-    Typst(::T)
-
-A wrapper used to pass values to
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
-
-# Examples
-
-```jldoctest
-julia> Typst(1)
-Typst{Int64}(1)
-
-julia> Typst("a")
-Typst{String}("a")
-```
-"""
-struct Typst{T}
-    value::T
-end
-
-"""
-    TypstText{T}
-    TypstText(::Any)
-
-A wrapper whose [`show_typst`](@ref) method uses `print`.
-
-# Examples
-
-```jldoctest
-julia> TypstText(1)
-TypstText{Int64}(1)
-
-julia> TypstText("a")
-TypstText{String}("a")
-```
-"""
-struct TypstText{T}
-    value::T
-end
-
+include("types.jl")
 include("typst_context.jl")
 include("typst_string.jl")
 include("show_typst.jl")
-
-"""
-    @typst_str("s")
-    typst"s"
-
-Construct a [`TypstString`](@ref).
-
-Control characters are escaped,
-except double quotation marks and backslashes in the same manner as `@raw_str`.
-Values may be interpolated by calling the `TypstString` constructor,
-except using a backslash instead of the type name.
-Interpolation syntax may be escaped in the same manner as quotation marks.
-
-!!! tip
-    Print directly to an `IO` using
-    [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
-
-    See also the performance tip to [Avoid string interpolation for I/O]
-    (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
-
-# Examples
-
-```jldoctest
-julia> x = 1;
-
-julia> typst"\$ \\(x; mode = math) / \\(x + 1; mode = math) \$"
-typst"\$ 1 / 2 \$"
-
-julia> typst"\\(x//2)"
-typst"\$1 / 2\$"
-
-julia> typst"\\(x // 2; mode = math)"
-typst"(1 / 2)"
-
-julia> typst"\\\\(x)"
-typst"\\\\(x)"
-```
-"""
-macro typst_str(s::String)
-    filename = __source__.file
-    current, final = firstindex(s), lastindex(s)
-    _s = Expr(:string)
-    args = _s.args
-
-    while (regex_match = match(r"(\\+)(\()", s, current)) ≢ nothing
-        backslashes, start = length(first(regex_match.captures)), last(regex_match.offsets)
-        interpolate, previous = isodd(backslashes), prevind(s, start)
-
-        current < previous && push!(args, s[current:prevind(s, previous, interpolate + backslashes ÷ 2)])
-
-        if interpolate
-            x, current = parse(s, start; filename, greedy = false)
-            isexpr(x, :incomplete) && throw(first(x.args))
-            interpolation = :($TypstString())
-
-            append!(interpolation.args, parse(s[previous:prevind(s, current)]; filename).args[2:end])
-            push!(args, esc(interpolation))
-        else current = start
-        end
-    end
-
-    current > final || push!(args, s[current:final])
-    :(TypstString(TypstText($_s)))
-end
-
-# `Typstry`
-
-@doc """
-    code
-
-A Typst syntactical [`Mode`](@ref) prefixed by the number sign.
-
-# Examples
-
-```jldoctest
-julia> code
-code::Mode = 0
-```
-""" code
-
-@doc """
-    markup
-
-A Typst syntactical [`Mode`](@ref) at the top-level of source text and enclosed within square brackets.
-
-```jldoctest
-julia> markup
-markup::Mode = 1
-```
-""" markup
-
-@doc """
-    math
-
-A Typst syntactical [`Mode`](@ref) enclosed within dollar signs.
-
-```jldoctest
-julia> math
-math::Mode = 2
-```
-""" math
 
 """
     show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString, TypstText})
@@ -179,57 +20,22 @@ See also [`TypstString`](@ref) and [`TypstText`](@ref).
 show(io::IO, ::MIME"text/typst", t::Union{Typst, TypstString, TypstText}) =
     _show_typst(io, t)
 show(io::IOContext, ::MIME"text/typst", t::Union{Typst, TypstString, TypstText}) =
-    _show_typst(io, unwrap(io, :typst_context, TypstContext()), t)
+    _show_typst(io, typst_context(io), t)
 
-# Internals
-
-"""
-    compile_workload(examples)
-
-Given an iterable of value-type pairs, interpolate each value into
-a `@typst_str` within a `PrecompileTools.@compile_workload` block.
-"""
-compile_workload(examples) = @compile_workload for (example, _) in examples
-    TypstString(example)
+function show(io::IO, x::T) where T <: Union{TypstText, Typst}
+    print(io, nameof(T), "(")
+    show(io, x.value)
+    print(io, ")")
 end
 
-"""
-    examples
-
-A constant `Vector` of Julia values and their corresponding
-`Type`s implemented for [`show_typst`](@ref).
-"""
-const examples = [
-    Any[true, 1, 1.2, 1 // 2] => AbstractArray
-    'a' => AbstractChar
-    1.2 => AbstractFloat
-    Any[true 1; 1.2 1 // 2] => AbstractMatrix
-    "a" => AbstractString
-    true => Bool
-    im => Complex{Bool}
-    1 + 2im => Complex
-    π => Irrational
-    nothing => Nothing
-    0:2:6 => OrdinalRange{<:Integer, <:Integer}
-    1 // 2 => Rational
-    r"[a-z]" => Regex
-    1 => Signed
-    StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer}
-    (true, 1, 1.2, 1 // 2) => Tuple
-    Typst(1) => Typst
-    typst"[\"a\"]" => TypstString
-    TypstText([1, 2, 3, 4]) => TypstText
-    0xff => Unsigned
-    v"1.2.3" => VersionNumber
-    html"<p>a</p>" => HTML
-    text"[\"a\"]" => Text
-    Date(1) => Date
-    DateTime(1) => DateTime
-    Day(1) => Period
-    Time(0) => Time
-]
-
-get!(context.context, :preamble, TypstString(TypstText("""
+get!(context.context, :preamble, typst"""
 #set page(margin: 1em, height: auto, width: auto, fill: white)
 #set text(16pt, font: "JuliaMono")
-""")))
+""")
+
+for (key, value) in pairs(context)
+    @eval begin
+        $key(tc) = unwrap(tc, $(typeof(value)), $(QuoteNode(key)))
+        @doc "$($key)" $key
+    end
+end

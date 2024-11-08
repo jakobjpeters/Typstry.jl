@@ -1,59 +1,6 @@
 
-"""
-    typst_command_error(tc)
-"""
-typst_command_error(tc) = TypstCommandError(tc)
-
 include("typst_command.jl")
 include("typst_command_error.jl")
-
-# Internals
-
-"""
-    format(::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"})
-
-Return the image format acronym corresponding to the given `MIME`.
-
-# Examples
-
-```jldoctest
-julia> Typstry.format(MIME"application/pdf"())
-"pdf"
-
-julia> Typstry.format(MIME"image/png"())
-"png"
-
-julia> Typstry.format(MIME"image/svg+xml"())
-"svg"
-```
-"""
-format(::MIME"application/pdf") = "pdf"
-format(::MIME"image/png") = "png"
-format(::MIME"image/svg+xml") = "svg"
-
-# `Typstry`
-
-"""
-    @typst_cmd("s")
-    typst`s`
-
-Construct a [`TypstCommand`](@ref) where each parameter is separated by a space.
-
-This does not support interpolation; use the constructor instead.
-
-# Examples
-
-```jldoctest
-julia> typst`help`
-typst`help`
-
-julia> typst`compile input.typ output.typ`
-typst`compile input.typ output.typ`
-```
-"""
-macro typst_cmd(parameters::String)
-    :(TypstCommand($(isempty(parameters) ? String[] : map(string, split(parameters, " ")))))
-end
 
 """
     julia_mono
@@ -103,39 +50,13 @@ function render(value;
 )
     Base.open(input; truncate = true) do file
         tc = render!(context)
-        print(file, unwrap(tc, TypstString, :preamble))
+        print(file, preamble(tc))
         _show_typst(file, tc, value)
         println(file)
     end
     run(TypstCommand(TypstCommand(
         ["compile", input, output, "--font-path=$julia_mono", "--open"][begin:(end - !open)]);
     ignorestatus))
-end
-
-"""
-    typst(::AbstractString; catch_interrupt = true, ignorestatus = true)
-
-Convenience function intended for interactive use, emulating the typst
-command line interface. Be aware, however, that it strictly splits
-on spaces and does not provide any shell-style escape mechanism,
-so it will not work if there are, e.g., filenames with spaces.
-
-When `catch_interrupt` is true, CTRL-C quietly quits the command.
-When [`ignorestatus`](@ref) is true, a Typst failure will not imply a julia error.
-
-If the `"TYPST_FONT_PATHS"` environment variable is not set,
-it is temporarily set to [`julia_mono`](@ref).
-"""
-function typst(parameters::AbstractString; catch_interrupt = true, ignorestatus = true)
-    tc = addenv(TypstCommand(TypstCommand(split(parameters)); ignorestatus),
-        "TYPST_FONT_PATHS" => get(ENV, "TYPST_FONT_PATHS", julia_mono))
-    if catch_interrupt
-        try run(tc)
-        catch e e isa InterruptException || rethrow()
-        end
-    else run(tc)
-    end
-    nothing
 end
 
 """
@@ -163,9 +84,34 @@ function show(io::IO, m::Union{
     input = tempname()
     output = input * "." * format(m)
 
-    render(t; input, output, open = false, ignorestatus = false,
-        context = unwrap(io, :typst_context, TypstContext()))
+    render(t; input, output, open = false, ignorestatus = false, context = typst_context(io))
     write(io, read(output))
 
+    nothing
+end
+
+"""
+    typst(::AbstractString; catch_interrupt = true, ignorestatus = true)
+
+Convenience function intended for interactive use, emulating the typst
+command line interface. Be aware, however, that it strictly splits
+on spaces and does not provide any shell-style escape mechanism,
+so it will not work if there are, e.g., filenames with spaces.
+
+When `catch_interrupt` is true, CTRL-C quietly quits the command.
+When [`ignorestatus`](@ref) is true, a Typst failure will not imply a julia error.
+
+If the `"TYPST_FONT_PATHS"` environment variable is not set,
+it is temporarily set to [`julia_mono`](@ref).
+"""
+function typst(parameters::AbstractString; catch_interrupt = true, ignorestatus = true)
+    tc = addenv(TypstCommand(TypstCommand(split(parameters)); ignorestatus),
+        "TYPST_FONT_PATHS" => get(ENV, "TYPST_FONT_PATHS", julia_mono))
+    if catch_interrupt
+        try run(tc)
+        catch e e isa InterruptException || rethrow()
+        end
+    else run(tc)
+    end
     nothing
 end

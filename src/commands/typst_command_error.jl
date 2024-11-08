@@ -9,8 +9,8 @@ An `Exception` indicating a failure to [`run`](@ref) a [`TypstCommand`](@ref).
 
 Implements the `Exception` interface.
 
-- `showerror(::IO, ::TypstCommandError)`
-- `show(::IO, ::MIME"text/plain", ::TypstCommandError)`
+- `showerror(::IO,\u00A0::TypstCommandError)`
+- `show(::IO,\u00A0::MIME"text/plain",\u00A0::TypstCommandError)`
 
 # Examples
 ```jldoctest

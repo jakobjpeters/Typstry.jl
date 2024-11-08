@@ -1,159 +1,4 @@
 
-"""
-    code_mode(io, tc)
-
-Print the number sign, unless `mode(tc) == code`.
-
-See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
-"""
-code_mode(io, tc) = if mode(tc) ≠ code print(io, "#") end
-
-"""
-    indent(tc)
-"""
-indent(tc) = " " ^ tab_size(tc)
-
-"""
-    math_mode(f, io, tc, x; kwargs...)
-"""
-math_mode(f, io, tc, x; kwargs...) = enclose(f, io, x, math_pad(tc); kwargs...)
-
-"""
-    math_pad(tc)
-
-Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
-[`block`](@ref Typstry.block) and [`mode`](@ref Typstry.mode) settings.
-"""
-math_pad(tc) =
-    if mode(tc) == math ""
-    else block(tc) ? "\$ " : "\$"
-    end
-
-"""
-    show_parameters(io, tc, f, keys, final)
-"""
-function show_parameters(io, tc, f, keys, final)
-    pairs = map(key -> key => unwrap(tc, TypstString, key), filter(key -> haskey(tc, key), keys))
-
-    println(io, f, "(")
-    join_with(io, pairs, ",\n") do io, (key, value)
-        print(io, indent(tc) ^ (depth(tc) + 1), key, ": ")
-        _show_typst(io, value)
-    end
-
-    if !isempty(pairs)
-        final && print(io, ",")
-        println(io)
-    end
-end
-
-"""
-    show_array(io, x)
-"""
-show_array(io, x) = enclose(io, x, "(", ")") do io, x
-    join_with((io, x) -> _show_typst(io, x; parenthesize = false, mode = code), io, x, ", ")
-    if length(x) == 1 print(io, ",") end
-end
-
-"""
-    show_raw(f, io, tc, x, language)
-"""
-function show_raw(f, io, tc, x, language)
-    _backticks, _block = "`" ^ backticks(tc), block(tc)
-
-    mode(tc) == math && print(io, "#")
-    print(io, _backticks, language)
-
-    if _block
-        _indent, _depth = indent(tc), depth(tc)
-
-        print(io, "\n")
-
-        for line in eachsplit(sprint(f, x), "\n")
-            println(io, _indent ^ (_depth + 1), line)
-        end
-
-        print(io, _indent ^ _depth)
-    else enclose(f, io, x, " ")
-    end
-
-    print(io, _backticks)
-end
-
-"""
-    show_vector(io, tc, x)
-"""
-show_vector(io, tc, x) = math_mode(io, tc, x) do io, x
-    _depth, _indent = depth(tc), indent(tc)
-    __depth = _depth + 1
-
-    show_parameters(io, tc, "vec", [:delim, :gap], true)
-    print(io, _indent ^ __depth)
-    join_with((io, x) -> _show_typst(io, TypstContext(; depth = __depth, mode = math, parenthesize = false), x), io, x, ", "),
-    print(io, "\n", _indent ^ _depth, ")")
-end
-
-for (key, value) in pairs(default_context)
-    @eval begin
-        $key(context) = unwrap(context, $(QuoteNode(key)), $value)
-        @doc "$($key)" $key
-    end
-end
-
-## Dates.jl
-
-"""
-    date_time(::Union{Dates.Date, Dates.Time, Dates.DateTime})
-"""
-date_time(::Date) = year, month, day
-date_time(::Time) = hour, minute, second
-date_time(::DateTime) = year, month, day, hour, minute, second
-
-"""
-    duration(::Dates.Period)
-
-# Examples
-
-```jldoctest
-julia> Typstry.duration(Dates.Day(1))
-:days
-
-julia> Typstry.duration(Dates.Hour(1))
-:hours
-```
-"""
-duration(::Day) = :days
-duration(::Hour) = :hours
-duration(::Minute) = :minutes
-duration(::Second) = :seconds
-duration(::Week) = :weeks
-
-"""
-    dates(::Union{Dates.Date, Dates.DateTime, Dates.Period, Dates.Time})
-
-# Examples
-
-```jldoctest
-julia> Typstry.dates(Dates.Date(1))
-("datetime", (:year, :month, :day), (1, 1, 1))
-
-julia> Typstry.dates(Dates.Day(1))
-("duration", (:days,), (TypstText{String}("1"),))
-```
-"""
-function dates(x::Union{Date, DateTime, Time})
-    fs = date_time(x)
-    "datetime", map(Symbol, fs), map(f -> f(x), fs)
-end
-function dates(x::Period)
-    buffer = IOBuffer()
-
-    print(buffer, x)
-    seekstart(buffer)
-
-    "duration", (duration(x),), (TypstText(readuntil(buffer, " ")),)
-end
-
 function _show_typst(io, tc, x)
     _tc = TypstContext(x)
     merge!(merge_contexts!(_tc, context), tc)
@@ -174,21 +19,21 @@ show_typst(io, tc, x::AbstractFloat) =
     end
 show_typst(io, tc, x::AbstractMatrix) = mode(tc) == code ?
     show_array(io, x) :
-    math_mode((io, x; indent, depth) -> begin
-        _depth = depth + 1
+    math_mode((io, tc, x) -> begin
+        _depth = depth(tc) + 1
 
         show_parameters(io, tc, "mat", [:augment, :column_gap, :delim, :gap, :row_gap], true)
-        join_with((io, x; indent) -> begin
-            print(io, indent ^ _depth)
+        join_with((io, x) -> begin
+            print(io, indent(tc) ^ _depth)
             join_with((io, x) -> _show_typst(io, x; depth = _depth, mode = math, parenthesize = false), io, x, ", ")
-        end, io, eachrow(x), ";\n"; indent)
-        print(io, "\n", indent ^ depth, ")")
-    end, io, TypstContext(; mode = mode(tc)), x; indent = indent(tc), depth = depth(tc))
+        end, io, eachrow(x), ";\n")
+        print(io, "\n", indent(tc) ^ depth(tc), ")")
+    end, io, tc, x)
 show_typst(io, tc, x::AbstractString) = enclose((io, x) -> escape_string(io, x, "\""),
     io, x, "\"", mode(tc) == math && length(x) == 1 ? "\\u{200b}\"" : "\"")
 show_typst(io, tc, x::Bool) = mode(tc) == math ? enclose(print, io, x, "\"") : print(io, x)
 show_typst(io, tc, x::Complex{Bool}) = _show_typst(io, tc, Complex(Int(real(x)), Int(imag(x))))
-show_typst(io, tc, x::Complex) = math_mode(io, tc, x) do io, x
+show_typst(io, tc, x::Complex) = math_mode(io, tc, x) do io, tc, x
     imaginary = imag(x)
     _real, _imaginary = real(x), abs(imaginary)
     __real, __imaginary = _real == 0, _imaginary == 0
@@ -245,9 +90,7 @@ function show_typst(io, tc, x::Text)
     code_mode(io, tc)
     _show_typst(io, string(x))
 end
-show_typst(io, tc, x::Typst) = show_typst(io, tc, x.value)
 show_typst(io, tc, x::TypstString) = print(io, x)
-show_typst(io, tc, x::TypstText) = print(io, x.value)
 function show_typst(io, tc, x::Unsigned)
     code_mode(io, tc)
     show(io, x)
@@ -279,7 +122,7 @@ function show_typst(io, tc, x::Union{Date, DateTime, Period, Time})
     _values = map(value -> TypstString(value; mode = code), values)
 
     code_mode(io, tc)
-    show_parameters(io, TypstContext(; zip(keys, _values)...), f, keys, false)
+    show_parameters(io, merge_contexts!(TypstContext(; zip(keys, _values)...), tc), f, keys, false)
     print(io, indent(tc) ^ depth(tc), ")")
 end
 show_typst(tc, x) = _show_typst(stdout, tc, x)

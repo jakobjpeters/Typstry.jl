@@ -1,14 +1,5 @@
 
 """
-    apply(f, tc, args...; kwargs...)
-"""
-function apply(f, tc, args...; kwargs...)
-    _tc = deepcopy(tc)
-    _tc.compiler = f(_tc.compiler, args...; kwargs...)
-    _tc
-end
-
-"""
     TypstCommand(::AbstractVector{<:AbstractString})
     TypstCommand(::TypstCommand; kwargs...)
 
@@ -21,31 +12,31 @@ Keyword parameters have the same semantics as for a `Cmd`.
 This type implements the `Cmd` interface.
 However, the interface is undocumented, which may result in unexpected behavior.
 
-- `addenv(::TypstCommand, env...; ::Bool = true)`
+- `addenv(::TypstCommand,\u00A0env...;\u00A0::Bool\u00A0=\u00A0true)`
     - Can be used with [`julia_mono`](@ref)
-    - `addenv(::TypstCommand, "TYPST_FONT_PATHS" => julia_mono)`
+    - `addenv(::TypstCommand,\u00A0"TYPST_FONT_PATHS"\u00A0=>\u00A0julia_mono)`
 - `detach(::TypstCommand)`
 - `eltype(::Type{TypstCommand})`
 - `firstindex(::TypstCommand)`
-- `getindex(::TypstCommand, i)`
-- `hash(::TypstCommand, ::UInt)`
+- `getindex(::TypstCommand,\u00A0i)`
+- `hash(::TypstCommand,\u00A0::UInt)`
 - `ignorestatus(::TypstCommand)`
     - Do not throw a [`TypstCommandError`](@ref) if the Typst compiler throws an error.
         Errors thrown by the Typst compiler are printed to `stderr` regardless.
-- `iterate(::TypstCommand, i)`
+- `iterate(::TypstCommand,\u00A0i)`
 - `iterate(::TypstCommand)`
 - `keys(::TypstCommand)`
 - `lastindex(::TypstCommand)`
 - `length(::TypstCommand)`
-- `run(::TypstCommand, args...; ::Bool = true)`
+- `run(::TypstCommand,\u00A0args...;\u00A0::Bool\u00A0=\u00A0true)`
     - Errors thrown by the Typst compiler will be printed to `stderr`.
         Then, a Julia [`TypstCommandError`](@ref) will be
         thrown unless the [`ignorestatus`](@ref) flag is set.
-- `setcpuaffinity(::TypstCommand, cpus)`
-- `setenv(::TypstString, env...; kwargs...)`
+- `setcpuaffinity(::TypstCommand,\u00A0cpus)`
+- `setenv(::TypstString,\u00A0env...;\u00A0kwargs...)`
     - Can be used with [`julia_mono`](@ref)
-    - `setenv(::TypstCommand, "TYPST_FONT_PATHS" => julia_mono)`
-- `show(::IO, ::MIME"text/plain", ::TypstCommand)`
+    - `setenv(::TypstCommand,\u00A0"TYPST_FONT_PATHS"\u00A0=>\u00A0julia_mono)`
+- `show(::IO,\u00A0::MIME"text/plain",\u00A0::TypstCommand)`
 
 # Examples
 
@@ -65,6 +56,28 @@ mutable struct TypstCommand
     TypstCommand(parameters) = new(parameters, false, Typst_jll.typst())
     TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
         new(tc.parameters, ignorestatus, Cmd(tc.compiler; kwargs...))
+end
+
+"""
+    @typst_cmd("s")
+    typst`s`
+
+Construct a [`TypstCommand`](@ref) where each parameter is separated by a space.
+
+This does not support interpolation; use the constructor instead.
+
+# Examples
+
+```jldoctest
+julia> typst`help`
+typst`help`
+
+julia> typst`compile input.typ output.typ`
+typst`compile input.typ output.typ`
+```
+"""
+macro typst_cmd(parameters::String)
+    :(TypstCommand($(isempty(parameters) ? String[] : map(string, split(parameters, " ")))))
 end
 
 tc::TypstCommand == _tc::TypstCommand =
@@ -103,7 +116,7 @@ length(tc::TypstCommand) = length(tc.parameters) + 1
 
 function run(tc::TypstCommand, args...; wait::Bool = true)
     process = run(ignorestatus(Cmd(`$(tc.compiler) $(tc.parameters)`)), args...; wait)
-    tc.ignore_status || success(process) || throw(typst_command_error(tc))
+    tc.ignore_status || success(process) || throw(TypstCommandError(tc))
     process
 end
 
