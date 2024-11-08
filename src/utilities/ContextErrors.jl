@@ -38,12 +38,12 @@ show(io::IO, ::MIME"text/plain", ce::ContextError) =
 _unwrap(type, key, value) = value isa type ? value : throw(ContextError(type, typeof(value), key))
 
 """
-    unwrap(io, key::Symbol, default)
-    unwrap(io, type::Type, key)
+    unwrap(x, key::Symbol, default)
+    unwrap(x, type::Type, key)
 """
-unwrap(io, key::Symbol, default) = _unwrap(typeof(default), key, get(io, key, default))
-function unwrap(io, type::Type, key)
-    value = io[key]
+unwrap(x, key::Symbol, default) = _unwrap(typeof(default), key, get(x, key, default))
+function unwrap(x, type::Type, key)
+    value = x[key]
     _unwrap(type, key, value)
 end
 

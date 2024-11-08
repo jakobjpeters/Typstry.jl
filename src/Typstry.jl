@@ -11,14 +11,15 @@ using .Strings:
 using .TypstContexts: TypstContext, context, set_context
 
 include("commands/Commands.jl")
-using .Commands: Preamble, TypstCommandErrors.TypstCommandError, TypstCommands.TypstCommand,
+using .Commands:
+    TypstCommandErrors.TypstCommandError, TypstCommands.TypstCommand,
     @typst_cmd, julia_mono, render, typst
-using .Preamble: preamble, set_preamble
 
 export
-    ContextError, Mode, TypstCommandError, TypstCommand, TypstContext, TypstString, TypstText, Typst,
-    @typst_cmd, @typst_str,
-    code, context, julia_mono, markup, math, preamble, render, set_context, set_preamble, show_typst, typst
+    ContextError, Mode, TypstCommandError, TypstCommand,
+    TypstContext, TypstString, TypstText, Typst,
+    @typst_cmd, @typst_str, code, context, julia_mono,
+    markup, math, render, set_context, show_typst, typst
 
 Strings.compile_workload(Strings.examples)
 
