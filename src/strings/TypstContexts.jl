@@ -1,4 +1,10 @@
 
+module TypstContexts
+
+import Base: eltype, get, iterate, length, show
+using Preferences: @load_preference
+using ..Strings: Utilities.set_preference, Typst, markup
+
 """
     TypstContext <: AbstractDict{Symbol, Any}
     TypstContext(; kwargs...)
@@ -10,12 +16,12 @@ Provide formatting data for [`show_typst`](@ref).
 This type implements the dictionary, iteration, interfaces.
 However, it is immutable such that it does not support inserting, deleting, or setting a key-value pair.
 
-- `iterate(::TypstContext, state)`
-- `iterate(::TypstContext)`
-- `length(::TypstContext)`
 - `eltype(::TypstContext)`
 - `get(::TypstContext, ::Symbol, default)`
 - `get(::Union{Function, Type}, ::TypstContext, ::Symbol)`
+- `iterate(::TypstContext, state)`
+- `iterate(::TypstContext)`
+- `length(::TypstContext)`
 - `show(::IO, ::TypstContext)`
 """
 struct TypstContext <: AbstractDict{Symbol, Any}
@@ -38,15 +44,15 @@ Implement a method of this constructor for a custom type to specify its custom s
 """
 TypstContext(x) = TypstContext()
 
-iterate(tc::TypstContext, state) = iterate(tc.context, state)
-iterate(tc::TypstContext) = iterate(tc.context)
-
-length(tc::TypstContext) = length(tc.context)
-
 eltype(tc::TypstContext) = eltype(tc.context)
 
 get(tc::TypstContext, key::Symbol, default) = get(tc.context, key, default)
 get(f::Union{Function, Type}, tc::TypstContext, key::Symbol) = get(f, tc.context, key)
+
+iterate(tc::TypstContext, state) = iterate(tc.context, state)
+iterate(tc::TypstContext) = iterate(tc.context)
+
+length(tc::TypstContext) = length(tc.context)
 
 function show(io::IO, tc::TypstContext)
     print(io, TypstContext, "(")
@@ -69,6 +75,9 @@ const default_context = TypstContext(;
     tab_size = 2
 )
 
+"""
+    merge_contexts(tc, context)
+"""
 merge_contexts!(tc, context) = mergewith!((x, _) -> x, tc.context, context)
 
 """
@@ -122,9 +131,4 @@ If a `TypstContext` is not provided, the `context` is reset to the default setti
 """
 set_context
 
-for (key, value) in pairs(default_context)
-    @eval begin
-        $key(context) = unwrap(context, $(QuoteNode(key)), $value)
-        @doc "$($key)" $key
-    end
-end
+end # TypstContexts

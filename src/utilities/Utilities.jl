@@ -1,13 +1,10 @@
 
-"""
-    compile_workload(examples)
+module Utilities
 
-Given an iterable of value-type pairs, interpolate each value into
-a `@typst_str` within a `PrecompileTools.@compile_workload` block.
-"""
-compile_workload(examples) = @compile_workload for (example, _) in examples
-    TypstString(example)
-end
+using .Iterators: Stateful
+using Preferences: @set_preferences!
+
+include("ContextErrors.jl")
 
 """
     enclose(f, io, x, left, right = reverse(left); kwargs...)
@@ -17,7 +14,7 @@ Call `f(io,\u00A0x;\u00A0kwargs...)` between printing `left` and `right`, respec
 # Examples
 
 ```jldoctest
-julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
+julia> Typstry.Utilities.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
 \$ 1x \$
 ```
 """
@@ -35,7 +32,7 @@ Similar to `join`, except printing with `f(io, x; kwargs...)`.
 # Examples
 
 ```jldoctest
-julia> Typstry.Strings.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
+julia> Typstry.Utilities.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
 -1x, -2x, -3x, -4x
 ```
 """
@@ -55,3 +52,5 @@ function set_preference(key, value = nothing)
     @set_preferences! key value
     @info "Restart Julia to reinitialize the `$key`"
 end
+
+end # Utilities

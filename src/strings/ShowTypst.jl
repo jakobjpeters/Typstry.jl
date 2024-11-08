@@ -1,4 +1,15 @@
 
+module ShowTypst
+
+using Dates:
+    Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
+    day, hour, minute, month, second, year
+using ..Strings:
+    TypstContexts, Utilities, TypstStrings.TypstString, Typst, TypstText,
+    @typst_str, code, markup, math, unwrap
+using .TypstContexts: TypstContext, context, default_context, merge_contexts!
+using .Utilities: enclose, join_with
+
 """
     code_mode(io, tc)
 
@@ -7,23 +18,6 @@ Print the number sign, unless `mode(tc) == code`.
 See also [`Mode`](@ref) and [`mode`](@ref Typstry.Strings.mode).
 """
 code_mode(io, tc) = if mode(tc) ≠ code print(io, "#") end
-
-"""
-    escape(io, n)
-
-Print `\\` to `io` `n` times.
-
-# Examples
-
-```jldoctest
-julia> Typstry.Strings.escape(stdout, 2)
-\\\\
-```
-"""
-escape(io, n) =
-    for _ in 1:n
-        print(io, '\\')
-    end
 
 """
     indent(tc)
@@ -110,6 +104,13 @@ show_vector(io, tc, x) = math_mode(io, tc, x) do io, x
     print(io, "\n", _indent ^ _depth, ")")
 end
 
+for (key, value) in pairs(default_context)
+    @eval begin
+        $key(context) = unwrap(context, $(QuoteNode(key)), $value)
+        @doc "$($key)" $key
+    end
+end
+
 ## Dates.jl
 
 """
@@ -125,10 +126,10 @@ date_time(::DateTime) = year, month, day, hour, minute, second
 # Examples
 
 ```jldoctest
-julia> Typstry.Strings.duration(Dates.Day(1))
+julia> Typstry.Strings.ShowTypst.duration(Dates.Day(1))
 :days
 
-julia> Typstry.Strings.duration(Dates.Hour(1))
+julia> Typstry.Strings.ShowTypst.duration(Dates.Hour(1))
 :hours
 ```
 """
@@ -144,10 +145,10 @@ duration(::Week) = :weeks
 # Examples
 
 ```jldoctest
-julia> Typstry.Strings.dates(Dates.Date(1))
+julia> Typstry.Strings.ShowTypst.dates(Dates.Date(1))
 ("datetime", (:year, :month, :day), (1, 1, 1))
 
-julia> Typstry.Strings.dates(Dates.Day(1))
+julia> Typstry.Strings.ShowTypst.dates(Dates.Day(1))
 ("duration", (:days,), (TypstText{String}("1"),))
 ```
 """
@@ -349,3 +350,5 @@ function show_typst(io, tc, x::Union{Date, DateTime, Period, Time})
 end
 show_typst(tc, x) = _show_typst(stdout, tc, x)
 show_typst(x) = show_typst(TypstContext(), x)
+
+end # ShowTypst

@@ -15,14 +15,15 @@ Typstry.Strings
 """
 module Strings
 
-import Base: IOBuffer, ==, codeunit, eltype, get, isvalid, iterate, length, ncodeunits, pointer, repr, show
-using ..Typstry: enclose, join_with, set_preference, unwrap
+import Base: show
+using Dates: Date, DateTime, Day, Period, Time
+using ..Typstry: Utilities
+using .Utilities: ContextErrors.unwrap
 using .Docs: HTML, Text
 using .Meta: isexpr, parse
-using Dates:
-    Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
-    day, hour, minute, month, second, year
-using Preferences: @load_preference
+using PrecompileTools: @compile_workload
+
+export compile_workload
 
 # `Typstry`
 
@@ -149,9 +150,14 @@ macro typst_str(s::String)
     :(TypstString(TypstText($_s)))
 end
 
-include("typst_contexts.jl")
-include("typst_strings.jl")
-include("show_typst.jl")
+include("TypstContexts.jl")
+using .TypstContexts: TypstContext
+
+include("TypstStrings.jl")
+using .TypstStrings: TypstString
+
+include("ShowTypst.jl")
+using .ShowTypst: _show_typst
 
 # `Typstry`
 
@@ -209,6 +215,16 @@ show(io::IOContext, ::MIME"text/typst", t::Union{Typst, TypstString, TypstText})
     _show_typst(io, unwrap(io, :typst_context, TypstContext()), t)
 
 # Internals
+
+"""
+    compile_workload(examples)
+
+Given an iterable of value-type pairs, interpolate each value into
+a `@typst_str` within a `PrecompileTools.@compile_workload` block.
+"""
+compile_workload(examples) = @compile_workload for (example, _) in examples
+    TypstString(example)
+end
 
 """
     examples

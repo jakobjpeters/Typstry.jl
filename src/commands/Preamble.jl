@@ -1,4 +1,9 @@
 
+module Preamble
+
+using ..Commands: TypstString, TypstText, Utilities.set_preference
+using Preferences: @load_preference
+
 """
     preamble
 
@@ -30,3 +35,5 @@ If the `TypstString` is not provided, reset the `preamble` to its default value.
 """
 set_preamble(ts::TypstString) = set_preference("preamble", ts)
 set_preamble() = set_preference("preamble")
+
+end # Preamble
