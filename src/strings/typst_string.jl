@@ -1,36 +1,5 @@
 
 """
-    typst_mime
-
-Equivalent to `MIME"text/typst"()`.
-
-# Examples
-
-```jldoctest
-julia> Typstry.typst_mime
-MIME type text/typst
-```
-"""
-const typst_mime = MIME"text/typst"()
-
-"""
-    escape(io, n)
-
-Print `\\` to `io` `n` times.
-
-# Examples
-
-```jldoctest
-julia> Typstry.escape(stdout, 2)
-\\\\
-```
-"""
-escape(io, n) =
-    for _ in 1:n
-        print(io, '\\')
-    end
-
-"""
     TypstString <: AbstractString
     TypstString(::TypstContext, ::Any)
     TypstString(::Any; context...)
@@ -47,18 +16,19 @@ This type implements the `String` interface.
 However, the interface is undocumented, which may result in unexpected behavior.
 
 - `IOBuffer(::TypstString)`
-- `codeunit(::TypstString, ::Integer)`
+- `codeunit(::TypstString,\u00A0::Integer)`
 - `codeunit(::TypstString)`
-- `isvalid(::TypstString, ::Integer)`
-- `iterate(::TypstString, ::Integer)`
+- `isvalid(::TypstString,\u00A0::Integer)`
+- `iterate(::TypstString,\u00A0::Integer)`
 - `iterate(::TypstString)`
 - `ncodeunits(::TypstString)`
 - `pointer(::TypstString)`
-- `repr(::MIME, ::TypstString)`
+- `repr(::MIME,\u00A0::TypstString)`
     - This method patches incorrect output from the assumption in `repr` that
         the parameter is already in the requested `MIME` type when the `MIME`
         type satisfies `istextmime` and the parameter is an `AbstractString`.
-- `show(::IO, ::TypstString)`
+- `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstString)`
+- `show(::IO,\u00A0::TypstString)`
     - Print in [`@typst_str`](@ref) format if each character satisfies `isprint`.
         Otherwise, print in [`TypstString`](@ref) format.
 
@@ -84,6 +54,70 @@ end
 
 TypstString(tc::TypstContext, x) = TypstString(tc, Typst(x))
 TypstString(x; context...) = TypstString(TypstContext(; context...), x)
+
+"""
+    @typst_str("s")
+    typst"s"
+
+Construct a [`TypstString`](@ref).
+
+Control characters are escaped,
+except double quotation marks and backslashes in the same manner as `@raw_str`.
+Values may be interpolated by calling the `TypstString` constructor,
+except using a backslash instead of the type name.
+Interpolation syntax may be escaped in the same manner as quotation marks.
+
+!!! tip
+    Print directly to an `IO` using
+    [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
+
+    See also the performance tip to [Avoid string interpolation for I/O]
+    (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
+
+# Examples
+
+```jldoctest
+julia> x = 1;
+
+julia> typst"\$ \\(x; mode = math) / \\(x + 1; mode = math) \$"
+typst"\$ 1 / 2 \$"
+
+julia> typst"\\(x//2)"
+typst"\$1 / 2\$"
+
+julia> typst"\\(x // 2; mode = math)"
+typst"(1 / 2)"
+
+julia> typst"\\\\(x)"
+typst"\\\\(x)"
+```
+"""
+macro typst_str(s::String)
+    filename = __source__.file
+    current, final = firstindex(s), lastindex(s)
+    _s = Expr(:string)
+    args = _s.args
+
+    while (regex_match = match(r"(\\+)(\()", s, current)) ≢ nothing
+        backslashes, start = length(first(regex_match.captures)), last(regex_match.offsets)
+        interpolate, previous = isodd(backslashes), prevind(s, start)
+
+        current < previous && push!(args, s[current:prevind(s, previous, interpolate + backslashes ÷ 2)])
+
+        if interpolate
+            x, current = parse(s, start; filename, greedy = false)
+            isexpr(x, :incomplete) && throw(first(x.args))
+            interpolation = :($TypstString())
+
+            append!(interpolation.args, parse(s[previous:prevind(s, current)]; filename).args[2:end])
+            push!(args, esc(interpolation))
+        else current = start
+        end
+    end
+
+    current > final || push!(args, s[current:final])
+    :(TypstString(TypstText($_s)))
+end
 
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 
