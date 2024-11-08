@@ -96,7 +96,7 @@ end
         @testset "`pointer`" begin end
 
         @testset "`repr`" begin
-            test_pairs((ts, s) -> repr(MIME"text/typst"(), ts) === eval(parse(repr(ts))) === ts)
+            test_pairs((ts, s) -> repr(MIME"text/typst"(), ts) == eval(parse(repr(ts))) == ts)
         end
 
         @testset "`show`" begin end

@@ -15,23 +15,44 @@ const typst_mime = MIME"text/typst"()
 
 """
     TypstString <: AbstractString
+    TypstString(::TypstContext, ::Any)
     TypstString(::Any; context...)
 
 Format the value as a Typst formatted string.
 
-Optional Julia settings and Typst parameters are passed to
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref)
-in an `IOContext`. See also [`show_typst`](@ref) for a list of supported types.
+The [`TypstContext`](@ref) is passed to
+`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`
+as the `IOContext` parameter `:typst_context`.
 
-!!! info
-    This type implements the `String` interface.
-    However, the interface is undocumented, which may result in unexpected behavior.
+# Interface
+
+This type implements the `String` interface.
+However, the interface is undocumented, which may result in unexpected behavior.
+
+- `IOBuffer(::TypstString)`
+- `codeunit(::TypstString, ::Integer)`
+- `codeunit(::TypstString)`
+- `isvalid(::TypstString, ::Integer)`
+- `iterate(::TypstString, ::Integer)`
+- `iterate(::TypstString)`
+- `ncodeunits(::TypstString)`
+- `pointer(::TypstString)`
+- `repr(::MIME, ::TypstString)`
+    - This method patches incorrect output from the assumption in `repr` that
+        the parameter is already in the requested `MIME` type when the `MIME`
+        type satisfies `istextmime` and the parameter is an `AbstractString`.
+- `show(::IO, ::TypstString)`
+    - Print in [`@typst_str`](@ref) format if each character satisfies `isprint`.
+        Otherwise, print in [`TypstString`](@ref) format.
 
 # Examples
 
 ```jldoctest
 julia> TypstString(1)
 typst"\$1\$"
+
+julia> TypstString(TypstContext(; mode = code), π)
+typst"3.141592653589793"
 
 julia> TypstString(1 + 2im; mode = math)
 typst"(1 + 2i)"
@@ -40,134 +61,29 @@ typst"(1 + 2i)"
 struct TypstString <: AbstractString
     text::String
 
-    TypstString(t::Union{Typst, TypstString, TypstText}; context...) =
-        new(sprint(show, typst_mime, t; context = :typst_context => TypstContext(; context...)))
+    TypstString(tc::TypstContext, t::Union{Typst, TypstString, TypstText}) =
+        new(sprint(show, typst_mime, t; context = :typst_context => tc))
 end
 
-TypstString(x; context...) = TypstString(Typst(x); context...)
+TypstString(tc::TypstContext, x) = TypstString(tc, Typst(x))
+TypstString(x; context...) = TypstString(TypstContext(; context...), x)
 
-"""
-    IOBuffer(::TypstString)
-
-See also [`TypstString`](@ref).
-
-# Examples
-
-```jldoctest
-julia> IOBuffer(typst"a")
-IOBuffer(data=UInt8[...], readable=true, writable=false, seekable=true, append=false, size=1, maxsize=Inf, ptr=1, mark=-1)
-```
-"""
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 
-"""
-    codeunit(::TypstString)
-    codeunit(::TypstString, ::Integer)
-
-See also [`TypstString`](@ref).
-
-# Examples
-
-```jldoctest
-julia> codeunit(typst"a")
-UInt8
-
-julia> codeunit(typst"a", 1)
-0x61
-```
-"""
 codeunit(ts::TypstString) = codeunit(ts.text)
 codeunit(ts::TypstString, i::Integer) = codeunit(ts.text, i)
 
-"""
-    isvalid(::TypstString, ::Integer)
-
-See also [`TypstString`](@ref).
-
-# Examples
-
-```jldoctest
-julia> isvalid(typst"a", 1)
-true
-```
-"""
 isvalid(ts::TypstString, i::Integer) = isvalid(ts.text, i::Integer)
 
-"""
-    iterate(::TypstString)
-    iterate(::TypstString, ::Integer)
-
-See also [`TypstString`](@ref).
-
-# Examples
-
-```jldoctest
-julia> iterate(typst"a")
-('a', 2)
-
-julia> iterate(typst"a", 1)
-('a', 2)
-```
-"""
 iterate(ts::TypstString) = iterate(ts.text)
 iterate(ts::TypstString, i::Integer) = iterate(ts.text, i)
 
-"""
-    ncodeunits(::TypstString)
-
-See also [`TypstString`](@ref).
-
-# Examples
-
-```jldoctest
-julia> ncodeunits(typst"a")
-1
-```
-"""
 ncodeunits(ts::TypstString) = ncodeunits(ts.text)
 
-"""
-    pointer(::TypstString)
-
-See also [`TypstString`](@ref).
-"""
 pointer(ts::TypstString) = pointer(ts.text)
 
-"""
-    repr(::MIME, ::TypstString; kwargs...)
+repr(m::MIME, ts::TypstString; context = nothing) = sprint(show, m, ts; context)
 
-See also [`TypstString`](@ref).
-
-!!! info
-    This method patches incorrect output from the assumption in `repr`
-    that the parameter is already in the requested `MIME` type when the
-    `MIME` type satisfies `istextmime` and the parameter is an `AbstractString`.
-
-# Examples
-
-```jldoctest
-julia> repr("text/plain", typst"a")
-"typst\\\"a\\\""
-
-julia> repr("text/typst", typst"a")
-typst"a"
-```
-"""
-repr(::MIME"text/typst", ts::TypstString; kwargs...) = ts
-repr(m::MIME, ts::TypstString; kwargs...) = sprint(show, m, ts; kwargs...)
-
-"""
-    show(::IO, ::TypstString)
-
-See also [`TypstString`](@ref).
-
-# Examples
-
-```jldoctest
-julia> show(stdout, typst"a")
-typst"a"
-```
-"""
 function show(io::IO, ts::TypstString)
     text = ts.text
 

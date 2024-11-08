@@ -15,7 +15,7 @@ Typstry.Strings
 """
 module Strings
 
-import Base: IOBuffer, ==, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show
+import Base: IOBuffer, ==, codeunit, eltype, get, isvalid, iterate, length, ncodeunits, pointer, repr, show
 using ..Typstry: enclose, join_with, set_preference, unwrap
 using .Docs: HTML, Text
 using .Meta: isexpr, parse
