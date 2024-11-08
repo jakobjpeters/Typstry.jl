@@ -190,28 +190,18 @@ math::Mode = 2
 ```
 """ math
 
-"""
+@doc """
     show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString, TypstText})
 
-Print in Typst format.
+Print in Typst format using [`show_typst`](@ref) and
+formatting data specified by a [`TypstContext`](@ref).
 
-This method provides formatting data to [`show_typst`](@ref)
-specified by a default and custom [`context`](@ref).
+The formatting data is given by combining the [`context`](@ref),
+the `TypstContext` constructor implemented for the given type,
+and the `IOContext` key `:typst_context` such that each successive
+context overwrites duplicate keys in previous contexts.
 
-See also [`Typst`](@ref), [`TypstString`](@ref), and [`TypstText`](@ref).
-
-# Examples
-
-```jldoctest
-julia> show(stdout, "text/typst", typst"a")
-a
-
-julia> show(stdout, "text/typst", Typst("a"))
-"a"
-
-julia> show(stdout, "text/typst", Typst(Text("a")))
-#"a"
-```
+See also [`TypstString`](@ref) and [`TypstText`](@ref).
 """
 show(io::IO, ::MIME"text/typst", t::Union{Typst, TypstString, TypstText}) =
     _show_typst(io, t)
