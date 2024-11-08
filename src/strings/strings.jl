@@ -1,34 +1,5 @@
 
 """
-    Strings
-
-The Julia to Typst interface,
-a custom string corresponding to Typst source text,
-and its implementation of the `String` interface.
-
-# Examples
-
-```jldoctest
-julia> Typstry.Strings
-Typstry.Strings
-```
-"""
-module Strings
-
-import Base: show
-using Dates: Date, DateTime, Day, Period, Time
-using ..Typstry: Utilities
-using .Utilities: ContextErrors
-using .ContextErrors: unwrap
-using .Docs: HTML, Text
-using .Meta: isexpr, parse
-using PrecompileTools: @compile_workload
-
-export compile_workload
-
-# `Typstry`
-
-"""
     Mode
 
 An `Enum`erated type used to specify that the current Typst syntactical
@@ -87,14 +58,9 @@ struct TypstText{T}
     value::T
 end
 
-include("TypstContexts.jl")
-using .TypstContexts: TypstContext, context
-
-include("TypstStrings.jl")
-using .TypstStrings: TypstString
-
-include("ShowTypst.jl")
-using .ShowTypst: _show_typst
+include("typst_context.jl")
+include("typst_string.jl")
+include("show_typst.jl")
 
 """
     @typst_str("s")
@@ -267,5 +233,3 @@ get!(context.context, :preamble, TypstString(TypstText("""
 #set page(margin: 1em, height: auto, width: auto, fill: white)
 #set text(16pt, font: "JuliaMono")
 """)))
-
-end # Strings

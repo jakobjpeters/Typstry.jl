@@ -1,9 +1,5 @@
 
-module Utilities
-
-using .Iterators: Stateful
-
-include("ContextErrors.jl")
+include("context_error.jl")
 
 """
     enclose(f, io, x, left, right = reverse(left); kwargs...)
@@ -13,7 +9,7 @@ Call `f(io,\u00A0x;\u00A0kwargs...)` between printing `left` and `right`, respec
 # Examples
 
 ```jldoctest
-julia> Typstry.Utilities.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
+julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
 \$ 1x \$
 ```
 """
@@ -31,7 +27,7 @@ Similar to `join`, except printing with `f(io, x; kwargs...)`.
 # Examples
 
 ```jldoctest
-julia> Typstry.Utilities.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
+julia> Typstry.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
 -1x, -2x, -3x, -4x
 ```
 """
@@ -43,5 +39,3 @@ function join_with(f, io, xs, delimeter; kwargs...)
         isempty(_xs) || print(io, delimeter)
     end
 end
-
-end # Utilities

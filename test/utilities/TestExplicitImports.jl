@@ -13,7 +13,7 @@ using ExplicitImports:
 using Test: @test
 
 @test isnothing(check_all_explicit_imports_are_public(Typstry;
-    ignore = (:Strings, :MD, :Stateful, :parse)))
+    ignore = (:MD, :Stateful, :compile_workload, :parse, :show_raw)))
 
 for check in [
     check_all_explicit_imports_via_owners,

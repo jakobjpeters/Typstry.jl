@@ -1,8 +1,4 @@
 
-module ContextErrors
-
-import Base: showerror, show
-
 """
     ContextError <: Exception
     ContextError(::Type, ::Type, ::Symbol)
@@ -46,5 +42,3 @@ function unwrap(x, type::Type, key)
     value = x[key]
     _unwrap(type, key, value)
 end
-
-end # ContextErrors

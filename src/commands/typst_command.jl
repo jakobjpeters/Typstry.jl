@@ -1,13 +1,4 @@
 
-module TypstCommands
-
-import Base:
-    ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus,
-    iterate, keys, lastindex, length, run, setcpuaffinity, setenv, show
-import Typst_jll
-using ..Commands: Utilities, typst_command_error
-using .Utilities: enclose, join_with
-
 """
     apply(f, tc, args...; kwargs...)
 """
@@ -129,5 +120,3 @@ function show(io::IO, ::MIME"text/plain", tc::TypstCommand)
         io, parameters, " "), io, tc.parameters, "typst`", "`") :
         print(TypstCommand, "(", parameters, ")")
 end
-
-end # TypstCommands

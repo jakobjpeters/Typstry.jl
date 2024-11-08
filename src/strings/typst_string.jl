@@ -1,9 +1,4 @@
 
-module TypstStrings
-
-import Base: IOBuffer, codeunit, isvalid, iterate, ncodeunits, pointer, repr, show
-using ..Strings: TypstContexts.TypstContext, Typst, TypstText
-
 """
     typst_mime
 
@@ -12,7 +7,7 @@ Equivalent to `MIME"text/typst"()`.
 # Examples
 
 ```jldoctest
-julia> Typstry.Strings.TypstStrings.typst_mime
+julia> Typstry.typst_mime
 MIME type text/typst
 ```
 """
@@ -26,7 +21,7 @@ Print `\\` to `io` `n` times.
 # Examples
 
 ```jldoctest
-julia> Typstry.Strings.TypstStrings.escape(stdout, 2)
+julia> Typstry.escape(stdout, 2)
 \\\\
 ```
 """
@@ -135,5 +130,3 @@ function show(io::IO, ts::TypstString)
         print(io, "))")
     end
 end
-
-end # TypstStrings

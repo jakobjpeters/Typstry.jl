@@ -3,8 +3,7 @@ module MarkdownExtension
 
 import Typstry: show_typst
 using Markdown: MD, @md_str
-using Typstry: Strings
-using .Strings: ShowTypst.show_raw, compile_workload
+using Typstry: compile_workload, show_raw
 
 # Strings
 

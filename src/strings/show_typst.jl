@@ -1,21 +1,10 @@
 
-module ShowTypst
-
-using Dates:
-    Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
-    day, hour, minute, month, second, year
-using ..Strings:
-    TypstContexts, Utilities, TypstStrings.TypstString, Typst, TypstText,
-    code, markup, math, ContextErrors.unwrap
-using .TypstContexts: TypstContext, context, default_context, merge_contexts!
-using .Utilities: enclose, join_with
-
 """
     code_mode(io, tc)
 
 Print the number sign, unless `mode(tc) == code`.
 
-See also [`Mode`](@ref) and [`mode`](@ref Typstry.Strings.mode).
+See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
 """
 code_mode(io, tc) = if mode(tc) ≠ code print(io, "#") end
 
@@ -33,7 +22,7 @@ math_mode(f, io, tc, x; kwargs...) = enclose(f, io, x, math_pad(tc); kwargs...)
     math_pad(tc)
 
 Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
-[`block`](@ref Typstry.Strings.block) and [`mode`](@ref Typstry.Strings.mode) settings.
+[`block`](@ref Typstry.block) and [`mode`](@ref Typstry.mode) settings.
 """
 math_pad(tc) =
     if mode(tc) == math ""
@@ -126,10 +115,10 @@ date_time(::DateTime) = year, month, day, hour, minute, second
 # Examples
 
 ```jldoctest
-julia> Typstry.Strings.ShowTypst.duration(Dates.Day(1))
+julia> Typstry.duration(Dates.Day(1))
 :days
 
-julia> Typstry.Strings.ShowTypst.duration(Dates.Hour(1))
+julia> Typstry.duration(Dates.Hour(1))
 :hours
 ```
 """
@@ -145,10 +134,10 @@ duration(::Week) = :weeks
 # Examples
 
 ```jldoctest
-julia> Typstry.Strings.ShowTypst.dates(Dates.Date(1))
+julia> Typstry.dates(Dates.Date(1))
 ("datetime", (:year, :month, :day), (1, 1, 1))
 
-julia> Typstry.Strings.ShowTypst.dates(Dates.Day(1))
+julia> Typstry.dates(Dates.Day(1))
 ("duration", (:days,), (TypstText{String}("1"),))
 ```
 """
@@ -350,5 +339,3 @@ Some settings, such as `block`, correspond with a parameter but may also be used
 | `Dates.Period`                                            | `:mode`, `:indent`                       |                                                         |
 | `Dates.Time`                                              | `:mode`, `:indent`                       |                                                         |
 """ show_typst
-
-end # ShowTypst
