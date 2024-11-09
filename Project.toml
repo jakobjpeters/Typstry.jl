@@ -8,7 +8,6 @@ Artifacts = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-Preferences = "21216c6a-2e73-6563-6e65-726566657250"
 Typst_jll = "eb4b1da6-20f6-5c66-9826-fdb8ad410d0e"
 
 [weakdeps]
@@ -22,6 +21,5 @@ MarkdownExtension = "Markdown"
 [compat]
 LaTeXStrings = "1.1"
 PrecompileTools = "1.0.1"
-Preferences = "1.0"
 Typst_jll = "0.7, 0.8 - 0.13"
 julia = "1.10"

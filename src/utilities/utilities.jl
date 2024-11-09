@@ -201,6 +201,11 @@ math_pad(tc) =
     end
 
 """
+    merge_contexts!(tc, context)
+"""
+merge_contexts!(tc, context) = mergewith!((x, _) -> x, tc.context, context)
+
+"""
     show_array(io, x)
 """
 show_array(io, x) = enclose(io, x, "(", ")") do io, x

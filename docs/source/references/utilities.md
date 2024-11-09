@@ -9,5 +9,5 @@ math
 ContextError
 TypstContext
 context
-set_context
+reset_context
 ```

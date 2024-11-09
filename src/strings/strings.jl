@@ -23,10 +23,17 @@ base_type(::Typst) = Typst
     base_type(x)
 """ base_type
 
-get!(context.context, :preamble, typst"""
-#set page(margin: 1em, height: auto, width: auto, fill: white)
-#set text(16pt, font: "JuliaMono")
-""")
+merge!(default_context, TypstContext(;
+    backticks = 3,
+    block = false,
+    depth = 0,
+    mode = markup,
+    parenthesize = true,
+    preamble = TypstString(TypstText(
+    "#set page(margin: 1em, height: auto, width: auto, fill: white)\n#set text(16pt, font: \"JuliaMono\")\n")),
+    tab_size = 2
+))
+reset_context()
 
 for (key, value) in pairs(context)
     @eval begin
