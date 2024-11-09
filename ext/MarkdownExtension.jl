@@ -3,7 +3,7 @@ module MarkdownExtension
 
 import Typstry: show_typst
 using Markdown: MD, @md_str
-using Typstry: compile_workload, show_raw
+using Typstry: TypstContext, compile_workload, show_raw
 
 """
     show_typst(::IO, ::TypstContext, ::Markdown.MD)
@@ -16,7 +16,7 @@ See also [`TypstContext`](@ref Typstry.TypstContext).
 |:--------------|:-----------------------------------------|:-----------|
 | `Markdown.MD` | `:block`, `:depth`, `:mode`, `:tab_size` |            |
 """
-show_typst(io, tc, x::MD) = show_raw(io, tc, x, "markdown") do io, x
+show_typst(io::IO, tc::TypstContext, x::MD) = show_raw(io, tc, x, "markdown") do io, x
     buffer = IOBuffer()
 
     print(buffer, x)

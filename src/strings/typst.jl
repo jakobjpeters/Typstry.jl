@@ -35,4 +35,4 @@ Call [`show_typst`](@ref) on the value wrapped in [`Typst`](@ref).
 
 See also [`TypstContext`](@ref).
 """
-show_typst(io, tc, x::Typst) = _show_typst(io, tc, x.value)
+show_typst(io::IO, tc::TypstContext, x::Typst) = _show_typst(io, tc, x.value)

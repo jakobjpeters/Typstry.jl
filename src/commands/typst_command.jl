@@ -59,8 +59,8 @@ mutable struct TypstCommand
 end
 
 """
-    @typst_cmd("s")
-    typst`s`
+    @typst_cmd("")
+    typst``
 
 Construct a [`TypstCommand`](@ref) where each parameter is separated by a space.
 

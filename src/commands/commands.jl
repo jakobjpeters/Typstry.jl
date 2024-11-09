@@ -30,11 +30,11 @@ render!(tc) = merge_contexts!(tc, context)
 
 """
     render(value;
-        input = "input.typ",
-        output = "output.pdf",
-        open = true,
-        ignorestatus = true,
-        context = TypstContext()
+        input::AbstractString = "input.typ",
+        output::AbstractString = "output.pdf",
+        open::Bool = true,
+        ignorestatus::Bool = true,
+        context::TypstContext = TypstContext()
     )
 
 Render the `value` to a document.
@@ -56,11 +56,11 @@ julia> render(Any[true 1; 1.2 1 // 2]);
 ```
 """
 function render(value;
-    input = "input.typ",
-    output = "output.pdf",
-    open = true,
-    ignorestatus = true,
-    context = TypstContext()
+    input::AbstractString = "input.typ",
+    output::AbstractString = "output.pdf",
+    open::Bool = true,
+    ignorestatus::Bool = true,
+    context::TypstContext = TypstContext()
 )
     Base.open(input; truncate = true) do file
         tc = render!(context)
@@ -74,7 +74,7 @@ function render(value;
 end
 
 """
-    typst(::AbstractString; catch_interrupt = true, ignorestatus = true)
+    typst(::AbstractString; catch_interrupt::Bool = true, ignorestatus::Bool = true)
 
 Convenience function intended for interactive use, emulating the typst
 command line interface. Be aware, however, that it strictly splits
@@ -87,7 +87,7 @@ When `ignorestatus` is true, a Typst failure will not imply a julia error.
 If the `"TYPST_FONT_PATHS"` environment variable is not set,
 it is temporarily set to [`julia_mono`](@ref).
 """
-function typst(parameters::AbstractString; catch_interrupt = true, ignorestatus = true)
+function typst(parameters::AbstractString; catch_interrupt::Bool = true, ignorestatus::Bool = true)
     tc = addenv(TypstCommand(TypstCommand(split(parameters)); ignorestatus),
         "TYPST_FONT_PATHS" => get(ENV, "TYPST_FONT_PATHS", julia_mono))
     if catch_interrupt

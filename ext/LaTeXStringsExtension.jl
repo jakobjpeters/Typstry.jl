@@ -3,7 +3,7 @@ module LaTeXStringsExtension
 
 import Typstry: show_typst
 using LaTeXStrings: LaTeXString, @L_str
-using Typstry: compile_workload, show_raw
+using Typstry: TypstContext, compile_workload, show_raw
 
 """
     show_typst(::IO, ::TypstContext, ::LaTeXString)
@@ -16,7 +16,7 @@ See also [`TypstContext`](@ref Typstry.TypstContext).
 |:--------------|:-----------------------------------------|:-----------|
 | `LaTeXString` | `:block`, `:depth`, `:mode`, `:tab_size` |            |
 """
-show_typst(io, tc, x::LaTeXString) = show_raw(print, io, tc, x, "latex")
+show_typst(io::IO, tc::TypstContext, x::LaTeXString) = show_raw(print, io, tc, x, "latex")
 
 const examples = [L"a" => LaTeXString]
 

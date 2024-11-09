@@ -60,8 +60,8 @@ TypstString(tc::TypstContext, x) = TypstString(tc, Typst(x))
 TypstString(x; context...) = TypstString(TypstContext(; context...), x)
 
 """
-    @typst_str("s")
-    typst"s"
+    @typst_str("")
+    typst""
 
 Construct a [`TypstString`](@ref).
 
@@ -126,7 +126,7 @@ end
 """
     show_typst(::IO, ::TypstContext, ::TypstString)
 """
-show_typst(io, tc, x::TypstString) = print(io, x)
+show_typst(io::IO, tc::TypstContext, x::TypstString) = print(io, x)
 
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 

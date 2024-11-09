@@ -37,4 +37,4 @@ Call `print` the value wrapped in [`TypstText`](@ref).
 
 See also [`TypstContext`](@ref).
 """
-show_typst(io, _, tt::TypstText) = print(io, tt.value)
+show_typst(io::IO, ::TypstContext, tt::TypstText) = print(io, tt.value)

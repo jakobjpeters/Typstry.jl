@@ -9,7 +9,7 @@ TypstText
 Typst
 @typst_str
 show_typst
-show_typst(::Any, ::Any, ::TypstString)
-show_typst(::Any, ::Any, ::TypstText)
-show_typst(::Any, ::Any, ::Typst)
+show_typst(::IO, ::TypstContext, ::TypstString)
+show_typst(::IO, ::TypstContext, ::TypstText)
+show_typst(::IO, ::TypstContext, ::Typst)
 ```
