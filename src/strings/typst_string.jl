@@ -6,9 +6,7 @@
 
 Format the value as a Typst formatted string.
 
-The [`TypstContext`](@ref) is passed to
-`show(::IO,\u00A0::MIME"text/typst",\u00A0::Any)`
-as the `IOContext` parameter `:typst_context`.
+The [`TypstContext`](@ref) is combined with additional context and passed to [`show_typst`](@ref).
 
 # Interface
 
@@ -27,9 +25,15 @@ However, the interface is undocumented, which may result in unexpected behavior.
     - This method patches incorrect output from the assumption in `repr` that
         the parameter is already in the requested `MIME` type when the `MIME`
         type satisfies `istextmime` and the parameter is an `AbstractString`.
+- `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstString)`
+- `show(::IO,\u00A0::MIME"text/typst",\u00A0::TypstString)`
+    - Accepts a `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
 - `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstString)`
+    - Accepts a `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
+    - Supports the [`julia_mono`](@ref) typeface
+    - The generated Typst source text contains the context's `preamble` and the formatted value
 - `show(::IO,\u00A0::TypstString)`
-    - Print in [`@typst_str`](@ref) format if each character satisfies `isprint`.
+    - Prints in [`@typst_str`](@ref) format if each character satisfies `isprint`.
         Otherwise, print in [`TypstString`](@ref) format.
 
 # Examples
@@ -69,7 +73,7 @@ Interpolation syntax may be escaped in the same manner as quotation marks.
 
 !!! tip
     Print directly to an `IO` using
-    [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
+    `show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`.
 
     See also the performance tip to [Avoid string interpolation for I/O]
     (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
@@ -118,6 +122,11 @@ macro typst_str(s::String)
     current > final || push!(args, s[current:final])
     :(TypstString(TypstText($_s)))
 end
+
+"""
+    show_typst(::IO, ::TypstContext, ::TypstString)
+"""
+show_typst(io, tc, x::TypstString) = print(io, x)
 
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 

@@ -3,7 +3,7 @@
     ContextError <: Exception
     ContextError(::Type, ::Type, ::Symbol)
 
-An `Exception` indicating that a [`context`](@ref) key returned a value of an incorrect type.
+An `Exception` indicating that a context key returned a value of an incorrect type.
 
 # Interface
 

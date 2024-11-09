@@ -14,7 +14,6 @@ However, the interface is undocumented, which may result in unexpected behavior.
 
 - `addenv(::TypstCommand,\u00A0env...;\u00A0::Bool\u00A0=\u00A0true)`
     - Can be used with [`julia_mono`](@ref)
-    - `addenv(::TypstCommand,\u00A0"TYPST_FONT_PATHS"\u00A0=>\u00A0julia_mono)`
 - `detach(::TypstCommand)`
 - `eltype(::Type{TypstCommand})`
 - `firstindex(::TypstCommand)`
@@ -33,11 +32,10 @@ However, the interface is undocumented, which may result in unexpected behavior.
 - `run(::TypstCommand,\u00A0args...;\u00A0::Bool\u00A0=\u00A0true)`
     - Errors thrown by the Typst compiler will be printed to `stderr`.
         Then, a Julia [`TypstCommandError`](@ref) will be
-        thrown unless the [`ignorestatus`](@ref) flag is set.
+        thrown unless the `ignorestatus` flag is set.
 - `setcpuaffinity(::TypstCommand,\u00A0cpus)`
 - `setenv(::TypstString,\u00A0env...;\u00A0kwargs...)`
-    - Can be used with [`julia_mono`](@ref)
-    - `setenv(::TypstCommand,\u00A0"TYPST_FONT_PATHS"\u00A0=>\u00A0julia_mono)`
+    - Can be used with `julia_mono`
 - `show(::IO,\u00A0::MIME"text/plain",\u00A0::TypstCommand)`
 
 # Examples

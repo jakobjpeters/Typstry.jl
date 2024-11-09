@@ -1,5 +1,7 @@
 
 include("context_error.jl")
+include("mode.jl")
+include("typst_context.jl")
 
 """
     typst_mime
@@ -197,11 +199,6 @@ math_pad(tc) =
     if mode(tc) == math ""
     else block(tc) ? "\$ " : "\$"
     end
-
-"""
-    merge_contexts(tc, context)
-"""
-merge_contexts!(tc, context) = mergewith!((x, _) -> x, tc.context, context)
 
 """
     show_array(io, x)

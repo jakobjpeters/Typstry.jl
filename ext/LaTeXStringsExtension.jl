@@ -6,9 +6,11 @@ using LaTeXStrings: LaTeXString, @L_str
 using Typstry: compile_workload, show_raw
 
 """
-    show_typst(io, ::LaTeXString)
+    show_typst(::IO, ::TypstContext, ::LaTeXString)
 
-Print in Typst format for LaTeXStrings.jl.
+Print a raw text block in Typst format.
+
+See also [`TypstContext`](@ref Typstry.TypstContext).
 
 | Type          | Settings                                 | Parameters |
 |:--------------|:-----------------------------------------|:-----------|

@@ -3,52 +3,50 @@
 
 This reference documents non-public utilities.
 
+!!! info
+    A Dates.jl package extension would currently print warnings during precompilation.
+    See also the [Julia issue #52511](https://github.com/JuliaLang/julia/issues/52511)
+
 ```@docs
+Typstry.examples
+```
+
+## Utilities.jl
+
+```@docs
+Typstry.typst_mime
+Typstry.apply
 Typstry.compile_workload
+Typstry.code_mode
+Typstry.date_time
+Typstry.dates
+Typstry.default_context
+Typstry.duration
+Typstry.enclose
+Typstry.escape
+Typstry.indent
+Typstry.format
+Typstry.join_with
+Typstry.math_mode
+Typstry.math_pad
+Typstry.merge_contexts!
+Typstry.show_array
+Typstry.show_parameters
+Typstry.show_raw
+Typstry.show_vector
+Typstry.typst_context
 Typstry.unwrap
 ```
 
 ## Strings
 
 ```@docs
-Typstry.Strings
-Typstry.Strings.examples
-Typstry.Strings.typst_mime
-Typstry.Strings.backticks
-Typstry.Strings.block
-Typstry.Strings.code_mode
-Typstry.Strings.depth
-Typstry.Strings.enclose
-Typstry.Strings.escape
-Typstry.Strings.indent
-Typstry.Strings.join_with
-Typstry.Strings.math_mode
-Typstry.Strings.math_pad
-Typstry.Strings.mode
-Typstry.Strings.parenthesize
-Typstry.Strings.show_array
-Typstry.Strings.show_parameters
-Typstry.Strings.show_raw
-Typstry.Strings.show_vector
-```
-
-### Dates.jl
-
-!!! info
-    A Dates.jl package extension would currently print warnings during precompilation.
-    See also the [Julia issue #52511](https://github.com/JuliaLang/julia/issues/52511)
-
-```@docs
-Typstry.Strings.date_time
-Typstry.Strings.duration
-Typstry.Strings.dates
-```
-
-## Commands
-
-```@docs
-Typstry.Commands
-Typstry.Commands.default_preamble
-Typstry.Commands.apply
-Typstry.Commands.format
+Typstry.backticks
+Typstry.base_type
+Typstry.block
+Typstry.depth
+Typstry.mode
+Typstry.parenthesize
+Typstry.preamble
+Typstry.tab_size
 ```

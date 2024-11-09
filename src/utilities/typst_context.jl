@@ -8,6 +8,30 @@ Provide formatting data for [`show_typst`](@ref).
 
 Implement a method of this constructor for a custom type to specify its custom settings and parameters.
 
+Calls to [`show_typst`](@ref) from the following methods:
+
+- [`TypstString`](@ref)
+- [`render`](@ref)
+- `show_typst(::IO,\u00A0::TypstContext,\u00A0x)`
+- `show` with the `application/pdf`, `image/png`, `image/svg+xml`, and `text/typst`
+    `MIME` types and a `TypstString`, `TypstText`, and `Typst` value
+
+specify the [`TypstContext`](@ref) by combining the following contexts:
+
+1. A default [`context`](@ref)
+2. The context specified by [`set_context`](@ref),
+    which is combined with the `context` upon initialization
+3. The `TypstContext` constructor implemented for the given type,
+    the context specified in the call by keyword parameters,
+    a given `TypstContext`, or the `IOContext` key `:typst_context`,
+    depending on the calling method
+4. Any context specified by a recursive call in `show_typst` to format values,
+    such as elements from a container
+
+Duplicate keys are handled such that each successive context overwrites
+those of previous contexts, prioritized in order as listed.
+In other words, the default `context` has the lowest priority while
+recursive calls to `show_typst` have the highest priority.
 # Interfaces
 
 This type implements the dictionary and iteration interfaces.
@@ -64,6 +88,11 @@ const default_context = TypstContext(;
 )
 
 """
+    merge_contexts!(tc, context)
+"""
+merge_contexts!(tc, context) = mergewith!((x, _) -> x, tc.context, context)
+
+"""
     context
 
 A `const`ant [`TypstContext`](@ref) used default formatting data when calling [`show_typst`](@ref).
@@ -118,5 +147,9 @@ the [`context`](@ref) is initialized to the given
 
 Specifying a key contained in the default settings will override it.
 If a `TypstContext` is not provided, the `context` is reset to the default settings.
+
+!!! tip
+    Use this function to customize the default formatting in environments that display values using
+    `show` with the `application/pdf`, `image/png`, and `image/svg+xml` `MIME` types.
 """
 set_context

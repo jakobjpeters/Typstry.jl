@@ -1,32 +1,27 @@
 
-include("types.jl")
-include("typst_context.jl")
-include("typst_string.jl")
 include("show_typst.jl")
+include("typst_text.jl")
+include("typst.jl")
+include("typst_string.jl")
 
-"""
-    show(::IO, ::MIME"text/typst", ::Union{Typst, TypstString, TypstText})
+_show(io::IOContext, x) = _show_typst(io, typst_context(io), x)
+_show(io::IO, x) = _show_typst(io, x)
 
-Print in Typst format using [`show_typst`](@ref) and
-formatting data specified by a [`TypstContext`](@ref).
+show(io::IO, ::MIME"text/typst", x::Union{Typst, TypstString, TypstText}) =
+    _show(io, x)
 
-The formatting data is given by combining the [`context`](@ref),
-the `TypstContext` constructor implemented for the given type,
-and the `IOContext` key `:typst_context` such that each successive
-context overwrites duplicate keys in previous contexts.
-
-See also [`TypstString`](@ref) and [`TypstText`](@ref).
-"""
-show(io::IO, ::MIME"text/typst", t::Union{Typst, TypstString, TypstText}) =
-    _show_typst(io, t)
-show(io::IOContext, ::MIME"text/typst", t::Union{Typst, TypstString, TypstText}) =
-    _show_typst(io, typst_context(io), t)
-
-function show(io::IO, x::T) where T <: Union{TypstText, Typst}
-    print(io, nameof(T), "(")
+function show(io::IO, x::Union{TypstText, Typst})
+    print(io, base_type(x), "(")
     show(io, x.value)
     print(io, ")")
 end
+
+base_type(::TypstText) = TypstText
+base_type(::Typst) = Typst
+
+@doc """
+    base_type(x)
+""" base_type
 
 get!(context.context, :preamble, typst"""
 #set page(margin: 1em, height: auto, width: auto, fill: white)
