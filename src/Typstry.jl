@@ -2,8 +2,9 @@
 module Typstry
 
 import Base:
-    IOBuffer, ==, addenv, codeunit, detach, eltype, firstindex, getindex, get, hash, ignorestatus, isvalid, iterate,
-    keys, lastindex, length, ncodeunits, pointer, repr, run, setcpuaffinity, setenv, showerror, show
+    IOBuffer, ==, addenv, codeunit, copy, detach, eltype, firstindex, getindex, getkey, get,
+    hash, ignorestatus, isvalid, iterate, keys, lastindex, length, mergewith, merge!, merge,
+    ncodeunits, pointer, repr, run, setcpuaffinity, setenv, setindex!, showerror, show, sizehint!
 import Typst_jll
 using Artifacts: @artifact_str
 using Dates:
@@ -13,7 +14,6 @@ using .Docs: HTML, Text
 using .Iterators: Stateful
 using .Meta: isexpr, parse
 using PrecompileTools: @compile_workload
-using Preferences: @load_preference, @set_preferences!
 
 include("utilities/utilities.jl")
 include("strings/strings.jl")
@@ -23,7 +23,7 @@ export
     ContextError, Mode, TypstCommandError, TypstCommand,
     TypstContext, TypstString, TypstText, Typst,
     @typst_cmd, @typst_str, code, context, julia_mono,
-    markup, math, render, set_context, show_typst, typst
+    markup, math, render, reset_context, show_typst, typst
 
 """
     examples

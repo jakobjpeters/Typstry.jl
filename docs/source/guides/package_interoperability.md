@@ -10,7 +10,7 @@ IJulia.jl, Pluto.jl, and QuartoNotebookRunner.jl each display
 `show` with the `application/pdf`, `image/png`, and `image/svg+xml` `MIME` types.
 
 !!! tip
-    Use [`set_context`](@ref) to customize the default formatting in these environments.
+    Set mappings in [`context`](@ref) to customize the default formatting in these environments.
 
 ## Typst Packages
 

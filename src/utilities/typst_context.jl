@@ -18,11 +18,9 @@ Calls to [`show_typst`](@ref) from the following methods:
 
 specify the [`TypstContext`](@ref) by combining the following contexts:
 
-1. A default [`context`](@ref)
-2. The context specified by [`set_context`](@ref),
-    which is combined with the `context` upon initialization
-3. The `TypstContext` constructor implemented for the given type,
-    the context specified in the call by keyword parameters,
+1. The [`context`](@ref)
+2. Any context specified by implementing the `TypstContext` constructor for the given type
+3. The context specified in the call by keyword parameters,
     a given `TypstContext`, or the `IOContext` key `:typst_context`,
     depending on the calling method
 4. Any context specified by a recursive call in `show_typst` to format values,
@@ -32,18 +30,26 @@ Duplicate keys are handled such that each successive context overwrites
 those of previous contexts, prioritized in order as listed.
 In other words, the default `context` has the lowest priority while
 recursive calls to `show_typst` have the highest priority.
+
 # Interfaces
 
 This type implements the dictionary and iteration interfaces.
-However, it is immutable such that it does not support inserting, deleting, or setting a key-value pair.
+However, it does not support removing mappings.
 
+- `copy(::TypstContext)`
 - `eltype(::TypstContext)`
-- `get(::TypstContext,\u00A0::Symbol,\u00A0default)`
-- `get(::Union{Function, Type},\u00A0::TypstContext,\u00A0::Symbol)`
+- `getkey(::TypstContext, ::Any, ::Any)`
+- `get(::TypstContext,\u00A0::Any,\u00A0::Any)`
+- `get(::Union{Function, Type},\u00A0::TypstContext,\u00A0::Any)`
 - `iterate(::TypstContext,\u00A0state)`
 - `iterate(::TypstContext)`
 - `length(::TypstContext)`
+- `mergewith(::Any, ::TypstContext, ::AbstractDict...)`
+- `merge!(::TypstContext, ::AbstractDict...)`
+- `merge(::TypstContext, ::AbstractDict...)`
+- `setindex!(::TypstContext, ::Any, ::Any)`
 - `show(::IO,\u00A0::TypstContext)`
+- `sizehint!(::TypstContext, ::Any)`
 """
 struct TypstContext <: AbstractDict{Symbol, Any}
     context::Dict{Symbol, Any}
@@ -53,15 +59,27 @@ end
 
 TypstContext(_) = TypstContext()
 
+copy(tc::TypstContext) = merge!(TypstContext(), tc)
+
 eltype(tc::TypstContext) = eltype(tc.context)
 
-get(tc::TypstContext, key::Symbol, default) = get(tc.context, key, default)
-get(f::Union{Function, Type}, tc::TypstContext, key::Symbol) = get(f, tc.context, key)
+getkey(tc::TypstContext, key, default) = getkey(tc.context, key, default)
+
+get(tc::TypstContext, key, default) = get(tc.context, key, default)
+get(f::Union{Function, Type}, tc::TypstContext, key) = get(f, tc.context, key)
 
 iterate(tc::TypstContext, state) = iterate(tc.context, state)
 iterate(tc::TypstContext) = iterate(tc.context)
 
 length(tc::TypstContext) = length(tc.context)
+
+mergewith(combine, tc::TypstContext, ds::AbstractDict...) = mergewith!(combine, copy(tc), ds)
+
+merge!(tc::TypstContext, ds::AbstractDict...) = (merge!(tc.context, ds...); tc)
+
+merge(tc::TypstContext, ds::AbstractDict...) = merge!(copy(tc), ds...)
+
+setindex!(tc::TypstContext, value, key) = (tc.context[key] = value; tc)
 
 function show(io::IO, tc::TypstContext)
     print(io, TypstContext, "(")
@@ -75,29 +93,25 @@ function show(io::IO, tc::TypstContext)
     print(io, ")")
 end
 
+sizehint!(tc::TypstContext, n) = sizehint!(tc.context, n)
+
 """
     default_context
 """
-const default_context = TypstContext(;
-    backticks = 3,
-    block = false,
-    depth = 0,
-    mode = markup,
-    parenthesize = true,
-    tab_size = 2
-)
-
-"""
-    merge_contexts!(tc, context)
-"""
-merge_contexts!(tc, context) = mergewith!((x, _) -> x, tc.context, context)
+const default_context = TypstContext()
 
 """
     context
 
-A `const`ant [`TypstContext`](@ref) used default formatting data when calling [`show_typst`](@ref).
+A `const`ant [`TypstContext`](@ref) used to provide
+default formatting data when calling [`show_typst`](@ref).
 
-May be configured using [`set_context`](@ref).
+See also [`reset_context`](@ref).
+
+!!! tip
+    Set mappings in this dictionary to customize the default formatting
+    in environments that display values using `show` with the
+    `application/pdf`, `image/png`, and `image/svg+xml` `MIME` types.
 
 | Setting        | Type                  | Description                                                                                                                                                                       |
 |:---------------|:----------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -123,33 +137,30 @@ TypstContext with 7 entries:
   :depth        => 0
 ```
 """
-const context = let
-    tc = @load_preference "context" TypstContext()
-    merge_contexts!(tc, default_context)
-    tc
-end
-
-function _set_context(value)
-    @set_preferences! "context" value
-    @info "Restart Julia to reinitialize the `context`"
-end
-
-set_context(tc::TypstContext) = _set_context(tc)
-set_context() = _set_context(nothing)
+const context = TypstContext()
 
 """
-    set_context(::TypstContext)
-    set_context()
+    reset_context()
 
-Use Preferences.jl such that after restarting Julia,
-the [`context`](@ref) is initialized to the given
-[`TypstContext`](@ref) merged with default settings.
+Remove any custom mappings from the [`context`](@ref)
+such that it is returned to its default state.
 
-Specifying a key contained in the default settings will override it.
-If a `TypstContext` is not provided, the `context` is reset to the default settings.
+# Examples
 
-!!! tip
-    Use this function to customize the default formatting in environments that display values using
-    `show` with the `application/pdf`, `image/png`, and `image/svg+xml` `MIME` types.
+```jldoctest
+julia> reset_context()
+TypstContext with 7 entries:
+  :mode         => markup
+  :parenthesize => true
+  :block        => false
+  :preamble     => TypstString(TypstText("#set page(margin: 1em, height: auto, …
+  :tab_size     => 2
+  :backticks    => 3
+  :depth        => 0
+```
 """
-set_context
+function reset_context()
+    _context = context.context
+    merge!(empty!(_context), default_context)
+    context
+end
