@@ -3,6 +3,7 @@
 
 ## v0.5.0
 
+- Improved documentation
 - `TypstError` renamed to `TypstCommandError`
 - `TypstContext`
 - `preamble` and `set_preamble` replaced by `context::TypstContext` and `set_context`

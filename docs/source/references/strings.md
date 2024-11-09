@@ -1,27 +1,15 @@
 
 # Strings
 
-```@eval
-using Markdown, Typstry
-Markdown.parse("This reference documents " * lowercasefirst(split(string(@doc Typstry.Strings), "\n")[5]))
-```
+This reference documents formatting Julia values into Typst source text.
 
 ```@docs
-ContextError
-Mode
-Typst
 TypstString
 TypstText
+Typst
 @typst_str
-code
-markup
-math
-context
-show_typst(::Any, ::AbstractChar)
-```
-
-```@docs
-show(::IO, ::MIME"text/plain", ::ContextError)
-show(::IO, ::MIME"text/typst", ::Typst)
-showerror(::IO, ::ContextError)
+show_typst
+show_typst(::Any, ::Any, ::TypstString)
+show_typst(::Any, ::Any, ::TypstText)
+show_typst(::Any, ::Any, ::Typst)
 ```

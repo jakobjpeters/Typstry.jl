@@ -7,8 +7,7 @@ using .DocMeta: setdocmeta!
 using LaTeXStrings: LaTeXString
 using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Markdown: MD
-using Typstry: Strings, preamble
-using .Strings: examples, _show_typst, enclose, join_with, typst_mime
+using Typstry: _show_typst, enclose, examples, join_with, preamble, typst_mime
 using Typstry
 
 const assets = joinpath(@__DIR__, "source", "assets")
@@ -52,7 +51,7 @@ finish()
 open(template; truncate = true) do file
     println(file, "\n#import table: cell, header\n\n#let template(document) = {")
 
-    for x in split(preamble, "\n")
+    for x in split(preamble(context), "\n")
         println(file, "    ", x[2:end])
     end
 
@@ -114,7 +113,7 @@ for (package, examples) in append!([("Typstry", examples)], zip(extensions, _exa
 
             print(file, "\",", v isa Union{Vector, Matrix} ? "\n        " : " ")
             join_with(file, modes, ", ") do file, mode
-                _show_typst(IOContext(file, :mode => code), String(TypstString(v; mode)))
+                _show_typst(file, String(TypstString(v; mode)); mode = code)
                 print(file, ", [")
                 enclose(_show_typst, file, TypstString(v; mode, depth = 2), (
                     if mode == code; ("#", "")
@@ -132,16 +131,12 @@ for (package, examples) in append!([("Typstry", examples)], zip(extensions, _exa
     run(TypstCommand(["compile", "--font-path=" * julia_mono, "--format=svg", path]))
 end
 
-makedocs(; modules,
-    format = Documenter.HTML(edit_link = "main"),
-    pages = [
-        "Typstry.jl" => "index.md",
-        pages("tutorials", ["getting_started"]),
-        pages("guides", ["typst_formatting_examples", "the_julia_to_typst_interface", "package_interoperability"]),
-        pages("references", ["strings", "commands", "package_extensions", "internals"])
-    ],
-    sitename = "Typstry.jl",
-    source = "source"
-)
+makedocs(; modules, format = Documenter.HTML(edit_link = "main"), pages = [
+    "Typstry.jl" => "index.md",
+    pages("tutorials", ["getting_started"]),
+    pages("guides", [
+        "typst_formatting_examples", "the_julia_to_typst_interface", "package_interoperability"
+    ]), pages("references", ["strings", "commands", "utilities", "package_extensions", "internals"])
+], sitename = "Typstry.jl", source = "source")
 
 deploydocs(; devurl = "development", repo = "github.com/jakobjpeters/Typstry.jl.git")

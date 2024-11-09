@@ -7,11 +7,11 @@ This reference documents the lazily-loaded implementations of
 ## LaTeXStrings.jl
 
 ```@docs
-show_typst(::Any, ::LaTeXStrings.LaTeXString)
+show_typst(::Any, ::Any, ::LaTeXStrings.LaTeXString)
 ```
 
 ## Markdown.jl
 
 ```@docs
-show_typst(::Any, ::Markdown.MD)
+show_typst(::Any, ::Any, ::Markdown.MD)
 ```

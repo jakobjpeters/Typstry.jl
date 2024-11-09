@@ -57,7 +57,7 @@ end
 show_typst(io, tc, x::HTML) = show_raw((io, x) -> show(io, MIME"text/html"(), x), io, tc, x, "html")
 show_typst(io, tc, x::Irrational) = mode(tc) == code ?
     _show_typst(io, tc, Float64(x)) :
-    math_mode(print, io, tc, x)
+    math_mode((io, _, x) -> print(io, x), io, tc, x)
 function show_typst(io, tc, ::Nothing)
     code_mode(io, tc)
     print(io, "none")
@@ -90,7 +90,6 @@ function show_typst(io, tc, x::Text)
     code_mode(io, tc)
     _show_typst(io, string(x))
 end
-show_typst(io, tc, x::TypstString) = print(io, x)
 function show_typst(io, tc, x::Unsigned)
     code_mode(io, tc)
     show(io, x)
@@ -146,11 +145,6 @@ Some settings, such as `block`, correspond with a parameter but may also be used
 
 !!! tip
     Please create an issue or pull-request to implement new methods.
-
-!!! info
-    Some types, particularly containers, may call
-    [`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref)
-    to format a value, which may use additional settings and parameters.
 
 | Type                                                      | Settings                                 | Parameters                                              |
 |:----------------------------------------------------------|:-----------------------------------------|:--------------------------------------------------------|

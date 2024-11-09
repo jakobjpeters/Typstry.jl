@@ -3,7 +3,7 @@
     TypstCommandError <: Exception
     TypstCommandError(::TypstCommand)
 
-An `Exception` indicating a failure to [`run`](@ref) a [`TypstCommand`](@ref).
+An `Exception` indicating a Typst compiler error from a [`TypstCommand`](@ref).
 
 # Interface
 

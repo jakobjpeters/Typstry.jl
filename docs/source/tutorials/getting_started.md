@@ -40,7 +40,7 @@ typst"$ π approx 3.141592653589793 $"
 
 ## Commands
 
-Use the Typst command-line interface by [`run`](@ref)ning a
+Use the Typst command-line interface by `run`ning a
 [`TypstCommand`](@ref) created with its constructor or [`@typst_cmd`](@ref).
 
 ```jldoctest 1

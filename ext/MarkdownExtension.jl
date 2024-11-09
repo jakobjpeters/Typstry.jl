@@ -6,9 +6,11 @@ using Markdown: MD, @md_str
 using Typstry: compile_workload, show_raw
 
 """
-    show_typst(io, ::Markdown.MD)
+    show_typst(::IO, ::TypstContext, ::Markdown.MD)
 
-Print in Typst format for Markdown.jl.
+Print a raw text block in Typst format.
+
+See also [`TypstContext`](@ref Typstry.TypstContext).
 
 | Type          | Settings                                 | Parameters |
 |:--------------|:-----------------------------------------|:-----------|

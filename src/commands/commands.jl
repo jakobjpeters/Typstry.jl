@@ -8,8 +8,21 @@ include("typst_command_error.jl")
 A constant `String` file path to the
 [JuliaMono](https://github.com/cormullion/juliamono) typeface.
 
-Use with a [`TypstCommand`](@ref) and one of [`addenv`](@ref),
-[`setenv`](@ref), or the `font-path` Typst command-line option.
+This typeface is available when using one of the following approaches:
+
+- `TypstCommand(["compile", "input.typ", "output.pdf", "--font-path=" * julia_mono)`
+- `addenv(::TypstCommand,\u00A0"TYPST_FONT_PATHS"\u00A0=>\u00A0julia_mono)`
+- `setenv(::TypstCommand,\u00A0"TYPST_FONT_PATHS"\u00A0=>\u00A0julia_mono)`
+- `ENV["TYPST_FONT_PATHS"] = julia_mono`
+
+and when compiling documents with the following methods:
+
+- [`render`](@ref)
+- [`typst`](@ref)
+- `show` with the `application/pdf`, `image/png`, and `image/svg+xml`
+    `MIME` types and a `TypstString`, `TypstText`, and `Typst` value
+
+See also [`TypstCommand`](@ref).
 """
 const julia_mono = artifact"JuliaMono"
 
@@ -24,16 +37,17 @@ render!(tc) = merge_contexts!(tc, context)
         context = TypstContext()
     )
 
-Render to a document using
-[`show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`](@ref).
+Render the `value` to a document.
 
 This first generates the `input` file containing
-the [`preamble`](@ref) and formatted `value`.
+the `preamble` and formatted `value`.
 Then it is compiled to the `output` document,
 whose format is inferred by its file extension to be `pdf`, `png`, or `svg`.
 The document may be automatically `open`ed by the default viewer.
-The [`ignorestatus`](@ref) flag may be set.
+The `ignorestatus` flag may be set.
 This supports using the [`julia_mono`](@ref) typeface.
+
+See also [`TypstContext`](@ref).
 
 # Examples
 
@@ -60,37 +74,6 @@ function render(value;
 end
 
 """
-    show(::IO, ::Union{
-        MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-    }, ::Union{Typst, TypstString, TypstText})
-
-Print the Portable Document Format (PDF), Portable Network Graphics (PNG),
-or Scalable Vector Graphics (SVG) format.
-
-The `preamble` keyword parameter used by [`render`](@ref) may be specified in an `IOContext`.
-Environments, such as Pluto.jl notebooks, may use these methods to `display` values of type
-[`Typst`](@ref), [`TypstString`](@ref), and [`TypstText`](@ref).
-This supports using the [`julia_mono`](@ref) typeface.
-
-# Examples
-
-```jldoctest
-julia> show(IOContext(devnull, :preamble => typst""), "image/svg+xml", Typst(1))
-```
-"""
-function show(io::IO, m::Union{
-    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, t::Union{Typst, TypstString, TypstText})
-    input = tempname()
-    output = input * "." * format(m)
-
-    render(t; input, output, open = false, ignorestatus = false, context = typst_context(io))
-    write(io, read(output))
-
-    nothing
-end
-
-"""
     typst(::AbstractString; catch_interrupt = true, ignorestatus = true)
 
 Convenience function intended for interactive use, emulating the typst
@@ -99,7 +82,7 @@ on spaces and does not provide any shell-style escape mechanism,
 so it will not work if there are, e.g., filenames with spaces.
 
 When `catch_interrupt` is true, CTRL-C quietly quits the command.
-When [`ignorestatus`](@ref) is true, a Typst failure will not imply a julia error.
+When `ignorestatus` is true, a Typst failure will not imply a julia error.
 
 If the `"TYPST_FONT_PATHS"` environment variable is not set,
 it is temporarily set to [`julia_mono`](@ref).
@@ -113,5 +96,17 @@ function typst(parameters::AbstractString; catch_interrupt = true, ignorestatus 
         end
     else run(tc)
     end
+    nothing
+end
+
+function show(io::IO, m::Union{
+    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
+}, t::Union{Typst, TypstString, TypstText})
+    input = tempname()
+    output = input * "." * format(m)
+
+    render(t; input, output, open = false, ignorestatus = false, context = typst_context(io))
+    write(io, read(output))
+
     nothing
 end

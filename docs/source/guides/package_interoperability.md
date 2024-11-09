@@ -5,9 +5,12 @@ This guide illustrates how to use Typstry.jl in compatible notebooks and package
 
 ## Notebooks
 
-IJulia.jl, Pluto.jl, and QuartoNotebookRunner.jl each [`render`](@ref) [`Typst`](@ref)s and [`TypstText`](@ref)s.
-Pluto.jl and QuartoNotebookRunner.jl also `render` [`TypstString`](@ref)s,
-whereas IJulia.jl will support them in its next feature release.
+IJulia.jl, Pluto.jl, and QuartoNotebookRunner.jl each display
+[`TypstString`](@ref)s, [`TypstText`](@ref)s, and [`Typst`](@ref)s using
+`show` with the `application/pdf`, `image/png`, and `image/svg+xml` `MIME` types.
+
+!!! tip
+    Use [`set_context`](@ref) to customize the default formatting in these environments.
 
 ## Typst Packages
 
