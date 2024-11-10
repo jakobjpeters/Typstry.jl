@@ -49,6 +49,8 @@ Typstry.default_context
 Typstry.backticks
 Typstry.base_type
 Typstry.block
+Typstry.io_context
+Typstry.default_io_context
 Typstry.depth
 Typstry.mode
 Typstry.parenthesize

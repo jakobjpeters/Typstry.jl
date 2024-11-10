@@ -17,6 +17,11 @@ function show(io::IO, x::Union{TypstText, Typst})
     print(io, ")")
 end
 
+"""
+    default_io_context
+"""
+const default_io_context = Dict{Symbol, Any}(:compact => true)
+
 base_type(::TypstText) = TypstText
 base_type(::Typst) = Typst
 
@@ -28,6 +33,7 @@ merge!(default_context, TypstContext(;
     backticks = 3,
     block = false,
     depth = 0,
+    io_context = default_io_context,
     mode = markup,
     parenthesize = true,
     preamble = TypstString(TypstText(

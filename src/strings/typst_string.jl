@@ -126,7 +126,7 @@ end
 """
     show_typst(::IO, ::TypstContext, ::TypstString)
 """
-show_typst(io::IO, tc::TypstContext, x::TypstString) = print(io, x)
+show_typst(io::IO, ::TypstContext, x::TypstString) = print(io, x)
 
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 
