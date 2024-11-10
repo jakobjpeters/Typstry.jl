@@ -13,7 +13,7 @@ This type implements the `Cmd` interface.
 However, the interface is undocumented, which may result in unexpected behavior.
 
 - `addenv(::TypstCommand,\u00A0env...;\u00A0::Bool\u00A0=\u00A0true)`
-    - Can be used with [`julia_mono`](@ref)
+    - Can be used with [`julia_mono`](@ref).
 - `detach(::TypstCommand)`
 - `eltype(::Type{TypstCommand})`
 - `firstindex(::TypstCommand)`
@@ -35,7 +35,7 @@ However, the interface is undocumented, which may result in unexpected behavior.
         thrown unless the `ignorestatus` flag is set.
 - `setcpuaffinity(::TypstCommand,\u00A0cpus)`
 - `setenv(::TypstString,\u00A0env...;\u00A0kwargs...)`
-    - Can be used with `julia_mono`
+    - Can be used with `julia_mono`.
 - `show(::IO,\u00A0::MIME"text/plain",\u00A0::TypstCommand)`
 
 # Examples

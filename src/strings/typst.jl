@@ -9,9 +9,9 @@ A wrapper used to pass values to [`show_typst`](@ref).
 
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::Typst)`
 - `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml",\u00A0MIME"text/typst"},\u00A0::Typst)`
-    - Accepts a `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
-    - Supports the [`julia_mono`](@ref) typeface
-    - The generated Typst source text contains the context's `preamble` and the formatted value
+    - Accepts a `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`.
+    - Supports the [`julia_mono`](@ref) typeface.
+    - The generated Typst source text contains the context's `preamble` and the formatted value.
 - `show(::IO,\u00A0::Typst)`
 
 # Examples

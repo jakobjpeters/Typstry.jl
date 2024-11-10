@@ -29,13 +29,12 @@ const julia_mono = artifact"JuliaMono"
 render!(tc) = merge_contexts!(tc, context)
 
 """
-    render(value;
+    render(::TypstContext = TypstContext(; context...), value;
         input::AbstractString = "input.typ",
         output::AbstractString = "output.pdf",
         open::Bool = true,
         ignorestatus::Bool = true,
-        context::TypstContext = TypstContext()
-    )
+    context...)
 
 Render the `value` to a document.
 
@@ -55,16 +54,14 @@ See also [`TypstContext`](@ref).
 julia> render(Any[true 1; 1.2 1 // 2]);
 ```
 """
-function render(value;
+function render(tc::TypstContext, value;
     input::AbstractString = "input.typ",
     output::AbstractString = "output.pdf",
     open::Bool = true,
     ignorestatus::Bool = true,
-    context::TypstContext = TypstContext()
 )
     Base.open(input; truncate = true) do file
-        tc = render!(context)
-        print(file, preamble(tc))
+        print(file, preamble(render!(tc)))
         _show_typst(file, tc, value)
         println(file)
     end
@@ -72,6 +69,12 @@ function render(value;
         ["compile", input, output, "--font-path=$julia_mono", "--open"][begin:(end - !open)]);
     ignorestatus))
 end
+render(value;
+    input::AbstractString = "input.typ",
+    output::AbstractString = "output.pdf",
+    open::Bool = true,
+    ignorestatus::Bool = true,
+context...) = render(TypstContext(; context...), value; input, output, open, ignorestatus)
 
 """
     typst(::AbstractString; catch_interrupt::Bool = true, ignorestatus::Bool = true)
