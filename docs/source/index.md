@@ -50,7 +50,7 @@ typst`help`
 julia> typst`compile input.typ output.pdf`
 typst`compile input.typ output.pdf`
 
-julia> render(1:4);
+julia> render(1:4)
 ```
 
 ## Features

@@ -10,7 +10,9 @@
 - `preamble` and `set_preamble` replaced by `context::TypstContext` and `reset_context`
 - New `TypstString(::TypstContext, ::Any)` constructor
 - `repr(::MIME"text/typst", ::TypstString)` now returns a `String` instead of a `TypstString`
-- `render` may take a `TypstContext` instead of extra keyword parameters
+- `render`
+    - May take a `TypstContext` instead of extra keyword parameters
+    - Now returns `nothing`
 - `TypstContext`
     - `context` function deleted
     - Use `IOContext(io, :typst_context => TypstContext(; ...))`

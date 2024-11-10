@@ -51,7 +51,7 @@ See also [`TypstContext`](@ref).
 # Examples
 
 ```jldoctest
-julia> render(Any[true 1; 1.2 1 // 2]);
+julia> render(Any[true 1; 1.2 1 // 2])
 ```
 """
 function render(tc::TypstContext, value;
@@ -68,6 +68,7 @@ function render(tc::TypstContext, value;
     run(TypstCommand(TypstCommand(
         ["compile", input, output, "--font-path=$julia_mono", "--open"][begin:(end - !open)]);
     ignorestatus))
+    nothing
 end
 render(value;
     input::AbstractString = "input.typ",
