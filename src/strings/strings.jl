@@ -1,4 +1,5 @@
 
+include("mode.jl")
 include("show_typst.jl")
 include("typst_text.jl")
 include("typst.jl")

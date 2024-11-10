@@ -136,7 +136,7 @@ makedocs(; modules, format = Documenter.HTML(edit_link = "main"), pages = [
     pages("tutorials", ["getting_started"]),
     pages("guides", [
         "typst_formatting_examples", "the_julia_to_typst_interface", "package_interoperability"
-    ]), pages("references", ["strings", "commands", "utilities", "package_extensions", "internals"])
+    ]), pages("references", ["commands", "contexts", "strings", "package_extensions", "internals"])
 ], sitename = "Typstry.jl", source = "source")
 
 deploydocs(; devurl = "development", repo = "github.com/jakobjpeters/Typstry.jl.git")

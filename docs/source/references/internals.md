@@ -11,7 +11,7 @@ This reference documents non-public utilities.
 Typstry.examples
 ```
 
-## Utilities.jl
+## Utilities
 
 ```@docs
 Typstry.typst_mime
@@ -20,7 +20,6 @@ Typstry.compile_workload
 Typstry.code_mode
 Typstry.date_time
 Typstry.dates
-Typstry.default_context
 Typstry.duration
 Typstry.enclose
 Typstry.escape
@@ -36,6 +35,12 @@ Typstry.show_raw
 Typstry.show_vector
 Typstry.typst_context
 Typstry.unwrap
+```
+
+## Contexts
+
+```@docs
+Typstry.default_context
 ```
 
 ## Strings

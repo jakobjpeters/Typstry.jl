@@ -4,6 +4,10 @@
 This reference documents formatting Julia values into Typst source text.
 
 ```@docs
+Mode
+code
+markup
+math
 TypstString
 TypstText
 Typst

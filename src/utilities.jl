@@ -1,8 +1,4 @@
 
-include("context_error.jl")
-include("mode.jl")
-include("typst_context.jl")
-
 """
     typst_mime
 

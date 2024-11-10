@@ -59,42 +59,6 @@ end
 
 TypstContext(_) = TypstContext()
 
-copy(tc::TypstContext) = merge!(TypstContext(), tc)
-
-eltype(tc::TypstContext) = eltype(tc.context)
-
-getkey(tc::TypstContext, key, default) = getkey(tc.context, key, default)
-
-get(tc::TypstContext, key, default) = get(tc.context, key, default)
-get(f::Union{Function, Type}, tc::TypstContext, key) = get(f, tc.context, key)
-
-iterate(tc::TypstContext, state) = iterate(tc.context, state)
-iterate(tc::TypstContext) = iterate(tc.context)
-
-length(tc::TypstContext) = length(tc.context)
-
-mergewith(combine, tc::TypstContext, ds::AbstractDict...) = mergewith!(combine, copy(tc), ds)
-
-merge!(tc::TypstContext, ds::AbstractDict...) = (merge!(tc.context, ds...); tc)
-
-merge(tc::TypstContext, ds::AbstractDict...) = merge!(copy(tc), ds...)
-
-setindex!(tc::TypstContext, value, key) = (tc.context[key] = value; tc)
-
-function show(io::IO, tc::TypstContext)
-    print(io, TypstContext, "(")
-    if !isempty(tc)
-        print(io, "; ")
-        join_with(io, tc, ", ") do io, (key, value)
-            print(io, key, " = ")
-            show(io, value)
-        end
-    end
-    print(io, ")")
-end
-
-sizehint!(tc::TypstContext, n) = sizehint!(tc.context, n)
-
 """
     default_context
 """
@@ -159,8 +123,40 @@ TypstContext with 7 entries:
   :depth        => 0
 ```
 """
-function reset_context()
-    _context = context.context
-    merge!(empty!(_context), default_context)
-    context
+reset_context() = (merge!(empty!(context.context), default_context); context)
+
+copy(tc::TypstContext) = merge!(TypstContext(), tc)
+
+eltype(tc::TypstContext) = eltype(tc.context)
+
+getkey(tc::TypstContext, key, default) = getkey(tc.context, key, default)
+
+get(tc::TypstContext, key, default) = get(tc.context, key, default)
+get(f::Union{Function, Type}, tc::TypstContext, key) = get(f, tc.context, key)
+
+iterate(tc::TypstContext, state) = iterate(tc.context, state)
+iterate(tc::TypstContext) = iterate(tc.context)
+
+length(tc::TypstContext) = length(tc.context)
+
+mergewith(combine, tc::TypstContext, ds::AbstractDict...) = mergewith!(combine, copy(tc), ds)
+
+merge!(tc::TypstContext, ds::AbstractDict...) = (merge!(tc.context, ds...); tc)
+
+merge(tc::TypstContext, ds::AbstractDict...) = merge!(copy(tc), ds...)
+
+setindex!(tc::TypstContext, value, key) = (tc.context[key] = value; tc)
+
+function show(io::IO, tc::TypstContext)
+    print(io, TypstContext, "(")
+    if !isempty(tc)
+        print(io, "; ")
+        join_with(io, tc, ", ") do io, (key, value)
+            print(io, key, " = ")
+            show(io, value)
+        end
+    end
+    print(io, ")")
 end
+
+sizehint!(tc::TypstContext, n) = sizehint!(tc.context, n)

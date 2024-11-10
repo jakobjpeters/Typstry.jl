@@ -15,7 +15,8 @@ using .Iterators: Stateful
 using .Meta: isexpr, parse
 using PrecompileTools: @compile_workload
 
-include("utilities/utilities.jl")
+include("utilities.jl")
+include("contexts/contexts.jl")
 include("strings/strings.jl")
 include("commands/commands.jl")
 
