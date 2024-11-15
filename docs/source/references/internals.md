@@ -15,7 +15,6 @@ Typstry.examples
 
 ```@docs
 Typstry.typst_mime
-Typstry.apply
 Typstry.compile_workload
 Typstry.code_mode
 Typstry.date_time

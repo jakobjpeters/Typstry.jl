@@ -14,15 +14,6 @@ MIME type text/typst
 const typst_mime = MIME"text/typst"()
 
 """
-    apply(f, tc, args...; kwargs...)
-"""
-function apply(f, tc, args...; kwargs...)
-    _tc = deepcopy(tc)
-    _tc.compiler = f(_tc.compiler, args...; kwargs...)
-    _tc
-end
-
-"""
     compile_workload(examples)
 
 Given an iterable of value-type pairs, interpolate each value into

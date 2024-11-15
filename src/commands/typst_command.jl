@@ -12,7 +12,7 @@ Keyword parameters have the same semantics as for a `Cmd`.
 This type implements the `Cmd` interface.
 However, the interface is undocumented, which may result in unexpected behavior.
 
-- `addenv(::TypstCommand,\u00A0env...;\u00A0::Bool\u00A0=\u00A0true)`
+- `addenv(::TypstCommand,\u00A0env...;\u00A0inherit::Bool\u00A0=\u00A0true)`
     - Can be used with [`julia_mono`](@ref).
 - `detach(::TypstCommand)`
 - `eltype(::Type{TypstCommand})`
@@ -29,7 +29,7 @@ However, the interface is undocumented, which may result in unexpected behavior.
 - `length(::TypstCommand)`
 - `read(::TypstCommand, ::Type{String})`
 - `read(::TypstCommand)`
-- `run(::TypstCommand,\u00A0args...;\u00A0::Bool\u00A0=\u00A0true)`
+- `run(::TypstCommand,\u00A0args...;\u00A0wait::Bool\u00A0=\u00A0true)`
     - Errors thrown by the Typst compiler will be printed to `stderr`.
         Then, a Julia [`TypstCommandError`](@ref) will be
         thrown unless the `ignorestatus` flag is set.
@@ -48,14 +48,20 @@ julia> TypstCommand(help; ignorestatus = true)
 typst`help`
 ```
 """
-mutable struct TypstCommand
-    const parameters::Vector{String}
-    const ignore_status::Bool
+struct TypstCommand
     compiler::Cmd
+    parameters::Vector{String}
+    ignore_status::Bool
 
-    TypstCommand(parameters) = new(parameters, false, Typst_jll.typst())
+    TypstCommand(parameters) = new(Typst_jll.typst(), parameters, false)
     TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
-        new(tc.parameters, ignorestatus, Cmd(tc.compiler; kwargs...))
+        new(Cmd(tc.compiler; kwargs...), tc.parameters, ignorestatus)
+
+    Base.addenv(tc::TypstCommand, environment...; inherit::Bool = true) =
+        new(addenv(tc.compiler, environment...; inherit), tc.parameters, tc.ignore_status)
+
+    Base.setenv(tc::TypstCommand, environment...; kwargs...) =
+        new(setenv(tc.compiler, environment...; kwargs...), tc.parameters, tc.ignore_status)
 end
 
 """
@@ -84,8 +90,6 @@ tc::TypstCommand == _tc::TypstCommand =
     tc.compiler == _tc.compiler &&
     tc.parameters == _tc.parameters &&
     tc.ignore_status == _tc.ignore_status
-
-addenv(tc::TypstCommand, env...; inherit::Bool = true) = apply(addenv, tc, env...; inherit)
 
 detach(tc::TypstCommand) = TypstCommand(tc; detach = true)
 
@@ -127,8 +131,6 @@ function run(tc::TypstCommand, args...; wait::Bool = true)
 end
 
 setcpuaffinity(tc::TypstCommand, cpus) = TypstCommand(tc; cpus)
-
-setenv(tc::TypstCommand, env...; kwargs...) = apply(setenv, tc, env...; kwargs...)
 
 function show(io::IO, ::MIME"text/plain", tc::TypstCommand)
     parameters = tc.parameters
