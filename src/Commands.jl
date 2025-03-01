@@ -24,7 +24,7 @@ using Artifacts: @artifact_str
 using Preferences: @load_preference, @set_preferences!
 
 include("typst_commands.jl")
-include("typst_errors.jl")
+include("typst_command_errors.jl")
 include("preamble.jl")
 
 # Internals

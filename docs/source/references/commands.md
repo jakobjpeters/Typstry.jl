@@ -10,7 +10,7 @@ Markdown.parse("This reference documents " * lowercasefirst(split(string(@doc Ty
 
 ```@docs
 TypstCommand
-TypstError
+TypstCommandError
 @typst_cmd
 julia_mono
 preamble
@@ -39,7 +39,7 @@ run
 setcpuaffinity
 setenv
 show(::IO, ::MIME"text/plain", ::TypstCommand)
-show(::IO, ::MIME"text/plain", ::TypstError)
+show(::IO, ::MIME"text/plain", ::TypstCommandError)
 show(::IO, ::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"}, ::Union{Typst, TypstString, TypstText})
-showerror(::IO, ::TypstError)
+showerror(::IO, ::TypstCommandError)
 ```
