@@ -47,3 +47,11 @@ function join_with(f, io, xs, delimeter; kwargs...)
         isempty(_xs) || print(io, delimeter)
     end
 end
+
+"""
+    set_preference(key, value = nothing)
+"""
+function set_preference(key, value = nothing)
+    @set_preferences! key value
+    @info "Restart Julia to reinitialize the `$key`"
+end

@@ -16,7 +16,7 @@ Print in Typst format for Markdown.jl.
 |:--------------|:-----------------------------------------|:-----------|
 | `Markdown.MD` | `:block`, `:depth`, `:mode`, `:tab_size` |            |
 """
-show_typst(io, x::MD) = show_raw(io, x, "markdown") do io, x
+show_typst(io, tc, x::MD) = show_raw(io, tc, x, "markdown") do io, x
     buffer = IOBuffer()
 
     print(buffer, x)

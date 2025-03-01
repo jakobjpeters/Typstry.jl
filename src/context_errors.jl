@@ -38,12 +38,11 @@ show(io::IO, ::MIME"text/plain", ce::ContextError) =
 
 ```jldoctest
 julia> showerror(stdout, ContextError(Mode, String, :mode))
-ContextError: the `context` key `:mode` expected a value of type `Mode` but received `String`
+ContextError: the context key `:mode` expected a value of type `Mode` but received `String`
 ```
 """
-showerror(io::IO, ce::ContextError) = print(io, "ContextError: the `",
-    context, "` key `:", ce.key, "` expected a value of type `",
-ce.expected, "` but received `", ce.received, "`")
+showerror(io::IO, ce::ContextError) = print(io, "ContextError: the context key `:", ce.key,
+    "` expected a value of type `", ce.expected, "` but received `", ce.received, "`")
 
 _unwrap(type, key, value) = value isa type ? value : throw(ContextError(type, typeof(value), key))
 

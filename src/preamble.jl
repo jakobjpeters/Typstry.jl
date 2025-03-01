@@ -1,13 +1,5 @@
 
 """
-    default_preamble
-"""
-const default_preamble = """
-#set page(margin: 1em, height: auto, width: auto, fill: white)
-#set text(16pt, font: "JuliaMono")
-"""
-
-"""
     preamble
 
 A constant [`TypstString`](@ref) used at the beginning of Typst
@@ -22,7 +14,10 @@ julia> preamble
 TypstString(TypstText("#set page(margin: 1em, height: auto, width: auto, fill: white)\\n#set text(16pt, font: \\"JuliaMono\\")\\n"))
 ```
 """
-const preamble = TypstString(TypstText(@load_preference "preamble" default_preamble))
+const preamble = TypstString(TypstText(@load_preference "preamble" """
+#set page(margin: 1em, height: auto, width: auto, fill: white)
+#set text(16pt, font: "JuliaMono")
+"""))
 
 """
     set_preamble(::TypstString)
@@ -31,10 +26,7 @@ const preamble = TypstString(TypstText(@load_preference "preamble" default_pream
 Use Preferences.jl such that after restarting Julia,
 the [`preamble`](@ref) is initialized to the given [`TypstString`](@ref).
 
-If the `TypstString` is not provided, reset the `preamble` to it's default value.
+If the `TypstString` is not provided, reset the `preamble` to its default value.
 """
-function set_preamble(ts::TypstString = default_preamble)
-    @set_preferences! "preamble" => ts
-    @info "Restart Julia to reinitialize the `preamble`"
-    ts
-end
+set_preamble(ts::TypstString) = set_preference("preamble", ts)
+set_preamble() = set_preference("preamble")

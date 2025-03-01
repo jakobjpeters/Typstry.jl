@@ -1,7 +1,7 @@
 
 module TestStrings
 
-import Typstry: context, show_typst
+import Typstry: TypstContext, show_typst
 using .Meta: parse
 using Test: @test, @testset
 using ..TestTypstry: test_strings
@@ -12,20 +12,11 @@ using Typstry
 
 struct X end
 
-const default_context = Dict(
-    :backticks => 3,
-    :block => false,
-    :depth => 0,
-    :mode => markup,
-    :parenthesize => true,
-    :tab_size => 2
-)
 const typst_int = Typst(1)
 const x = X()
-const x_context = Dict(:x => 1)
 
-context(::X) = x_context
-show_typst(io, ::X) = print(io, io[:x]::Int)
+TypstContext(::X) = TypstContext(; x = 1)
+show_typst(io, tc, ::X) = print(io, tc[:x]::Int)
 
 const pairs = [
     typst"" => ""
@@ -82,13 +73,6 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
     @testset "`TypstText`" begin @test TypstText(x) isa TypstText{X} end
 
     @testset "`@typst_str`" begin end
-
-    @testset "`context`" begin
-        @test context(1) == Dict{Symbol, Union{}}()
-        @test context(X()) == x_context
-        @test context(typst_int) == default_context
-        @test context(Typst(x)) == merge(default_context, x_context)
-    end
 
     @testset "`show_typst`" begin end
 end

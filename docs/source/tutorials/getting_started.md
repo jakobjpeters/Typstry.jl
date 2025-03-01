@@ -23,7 +23,7 @@ typst"$π$"
 Formatting may be configured in `show` using an `IOContext` and in `TypstString` using keyword parameters.
 
 ```jldoctest 1
-julia> show(IOContext(stdout, :mode => code), "text/typst", Typst(π))
+julia> show(IOContext(stdout, :typst_context => TypstContext(; mode = code)), "text/typst", Typst(π))
 3.141592653589793
 
 julia> TypstString(π; mode = code)
