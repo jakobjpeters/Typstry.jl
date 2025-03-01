@@ -1,7 +1,4 @@
 
-using .Iterators: Stateful
-using PrecompileTools: @compile_workload
-
 """
     compile_workload(examples)
 

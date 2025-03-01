@@ -15,25 +15,19 @@ Typstry.Commands
 module Commands
 
 import Base:
-    ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus, iterate,
+    ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus, iterate
     keys, lastindex, length, read, run, setcpuaffinity, setenv, show, showerror
+import Typst_jll
 using ..Typstry: Strings, Typst, TypstString, TypstText, @typst_str, enclose, join_with, unwrap
 using .Strings: _show_typst
 using Artifacts: @artifact_str
-import Typst_jll
+using Preferences: @load_preference, @set_preferences!
 
+include("typst_commands.jl")
+include("typst_errors.jl")
 include("preamble.jl")
 
 # Internals
-
-"""
-    apply(f, tc, args...; kwargs...)
-"""
-function apply(f, tc, args...; kwargs...)
-    _tc = deepcopy(tc)
-    _tc.compiler = f(_tc.compiler, args...; kwargs...)
-    _tc
-end
 
 """
     format(::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"})
@@ -58,54 +52,6 @@ format(::MIME"image/png") = "png"
 format(::MIME"image/svg+xml") = "svg"
 
 # `Typstry`
-
-"""
-    TypstCommand(::AbstractVector{<:AbstractString})
-    TypstCommand(::TypstCommand; kwargs...)
-
-The Typst compiler and its parameters.
-
-Keyword parameters have the same semantics as for a `Cmd`.
-
-!!! info
-    This type implements the `Cmd` interface.
-    However, the interface is undocumented, which may result in unexpected behavior.
-
-# Examples
-
-```jldoctest
-julia> help = TypstCommand(["help"])
-typst`help`
-
-julia> TypstCommand(help; ignorestatus = true)
-typst`help`
-```
-"""
-mutable struct TypstCommand
-    const parameters::Vector{String}
-    const ignore_status::Bool
-    compiler::Cmd
-
-    TypstCommand(parameters) = new(parameters, false, Typst_jll.typst())
-    TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
-        new(tc.parameters, ignorestatus, Cmd(tc.compiler; kwargs...))
-end
-
-"""
-    TypstError <: Exception
-    TypstError(::TypstCommand)
-
-An `Exception` indicating a failure to [`run`](@ref) a [`TypstCommand`](@ref).
-
-# Examples
-```jldoctest
-julia> TypstError(typst``)
-TypstError(typst``)
-```
-"""
-struct TypstError <: Exception
-    command::TypstCommand
-end
 
 """
     @typst_cmd("s")
@@ -209,6 +155,7 @@ function typst(parameters::AbstractString; catch_interrupt = true, ignorestatus 
     nothing
 end
 
+<<<<<<< HEAD
 # `Base`
 
 """
@@ -486,6 +433,8 @@ function show(io::IO, m::MIME"text/plain", te::TypstError)
     print(io, ")")
 end
 
+=======
+>>>>>>> 15577c9 (Create `typst_commands.jl` and `typst_errors.jl`)
 """
     show(::IO, ::Union{
         MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
@@ -517,20 +466,5 @@ function show(io::IO, m::Union{
 
     nothing
 end
-
-"""
-    showerror(::IO, ::TypstError)
-
-Print a [`TypstError`](@ref) when failing to [`run`](@ref) a [`TypstCommand`](@ref).
-
-# Examples
-
-```jldoctest
-julia> showerror(stdout, TypstError(typst``))
-TypstError: failed to `run` a `TypstCommand(String[])`
-```
-"""
-showerror(io::IO, te::TypstError) = print(io,
-    "TypstError: failed to `run` a `", TypstCommand, "(", te.command.parameters, ")`")
 
 end # Commands
