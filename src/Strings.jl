@@ -693,7 +693,7 @@ show_typst(io, x::AbstractMatrix) = mode(io) == code ?
         print(io, "\n", indent ^ depth, ")")
     end, IOContext(io, :parenthesize => false), x; indent = indent(io), depth = depth(io))
 show_typst(io, x::AbstractString) = enclose((io, x) -> escape_string(io, x, "\""),
-    io, x, "\"", mode(io) == math && length(x) == 1 ? "\\u{200b}\"" : "\"")
+    io, x, "\"")
 show_typst(io, x::Bool) = mode(io) == math ? enclose(print, io, x, "\"") : print(io, x)
 show_typst(io, x::Complex{Bool}) = _show_typst(io, Complex(Int(real(x)), Int(imag(x))))
 show_typst(io, x::Complex) = math_mode(io, x) do io, x
