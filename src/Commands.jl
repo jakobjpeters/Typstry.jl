@@ -15,8 +15,8 @@ Typstry.Commands
 module Commands
 
 import Base:
-    ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus,
-    iterate, keys, lastindex, length, run, setcpuaffinity, setenv, show, showerror
+    ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus, iterate,
+    keys, lastindex, length, read, run, setcpuaffinity, setenv, show, showerror
 using ..Typstry: Strings, Typst, TypstString, TypstText, @typst_str, unwrap
 using .Strings: enclose, join_with, _show_typst
 using Artifacts: @artifact_str
@@ -433,6 +433,24 @@ julia> length(typst`help`)
 length(tc::TypstCommand) = length(tc.parameters) + 1
 
 """
+    read(::TypstCommand, ::Type{String})
+    read(::TypstCommand)
+
+See also [`TypstCommand`](@ref).
+
+# Examples
+
+```jldoctest
+julia> 
+```
+"""
+read(tc::TypstCommand, ::Type{String}) = String(read(tc))
+function read(tc::TypstCommand)
+    command = `$(tc.compiler) $(tc.parameters)`
+    read(tc.ignore_status ? ignorestatus(command) : command)
+end
+
+"""
     run(::TypstCommand, args...; kwargs...)
 
 See also [`TypstCommand`](@ref).
@@ -442,7 +460,7 @@ See also [`TypstCommand`](@ref).
     Then, a Julia [`TypstError`](@ref) will be thrown unless the [`ignorestatus`](@ref) flag is set.
 """
 function run(tc::TypstCommand, args...; kwargs...)
-    process = run(ignorestatus(Cmd(`$(tc.compiler) $(tc.parameters)`)), args...; kwargs...)
+    process = run(ignorestatus(`$(tc.compiler) $(tc.parameters)`), args...; kwargs...)
     tc.ignore_status || success(process) || throw(TypstError(tc))
     process
 end

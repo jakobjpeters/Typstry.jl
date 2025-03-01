@@ -34,6 +34,7 @@ iterate(::TypstCommand)
 keys
 lastindex
 length
+read
 run
 setcpuaffinity
 setenv
