@@ -437,12 +437,6 @@ length(tc::TypstCommand) = length(tc.parameters) + 1
     read(::TypstCommand)
 
 See also [`TypstCommand`](@ref).
-
-# Examples
-
-```jldoctest
-julia> 
-```
 """
 read(tc::TypstCommand, ::Type{String}) = String(read(tc))
 function read(tc::TypstCommand)
