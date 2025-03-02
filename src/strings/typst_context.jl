@@ -1,10 +1,4 @@
 
-module TypstContexts
-
-import Base: eltype, get, iterate, length, show
-using Preferences: @load_preference, @set_preferences!
-using ..Strings: Utilities.join_with, Typst, markup
-
 """
     TypstContext <: AbstractDict{Symbol, Any}
     TypstContext(; kwargs...)
@@ -140,5 +134,3 @@ Specifying a key contained in the default settings will override it.
 If a `TypstContext` is not provided, the `context` is reset to the default settings.
 """
 set_context
-
-end # TypstContexts

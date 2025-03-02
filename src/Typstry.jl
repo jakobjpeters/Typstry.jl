@@ -1,19 +1,23 @@
 
 module Typstry
 
-include("utilities/Utilities.jl")
-using .Utilities: ContextErrors.ContextError
+import Base:
+    IOBuffer, ==, addenv, codeunit, detach, eltype, firstindex, getindex, get, hash, ignorestatus, isvalid, iterate,
+    keys, lastindex, length, ncodeunits, pointer, repr, run, setcpuaffinity, setenv, showerror, show
+import Typst_jll
+using Artifacts: @artifact_str
+using Dates:
+    Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
+    day, hour, minute, month, second, year
+using .Docs: HTML, Text
+using .Iterators: Stateful
+using .Meta: isexpr, parse
+using PrecompileTools: @compile_workload
+using Preferences: @load_preference, @set_preferences!
 
-include("strings/Strings.jl")
-using .Strings:
-    TypstContexts, TypstStrings.TypstString, Mode, TypstText, Typst,
-    ShowTypst.show_typst, @typst_str, code, markup, math
-using .TypstContexts: TypstContext, context, set_context
-
-include("commands/Commands.jl")
-using .Commands:
-    TypstCommandErrors.TypstCommandError, TypstCommands.TypstCommand,
-    @typst_cmd, julia_mono, render, typst
+include("utilities/utilities.jl")
+include("strings/strings.jl")
+include("commands/commands.jl")
 
 export
     ContextError, Mode, TypstCommandError, TypstCommand,
@@ -21,6 +25,6 @@ export
     @typst_cmd, @typst_str, code, context, julia_mono,
     markup, math, render, set_context, show_typst, typst
 
-Strings.compile_workload(Strings.examples)
+compile_workload(examples)
 
 end # Typstry

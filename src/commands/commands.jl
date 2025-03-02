@@ -1,36 +1,11 @@
 
 """
-    Commands
-
-A custom command corresponding to the Typst compiler
-and its implementation of the `Cmd` interface.
-
-# Examples
-
-```jldoctest
-julia> Typstry.Commands
-Typstry.Commands
-```
-"""
-module Commands
-
-import Base: show
-using ..Typstry: Strings, Utilities, TypstContext, TypstString, TypstText, Typst
-using .Strings: TypstContexts, ShowTypst._show_typst
-using .TypstContexts: context, merge_contexts!
-using .Utilities: ContextErrors.unwrap
-using Artifacts: @artifact_str
-
-"""
     typst_command_error(tc)
 """
 typst_command_error(tc) = TypstCommandError(tc)
 
-include("TypstCommands.jl")
-using .TypstCommands: TypstCommand
-
-include("TypstCommandErrors.jl")
-using .TypstCommandErrors: TypstCommandError
+include("typst_command.jl")
+include("typst_command_error.jl")
 
 # Internals
 
@@ -42,13 +17,13 @@ Return the image format acronym corresponding to the given `MIME`.
 # Examples
 
 ```jldoctest
-julia> Typstry.Commands.format(MIME"application/pdf"())
+julia> Typstry.format(MIME"application/pdf"())
 "pdf"
 
-julia> Typstry.Commands.format(MIME"image/png"())
+julia> Typstry.format(MIME"image/png"())
 "png"
 
-julia> Typstry.Commands.format(MIME"image/svg+xml"())
+julia> Typstry.format(MIME"image/svg+xml"())
 "svg"
 ```
 """
@@ -474,5 +449,3 @@ function show(io::IO, m::Union{
 
     nothing
 end
-
-end # Commands
