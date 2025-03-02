@@ -1,32 +1,25 @@
 
 module Typstry
 
-import Base: show, showerror
-using .Iterators: Stateful
-using PrecompileTools: @compile_workload
-using Preferences: @delete_preferences!, @load_preference, @set_preferences!
+include("utilities/Utilities.jl")
+using .Utilities: ContextErrors.ContextError
 
-include("utilities.jl")
-
-include("context_errors.jl")
-export ContextError
-
-include("Strings.jl")
+include("strings/Strings.jl")
 using .Strings:
-    Mode, Typst, TypstContext, TypstString, TypstText, @typst_str,
-    code, context, markup, math, set_context, show_typst
-export
-    Mode, Typst, TypstContext, TypstString, TypstText, @typst_str,
-    code, context, markup, math, set_context, show_typst
+    TypstContexts, TypstStrings.TypstString, Mode, TypstText, Typst,
+    ShowTypst.show_typst, @typst_str, code, markup, math
+using .TypstContexts: TypstContext, context, set_context
 
-include("Commands.jl")
-using .Commands:
-    TypstCommand, TypstCommandError, @typst_cmd,
-    julia_mono, preamble, render, set_preamble, typst
-export
-    TypstCommand, TypstCommandError, @typst_cmd,
-    julia_mono, preamble, render, set_preamble, typst
+include("commands/Commands.jl")
+using .Commands: Preamble, TypstCommandErrors.TypstCommandError, TypstCommands.TypstCommand,
+    @typst_cmd, julia_mono, render, typst
+using .Preamble: preamble, set_preamble
 
-compile_workload(Strings.examples)
+export
+    ContextError, Mode, TypstCommandError, TypstCommand, TypstContext, TypstString, TypstText, Typst,
+    @typst_cmd, @typst_str,
+    code, context, julia_mono, markup, math, preamble, render, set_context, set_preamble, show_typst, typst
+
+Strings.compile_workload(Strings.examples)
 
 end # Typstry

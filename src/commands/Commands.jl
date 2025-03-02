@@ -14,18 +14,24 @@ Typstry.Commands
 """
 module Commands
 
-import Base:
-    ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus, iterate
-    keys, lastindex, length, read, run, setcpuaffinity, setenv, show, showerror
-import Typst_jll
-using ..Typstry: Strings, Typst, TypstString, TypstText, @typst_str, enclose, join_with, unwrap
-using .Strings: _show_typst
+import Base: show
+using ..Typstry: Utilities, TypstContext, TypstString, TypstText, Typst, Strings._show_typst
+using .Utilities: ContextErrors.unwrap
 using Artifacts: @artifact_str
-using Preferences: @load_preference
 
-include("typst_commands.jl")
-include("typst_command_errors.jl")
-include("preamble.jl")
+"""
+    typst_command_error(tc)
+"""
+typst_command_error(tc) = TypstCommandError(tc)
+
+include("TypstCommands.jl")
+using .TypstCommands: TypstCommand
+
+include("Preamble.jl")
+using .Preamble: preamble
+
+include("TypstCommandErrors.jl")
+using .TypstCommandErrors: TypstCommandError
 
 # Internals
 
@@ -118,10 +124,11 @@ function render(value;
     open = true,
     ignorestatus = true,
     preamble = preamble,
-context...)
+    context = TypstContext()
+)
     Base.open(input; truncate = true) do file
-        _show_typst(file, preamble)
-        _show_typst(IOContext(file, context...), value)
+        _show_typst(file, context, preamble)
+        _show_typst(file, context, value)
         println(file)
     end
     run(TypstCommand(TypstCommand(
