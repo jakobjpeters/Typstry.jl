@@ -116,6 +116,7 @@ julia> render(1:4);
 ### Typst
 
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
+    - Dependent of Typstry.jl
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
 - [TypstJlyFish.jl](https://github.com/andreasKroepelin/TypstJlyfish.jl)
     - Interoperable with Typstry.jl
@@ -126,6 +127,8 @@ julia> render(1:4);
 
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
     - Dependent of Typstry.jl
+- [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl)
+    - Weak dependent of Typstry.jl
 - [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 
 ### LaTeX
