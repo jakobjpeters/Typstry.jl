@@ -2,9 +2,9 @@
 module Typstry
 
 import Base:
-    IOBuffer, ==, addenv, codeunit, copy, detach, eltype, firstindex, getindex, getkey, get,
-    hash, ignorestatus, isvalid, iterate, keys, lastindex, length, mergewith, merge!, merge,
-    ncodeunits, pointer, repr, run, setcpuaffinity, setenv, setindex!, showerror, show, sizehint!
+    IOBuffer, ==, addenv, codeunit, copy, detach, eltype, firstindex, getindex, getkey, get, hash,
+    ignorestatus, isvalid, iterate, keys, lastindex, length, mergewith, merge!, merge, ncodeunits,
+    pointer, read, repr, run, setcpuaffinity, setenv, setindex!, showerror, show, sizehint!
 import Typst_jll
 using Artifacts: @artifact_str
 using Dates:
