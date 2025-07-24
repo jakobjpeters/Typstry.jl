@@ -29,10 +29,10 @@ struct Typst{T}
 end
 
 """
-    show_typst(::IO, ::TypstContext, ::Typst)
+    show_typst(::IO, ::Typst; _...)
 
 Call [`show_typst`](@ref) on the value wrapped in [`Typst`](@ref).
 
 See also [`TypstContext`](@ref).
 """
-show_typst(io::IO, tc::TypstContext, x::Typst) = _show_typst(io, tc, x.value)
+show_typst(io::IO, x::Typst; _...) = show_typst(io, x.value)

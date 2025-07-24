@@ -10,7 +10,7 @@ A constant `String` file path to the
 
 This typeface is available when using one of the following approaches:
 
-- `TypstCommand(["compile", "input.typ", "output.pdf", "--font-path=" * julia_mono)`
+- `TypstCommand(["compile", "input.typ", "output.pdf", "--font-path=" * julia_mono])`
 - `addenv(::TypstCommand,\u00A0"TYPST_FONT_PATHS"\u00A0=>\u00A0julia_mono)`
 - `setenv(::TypstCommand,\u00A0"TYPST_FONT_PATHS"\u00A0=>\u00A0julia_mono)`
 - `ENV["TYPST_FONT_PATHS"] = julia_mono`
@@ -58,16 +58,16 @@ function render(tc::TypstContext, value;
     input::AbstractString = "input.typ",
     output::AbstractString = "output.pdf",
     open::Bool = true,
-    ignorestatus::Bool = true,
+    ignorestatus::Bool = true
 )
     Base.open(input; truncate = true) do file
         print(file, preamble(render!(tc)))
         _show_typst(file, tc, value)
         println(file)
     end
-    run(TypstCommand(TypstCommand(
-        ["compile", input, output, "--font-path=$julia_mono", "--open"][begin:(end - !open)]);
-    ignorestatus))
+    run(TypstCommand(TypstCommand([
+        "compile", input, output, "--font-path=$julia_mono", "--open"
+    ][begin:(end - !open)]); ignorestatus))
     nothing
 end
 render(value;
@@ -92,14 +92,18 @@ If the `"TYPST_FONT_PATHS"` environment variable is not set,
 it is temporarily set to [`julia_mono`](@ref).
 """
 function typst(parameters::AbstractString; catch_interrupt::Bool = true, ignorestatus::Bool = true)
-    tc = addenv(TypstCommand(TypstCommand(split(parameters)); ignorestatus),
-        "TYPST_FONT_PATHS" => get(ENV, "TYPST_FONT_PATHS", julia_mono))
+    tc = addenv(
+        TypstCommand(TypstCommand(split(parameters)); ignorestatus),
+        "TYPST_FONT_PATHS" => get(ENV, "TYPST_FONT_PATHS", julia_mono)
+    )
+
     if catch_interrupt
         try run(tc)
         catch e e isa InterruptException || rethrow()
         end
     else run(tc)
     end
+
     nothing
 end
 
@@ -107,7 +111,7 @@ function show(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
 }, t::Union{Typst, TypstString, TypstText})
     input = tempname()
-    output = input * "." * format(m)
+    output = input * '.' * format(m)
 
     render(t; input, output, open = false, ignorestatus = false, context = typst_context(io))
     write(io, read(output))

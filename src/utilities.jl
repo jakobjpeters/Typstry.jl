@@ -1,17 +1,30 @@
 
-"""
-    typst_mime
+# """
+#     counter
+# """
+# const counter = Stateful(countfrom())
 
-Equivalent to `MIME"text/typst"()`.
+# """
+#     lock
+# """
+# const lock = ReentrantLock()
 
-# Examples
-
-```jldoctest
-julia> Typstry.typst_mime
-MIME type text/typst
-```
-"""
-const typst_mime = MIME"text/typst"()
+# """
+#     parameters
+# """
+# const parameters = Dict(
+#     :image => [:alt, :fit, :height, :width],
+#     :mat => [:align, :augment, :column_gap, :delim, :gap, :row_gap],
+#     :raw => [:align, :block, :lang, :syntaxes, :tab_size, :theme],
+#     :text => [
+#         :alternates, :baseline, :bottom_edge, :cjk_latin_spacing, :costs, :dir,
+#         :discretionary_ligatures, :fallback, :features, :fill, :font, :fractions,
+#         :historical_ligatures, :hyphenate, :kerning, :lang, :ligatures, :number_type,
+#         :number_width, :overhang, :region, :script, :size, :slashed_zero, :spacing,
+#         :stretch, :stroke, :style, :stylistic_set, :top_edge, :tracking, :weight
+#     ],
+#     :vec => [:align, :delim, :gap]
+# )
 
 """
     compile_workload(examples)
@@ -19,8 +32,8 @@ const typst_mime = MIME"text/typst"()
 Given an iterable of value-type pairs, interpolate each value into
 a `@typst_str` within a `PrecompileTools.@compile_workload` block.
 """
-compile_workload(examples) = @compile_workload for (example, _) in examples
-    TypstString(example)
+compile_workload(examples::Vector) = @compile_workload for example ∈ examples
+    render(first(example))
 end
 
 """
@@ -30,7 +43,7 @@ Print the number sign, unless `mode(tc) == code`.
 
 See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
 """
-code_mode(io, tc) = if mode(tc) ≠ code print(io, "#") end
+code_mode(io::IO, tc) = if mode(tc) ≠ code print(io, "#") end
 
 date_time(::Date) = year, month, day
 date_time(::Time) = hour, minute, second
@@ -50,7 +63,7 @@ function dates(x::Period)
     print(buffer, x)
     seekstart(buffer)
 
-    "duration", (duration(x),), (TypstText(readuntil(buffer, " ")),)
+    "duration", (duration(x),), (TypstText(readuntil(buffer, ' ')),)
 end
 
 @doc """
@@ -99,7 +112,7 @@ julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x
 \$ 1x \$
 ```
 """
-function enclose(f, io, x, left, right = reverse(left); context...)
+function enclose(f, io::IO, x, left::String, right::String = reverse(left); context...)
     print(io, left)
     f(io, x; context...)
     print(io, right)
@@ -117,10 +130,7 @@ julia> Typstry.escape(stdout, 2)
 \\\\
 ```
 """
-escape(io, n) =
-    for _ in 1:n
-        print(io, '\\')
-    end
+escape(io::IO, n::Int) = join(io, repeated('\\', n))
 
 """
     indent(tc)
@@ -161,7 +171,7 @@ julia> Typstry.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = 
 -1x, -2x, -3x, -4x
 ```
 """
-function join_with(f, io, xs, delimeter; kwargs...)
+function join_with(f, io::IO, xs, delimeter; kwargs...)
     _xs = Stateful(xs)
 
     for x in _xs
@@ -173,8 +183,9 @@ end
 """
     math_mode(f, io, tc, x; kwargs...)
 """
-math_mode(f, io, tc, x; kwargs...) =
-    enclose((io, x; kwargs...) -> f(io, tc, x; kwargs...), io, x, math_pad(tc); kwargs...)
+math_mode(f, io::IO, tc, x; kwargs...) = enclose(
+    (io, x; kwargs...) -> f(io, tc, x; kwargs...), io, x, math_pad(tc); kwargs...
+)
 
 """
     math_pad(tc)
@@ -182,38 +193,45 @@ math_mode(f, io, tc, x; kwargs...) =
 Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
 [`block`](@ref Typstry.block) and [`mode`](@ref Typstry.mode) settings.
 """
-math_pad(tc) =
+function math_pad(tc)
     if mode(tc) == math ""
     else block(tc) ? "\$ " : "\$"
     end
+end
 
 """
     merge_contexts!(tc, context)
 """
-merge_contexts!(tc, context) = mergewith!((x, _) -> x, tc.context, context)
+merge_contexts!(tc, context) = mergewith!((x, _) -> x, tc, context)
 
 """
     show_array(io, x)
 """
-show_array(io, x) = enclose(io, x, "(", ")") do io, x
-    join_with((io, x) -> _show_typst(io, x; parenthesize = false, mode = code), io, x, ", ")
-    if length(x) == 1 print(io, ",") end
+show_array(io::IO, x) = enclose(io, x, "(", ")") do _io, _x
+    join_with(_io, _x, ", ") do __io, __x
+        show_typst(__io, __x; parenthesize = false, mode = code)
+    end
+    if length(_x) == 1 print(_io, ',') end
 end
 
 """
     show_parameters(io, tc, f, keys, final)
 """
-function show_parameters(io, tc, f, keys, final)
+function show_parameters(io::IO, tc, f, keys, final)
     pairs = map(key -> key => unwrap(tc, TypstString, key), filter(key -> haskey(tc, key), keys))
 
-    println(io, f, "(")
-    join_with(io, pairs, ",\n") do io, (key, value)
-        print(io, indent(tc) ^ (depth(tc) + 1), key, ": ")
-        _show_typst(io, value)
+    println(io, f, '(')
+    join_with(io, pairs, ",\n") do _io, (key, value)
+        print(_io, indent(tc) ^ (depth(tc) + 1), key, ": ")
+        # println()
+        # @show value
+        # show_typst(IOContext(stdout, :typst_context => value)
+        # println()
+        show_typst(_io, value)
     end
 
     if !isempty(pairs)
-        final && print(io, ",")
+        final && print(io, ',')
         println(io)
     end
 end
@@ -221,8 +239,8 @@ end
 """
     show_raw(f, io, tc, x, language)
 """
-function show_raw(f, io, tc, x, language)
-    _backticks, _block = "`" ^ backticks(tc), block(tc)
+function show_raw(f, io::IO, tc, x, language)
+    _backticks, _block = '`' ^ backticks(tc), block(tc)
 
     mode(tc) == math && print(io, "#")
     print(io, _backticks, language)
@@ -230,9 +248,9 @@ function show_raw(f, io, tc, x, language)
     if _block
         _indent, _depth = indent(tc), depth(tc)
 
-        print(io, "\n")
+        println(io)
 
-        for line in eachsplit(sprint(f, x), "\n")
+        for line in eachsplit(sprint(f, x), '\n')
             println(io, _indent ^ (_depth + 1), line)
         end
 
@@ -244,31 +262,21 @@ function show_raw(f, io, tc, x, language)
 end
 
 """
-    show_vector(io, tc, x)
-"""
-show_vector(io, tc, x) = math_mode(io, tc, x) do io, tc, x
-    _depth, _indent = depth(tc), indent(tc)
-    __depth = _depth + 1
-
-    show_parameters(io, tc, "vec", [:delim, :gap], true)
-    print(io, _indent ^ __depth)
-    join_with((io, x) -> _show_typst(io, TypstContext(; depth = __depth, mode = math, parenthesize = false), x), io, x, ", "),
-    print(io, "\n", _indent ^ _depth, ")")
-end
-
-"""
     typst_context(io)
 """
-typst_context(io) = unwrap(io, :typst_context, TypstContext())
+typst_context(io::IO) = unwrap(io, :typst_context, TypstContext())
 
-_unwrap(type, key, value) = value isa type ? value : throw(ContextError(type, typeof(value), key))
+function _unwrap(dt::DataType, key::Symbol, value)
+    value isa dt ? value : throw(ContextError(dt, typeof(value), key))
+end
 
-"""
-    unwrap(x, key::Symbol, default)
-    unwrap(x, type::Type, key)
-"""
 unwrap(x, key::Symbol, default) = _unwrap(typeof(default), key, get(x, key, default))
 function unwrap(x, type::Type, key)
     value = x[key]
     _unwrap(type, key, value)
 end
+
+@doc """
+    unwrap(x, key::Symbol, default)
+    unwrap(x, type::Type, key)
+""" unwrap

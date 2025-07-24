@@ -54,14 +54,17 @@ struct TypstCommand
     ignore_status::Bool
 
     TypstCommand(parameters) = new(Typst_jll.typst(), parameters, false)
-    TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) =
-        new(Cmd(tc.compiler; kwargs...), tc.parameters, ignorestatus)
+    TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) = new(
+        Cmd(tc.compiler; kwargs...), tc.parameters, ignorestatus
+    )
 
-    Base.addenv(tc::TypstCommand, environment...; inherit::Bool = true) =
-        new(addenv(tc.compiler, environment...; inherit), tc.parameters, tc.ignore_status)
+    Base.addenv(tc::TypstCommand, environment...; inherit::Bool = true) = new(
+        addenv(tc.compiler, environment...; inherit), tc.parameters, tc.ignore_status
+    )
 
-    Base.setenv(tc::TypstCommand, environment...; kwargs...) =
-        new(setenv(tc.compiler, environment...; kwargs...), tc.parameters, tc.ignore_status)
+    Base.setenv(tc::TypstCommand, environment...; kwargs...) = new(
+        setenv(tc.compiler, environment...; kwargs...), tc.parameters, tc.ignore_status
+    )
 end
 
 """
@@ -82,14 +85,16 @@ julia> typst`compile input.typ output.typ`
 typst`compile input.typ output.typ`
 ```
 """
-macro typst_cmd(parameters::String)
-    :(TypstCommand($(isempty(parameters) ? String[] : map(string, split(parameters, " ")))))
+macro typst_cmd(s::String)
+    parameters = isempty(s) ? String[] : map(string, eachsplit(s, ' '))
+    :(TypstCommand($parameters))
 end
 
-tc::TypstCommand == _tc::TypstCommand =
+tc::TypstCommand == _tc::TypstCommand = (
     tc.compiler == _tc.compiler &&
     tc.parameters == _tc.parameters &&
     tc.ignore_status == _tc.ignore_status
+)
 
 detach(tc::TypstCommand) = TypstCommand(tc; detach = true)
 
@@ -99,18 +104,20 @@ firstindex(::TypstCommand) = 1
 
 getindex(tc::TypstCommand, i) = i == 1 ? only(tc.compiler) : tc.parameters[i - 1]
 
-hash(tc::TypstCommand, h::UInt) =
-    hash((TypstCommand, tc.compiler, tc.parameters, tc.ignore_status), h)
+hash(tc::TypstCommand, h::UInt) = hash((
+    TypstCommand, tc.compiler, tc.parameters, tc.ignore_status
+), h)
 
 ignorestatus(tc::TypstCommand) = TypstCommand(tc; ignorestatus = true)
 
-iterate(tc::TypstCommand, i) =
+function iterate(tc::TypstCommand, i)
     if i == 1 (only(tc.compiler), 2)
     else
         parameters, _i = tc.parameters, i - 1
         length(parameters) < _i ?  nothing : (parameters[_i], i + 1)
     end
-iterate(tc::TypstCommand) = iterate(tc, 1)
+end
+iterate(tc::TypstCommand) = iterate(tc, firstindex(tc))
 
 keys(tc::TypstCommand) = LinearIndices(firstindex(tc) : lastindex(tc))
 
@@ -135,9 +142,12 @@ setcpuaffinity(tc::TypstCommand, cpus) = TypstCommand(tc; cpus)
 function show(io::IO, ::MIME"text/plain", tc::TypstCommand)
     parameters = tc.parameters
 
-    all(parameter -> all(isprint, parameter), parameters) ?
-        enclose((io, parameters) -> join_with(
-            (io, parameter) -> printstyled(io, parameter; underline = true),
-        io, parameters, " "), io, tc.parameters, "typst`", "`") :
-        print(TypstCommand, "(", parameters, ")")
+    if all(parameter -> all(isprint, parameter), parameters)
+        enclose(io, parameters, "typst`", "`") do _io, _parameters
+            join_with(_io, _parameters, ' ') do __io, parameter
+                printstyled(__io, parameter; underline = true)
+            end
+        end
+    else print(TypstCommand, '(', parameters, ')')
+    end
 end

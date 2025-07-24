@@ -22,11 +22,12 @@ struct TypstCommandError <: Exception
     command::TypstCommand
 end
 
-showerror(io::IO, te::TypstCommandError) = print(io,
-    "TypstCommandError: failed to `run` a `", TypstCommand, "(", te.command.parameters, ")`")
+showerror(io::IO, te::TypstCommandError) = print(
+    io, "TypstCommandError: failed to `run` a `", TypstCommand, '(', te.command.parameters, ")`"
+)
 
 function show(io::IO, m::MIME"text/plain", te::TypstCommandError)
-    print(io, TypstCommandError, "(")
+    print(io, TypstCommandError, '(')
     show(io, m, te.command)
-    print(io, ")")
+    print(io, ')')
 end

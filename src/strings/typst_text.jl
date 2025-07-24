@@ -31,18 +31,10 @@ struct TypstText{T}
 end
 
 """
-    show_typst(::IO, ::TypstContext, ::TypstText)
+    show_typst(::IO, ::TypstText; _...)
 
 Call `print` the value wrapped in [`TypstText`](@ref).
 
 See also [`TypstContext`](@ref).
 """
-function show_typst(io::IO, tc::TypstContext, tt::TypstText)
-    context = IOContext(io)
-
-    for pair in unwrap(tc, :typst_context, default_io_context)
-        context = IOContext(context, pair)
-    end
-
-    print(context, tt.value)
-end
+show_typst(io::IO, tt::TypstText; _...) = print(io, tt.value)

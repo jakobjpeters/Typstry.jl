@@ -16,13 +16,13 @@ See also [`TypstContext`](@ref Typstry.TypstContext).
 |:--------------|:-----------------------------------------|:-----------|
 | `Markdown.MD` | `:block`, `:depth`, `:mode`, `:tab_size` |            |
 """
-show_typst(io::IO, tc::TypstContext, x::MD) = show_raw(io, tc, x, "markdown") do io, x
+show_typst(io::IO, tc::TypstContext, x::MD) = show_raw(io, tc, x, "markdown") do _io, x
     buffer = IOBuffer()
 
     print(buffer, x)
     seekstart(buffer)
 
-    print(io, read(buffer, String)[begin:end - 1])
+    print(_io, read(buffer, String)[begin:end - 1])
 end
 
 const examples = [md"# A" => MD]

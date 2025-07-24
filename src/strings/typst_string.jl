@@ -42,8 +42,8 @@ However, the interface is undocumented, which may result in unexpected behavior.
 julia> TypstString(1)
 typst"\$1\$"
 
-julia> TypstString(TypstContext(; mode = code), π)
-typst"3.141592653589793"
+julia> TypstString(TypstContext(; mode = math), π)
+typst"π"
 
 julia> TypstString(1 + 2im; mode = math)
 typst"(1 + 2i)"
@@ -52,11 +52,9 @@ typst"(1 + 2i)"
 struct TypstString <: AbstractString
     text::String
 
-    TypstString(tc::TypstContext, t::Union{Typst, TypstString, TypstText}) =
-        new(sprint(show, typst_mime, t; context = :typst_context => tc))
+    TypstString(tc::TypstContext, x) = new(sprint(show_typst, x; context = :typst_context => tc))
 end
 
-TypstString(tc::TypstContext, x) = TypstString(tc, Typst(x))
 TypstString(x; context...) = TypstString(TypstContext(; context...), x)
 
 """
@@ -106,14 +104,18 @@ macro typst_str(s::String)
         backslashes, start = length(first(regex_match.captures)), last(regex_match.offsets)
         interpolate, previous = isodd(backslashes), prevind(s, start)
 
-        current < previous && push!(args, s[current:prevind(s, previous, interpolate + backslashes ÷ 2)])
+        if current < previous
+            push!(args, s[current:prevind(s, previous, interpolate + backslashes ÷ 2)])
+        end
 
         if interpolate
             x, current = parse(s, start; filename, greedy = false)
             isexpr(x, :incomplete) && throw(first(x.args))
             interpolation = :($TypstString())
 
-            append!(interpolation.args, parse(s[previous:prevind(s, current)]; filename).args[2:end])
+            append!(interpolation.args, parse(
+                s[previous:prevind(s, current)]; filename
+            ).args[2:end])
             push!(args, esc(interpolation))
         else current = start
         end
@@ -124,9 +126,9 @@ macro typst_str(s::String)
 end
 
 """
-    show_typst(::IO, ::TypstContext, ::TypstString)
+    show_typst(::IO, ::TypstString)
 """
-show_typst(io::IO, ::TypstContext, x::TypstString) = print(io, x)
+show_typst(ioc::IOContext, x::TypstString) = print(ioc, x)
 
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 
@@ -142,6 +144,7 @@ ncodeunits(ts::TypstString) = ncodeunits(ts.text)
 
 pointer(ts::TypstString) = pointer(ts.text)
 
+repr(::MIME"text/typst", ts::TypstString; context = nothing) = ts
 repr(m::MIME, ts::TypstString; context = nothing) = sprint(show, m, ts; context)
 
 function show(io::IO, ts::TypstString)
@@ -155,7 +158,7 @@ function show(io::IO, ts::TypstString)
         for c in text
             if c == '\\' escapes += 1
             else
-                if c == '\"' escape(io, escapes + 1)
+                if c == '"' escape(io, escapes + 1)
                 elseif c == '(' escape(io, escapes)
                 end
 
@@ -166,9 +169,9 @@ function show(io::IO, ts::TypstString)
         end
 
         escape(io, escapes)
-        print(io, "\"")
+        print(io, '"')
     else
-        print(io, TypstString, "(", TypstText, "(")
+        print(io, TypstString, '(', TypstText, '(')
         show(io, text)
         print(io, "))")
     end

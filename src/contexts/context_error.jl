@@ -20,13 +20,22 @@ ContextError(Mode, String, :mode)
 ```
 """
 struct ContextError <: Exception
-    expected::Type
-    received::Type
+    expected::DataType
+    received::DataType
     key::Symbol
 end
 
-showerror(io::IO, ce::ContextError) = print(io, "ContextError: the context key `:", ce.key,
-    "` expected a value of type `", ce.expected, "` but received `", ce.received, "`")
+showerror(io::IO, ce::ContextError) = print(
+    io,
+    "ContextError: the context key `:",
+    ce.key,
+    "` expected a value of type `",
+    ce.expected,
+    "` but received `",
+    ce.received,
+    "`"
+)
 
-show(io::IO, ::MIME"text/plain", ce::ContextError) =
-    print(io, ContextError, "(", ce.expected, ", ", ce.received, ", :", ce.key, ")")
+show(io::IO, ::MIME"text/plain", ce::ContextError) = print(
+    io, ContextError, "(", ce.expected, ", ", ce.received, ", :", ce.key, ")"
+)

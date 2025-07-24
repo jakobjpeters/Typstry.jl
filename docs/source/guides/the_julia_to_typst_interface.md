@@ -27,7 +27,7 @@ Implement a [`show_typst`](@ref) method to specify its Typst formatting. Remembe
 [Annotate values taken from untyped locations](https://docs.julialang.org/en/v1/manual/performance-tips/#Annotate-values-taken-from-untyped-locations).
 
 ```jldoctest 1
-julia> show_typst(io, tc, r::Reciprocal) =
+julia> show_typst(io::IO, tc::TypstContext, r::Reciprocal) =
            if tc[:mode]::Mode == markup
                print(io, "#let reciprocal(n) = \$1 / #n\$")
            else
@@ -95,20 +95,7 @@ julia> println(TypstString(r"[a-z]"))
 
 ### Choose the most semantically rich representation
 
-- This may vary across `Mode`s and domains
-    - Some modes may not have a meaningful representation, and should be formatted into a mode that does
-- Both Julia and Typst support Unicode characters, except unknown variables in Typst's `code` mode
-
-```jldoctest 1
-julia> println(TypstString(π; mode = code))
-3.141592653589793
-
-julia> println(TypstString(π; mode = math))
-π
-
-julia> println(TypstString(π; mode = markup))
-$π$
-```
+### Each method of `show_typst` should correspond to the same rendering in a compiled document
 
 ### Consider both the Typst source text and compiled document formatting
 
@@ -184,5 +171,9 @@ julia> println(TypstString(0:2:6; mode = code))
 range(0, 7, step: 2)
 
 julia> println(TypstString(0:2.0:6; mode = code))
-(0.0, 2.0, 4.0, 6.0)
+$vec(
+  0.0, 2.0, 4.0, 6.0
+)$
 ```
+
+### Prefer to perform computation in Julia, rather than Typst code mode

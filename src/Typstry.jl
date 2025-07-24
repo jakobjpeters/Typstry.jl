@@ -11,7 +11,7 @@ using Dates:
     Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
     day, hour, minute, month, second, year
 using .Docs: HTML, Text
-using .Iterators: Stateful
+using .Iterators: Stateful, repeated
 using .Meta: isexpr, parse
 using PrecompileTools: @compile_workload
 
@@ -21,7 +21,7 @@ include("strings/strings.jl")
 include("commands/commands.jl")
 
 export
-    ContextError, Mode, TypstCommandError, TypstCommand,
+    ContextError, DefaultIO, Mode, TypstCommandError, TypstCommand,
     TypstContext, TypstString, TypstText, Typst,
     @typst_cmd, @typst_str, code, context, julia_mono,
     markup, math, render, reset_context, show_typst, typst

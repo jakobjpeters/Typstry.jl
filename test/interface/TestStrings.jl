@@ -16,7 +16,7 @@ const typst_int = Typst(1)
 const x = X()
 
 TypstContext(::X) = TypstContext(; x = 1)
-show_typst(io, tc, ::X) = print(io, tc[:x]::Int)
+show_typst(io::IO, tc::TypstContext, ::X) = print(io, tc[:x]::Int)
 
 const pairs = [
     typst"" => ""
