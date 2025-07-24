@@ -21,7 +21,7 @@ test_strings(x, s; kwargs...) = @test TypstString(x; kwargs...) == s
 
 @testset "Typstry" begin
     for (description, descriptions) in [
-        "Utilities" => ["Aqua", "Documenter", "ExplicitImports"],
+        "Utilities" => ["Aqua", "Documenter", "ExplicitImports", "JET"],
         "Interface" => ["Strings", "Commands"],
         "Extensions" => map(string, names),
     ]
