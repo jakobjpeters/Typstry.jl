@@ -142,4 +142,5 @@ julia> render(1:4);
 - [LibTeXPrintf.jl](https://github.com/JuliaStrings/LibTeXPrintf.jl)
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
 - [MathTeXEngine.jl](https://github.com/Kolaru/MathTeXEngine.jl)
+- [PlutoPapers.jl](https://github.com/mossr/PlutoPapers.jl)
 - [tectonic_jll.jl](https://github.com/JuliaBinaryWrappers/tectonic_jll.jl)
