@@ -9,23 +9,6 @@
 # """
 # const lock = ReentrantLock()
 
-# """
-#     parameters
-# """
-# const parameters = Dict(
-#     :image => [:alt, :fit, :height, :width],
-#     :mat => [:align, :augment, :column_gap, :delim, :gap, :row_gap],
-#     :raw => [:align, :block, :lang, :syntaxes, :tab_size, :theme],
-#     :text => [
-#         :alternates, :baseline, :bottom_edge, :cjk_latin_spacing, :costs, :dir,
-#         :discretionary_ligatures, :fallback, :features, :fill, :font, :fractions,
-#         :historical_ligatures, :hyphenate, :kerning, :lang, :ligatures, :number_type,
-#         :number_width, :overhang, :region, :script, :size, :slashed_zero, :spacing,
-#         :stretch, :stroke, :style, :stylistic_set, :top_edge, :tracking, :weight
-#     ],
-#     :vec => [:align, :delim, :gap]
-# )
-
 """
     compile_workload(examples)
 
@@ -76,7 +59,7 @@ julia> Typstry.dates(Dates.Date(1))
 ("datetime", (:year, :month, :day), (1, 1, 1))
 
 julia> Typstry.dates(Dates.Day(1))
-("duration", (:days,), (TypstText("1"),))
+("duration", (:days,), (TypstText{String}("1"),))
 ```
 """ dates
 
@@ -136,28 +119,6 @@ escape(io::IO, n::Int) = join(io, repeated('\\', n))
     indent(tc)
 """
 indent(tc) = " " ^ tab_size(tc)
-
-"""
-    format(::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"})
-
-Return the image format acronym corresponding to the given `MIME`.
-
-# Examples
-
-```jldoctest
-julia> Typstry.format(MIME"application/pdf"())
-"pdf"
-
-julia> Typstry.format(MIME"image/png"())
-"png"
-
-julia> Typstry.format(MIME"image/svg+xml"())
-"svg"
-```
-"""
-format(::MIME"application/pdf") = "pdf"
-format(::MIME"image/png") = "png"
-format(::MIME"image/svg+xml") = "svg"
 
 """
     join_with(f, io, xs, delimeter; kwargs...)
@@ -262,9 +223,11 @@ function show_raw(f, io::IO, tc, x, language)
 end
 
 """
-    typst_context(io)
+    typst_context(::IO)
 """
-typst_context(io::IO) = unwrap(io, :typst_context, TypstContext())
+typst_context(ioc::IOContext) = unwrap(ioc, :typst_context, TypstContext())
+typst_context(::IO) = TypstContext()
+
 
 function _unwrap(dt::DataType, key::Symbol, value)
     value isa dt ? value : throw(ContextError(dt, typeof(value), key))

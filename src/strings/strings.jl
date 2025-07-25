@@ -1,25 +1,11 @@
 
+include("utilities.jl")
 include("default_io.jl")
 include("mode.jl")
 include("show_typst.jl")
 include("typst_text.jl")
 include("typst.jl")
 include("typst_string.jl")
-
-show(io::IO, ::MIME"text/typst", x::Union{Typst, TypstString, TypstText}) = show_typst(io, x)
-
-function show(io::IO, x::Union{TypstText, Typst})
-    print(io, base_type(x), '(')
-    show(io, x.value)
-    print(io, ')')
-end
-
-base_type(::TypstText) = TypstText
-base_type(::Typst) = Typst
-
-@doc """
-    base_type(x)
-""" base_type
 
 merge!(default_context, TypstContext(;
     backticks = 3,

@@ -73,7 +73,7 @@ end
 
 Construct a [`TypstCommand`](@ref) where each parameter is separated by a space.
 
-This does not support interpolation; use the constructor instead.
+This does not yet support interpolation; use the constructor instead.
 
 # Examples
 

@@ -3,36 +3,40 @@
     Typst{T}
     Typst(::T)
 
-A wrapper used to pass values to [`show_typst`](@ref).
+A wrapper used to pass values to `show`,
+whose [`show_typst`](@ref) method formats the wrapped value.
 
 # Interface
 
+- `TypstContext(::Typst)`
+    - Uses the context of the wrapped value
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::Typst)`
-- `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml",\u00A0MIME"text/typst"},\u00A0::Typst)`
-    - Accepts a `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`.
-    - Supports the [`julia_mono`](@ref) typeface.
-    - The generated Typst source text contains the context's `preamble` and the formatted value.
-- `show(::IO,\u00A0::Typst)`
+- `show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`
+    - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
+- `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::Typst)`
+    - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
+    - Uses the `preamble` in [`context`](@ref)
+    - Supports the [`julia_mono`](@ref) typeface
 
 # Examples
 
 ```jldoctest
-julia> Typst(1)
-Typst(1)
+julia> t = Typst(1)
+Typst{Int64}(1)
 
-julia> Typst("a")
-Typst("a")
+julia> show(stdout, "text/typst", t)
+\$1\$
 ```
 """
 struct Typst{T}
     value::T
 end
 
-"""
-    show_typst(::IO, ::Typst; _...)
+TypstContext(t::Typst) = TypstContext(t.value)
 
-Call [`show_typst`](@ref) on the value wrapped in [`Typst`](@ref).
+show_typst(io::IO, tc::TypstContext, t::Typst) = show_typst(io, tc, t.value)
 
-See also [`TypstContext`](@ref).
-"""
-show_typst(io::IO, x::Typst; _...) = show_typst(io, x.value)
+show(io::IO, ::MIME"text/typst", t::Typst) = show_typst(io, t)
+show(io::IO, m::Union{
+    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
+}, t::Typst) = show_render(io, m, t)

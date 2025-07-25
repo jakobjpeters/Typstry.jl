@@ -19,6 +19,7 @@ include("utilities.jl")
 include("contexts/contexts.jl")
 include("strings/strings.jl")
 include("commands/commands.jl")
+include("render.jl")
 
 export
     ContextError, DefaultIO, Mode, TypstCommandError, TypstCommand,

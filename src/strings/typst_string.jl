@@ -21,7 +21,7 @@ However, the interface is undocumented, which may result in unexpected behavior.
 - `iterate(::TypstString)`
 - `ncodeunits(::TypstString)`
 - `pointer(::TypstString)`
-- `repr(::MIME,\u00A0::TypstString)`
+- `repr(::MIME,\u00A0::TypstString; context = nothing)`
     - This method patches incorrect output from the assumption in `repr` that
         the parameter is already in the requested `MIME` type when the `MIME`
         type satisfies `istextmime` and the parameter is an `AbstractString`.
@@ -125,20 +125,15 @@ macro typst_str(s::String)
     :(TypstString(TypstText($_s)))
 end
 
-"""
-    show_typst(::IO, ::TypstString)
-"""
-show_typst(ioc::IOContext, x::TypstString) = print(ioc, x)
-
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 
-codeunit(ts::TypstString) = codeunit(ts.text)
 codeunit(ts::TypstString, i::Integer) = codeunit(ts.text, i)
+codeunit(ts::TypstString) = codeunit(ts.text)
 
 isvalid(ts::TypstString, i::Integer) = isvalid(ts.text, i::Integer)
 
-iterate(ts::TypstString) = iterate(ts.text)
 iterate(ts::TypstString, i::Integer) = iterate(ts.text, i)
+iterate(ts::TypstString) = iterate(ts.text)
 
 ncodeunits(ts::TypstString) = ncodeunits(ts.text)
 
@@ -147,6 +142,12 @@ pointer(ts::TypstString) = pointer(ts.text)
 repr(::MIME"text/typst", ts::TypstString; context = nothing) = ts
 repr(m::MIME, ts::TypstString; context = nothing) = sprint(show, m, ts; context)
 
+show_typst(io::IO, ::TypstContext, x::TypstString) = print(io, x)
+
+show(io::IO, ::MIME"text/typst", x::TypstString) = show_typst(io, x)
+show(io::IO, m::Union{
+    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
+}, ts::TypstString) = show_render(io, m, ts)
 function show(io::IO, ts::TypstString)
     text = ts.text
 

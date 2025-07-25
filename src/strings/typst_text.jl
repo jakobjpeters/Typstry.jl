@@ -9,32 +9,29 @@ A wrapper whose [`show_typst`](@ref) method uses `print` on the wrapped value.
 
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstText)`
 - `show(::IO,\u00A0::MIME"text/typst",\u00A0::TypstText)`
-    - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`.
+    - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
 - `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstText)`
-    - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`.
-    - Supports the [`julia_mono`](@ref) typeface.
-    - The generated Typst source text contains the context's `preamble` and the formatted value.
-- `show(::IO,\u00A0::TypstText)`
+    - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
+    - Uses the `preamble` in [`context`](@ref)
+    - Supports the [`julia_mono`](@ref) typeface
 
 # Examples
 
 ```jldoctest
-julia> TypstText(1)
-TypstText(1)
+julia> tt = TypstText('a')
+TypstText{Char}('a')
 
-julia> TypstText("a")
-TypstText("a")
+julia> show_typst(tt)
+a
 ```
 """
 struct TypstText{T}
     value::T
 end
 
-"""
-    show_typst(::IO, ::TypstText; _...)
+show_typst(io::IO, ::TypstContext, tt::TypstText) = print(io, tt.value)
 
-Call `print` the value wrapped in [`TypstText`](@ref).
-
-See also [`TypstContext`](@ref).
-"""
-show_typst(io::IO, tt::TypstText; _...) = print(io, tt.value)
+show(io::IO, ::MIME"text/typst", tt::TypstText) = show_typst(io, tt)
+show(io::IO, m::Union{
+    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
+}, tt::TypstText) = show_render(io, m, tt)

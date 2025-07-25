@@ -1,4 +1,23 @@
 
+"""
+    DefaultIO
+    DefaultIO()
+
+A type used to initialize the default `io` in [`context`](@ref).
+
+!!! info
+    This is a workaround for `stdout` being invalid when assigned to a global variable.
+
+# Examples
+
+```julia-repl
+julia> io = context[:io]::DefaultIO
+(() -> IOContext(stdout, :compact => true))::DefaultIO
+
+julia> io == DefaultIO()() == IOContext(stdout, :compact => true)
+true
+```
+"""
 struct DefaultIO end
 
 (::DefaultIO)() = IOContext(stdout, :compact => true)

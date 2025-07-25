@@ -62,7 +62,7 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
         @test typst_int == typst_int
         @test typst_int != Typst(1.0)
         @test typeof(typst_int) == Typst{Int}
-        @test string(typst_int) == "Typst(1)"
+        @test string(typst_int) == "Typst{Int64}(1)"
     end
 
     @testset "`TypstString`" begin

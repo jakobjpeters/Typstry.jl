@@ -170,7 +170,7 @@ show_typst(x; context...) = show_typst(TypstContext(; context...), x)
 
 _show_typst(ioc::IOContext, tc::TypstContext, x) = show_typst(ioc, merge!(
     merge_contexts!(TypstContext(x), context),
-    unwrap(ioc, :typst_context, TypstContext()),
+    typst_context(ioc),
     tc
 ), x)
 _show_typst(io::IO, tc::TypstContext, x) = _show_typst(IOContext(io), tc, x)
