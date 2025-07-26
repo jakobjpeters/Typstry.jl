@@ -75,6 +75,26 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
     @testset "`@typst_str`" begin end
 
     @testset "`show_typst`" begin end
+
+    for (value, mode) ∈ Iterators.product(Typstry.examples, instances(Mode))
+        @test begin
+            buffer = IOBuffer()
+
+            if mode == markup show_typst(buffer, value; mode)
+            elseif mode == math
+                print(buffer, '$')
+                show_typst(buffer, value; mode)
+                print(buffer, '$')
+            elseif mode == code
+                print(buffer, "#{")
+                show_typst(buffer, value; mode)
+                print(buffer, '}')
+            end
+
+            render(TypstText(String(take!(buffer))))
+            true
+        end
+    end
 end
 
 @testset "`Base`" begin
