@@ -58,20 +58,8 @@ function join_with(f, io::IO, xs, delimeter; kwargs...)
     end
 end
 
-"""
-    merge_contexts!(tc, context)
-"""
-merge_contexts!(tc, context) = mergewith!((x, _) -> x, tc, context)
-
-"""
-    typst_context(::IO)
-"""
-# typst_context(ioc::IOContext) = unwrap(ioc, :typst_context, TypstContext())
-# typst_context(::IO) = TypstContext()
-typst_context(ioc::IOContext, tc::TypstContext, _tc::TypstContext, value) = merge!(
-    merge_contexts!(_tc, context),
-    typst_context(ioc),
-    ioc, tc, value
+typst_context(ioc::IOContext, tc::TypstContext, _tc::TypstContext, value) = (
+    ioc, merge!(mergewith!((x, _) -> x, _tc, context), typst_context(ioc), tc), value
 )
 typst_context(ioc::IOContext, tc::TypstContext, value) = typst_context(
     ioc, tc, TypstContext(value), value
@@ -79,8 +67,10 @@ typst_context(ioc::IOContext, tc::TypstContext, value) = typst_context(
 typst_context(io::IO, tc::TypstContext, value) = typst_context(IOContext(io), tc, value)
 function typst_context(tc::TypstContext, value)
     _tc = TypstContext(value)
-    typst_context(get(() -> context[:io], tc, :io), tc, _tc, value)
+    typst_context(get(() -> context[:io](), tc, :io), tc, _tc, value)
 end
+typst_context(ioc::IOContext) = unwrap(ioc, :typst_context, TypstContext())
+typst_context(::IO) = TypstContext()
 
 function _unwrap(dt::DataType, key::Symbol, value)
     value isa dt ? value : throw(ContextError(dt, typeof(value), key))

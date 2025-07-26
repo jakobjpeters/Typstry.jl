@@ -13,8 +13,8 @@ using .Iterators: Stateful, repeated
 using .Meta: isexpr, parse
 using PrecompileTools: @compile_workload
 
-include("utilities.jl")
 include("contexts/contexts.jl")
+include("utilities.jl")
 include("strings/strings.jl")
 
 include("commands/Commands.jl")
