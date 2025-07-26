@@ -2,7 +2,8 @@
 module Typstry
 
 import Base:
-    IOBuffer, ==, copy, eltype, getkey, get, iterate, keys, length, mergewith, merge!, merge, read, run, setindex!, show, sizehint!
+    IOBuffer, ==, copy, eltype, getkey, get, iterate, keys, length,
+    mergewith, merge!, merge, read, run, setindex!, show, sizehint!
 
 using Dates:
     Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
