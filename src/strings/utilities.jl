@@ -113,6 +113,8 @@ julia> Typstry.format(MIME"image/svg+xml"())
 ```
 """
 format(::MIME"application/pdf") = "pdf"
+format(::MIME"image/gif") = "gif"
+format(::MIME"image/jpg") = "jpg"
 format(::MIME"image/png") = "png"
 format(::MIME"image/svg+xml") = "svg"
 
@@ -148,6 +150,21 @@ show_array(io::IO, x) = enclose(io, x, "(", ")") do _io, _x
         show_typst(__io, __x; parenthesize = false, mode = code)
     end
     if length(_x) == 1 print(_io, ',') end
+end
+
+function show_image(io::IO, m::Union{
+    MIME"image/gif", MIME"image/svg+xml", MIME"image/png", MIME"image/jpg"
+}, value)
+    tc = typst_context(io, value)
+    path = tempname() * '.' * format(m)
+
+    open(path; write = true) do file
+        show(IOContext(file, IOContext(io, :typst_context => tc)), m, value)
+    end
+
+    code_mode(io, tc)
+    show_parameters(io, tc, :format, [:format, :width, :height, :alt, :fit, :scaling, :icc], path)
+    print(io, ')')
 end
 
 """

@@ -157,7 +157,7 @@ function show_typst(io::IO, ::TypstContext, x)
     elseif showable(MIME"image/svg+xml"(), x) show_image(io, MIME"image/svg+xml"(), x)
     elseif showable(MIME"image/png"(), x) show_image(io, MIME"image/png"(), x)
     elseif showable(MIME"image/jpg"(), x) show_image(io, MIME"image/jpg"(), x)
-    else show_typst(io, sprint(show, MIME"text/plain"(), x))
+    else show(io, MIME"text/plain"(), x)
     end
 end
 show_typst(io::IO, x::AbstractChar; context...) = show_typst(io, string(x); context...)

@@ -65,6 +65,7 @@ typst_context(ioc::IOContext, tc::TypstContext, value) = typst_context(
     ioc, tc, TypstContext(value), value
 )
 typst_context(io::IO, tc::TypstContext, value) = typst_context(IOContext(io), tc, value)
+typst_context(io::IO, value) = typst_context(io, TypstContext(), value)
 function typst_context(tc::TypstContext, value)
     _tc = TypstContext(value)
     typst_context(get(() -> context[:io](), tc, :io), tc, _tc, value)
