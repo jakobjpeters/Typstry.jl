@@ -20,70 +20,6 @@ compile_workload(examples::Vector) = @compile_workload for example ∈ examples
 end
 
 """
-    code_mode(io, tc)
-
-Print the number sign, unless `mode(tc) == code`.
-
-See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
-"""
-code_mode(io::IO, tc) = if mode(tc) ≠ code print(io, "#") end
-
-date_time(::Date) = year, month, day
-date_time(::Time) = hour, minute, second
-date_time(::DateTime) = year, month, day, hour, minute, second
-
-@doc"""
-    date_time(::Union{Dates.Date, Dates.Time, Dates.DateTime})
-""" date_time
-
-function dates(x::Union{Date, DateTime, Time})
-    fs = date_time(x)
-    "datetime", map(Symbol, fs), map(f -> f(x), fs)
-end
-function dates(x::Period)
-    buffer = IOBuffer()
-
-    print(buffer, x)
-    seekstart(buffer)
-
-    "duration", (duration(x),), (TypstText(readuntil(buffer, ' ')),)
-end
-
-@doc """
-    dates(::Union{Dates.Date, Dates.DateTime, Dates.Period, Dates.Time})
-
-# Examples
-
-```jldoctest
-julia> Typstry.dates(Dates.Date(1))
-("datetime", (:year, :month, :day), (1, 1, 1))
-
-julia> Typstry.dates(Dates.Day(1))
-("duration", (:days,), (TypstText{String}("1"),))
-```
-""" dates
-
-duration(::Day) = :days
-duration(::Hour) = :hours
-duration(::Minute) = :minutes
-duration(::Second) = :seconds
-duration(::Week) = :weeks
-
-@doc """
-    duration(::Dates.Period)
-
-# Examples
-
-```jldoctest
-julia> Typstry.duration(Dates.Day(1))
-:days
-
-julia> Typstry.duration(Dates.Hour(1))
-:hours
-```
-""" duration
-
-"""
     enclose(f, io, x, left, right = reverse(left); kwargs...)
 
 Call `f(io,\u00A0x;\u00A0kwargs...)` between printing `left` and `right`, respectfully.
@@ -100,25 +36,6 @@ function enclose(f, io::IO, x, left::String, right::String = reverse(left); cont
     f(io, x; context...)
     print(io, right)
 end
-
-"""
-    escape(io, n)
-
-Print `\\` to `io` `n` times.
-
-# Examples
-
-```jldoctest
-julia> Typstry.escape(stdout, 2)
-\\\\
-```
-"""
-escape(io::IO, n::Int) = join(io, repeated('\\', n))
-
-"""
-    indent(tc)
-"""
-indent(tc) = " " ^ tab_size(tc)
 
 """
     join_with(f, io, xs, delimeter; kwargs...)
@@ -142,92 +59,28 @@ function join_with(f, io::IO, xs, delimeter; kwargs...)
 end
 
 """
-    math_mode(f, io, tc, x; kwargs...)
-"""
-math_mode(f, io::IO, tc, x; kwargs...) = enclose(
-    (io, x; kwargs...) -> f(io, tc, x; kwargs...), io, x, math_pad(tc); kwargs...
-)
-
-"""
-    math_pad(tc)
-
-Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
-[`block`](@ref Typstry.block) and [`mode`](@ref Typstry.mode) settings.
-"""
-function math_pad(tc)
-    if mode(tc) == math ""
-    else block(tc) ? "\$ " : "\$"
-    end
-end
-
-"""
     merge_contexts!(tc, context)
 """
 merge_contexts!(tc, context) = mergewith!((x, _) -> x, tc, context)
 
 """
-    show_array(io, x)
-"""
-show_array(io::IO, x) = enclose(io, x, "(", ")") do _io, _x
-    join_with(_io, _x, ", ") do __io, __x
-        show_typst(__io, __x; parenthesize = false, mode = code)
-    end
-    if length(_x) == 1 print(_io, ',') end
-end
-
-"""
-    show_parameters(io, tc, f, keys, final)
-"""
-function show_parameters(io::IO, tc, f, keys, final)
-    pairs = map(key -> key => unwrap(tc, TypstString, key), filter(key -> haskey(tc, key), keys))
-
-    println(io, f, '(')
-    join_with(io, pairs, ",\n") do _io, (key, value)
-        print(_io, indent(tc) ^ (depth(tc) + 1), key, ": ")
-        # println()
-        # @show value
-        # show_typst(IOContext(stdout, :typst_context => value)
-        # println()
-        show_typst(_io, value)
-    end
-
-    if !isempty(pairs)
-        final && print(io, ',')
-        println(io)
-    end
-end
-
-"""
-    show_raw(f, io, tc, x, language)
-"""
-function show_raw(f, io::IO, tc, x, language)
-    _backticks, _block = '`' ^ backticks(tc), block(tc)
-
-    mode(tc) == math && print(io, "#")
-    print(io, _backticks, language)
-
-    if _block
-        _indent, _depth = indent(tc), depth(tc)
-
-        println(io)
-
-        for line in eachsplit(sprint(f, x), '\n')
-            println(io, _indent ^ (_depth + 1), line)
-        end
-
-        print(io, _indent ^ _depth)
-    else enclose(f, io, x, " ")
-    end
-
-    print(io, _backticks)
-end
-
-"""
     typst_context(::IO)
 """
-typst_context(ioc::IOContext) = unwrap(ioc, :typst_context, TypstContext())
-typst_context(::IO) = TypstContext()
-
+# typst_context(ioc::IOContext) = unwrap(ioc, :typst_context, TypstContext())
+# typst_context(::IO) = TypstContext()
+typst_context(ioc::IOContext, tc::TypstContext, _tc::TypstContext, value) = merge!(
+    merge_contexts!(_tc, context),
+    typst_context(ioc),
+    ioc, tc, value
+)
+typst_context(ioc::IOContext, tc::TypstContext, value) = typst_context(
+    ioc, tc, TypstContext(value), value
+)
+typst_context(io::IO, tc::TypstContext, value) = typst_context(IOContext(io), tc, value)
+function typst_context(tc::TypstContext, value)
+    _tc = TypstContext(value)
+    typst_context(get(() -> context[:io], tc, :io), tc, _tc, value)
+end
 
 function _unwrap(dt::DataType, key::Symbol, value)
     value isa dt ? value : throw(ContextError(dt, typeof(value), key))

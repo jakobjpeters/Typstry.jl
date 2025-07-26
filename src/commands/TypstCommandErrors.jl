@@ -1,4 +1,11 @@
 
+module TypstCommandErrors
+
+import Base: showerror, show
+using ..Commands: TypstCommand
+
+export TypstCommandError
+
 """
     TypstCommandError <: Exception
     TypstCommandError(::TypstCommand)
@@ -32,3 +39,5 @@ function show(io::IO, m::MIME"text/plain", te::TypstCommandError)
     show(io, m, te.command)
     print(io, ')')
 end
+
+end # TypstCommandErrors

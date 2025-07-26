@@ -1,4 +1,15 @@
 
+module TypstCommands
+
+import Base:
+    ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus,
+    iterate, keys, lastindex, length, read, setcpuaffinity, setenv, show
+import Typst_jll
+using ..Commands: Typstry
+using Typstry: enclose, join_with
+
+export TypstCommand, @typst_cmd
+
 """
     TypstCommand(::AbstractVector{<:AbstractString})
     TypstCommand(::TypstCommand; kwargs...)
@@ -131,12 +142,6 @@ function read(tc::TypstCommand)
     read(tc.ignore_status ? ignorestatus(command) : command)
 end
 
-function run(tc::TypstCommand, args...; wait::Bool = true)
-    process = run(ignorestatus(`$(tc.compiler) $(tc.parameters)`), args...; wait)
-    tc.ignore_status || success(process) || throw(TypstCommandError(tc))
-    process
-end
-
 setcpuaffinity(tc::TypstCommand, cpus) = TypstCommand(tc; cpus)
 
 function show(io::IO, ::MIME"text/plain", tc::TypstCommand)
@@ -151,3 +156,5 @@ function show(io::IO, ::MIME"text/plain", tc::TypstCommand)
     else print(TypstCommand, '(', parameters, ')')
     end
 end
+
+end # TypstCommands

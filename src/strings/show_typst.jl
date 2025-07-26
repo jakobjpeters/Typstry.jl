@@ -164,16 +164,9 @@ show_typst(io::IO, x::AbstractChar; context...) = show_typst(io, string(x); cont
 show_typst(io::IO, x::Complex{Bool}; context...) = show_typst(
     io, Complex(Int(real(x)), Int(imag(x))); context...
 )
-show_typst(tc::TypstContext, x) = _show_typst(stdout, tc, x)
-show_typst(io::IO, x; context...) = _show_typst(io, TypstContext(; context...), x)
-show_typst(x; context...) = show_typst(TypstContext(; context...), x)
-
-_show_typst(ioc::IOContext, tc::TypstContext, x) = show_typst(ioc, merge!(
-    merge_contexts!(TypstContext(x), context),
-    typst_context(ioc),
-    tc
-), x)
-_show_typst(io::IO, tc::TypstContext, x) = _show_typst(IOContext(io), tc, x)
+show_typst(tc::TypstContext, x) = show_typst(typst_context(tc, x)...)
+show_typst(io::IO, x; context...) = show_typst(typst_context(io, TypstContext(; context...), x)...)
+show_typst(x; context...) = show_typst(typst_context(TypstContext(; context...), x)...)
 
 # function show_typst(io, tc, x::Union{Date, DateTime, Period, Time})
 #     f, keys, values = dates(x)

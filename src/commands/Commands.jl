@@ -1,6 +1,17 @@
 
-include("typst_command.jl")
-include("typst_command_error.jl")
+module Commands
+
+import Base: run
+import Typstry
+using Artifacts: @artifact_str
+
+include("TypstCommands.jl")
+using .TypstCommands: TypstCommand, @typst_cmd
+
+include("TypstCommandErrors.jl")
+using .TypstCommandErrors: TypstCommandError
+
+export TypstCommandError, TypstCommand, @typst_cmd, julia_mono, typst
 
 """
     julia_mono
@@ -61,3 +72,11 @@ function typst(parameters::AbstractString; catch_interrupt::Bool = true, ignores
 
     nothing
 end
+
+function run(tc::TypstCommand, args...; wait::Bool = true)
+    process = run(ignorestatus(`$(tc.compiler) $(tc.parameters)`), args...; wait)
+    tc.ignore_status || success(process) || throw(TypstCommandError(tc))
+    process
+end
+
+end # Commands

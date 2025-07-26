@@ -29,7 +29,8 @@ test_strings(x, s; kwargs...) = @test TypstString(x; kwargs...) == s
         @testset "$description" begin
             for _description in descriptions
                 @testset "$_description" include(joinpath(lowercasefirst(description),
-                    "Test" * _description * (description == "Extensions" ? "Extension" : "") * ".jl"))
+                    "Test" * _description * (description == "Extensions" ? "Extension" : "") * ".jl"
+                ))
             end
         end
     end

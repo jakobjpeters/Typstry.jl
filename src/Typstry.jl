@@ -2,11 +2,9 @@
 module Typstry
 
 import Base:
-    IOBuffer, ==, addenv, codeunit, copy, detach, eltype, firstindex, getindex, getkey, get, hash,
-    ignorestatus, isvalid, iterate, keys, lastindex, length, mergewith, merge!, merge, ncodeunits,
-    pointer, read, repr, run, setcpuaffinity, setenv, setindex!, showerror, show, sizehint!
-import Typst_jll
-using Artifacts: @artifact_str
+    IOBuffer, ==, codeunit, copy, eltype, firstindex, getkey, get,
+    isvalid, iterate, keys, lastindex, length, mergewith, merge!, merge, ncodeunits,
+    pointer, read, repr, run, setindex!, showerror, show, sizehint!
 using Dates:
     Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
     day, hour, minute, month, second, year
@@ -18,7 +16,10 @@ using PrecompileTools: @compile_workload
 include("utilities.jl")
 include("contexts/contexts.jl")
 include("strings/strings.jl")
-include("commands/commands.jl")
+
+include("commands/Commands.jl")
+using .Commands: TypstCommandError, TypstCommand, @typst_cmd, julia_mono, typst
+
 include("render.jl")
 
 export
