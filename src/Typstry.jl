@@ -2,15 +2,13 @@
 module Typstry
 
 import Base:
-    IOBuffer, ==, codeunit, copy, eltype, firstindex, getkey, get,
-    isvalid, iterate, keys, lastindex, length, mergewith, merge!, merge, ncodeunits,
-    pointer, read, repr, run, setindex!, showerror, show, sizehint!
+    IOBuffer, ==, copy, eltype, getkey, get, iterate, keys, length, mergewith, merge!, merge, read, run, setindex!, show, sizehint!
+
 using Dates:
     Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
     day, hour, minute, month, second, year
 using .Docs: HTML, Text
 using .Iterators: Stateful, repeated
-using .Meta: isexpr, parse
 using PrecompileTools: @compile_workload
 
 include("contexts/contexts.jl")
@@ -18,6 +16,7 @@ include("utilities.jl")
 include("strings/strings.jl")
 
 include("commands/Commands.jl")
+
 using .Commands: TypstCommandError, TypstCommand, @typst_cmd, julia_mono, typst
 
 include("render.jl")

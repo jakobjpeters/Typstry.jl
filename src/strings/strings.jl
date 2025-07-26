@@ -1,11 +1,23 @@
 
 include("utilities.jl")
-include("default_io.jl")
-include("mode.jl")
+
+include("Modes.jl")
+
+using .Modes: Mode, code, markup, math
+
 include("show_typst.jl")
-include("typst_text.jl")
-include("typst.jl")
-include("typst_string.jl")
+
+include("TypstTexts.jl")
+
+using .TypstTexts: TypstText
+
+include("Typsts.jl")
+
+using .Typsts: Typst
+
+include("TypstStrings.jl")
+
+using .TypstStrings: TypstString, @typst_str
 
 merge!(default_context, TypstContext(;
     backticks = 3,

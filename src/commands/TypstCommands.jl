@@ -5,6 +5,7 @@ import Base:
     ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus,
     iterate, keys, lastindex, length, read, setcpuaffinity, setenv, show
 import Typst_jll
+
 using ..Commands: Typstry
 using Typstry: enclose, join_with
 

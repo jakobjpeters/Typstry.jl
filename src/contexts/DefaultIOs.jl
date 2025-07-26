@@ -1,4 +1,10 @@
 
+module DefaultIOs
+
+import Base: show
+
+export DefaultIO
+
 """
     DefaultIO
     DefaultIO()
@@ -28,3 +34,5 @@ function show(io::IO, ::DefaultIO)
     print(io, "(stdout, :compact => true))::")
     show(io, DefaultIO)
 end
+
+end # DefaultIOs

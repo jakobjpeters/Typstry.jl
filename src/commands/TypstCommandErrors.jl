@@ -2,6 +2,7 @@
 module TypstCommandErrors
 
 import Base: showerror, show
+
 using ..Commands: TypstCommand
 
 export TypstCommandError

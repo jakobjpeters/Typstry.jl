@@ -1,4 +1,11 @@
 
+module TypstTexts
+
+import Base: show
+import ..Typstry: show_typst
+
+using ..Typstry: TypstContext
+
 """
     TypstText{T}
     TypstText(::Any)
@@ -35,3 +42,5 @@ show(io::IO, ::MIME"text/typst", tt::TypstText) = show_typst(io, tt)
 show(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
 }, tt::TypstText) = show_render(io, m, tt)
+
+end # TypstTexts

@@ -1,4 +1,8 @@
 
+module Modes
+
+export Mode, code, markup, math
+
 """
     Mode
 
@@ -51,3 +55,5 @@ julia> math
 math::Mode = 2
 ```
 """ math
+
+end # Modes

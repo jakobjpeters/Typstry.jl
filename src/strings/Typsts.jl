@@ -1,4 +1,13 @@
 
+module Typsts
+
+import Base: show
+import ..Typstry: show_typst
+
+using ..Typstry: TypstContext
+
+export Typst
+
 """
     Typst{T}
     Typst(::T)
@@ -40,3 +49,5 @@ show(io::IO, ::MIME"text/typst", t::Typst) = show_typst(io, t)
 show(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
 }, t::Typst) = show_render(io, m, t)
+
+end # Typsts

@@ -1,4 +1,16 @@
 
+module TypstStrings
+
+import Base:
+    IOBuffer, codeunit, codeunit, isvalid, iterate, iterate,
+    ncodeunits, pointer, repr, show
+import ..Typstry: show_typst
+
+using .Meta: isexpr, parse
+using ..Typstry: TypstContext, TypstText, escape
+
+export TypstString, @typst_str
+
 """
     TypstString <: AbstractString
     TypstString(::TypstContext, ::Any)
@@ -177,3 +189,5 @@ function show(io::IO, ts::TypstString)
         print(io, "))")
     end
 end
+
+end # TypstStrings

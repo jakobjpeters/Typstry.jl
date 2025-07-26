@@ -1,4 +1,10 @@
 
+module ContextErrors
+
+import Base: showerror, show
+
+export ContextError
+
 """
     ContextError <: Exception
     ContextError(::Type, ::Type, ::Symbol)
@@ -39,3 +45,5 @@ showerror(io::IO, ce::ContextError) = print(
 show(io::IO, ::MIME"text/plain", ce::ContextError) = print(
     io, ContextError, "(", ce.expected, ", ", ce.received, ", :", ce.key, ")"
 )
+
+end # ContextErrors

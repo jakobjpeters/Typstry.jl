@@ -3,12 +3,15 @@ module Commands
 
 import Base: run
 import Typstry
+
 using Artifacts: @artifact_str
 
 include("TypstCommands.jl")
+
 using .TypstCommands: TypstCommand, @typst_cmd
 
 include("TypstCommandErrors.jl")
+
 using .TypstCommandErrors: TypstCommandError
 
 export TypstCommandError, TypstCommand, @typst_cmd, julia_mono, typst
