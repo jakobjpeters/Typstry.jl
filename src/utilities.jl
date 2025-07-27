@@ -31,7 +31,7 @@ julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x
 \$ 1x \$
 ```
 """
-function enclose(f, io::IO, x, left::String, right::String = reverse(left); context...)
+function enclose(f, io::IO, x, left, right = reverse(string(left)); context...)
     print(io, left)
     f(io, x; context...)
     print(io, right)
@@ -58,9 +58,17 @@ function join_with(f, io::IO, xs, delimeter; kwargs...)
     end
 end
 
-typst_context(ioc::IOContext, tc::TypstContext, _tc::TypstContext, value) = (
-    ioc, merge!(mergewith!((x, _) -> x, _tc, context), typst_context(ioc), tc), value
-)
+function typst_context(ioc::IOContext, tc::TypstContext, ____tc::TypstContext, value)
+    _tc = typst_context(ioc)
+    __tc = merge!(copy(_tc), tc)
+    ___tc = unwrap(_tc, :context, TypstContext())
+
+    if haskey(ioc, :typst_context) _tc[:context] = __tc
+    else ioc = IOContext(ioc, __tc)
+    end
+
+    (ioc, merge!(mergewith!((x, _) -> x, ____tc, context), ___tc, __tc), value)
+end
 typst_context(ioc::IOContext, tc::TypstContext, value) = typst_context(
     ioc, tc, TypstContext(value), value
 )
@@ -68,7 +76,8 @@ typst_context(io::IO, tc::TypstContext, value) = typst_context(IOContext(io), tc
 typst_context(io::IO, value) = typst_context(io, TypstContext(), value)
 function typst_context(tc::TypstContext, value)
     _tc = TypstContext(value)
-    typst_context(get(() -> context[:io](), tc, :io), tc, _tc, value)
+    # TODO: throw a `ContextError`
+    typst_context(get(() -> context[:io]()::IO, tc, :io), tc, _tc, value)
 end
 typst_context(ioc::IOContext) = unwrap(ioc, :typst_context, TypstContext())
 typst_context(::IO) = TypstContext()

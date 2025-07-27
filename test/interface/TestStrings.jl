@@ -76,7 +76,7 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
 
     @testset "`show_typst`" begin end
 
-    for (value, mode) ∈ Iterators.product(Typstry.examples, instances(Mode))
+    for ((value, _), mode) ∈ Iterators.product(Typstry.examples, instances(Mode))
         @test begin
             buffer = IOBuffer()
 

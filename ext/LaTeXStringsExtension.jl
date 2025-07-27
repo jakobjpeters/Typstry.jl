@@ -16,7 +16,9 @@ See also [`TypstContext`](@ref Typstry.TypstContext).
 |:--------------|:-----------------------------------------|:-----------|
 | `LaTeXString` | `:block`, `:depth`, `:mode`, `:tab_size` |            |
 """
-show_typst(io::IO, tc::TypstContext, x::LaTeXString) = show_raw(print, io, tc, x, "latex")
+show_typst(io::IO, tc::TypstContext, x::LaTeXString) = show_raw(
+    io, tc, MIME"text/latex"(), :latex, x
+)
 
 const examples = [L"a" => LaTeXString]
 

@@ -16,14 +16,7 @@ See also [`TypstContext`](@ref Typstry.TypstContext).
 |:--------------|:-----------------------------------------|:-----------|
 | `Markdown.MD` | `:block`, `:depth`, `:mode`, `:tab_size` |            |
 """
-show_typst(io::IO, tc::TypstContext, x::MD) = show_raw(io, tc, x, "markdown") do _io, x
-    buffer = IOBuffer()
-
-    print(buffer, x)
-    seekstart(buffer)
-
-    print(_io, read(buffer, String)[begin:(end - 1)])
-end
+show_typst(io::IO, tc::TypstContext, x::MD) = show_raw(io, tc, MIME"text/markdown"(), :markdown, x)
 
 const examples = [md"# A" => MD]
 

@@ -2,9 +2,10 @@
 module Typstry
 
 import Base:
-    IOBuffer, ==, copy, eltype, getkey, get, iterate, keys, length,
+    IOBuffer, IOContext, ==, copy, eltype, getkey, get, iterate, length,
     mergewith, merge!, merge, read, run, setindex!, show, sizehint!
 
+using Base: MathConstants.catalan
 using Dates:
     Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
     day, hour, minute, month, second, year
@@ -35,33 +36,35 @@ A constant `Vector` of Julia values and their corresponding
 `Type`s implemented for [`show_typst`](@ref).
 """
 const examples = [
-    Any[true, 1, 1.2, 1 // 2] => AbstractArray
+    # Any[true, 1, 1.2, 1 // 2] => AbstractArray
+    # Any[true 1; 1.2 1 // 2] => AbstractMatrix
+    # Date(1) => Date
+    # DateTime(1) => DateTime
+    # Day(1) => Period
+    # Time(0) => Time
     'a' => AbstractChar
     1.2 => AbstractFloat
-    Any[true 1; 1.2 1 // 2] => AbstractMatrix
     "a" => AbstractString
     true => Bool
+    1 + 2im => Complex{Int}
     im => Complex{Bool}
-    1 + 2im => Complex
-    π => Irrational
+    html"<p>a</p>" => HTML
+    π => Irrational{:π}
+    catalan => Irrational{:catalan}
     nothing => Nothing
     0:2:6 => OrdinalRange{<:Integer, <:Integer}
-    1 // 2 => Rational
+    1 // 2 => Rational{Int}
+    true // true => Rational{Bool}
     r"[a-z]" => Regex
     1 => Signed
     StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer}
+    text"[\"a\"]" => Text
     (true, 1, 1.2, 1 // 2) => Tuple
-    Typst(1) => Typst
     typst"[\"a\"]" => TypstString
     TypstText([1, 2, 3, 4]) => TypstText
+    Typst(1) => Typst
     0xff => Unsigned
     v"1.2.3" => VersionNumber
-    html"<p>a</p>" => HTML
-    text"[\"a\"]" => Text
-    Date(1) => Date
-    DateTime(1) => DateTime
-    Day(1) => Period
-    Time(0) => Time
 ]
 
 compile_workload(examples)

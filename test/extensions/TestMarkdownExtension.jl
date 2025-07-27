@@ -13,7 +13,13 @@ test_modes(markdown, [
     "#```markdown a\nb ```"
 ])
 
-test_strings(markdown, "````markdown\n        a\n        b\n    ````";
-    backticks = 4, block = true, depth = 1, tab_size = 4)
+test_strings(
+    markdown,
+    "````markdown\n    a\n    b\n    ````";
+    backticks = 4,
+    block = true,
+    depth = 1,
+    tab_size = 4
+)
 
 end # TestMarkdownExtension

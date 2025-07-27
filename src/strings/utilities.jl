@@ -142,16 +142,6 @@ function math_pad(tc)
     end
 end
 
-"""
-    show_array(io, x)
-"""
-show_array(io::IO, x) = enclose(io, x, "(", ")") do _io, _x
-    join_with(_io, _x, ", ") do __io, __x
-        show_typst(__io, __x; parenthesize = false, mode = code)
-    end
-    if length(_x) == 1 print(_io, ',') end
-end
-
 function show_image(io::IO, m::Union{
     MIME"image/gif", MIME"image/svg+xml", MIME"image/png", MIME"image/jpg"
 }, value)
@@ -170,45 +160,52 @@ end
 """
     show_parameters(io, tc, f, keys, final)
 """
-function show_parameters(io::IO, tc, f, keys, final)
-    pairs = map(key -> key => unwrap(tc, TypstString, key), filter(key -> haskey(tc, key), keys))
+# function show_parameters(io::IO, tc, f, keys, final)
+#     pairs = map(key -> key => unwrap(tc, TypstString, key), filter(key -> haskey(tc, key), keys))
 
-    println(io, f, '(')
-    join_with(io, pairs, ",\n") do _io, (key, value)
-        print(_io, indent(tc) ^ (depth(tc) + 1), key, ": ")
-        show_typst(_io, value)
-    end
+#     println(io, f, '(')
+#     join_with(io, pairs, ",\n") do _io, (key, value)
+#         print(_io, indent(tc) ^ (depth(tc) + 1), key, ": ")
+#         show_typst(_io, value)
+#     end
 
-    if !isempty(pairs)
-        final && print(io, ',')
-        println(io)
-    end
-end
+#     if !isempty(pairs)
+#         final && print(io, ',')
+#         println(io)
+#     end
+# end
 
 """
-    show_raw(f, io, tc, x, language)
+    show_raw(::IO, ::TypstContext, ::MIME, ::Symbol, x)
 """
-function show_raw(f, io::IO, tc, x, language)
+function show_raw(io::IO, tc::TypstContext, m::MIME, language::Symbol, x)
     _backticks, _block = '`' ^ backticks(tc), block(tc)
 
-    mode(tc) == math && print(io, "#")
+    mode(tc) == math && code_mode(io, tc)
     print(io, _backticks, language)
 
     if _block
-        _indent, _depth = indent(tc), depth(tc)
+        space = indent(tc) ^ depth(tc)
 
         println(io)
 
-        for line in eachsplit(sprint(f, x), '\n')
-            println(io, _indent ^ (_depth + 1), line)
+        for line in eachsplit(
+            (@view sprint(show, m, x; context = io)[begin:(end - (m isa MIME"text/markdown"))]),
+            '\n'
+        )
+            println(io, space, line)
         end
 
-        print(io, _indent ^ _depth)
-    else enclose(f, io, x, " ")
+        print(io, space)
+    else enclose((io, x) -> show_raw(io, m, x), io, x, ' ')
     end
 
     print(io, _backticks)
 end
+show_raw(io::IO, m::MIME"text/markdown", x) = print(
+    io, @view sprint(show, m, x; context = io)[begin:(end - 1)]
+)
+show_raw(io::IO, m::MIME, x) = show(io, m, x)
 
 function show_render(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"

@@ -12,7 +12,8 @@ test_modes(latex, [
     "#```latex \$a\$ ```"
 ])
 
-test_strings(latex, "````latex\n        \$a\$\n    ````";
-    backticks = 4, block = true, depth = 1, tab_size = 4)
+test_strings(
+    latex, "````latex\n    \$a\$\n    ````"; backticks = 4, block = true, depth = 1, tab_size = 4
+)
 
 end # TestLaTeXStringsExtension

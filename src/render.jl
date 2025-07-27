@@ -33,9 +33,9 @@ function render(tc::TypstContext, value;
     ignorestatus::Bool = true
 )
     Base.open(input; truncate = true) do file
-        ioc, _tc, _ = typst_context(file, tc, value)
-        print(ioc, preamble(_tc))
-        show_typst(IOContext(ioc, :typst_context => _tc), value)
+        ioc, tc, _ = typst_context(file, tc, value)
+        print(ioc, preamble(tc))
+        show_typst(IOContext(ioc, tc), value)
         println(file)
     end
     run(TypstCommand(TypstCommand([
