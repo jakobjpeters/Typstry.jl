@@ -41,8 +41,8 @@ $mat(
 julia> TypstString(1 // 2; block = true)
 typst"$ 1 / 2 $"
 
-julia> typst"$ \(1 + 2im; mode = math) $"
-typst"$ (1 + 2i) $"
+julia> typst"$ 1 / \(1 + 2im; mode = math) $"
+typst"$ 1 / (1 + 2i) $"
 
 julia> TypstCommand(["help"])
 typst`help`
@@ -72,10 +72,9 @@ julia> render(1:4)
 
 ### Planned
 
-- Seperate the choice of Typst representation from the `mode`
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
-    - Use a tree-sitter grammar or jll package
+    - Use a jll package
 - Implement Typst formatting for more types
     - `Base`
         - `AbstractDict`
@@ -91,10 +90,10 @@ julia> render(1:4)
             - DataFrames.jl
     - Partial Julia to Typst transpilation
         - ```
-          @typst(a * b) ==
-          TypstString(:(a * b)) ==
-          TypstString(TypstFunction(*, :a, :b)) ==
-          typst"$ a b $"
+          (@typst $a * b) ==
+          TypstString(:($a * b)) ==
+          TypstString(TypstFunction(*, a, :b)) ==
+          typst"$ 2b $"
           ```
 
 ## Similar Packages
@@ -102,6 +101,9 @@ julia> render(1:4)
 ### Typst
 
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
+    - Dependent of Typstry.jl
+- [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl)
+    - Weak dependent of Typstry.jl
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
 - [TypstJlyFish.jl](https://github.com/andreasKroepelin/TypstJlyfish.jl)
     - Interoperable with Typstry.jl
@@ -125,4 +127,5 @@ julia> render(1:4)
 - [LibTeXPrintf.jl](https://github.com/JuliaStrings/LibTeXPrintf.jl)
 - [MathJaxRenderer.jl](https://github.com/MichaelHatherly/MathJaxRenderer.jl)
 - [MathTeXEngine.jl](https://github.com/Kolaru/MathTeXEngine.jl)
+- [PlutoPapers.jl](https://github.com/mossr/PlutoPapers.jl)
 - [tectonic_jll.jl](https://github.com/JuliaBinaryWrappers/tectonic_jll.jl)

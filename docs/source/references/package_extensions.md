@@ -6,12 +6,28 @@ This reference documents the lazily-loaded implementations of
 
 ## LaTeXStrings.jl
 
-```@docs
-show_typst(::IO, ::TypstContext, ::LaTeXStrings.LaTeXString)
-```
+<!-- """ -->
+    <!-- show_typst(::IO, ::TypstContext, ::LaTeXString) -->
+
+<!-- Print a raw text block in Typst format. -->
+
+<!-- See also [`TypstContext`](@ref Typstry.TypstContext). -->
+
+<!-- | Type          | Settings                                 | Parameters | -->
+<!-- |:--------------|:-----------------------------------------|:-----------| -->
+<!-- | `LaTeXString` | `:block`, `:depth`, `:mode`, `:tab_size` |            | -->
+<!-- """ -->
 
 ## Markdown.jl
 
-```@docs
-show_typst(::IO, ::TypstContext, ::Markdown.MD)
-```
+<!-- """ -->
+    <!-- show_typst(::IO, ::TypstContext, ::Markdown.MD) -->
+
+<!-- Print a raw text block in Typst format. -->
+
+<!-- See also [`TypstContext`](@ref Typstry.TypstContext). -->
+
+<!-- | Type          | Settings                                 | Parameters | -->
+<!-- |:--------------|:-----------------------------------------|:-----------| -->
+<!-- | `Markdown.MD` | `:block`, `:depth`, `:mode`, `:tab_size` |            | -->
+<!-- """ -->

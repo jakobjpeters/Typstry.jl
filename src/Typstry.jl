@@ -46,15 +46,18 @@ const examples = [
     1.2 => AbstractFloat
     "a" => AbstractString
     true => Bool
-    1 + 2im => Complex{Int}
-    im => Complex{Bool}
+    1 + 2im => Complex{<:Union{
+        AbstractFloat, AbstractIrrational, Rational{<:Signed}, Signed
+    }}
+    im => Complex{<:Union{
+        Bool, Unsigned, Rational{<:Union{Bool, Unsigned
+    }}}}
     html"<p>a</p>" => HTML
     π => Irrational{:π}
-    catalan => Irrational{:catalan}
     nothing => Nothing
     0:2:6 => OrdinalRange{<:Integer, <:Integer}
-    1 // 2 => Rational{Int}
-    true // true => Rational{Bool}
+    1 // 2 => Rational{<:Signed}
+    true // true => Rational{<:Union{Bool, Unsigned}}
     r"[a-z]" => Regex
     1 => Signed
     StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer}

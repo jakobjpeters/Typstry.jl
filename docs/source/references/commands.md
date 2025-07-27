@@ -8,6 +8,5 @@ TypstCommandError
 TypstCommand
 @typst_cmd
 julia_mono
-render
 typst
 ```

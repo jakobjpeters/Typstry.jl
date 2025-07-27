@@ -10,8 +10,11 @@ function show_typst(io::IO, tc::TypstContext, x::AbstractFloat)
     else math_mode((io, _, x) -> print(io, x), io, tc, x)
     end
 end
-show_typst(io::IO, tc::TypstContext, x::AbstractString) = enclose(io, x, '"') do io, x
-    escape_string(io, x, '"')
+function show_typst(io::IO, tc::TypstContext, x::AbstractString)
+    code_mode(io, tc)
+    enclose(io, x, '"') do io, x
+        escape_string(io, x, '"')
+    end
 end
 function show_typst(io::IO, tc::TypstContext, x::Bool)
     code_mode(io, tc)
@@ -30,7 +33,9 @@ show_typst(io::IO, tc::TypstContext, x::Complex{<:Union{
         print(io, 'i')
     end
 end
-show_typst(io::IO, tc::TypstContext, x::Complex) = show_typst(
+show_typst(io::IO, tc::TypstContext, x::Complex{<:Union{
+    Bool, Unsigned, Rational{<:Union{Bool, Unsigned
+}}}}) = show_typst(
     io, Complex(signed(real(x)), signed(imag(x)))
 )
 show_typst(io::IO, tc::TypstContext, x::HTML) = show_raw(io, tc, MIME"text/html"(), :html, x)
@@ -50,7 +55,7 @@ show_typst(io::IO, tc::TypstContext, x::Rational{<:Signed}) = math_mode(io, tc, 
         show_typst(io, denominator(x); mode = math)
     end
 end
-show_typst(io::IO, ::TypstContext, x::Rational) = show_typst(
+show_typst(io::IO, ::TypstContext, x::Rational{<:Union{Bool, Unsigned}}) = show_typst(
     io, signed(numerator(x)) // signed(denominator(x))
 )
 function show_typst(io::IO, tc::TypstContext, x::Regex)

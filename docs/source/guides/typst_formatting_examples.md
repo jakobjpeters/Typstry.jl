@@ -3,12 +3,10 @@
 
 This guide illustrates Typst formatting for supported types.
 
-These Typst documents were generated from Julia using `show` with
-the `text/typst` MIME type and compiled using a [`TypstCommand`](@ref).
+These Typst documents were generated from Julia using
+`show_typst` and compiled using a [`TypstCommand`](@ref).
 Each row corresponds to a method of [`show_typst`](@ref).
-The Typst columns contain the [`code`](@ref), [`markup`](@ref), and [`math`](@ref) syntactical [`Mode`](@ref)s.
-Each mode contains two columns, where the first is the Typst source
-text and the second is how that text is rendered in a compiled document.
+The Typst columns contain the formatted value and its render.
 Sequential documents correspond to [Package Extensions](@ref).
 
 !!! tip

@@ -107,8 +107,6 @@ TypstContext with 8 entries:
 """
 const context = TypstContext()
 
-x = stdout
-
 """
     reset_context()
 
