@@ -9,8 +9,8 @@
         if c.y < 2 { strong(c) }
         else {
             let x = c.x
-            if x == 3 { c }
-            else { raw({ c.body.text }, lang: { if x < 2 { "julia" } else if x == 2 { "typ" } }) }
+            if x == 2 or x == 4  { c }
+            else { raw({ c.body.text }, lang: { if x < 2 { "julia" } else if x == 3 { "typ" } }) }
         }
     ))
 
@@ -19,10 +19,8 @@
 
 #let module(name, examples) = {
     [= #name]
-    table(columns: 4, header(
-        cell(colspan: 2)[Julia],
-        cell(colspan: 2)[Typst],
-        [Value], [Type],
-        [Code], [Render]
+    table(columns: 5, header(
+        cell(colspan: 3)[Julia], cell(colspan: 2)[Typst],
+        [Value], [Type], [Settings], [Code], [Render]
     ), ..examples)
 }

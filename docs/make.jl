@@ -11,7 +11,7 @@ using Typstry: TypstContext, context, enclose, examples, join_with, show_raw
 using Typstry
 
 const assets = joinpath(@__DIR__, "source", "assets")
-const _examples = Vector{Pair{Any, Type}}[]
+const _examples = Vector{Pair{Any, Pair{Type, Vector{Symbol}}}}[]
 const logo = joinpath(assets, "logo.svg")
 const modes = instances(Mode)
 const width, height = 210, 297
@@ -60,7 +60,7 @@ for (package, examples) in append!([("Typstry", examples)], zip(extensions, _exa
             #module(\(package * ".jl"; mode = code), (
             """
         )
-        join_with(file, examples, ",\n") do file, (v, t)
+        join_with(file, examples, ",\n") do file, (v, (t, cs))
             print(file, "    ")
 
             if v isa MD show_typst(file, "md\"# A\""; mode = code)
@@ -69,7 +69,9 @@ for (package, examples) in append!([("Typstry", examples)], zip(extensions, _exa
 
             print(file, ", ")
             show_typst(file, repr(t); mode = code)
-            print(file, ", ")
+            print(file, ", [")
+            join_with((file, c) -> print(file, '`', c, '`'), file, cs, ", ")
+            print(file, "], ")
             show_raw(file, tc, MIME"text/typst"(), :typst, Typst(v))
             print(file, ", [")
             show_typst(file, v)

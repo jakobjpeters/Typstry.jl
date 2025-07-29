@@ -1,5 +1,5 @@
 
-show_typst(io::IO, tc::TypstContext, x::AbstractChar) = show_typst(io, string(x))
+show_typst(io::IO, ::TypstContext, x::AbstractChar) = show_typst(io, string(x))
 function show_typst(io::IO, tc::TypstContext, x::AbstractFloat)
     if isinf(x)
         code_mode(io, tc)
@@ -11,10 +11,8 @@ function show_typst(io::IO, tc::TypstContext, x::AbstractFloat)
     end
 end
 function show_typst(io::IO, tc::TypstContext, x::AbstractString)
-    code_mode(io, tc)
-    enclose(io, x, '"') do io, x
-        escape_string(io, x, '"')
-    end
+    mode(tc) == markup && print(io, '#')
+    enclose((io, x) -> escape_string(io, x, '"'), io, x, '"')
 end
 function show_typst(io::IO, tc::TypstContext, x::Bool)
     code_mode(io, tc)
@@ -33,9 +31,14 @@ show_typst(io::IO, tc::TypstContext, x::Complex{<:Union{
         print(io, 'i')
     end
 end
-show_typst(io::IO, tc::TypstContext, x::Complex{<:Union{
-    Bool, Unsigned, Rational{<:Union{Bool, Unsigned
-}}}}) = show_typst(
+function show_typst(io::IO, ::TypstContext, x::Complex{<:Rational{<:Union{Bool, Unsigned}}})
+    _real, _imag = real(x), imag(x)
+    show_typst(io, Complex(
+        signed(numerator(_real)) // signed(denominator(_real)),
+        signed(numerator(_imag)) // signed(denominator(_imag))
+    ))
+end
+show_typst(io::IO, ::TypstContext, x::Complex{<:Union{Bool, Unsigned}}) = show_typst(
     io, Complex(signed(real(x)), signed(imag(x)))
 )
 show_typst(io::IO, tc::TypstContext, x::HTML) = show_raw(io, tc, MIME"text/html"(), :html, x)
@@ -96,8 +99,8 @@ function show_typst(io::IO, tc::TypstContext, x::VersionNumber)
     end
 end
 function show_typst(io::IO, tc::TypstContext, x::Union{
-    OrdinalRange{<:Integer, <:Integer},
-    StepRangeLen{<:Integer, <:Integer, <:Integer}
+    OrdinalRange{<:Signed, <:Signed},
+    StepRangeLen{<:Signed, <:Signed, <:Signed, <:Signed}
 })
     code_mode(io, tc)
     enclose(io, x, "range(", ')') do io, x
@@ -113,6 +116,10 @@ function show_typst(io::IO, tc::TypstContext, x::Union{
         end
     end
 end
+show_typst(io::IO, ::TypstContext, x::Union{
+    OrdinalRange{<:Integer, <:Integer},
+    StepRangeLen{<:Integer, <:Integer, <:Integer, <:Integer}
+}) = show_typst(io, signed(first(x)):signed(step(x)):signed(last(x)))
 show_typst(tc::TypstContext, x) = show_typst(typst_context(tc, x)...)
 show_typst(io::IO, x; context...) = show_typst(typst_context(io, TypstContext(; context...), x)...)
 show_typst(x; context...) = show_typst(typst_context(TypstContext(; context...), x)...)
@@ -170,9 +177,14 @@ show_typst(x; context...) = show_typst(typst_context(TypstContext(; context...),
 #     print(io, indent(tc) ^ _depth(tc), ")")
 # end
 
+# show_typst(tc::TypstContext, x)
+# show_typst(io::IO, x; context...)
+# show_typst(x; context...)
 @doc """
-    show_typst(::IO = stdout, ::TypstContext, x)
-    show_typst(::TypstContext = TypstContext(), x)
+    show_typst(::IO, ::TypstContext, ::Any)
+    show_typst(::IO, ::Any; context...)
+    show_typst(::TypstContext, ::Any)
+    show_typst(::Any; context...)
 
 Print in Typst format with Julia settings and Typst
 parameters provided by the [`TypstContext`](@ref).
@@ -188,34 +200,4 @@ Some settings, such as `block`, correspond with a parameter but may also be used
 
 !!! tip
     Please create an issue or pull-request to implement new methods.
-
-| Type                                                      | Settings                                 | Parameters                                              |
-|:----------------------------------------------------------|:-----------------------------------------|:--------------------------------------------------------|
-| `AbstractArray`                                           | `:block`, `:depth`, `:mode`, `:tab_size` | `:delim`, `:gap`                                        |
-| `AbstractChar`                                            |                                          |                                                         |
-| `AbstractFloat`                                           | `:mode`                                  |                                                         |
-| `AbstractMatrix`                                          | `:block`, `:depth`, `:mode`, `:tab_size` | `:augment`, `:column_gap`, `:delim`, `:gap`, `:row_gap` |
-| `AbstractString`                                          |                                          |                                                         |
-| `Bool`                                                    | `:mode`                                  |                                                         |
-| `Complex{Bool}`                                           | `:block`, `:mode`, `:parenthesize`       |                                                         |
-| `Complex`                                                 | `:block`, `:mode`, `:parenthesize`       |                                                         |
-| `Irrational`                                              | `:mode`                                  |                                                         |
-| `Nothing`                                                 | `:mode`                                  |                                                         |
-| `OrdinalRange{<:Integer,\u00A0<:Integer}`                 | `:mode`                                  |                                                         |
-| `Rational`                                                | `:block`, `:mode`, `:parenthesize`       |                                                         |
-| `Regex`                                                   | `:mode`                                  |                                                         |
-| `Signed`                                                  | `:mode`                                  |                                                         |
-| `StepRangeLen{<:Integer,\u00A0<:Integer,\u00A0<:Integer}` | `:mode`                                  |                                                         |
-| `Tuple`                                                   | `:block`, `:depth`, `:mode`, `:tab_size` | `:delim`, `:gap`                                        |
-| `Typst`                                                   |                                          |                                                         |
-| `TypstString`                                             |                                          |                                                         |
-| `TypstText`                                               |                                          |                                                         |
-| `Unsigned`                                                | `:mode`                                  |                                                         |
-| `VersionNumber`                                           | `:mode`                                  |                                                         |
-| `Docs.HTML`                                               | `:block`, `:depth`, `:mode`, `:tab_size` |                                                         |
-| `Docs.Text`                                               | `:mode`                                  |                                                         |
-| `Dates.Date`                                              | `:mode`, `:indent`                       |                                                         |
-| `Dates.DateTime`                                          | `:mode`, `:indent`                       |                                                         |
-| `Dates.Period`                                            | `:mode`, `:indent`                       |                                                         |
-| `Dates.Time`                                              | `:mode`, `:indent`                       |                                                         |
 """ show_typst

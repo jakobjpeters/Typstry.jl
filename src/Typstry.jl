@@ -42,32 +42,35 @@ const examples = [
     # DateTime(1) => DateTime
     # Day(1) => Period
     # Time(0) => Time
-    'a' => AbstractChar
-    1.2 => AbstractFloat
-    "a" => AbstractString
-    true => Bool
+    'a' => AbstractChar => [:mode]
+    1.2 => AbstractFloat => [:mode]
+    "a" => AbstractString => [:mode]
+    true => Bool => [:mode]
     1 + 2im => Complex{<:Union{
         AbstractFloat, AbstractIrrational, Rational{<:Signed}, Signed
-    }}
-    im => Complex{<:Union{
-        Bool, Unsigned, Rational{<:Union{Bool, Unsigned
-    }}}}
-    html"<p>a</p>" => HTML
-    π => Irrational{:π}
-    nothing => Nothing
-    0:2:6 => OrdinalRange{<:Integer, <:Integer}
-    1 // 2 => Rational{<:Signed}
-    true // true => Rational{<:Union{Bool, Unsigned}}
-    r"[a-z]" => Regex
-    1 => Signed
-    StepRangeLen(0, 2, 4) => StepRangeLen{<:Integer, <:Integer, <:Integer}
-    text"[\"a\"]" => Text
-    (true, 1, 1.2, 1 // 2) => Tuple
-    typst"[\"a\"]" => TypstString
-    TypstText([1, 2, 3, 4]) => TypstText
-    Typst(1) => Typst
-    0xff => Unsigned
-    v"1.2.3" => VersionNumber
+    }} => [:mode, :parenthesize]
+    false // true * im => Complex{<:Rational{<:Union{Bool, Unsigned}}} => [:mode, :parenthesize]
+    im => Complex{<:Union{Bool, Unsigned}} => [:mode, :parenthesize]
+    html"<p>a</p>" => HTML => [:backticks, :block, :depth, :indent, :mode]
+    π => Irrational{:π} => [:mode]
+    nothing => Nothing => [:mode]
+    0:2:6 => OrdinalRange{<:Signed, <:Signed} => [:mode]
+    true:true:true => OrdinalRange{<:Integer, <:Integer} => [:mode]
+    1 // 2 => Rational{<:Signed} => [:mode, :parenthesize]
+    true // true => Rational{<:Union{Bool, Unsigned}} => [:mode, :parenthesize]
+    r"[a-z]" => Regex => [:mode]
+    1 => Signed => [:mode]
+    StepRangeLen(0, 2, 4) => StepRangeLen{<:Signed, <:Signed, <:Signed, <:Signed} => [:mode]
+    StepRangeLen(true, true, true) => StepRangeLen{
+        <:Integer, <:Integer, <:Integer, <:Integer
+    } => [:mode]
+    text"[\"a\"]" => Text => [:mode]
+    (true, 1, 1.2, 1 // 2) => Tuple => [:mode]
+    typst"[\"a\"]" => TypstString => Symbol[]
+    TypstText([1, 2, 3, 4]) => TypstText => Symbol[]
+    Typst(1) => Typst => Symbol[]
+    0xff => Unsigned => [:mode]
+    v"1.2.3" => VersionNumber => [:mode]
 ]
 
 compile_workload(examples)

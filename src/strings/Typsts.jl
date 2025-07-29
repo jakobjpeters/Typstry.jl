@@ -17,8 +17,6 @@ whose [`show_typst`](@ref) method formats the wrapped value.
 
 # Interface
 
-- `TypstContext(::Typst)`
-    - Uses the context of the wrapped value
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::Typst)`
 - `show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`
     - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
@@ -41,9 +39,7 @@ struct Typst{T}
     value::T
 end
 
-TypstContext(t::Typst) = TypstContext(t.value)
-
-show_typst(io::IO, tc::TypstContext, t::Typst) = show_typst(io, tc, t.value)
+show_typst(io::IO, ::TypstContext, t::Typst) = show_typst(io, t.value)
 
 show(io::IO, ::MIME"text/typst", t::Typst) = show_typst(io, t)
 show(io::IO, m::Union{

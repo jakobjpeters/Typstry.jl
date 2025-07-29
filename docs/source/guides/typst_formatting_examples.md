@@ -6,6 +6,9 @@ This guide illustrates Typst formatting for supported types.
 These Typst documents were generated from Julia using
 `show_typst` and compiled using a [`TypstCommand`](@ref).
 Each row corresponds to a method of [`show_typst`](@ref).
+The "Settings" correspond to those in a [`TypstContet`](@ref).
+Note that additional settings may be used for component values,
+such as those in a container.
 The Typst columns contain the formatted value and its render.
 Sequential documents correspond to [Package Extensions](@ref).
 

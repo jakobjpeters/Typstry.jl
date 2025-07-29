@@ -22,6 +22,16 @@ For example, `typst"#import \"@namespace/name:version\""`.
 
 ### Literate.jl
 
+### Luxor.jl
+
+```julia-repl
+julia> using Luxor: @svg, O, text
+
+julia> using Typstry: @typst_str
+
+julia> @svg text(typst\"Hi cormullion!\", O)
+```
+
 ### MakieTeX.jl
 
 !!! note
@@ -34,7 +44,7 @@ julia> using CairoMakie, MakieTeX
 
 julia> f = Figure(; size = (100, 100))
 
-julia> LTeX(f[1, 1], TypstDocument(typst"\$ 1 / x \$"))
+julia> LTeX(f[1, 1], TypstDocument(typst"Hi Anshul Singhvi!"))
 
 julia> save("makie_tex.svg", f)
 ```""")
@@ -49,7 +59,7 @@ Markdown.parse("""
 #import "@preview/jlyfish:0.1.0": *
 #read-julia-output(json("typst_jlyfish.json"))
 #jl-pkg("Typstry")
-#jl(`using Typstry; typst"\$1 / x\$"`)
+#jl(`using Typstry; typst"Hi Andreas Kröpelin!"`)
 ```
 ```julia-repl
 julia> using TypstJlyfish, Typstry
