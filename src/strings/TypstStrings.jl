@@ -39,9 +39,9 @@ However, the interface is undocumented, which may result in unexpected behavior.
         type satisfies `istextmime` and the parameter is an `AbstractString`.
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstString)`
 - `show(::IO,\u00A0::MIME"text/typst",\u00A0::TypstString)`
-    - Accepts a `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`.
+    - Accepts a `IOContext(::IO,\u00A0::TypstContext)`.
 - `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstString)`
-    - Accepts a `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`.
+    - Accepts a `IOContext(::IO,\u00A0::TypstContext)`.
     - Supports the [`julia_mono`](@ref Typstry.Commands.julia_mono) typeface.
     - The generated Typst source text contains the context's `preamble` and the formatted value.
 - `show(::IO,\u00A0::TypstString)`
@@ -82,8 +82,7 @@ except using a backslash instead of the type name.
 Interpolation syntax may be escaped in the same manner as quotation marks.
 
 !!! tip
-    Print directly to an `IO` using
-    `show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`.
+    Print directly to an `IO` using [`show_typst`](@ref).
 
     See also the performance tip to [Avoid string interpolation for I/O]
     (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).

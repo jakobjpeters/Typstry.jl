@@ -56,7 +56,7 @@ it is temporarily set to [`julia_mono`](@ref).
 # Parameters
 
 - `catch_interrupt::Bool = true`
-    `[CTRL]+[C]` quietly quits the command.
+    - `[CTRL]+[C]` quietly quits the command.
 - `ignorestatus::Bool = true`
     - Whether to throw a [`TypstCommandError`](@ref) if the command errors.
 """

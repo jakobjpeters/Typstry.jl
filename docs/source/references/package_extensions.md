@@ -6,28 +6,18 @@ This reference documents the lazily-loaded implementations of
 
 ## LaTeXStrings.jl
 
-<!-- """ -->
-    <!-- show_typst(::IO, ::TypstContext, ::LaTeXString) -->
+`````julia-repl
+julia> using LaTeXStrings, Typstry
 
-<!-- Print a raw text block in Typst format. -->
-
-<!-- See also [`TypstContext`](@ref Typstry.TypstContext). -->
-
-<!-- | Type          | Settings                                 | Parameters | -->
-<!-- |:--------------|:-----------------------------------------|:-----------| -->
-<!-- | `LaTeXString` | `:block`, `:depth`, `:mode`, `:tab_size` |            | -->
-<!-- """ -->
+julia> show_typst(L"$a$")
+```latex $a$```
+`````
 
 ## Markdown.jl
 
-<!-- """ -->
-    <!-- show_typst(::IO, ::TypstContext, ::Markdown.MD) -->
+`````julia-repl
+julia> using Markdown, Typstry
 
-<!-- Print a raw text block in Typst format. -->
-
-<!-- See also [`TypstContext`](@ref Typstry.TypstContext). -->
-
-<!-- | Type          | Settings                                 | Parameters | -->
-<!-- |:--------------|:-----------------------------------------|:-----------| -->
-<!-- | `Markdown.MD` | `:block`, `:depth`, `:mode`, `:tab_size` |            | -->
-<!-- """ -->
+julia> show_typst(md"# A")
+```markdown # A```
+`````

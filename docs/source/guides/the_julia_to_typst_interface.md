@@ -25,7 +25,9 @@ Implement a [`show_typst`](@ref) method to specify its Typst formatting. Remembe
 [Annotate values taken from untyped locations](https://docs.julialang.org/en/v1/manual/performance-tips/#Annotate-values-taken-from-untyped-locations).
 
 ```jldoctest 1
-julia> show_typst(io::IO, tc::TypstContext, ::Hi) = print(io, "Hi", '!' ^ tc[:excitement]::Int);
+julia> show_typst(io::IO, tc::TypstContext, ::Hi) = print(
+           io, "Hi", '!' ^ tc[:excitement]::Int
+       );
 ```
 
 Although custom formatting may be handled in `show_typst`
@@ -43,13 +45,6 @@ julia> TypstContext(::Hi) = TypstContext(; excitement = 0);
 Those two methods are a complete implementation of the Julia to Typst interface.
 The following method is optional, but enables interoperability
 with packages that do not know about Typstry.jl.
-
-julia> show(io::IO, m::Union{
-           MIME\"application/pdf\",
-           MIME\"image/png\",
-           MIME\"image/svg+xml\",
-           MIME\"text/typst\",
-       }, h::Hi) = show(io, m, Typst(h))
 
 ```jldoctest 1
 julia> show(io::IO, m::Union{

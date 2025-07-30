@@ -16,7 +16,11 @@ IJulia.jl, Pluto.jl, and QuartoNotebookRunner.jl each display
 
 Compiling a document which imports a Typst package can be achieved in exactly the
 same manner as compiling a standard Typst source file with the command-line interface.
-For example, `typst"#import \"@namespace/name:version\""`.
+For example:
+
+```julia
+typst"#import \"@namespace/name:version\""
+```
 
 ## Julia Packages
 

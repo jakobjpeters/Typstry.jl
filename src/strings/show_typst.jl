@@ -184,6 +184,8 @@ A parameter is passed directly to a Typst function and must be a [`TypstString`]
 with the same name as in Typst, except that dashes are replaced with underscores.
 Some settings, such as `block`, correspond with a parameter but may also be used in Julia.
 
+See also the [Typst Formatting Examples](@ref).
+
 !!! tip
     Please create an issue or pull-request to implement new methods.
 """ show_typst

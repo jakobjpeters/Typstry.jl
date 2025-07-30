@@ -18,7 +18,7 @@ A wrapper whose [`show_typst`](@ref) method uses `print` on the wrapped value.
 - `show(::IO,\u00A0::MIME"text/typst",\u00A0::TypstText)`
     - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
 - `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstText)`
-    - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
+    - Accepts `IOContext(::IO,\u00A0::TypstContext)`
     - Uses the `preamble` in [`context`](@ref Typstry.context)
     - Supports the [`julia_mono`](@ref Typstry.Commands.julia_mono) typeface
 
