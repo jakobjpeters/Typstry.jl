@@ -1,12 +1,11 @@
 name = "Typstry"
 uuid = "f0ed7684-a786-439e-b1e3-3b82803b501e"
 authors = ["Jakob Peters <jakobj.peters@gmail.com>"]
-version = "0.5.0"
+version = "0.6.0"
 
 [deps]
 Artifacts = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 Typst_jll = "eb4b1da6-20f6-5c66-9826-fdb8ad410d0e"
 
