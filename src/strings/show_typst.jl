@@ -1,4 +1,15 @@
 
+show_typst(io::IO, tc::TypstContext, x::AbstractArray) = math_mode(io, tc, x) do io, tc, x
+    _depth, _indent = depth(tc), indent(tc)
+    __depth = _depth + 1
+
+    show_parameters(io, tc, "vec", [:delim, :align, :gap], true)
+    print(io, _indent ^ __depth)
+    join_with(io, x, ", ") do io, x
+        show_typst(io, x; depth = __depth, mode = math, parenthesize = false)
+    end
+    print(io, '\n', _indent ^ _depth, ')')
+end
 show_typst(io::IO, ::TypstContext, x::AbstractChar) = show_typst(io, string(x))
 function show_typst(io::IO, tc::TypstContext, x::AbstractFloat)
     if isinf(x)
@@ -46,6 +57,21 @@ show_typst(io::IO, tc::TypstContext, x::Irrational{T}) where T = math_mode(io, t
     if T isa Symbol && length(string(T)) == 1 print(io, x)
     else show_typst(io, string(x); mode = math)
     end
+end
+show_typst(io::IO, tc::TypstContext, x::AbstractMatrix) = math_mode(io, tc, x) do io, tc, x
+    _depth, _indent = depth(tc), indent(tc)
+    __depth = _depth + 1
+
+    show_parameters(io, tc, "mat", [
+        :delim, :align, :augment, :gap, :row_gap, :column_gap
+    ], true)
+    join_with(io, eachrow(x), ";\n") do io, x
+        print(io, _indent ^ __depth)
+        join_with(io, x, ", ") do io, x
+            show_typst(io, x; depth = __depth, mode = math, parenthesize = false)
+        end
+    end
+    print(io, '\n', _indent ^ _depth, ')')
 end
 function show_typst(io::IO, tc::TypstContext, ::Nothing)
     code_mode(io, tc)
@@ -98,6 +124,15 @@ function show_typst(io::IO, tc::TypstContext, x::VersionNumber)
         join_with(print, io, eachsplit(string(x), '.'), ", ")
     end
 end
+function show_typst(io::IO, tc::TypstContext, x::Union{Date, DateTime, Period, Time})
+    f, keys, values = dates(x)
+    _values = map(value -> TypstString(value; mode = code), values)
+    _tc = merge!(copy(tc), Dict(zip(keys, _values)))
+
+    code_mode(io, tc)
+    show_parameters(io, _tc, f, keys, false)
+    print(io, indent(tc) ^ depth(tc), ')')
+end
 function show_typst(io::IO, tc::TypstContext, x::Union{
     OrdinalRange{<:Signed, <:Signed},
     StepRangeLen{<:Signed, <:Signed, <:Signed, <:Signed}
@@ -116,6 +151,15 @@ function show_typst(io::IO, tc::TypstContext, x::Union{
         end
     end
 end
+function show_typst(io::IO, ::TypstContext, x)
+    if showable(MIME"text/typst"(), x) show(io, MIME"text/typst"(), x)
+    elseif showable(MIME"image/gif"(), x) show_image(io, MIME"image/gif"(), x)
+    elseif showable(MIME"image/svg+xml"(), x) show_image(io, MIME"image/svg+xml"(), x)
+    elseif showable(MIME"image/png"(), x) show_image(io, MIME"image/png"(), x)
+    elseif showable(MIME"image/jpg"(), x) show_image(io, MIME"image/jpg"(), x)
+    else show_typst(io, repr(MIME"text/plain"(), x))
+    end
+end
 show_typst(io::IO, ::TypstContext, x::Union{
     OrdinalRange{<:Integer, <:Integer},
     StepRangeLen{<:Integer, <:Integer, <:Integer, <:Integer}
@@ -124,62 +168,6 @@ show_typst(tc::TypstContext, x) = show_typst(typst_context(tc, x)...)
 show_typst(io::IO, x; context...) = show_typst(typst_context(io, TypstContext(; context...), x)...)
 show_typst(x; context...) = show_typst(typst_context(TypstContext(; context...), x)...)
 
-# show_typst(io::IO, tc::TypstContext, x::AbstractArray) = math_mode(io, tc, x) do io, tc, x
-#     _depth, _indent = depth(tc), indent(tc)
-#     __depth = _depth + 1
-
-#     show_parameters(io, tc, "vec", [:delim, :gap], true)
-#     print(io, _indent ^ __depth)
-#     join_with(io, x, ", ") do io, x
-#         show_typst(io, x; depth = __depth, mode = math, parenthesize = false)
-#     end
-#     print(io, '\n', _indent ^ _depth, ')')
-# end
-# show_typst(io::IO, tc::TypstContext, x::AbstractMatrix) = math_mode(io, tc, x) do _io, _tc, _x
-#     _depth = depth(_tc) + 1
-#     show_parameters(_io, _tc, "mat", [
-#         :augment, :column_gap, :delim, :gap, :row_gap
-#     ], true)
-#     join_with(_io, eachrow(_x), ";\n") do __io, __x
-#         print(__io, indent(_tc) ^ _depth)
-#         join_with(__io, __x, ", ") do ___io, ___x
-#             show_typst(___io, ___x; depth = _depth, mode = math, parenthesize = false)
-#         end
-#     end
-#     print(io, '\n', indent(_tc) ^ depth(_tc), ')')
-# end
-# function show_typst(io::IO, tc::TypstContext, x::Union{Date, DateTime, Period, Time})
-#     f, keys, values = dates(x)
-#     _values = map(value -> TypstString(value; mode = code), values)
-
-#     code_mode(io, tc)
-#     show_parameters(io, merge_contexts!(
-#         TypstContext(; zip(keys, _values)...), tc
-#     ), f, keys, false)
-#     print(io, indent(tc) ^ depth(tc), ')')
-# end
-# function show_typst(io::IO, ::TypstContext, x)
-#     if showable(MIME"text/typst"(), x) show(io, MIME"text/typst"(), x)
-#     elseif showable(MIME"image/gif"(), x) show_image(io, MIME"image/gif"(), x)
-#     elseif showable(MIME"image/svg+xml"(), x) show_image(io, MIME"image/svg+xml"(), x)
-#     elseif showable(MIME"image/png"(), x) show_image(io, MIME"image/png"(), x)
-#     elseif showable(MIME"image/jpg"(), x) show_image(io, MIME"image/jpg"(), x)
-#     else show_typst(io, repr(MIME"text/plain"(), x))
-#     end
-# end
-
-# function show_typst(io, tc, x::Union{Date, DateTime, Period, Time})
-#     f, keys, values = dates(x)
-#     _values = map(value -> TypstString(value; mode = code), values)
-
-#     code_mode(io, tc)
-#     show_parameters(io, merge_contexts!(TypstContext(; zip(keys, _values)...), tc), f, keys, false)
-#     print(io, indent(tc) ^ _depth(tc), ")")
-# end
-
-# show_typst(tc::TypstContext, x)
-# show_typst(io::IO, x; context...)
-# show_typst(x; context...)
 @doc """
     show_typst(::IO, ::TypstContext, ::Any)
     show_typst(::IO, ::Any; context...)
@@ -194,8 +182,6 @@ for a custom type to specify its Typst formatting.
 A setting is a value used in Julia, whose type varies across settings.
 A parameter is passed directly to a Typst function and must be a [`TypstString`](@ref)
 with the same name as in Typst, except that dashes are replaced with underscores.
-Settings each have a default value specified by [`context`](@ref),
-whereas the default values of parameters are handled in Typst functions.
 Some settings, such as `block`, correspond with a parameter but may also be used in Julia.
 
 !!! tip

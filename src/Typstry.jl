@@ -36,12 +36,8 @@ A constant `Vector` of Julia values and their corresponding
 `Type`s implemented for [`show_typst`](@ref).
 """
 const examples = [
-    # Any[true, 1, 1.2, 1 // 2] => AbstractArray
-    # Any[true 1; 1.2 1 // 2] => AbstractMatrix
-    # Date(1) => Date
-    # DateTime(1) => DateTime
-    # Day(1) => Period
-    # Time(0) => Time
+    Any[nothing, 1, 1.2, 1 // 2] => AbstractArray => [:depth, :indent, :mode]
+    Any[nothing 1; 1.2 1 // 2] => AbstractMatrix => [:depth, :indent, :mode]
     'a' => AbstractChar => [:mode]
     1.2 => AbstractFloat => [:mode]
     "a" => AbstractString => [:mode]
@@ -71,6 +67,10 @@ const examples = [
     Typst(1) => Typst => Symbol[]
     0xff => Unsigned => [:mode]
     v"1.2.3" => VersionNumber => [:mode]
+    Date(1) => Date => [:mode]
+    DateTime(1) => DateTime => [:mode]
+    Day(1) => Period => [:mode]
+    Time(0) => Time => [:mode]
 ]
 
 compile_workload(examples)

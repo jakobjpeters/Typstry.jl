@@ -23,18 +23,18 @@ typst"$π$"
 Formatting may be configured in `show` using an `IOContext` and in `TypstString` using keyword parameters.
 
 ```jldoctest 1
-julia> show(IOContext(stdout, :typst_context => TypstContext(; mode = code)), "text/typst", Typst(π))
-3.141592653589793
+julia> show(IOContext(stdout, TypstContext(; mode = markup)), "text/typst", Typst(π))
+$π$
 
-julia> TypstString(π; mode = code)
-typst"3.141592653589793"
+julia> TypstString(π; mode = math)
+typst"π"
 ```
 
 Use [`@typst_str`](@ref) to directly write Typst source text.
 This also supports formatted interpolation by calling the `TypstString` constructor.
 
 ```jldoctest 1
-julia> typst"$ \(pi; mode = math) approx \(pi; mode = code) $"
+julia> typst"$ \(π; mode = math) approx \(Float64(π); mode = math) $"
 typst"$ π approx 3.141592653589793 $"
 ```
 

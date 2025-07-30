@@ -29,11 +29,11 @@ julia> using Typstry
 ## Showcase
 
 ```jldoctest
-julia> show(stdout, "text/typst", Typst([true 1; 1.0 [Any[true 1; 1.0 nothing]]]))
+julia> show(stdout, "text/typst", Typst([1 // 2 1; 1.0 [Any[1 // 2 1; 1.0 nothing]]]))
 $mat(
-  "true", 1;
+  1 / 2, 1;
   1.0, mat(
-    "true", 1;
+    1 / 2, 1;
     1.0, #none
   )
 )$

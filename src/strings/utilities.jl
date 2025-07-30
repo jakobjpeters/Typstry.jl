@@ -148,32 +148,31 @@ function show_image(io::IO, m::Union{
     tc = typst_context(io, value)
     path = tempname() * '.' * format(m)
 
+    code_mode(io, tc)
+    show_parameters(io, tc, :format, [:format, :width, :height, :alt, :fit, :scaling, :icc], path)
     open(path; write = true) do file
         show(IOContext(file, IOContext(io, :typst_context => tc)), m, value)
     end
-
-    code_mode(io, tc)
-    show_parameters(io, tc, :format, [:format, :width, :height, :alt, :fit, :scaling, :icc], path)
     print(io, ')')
 end
 
 """
     show_parameters(io, tc, f, keys, final)
 """
-# function show_parameters(io::IO, tc, f, keys, final)
-#     pairs = map(key -> key => unwrap(tc, TypstString, key), filter(key -> haskey(tc, key), keys))
+function show_parameters(io::IO, tc, f, keys, final)
+    pairs = map(key -> key => unwrap(tc, TypstString, key), filter(key -> haskey(tc, key), keys))
 
-#     println(io, f, '(')
-#     join_with(io, pairs, ",\n") do _io, (key, value)
-#         print(_io, indent(tc) ^ (depth(tc) + 1), key, ": ")
-#         show_typst(_io, value)
-#     end
+    println(io, f, '(')
+    join_with(io, pairs, ",\n") do _io, (key, value)
+        print(_io, indent(tc) ^ (depth(tc) + 1), key, ": ")
+        show_typst(_io, value)
+    end
 
-#     if !isempty(pairs)
-#         final && print(io, ',')
-#         println(io)
-#     end
-# end
+    if !isempty(pairs)
+        final && print(io, ',')
+        println(io)
+    end
+end
 
 """
     show_raw(::IO, ::TypstContext, ::MIME, ::Symbol, x)

@@ -86,7 +86,7 @@ julia> render(1:4);
 
 ### Planned
 
-- Seperate the choice of Typst representation from the `mode`
+- Implement `IO` interface for `TypstContext`
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
     - Use a tree-sitter grammar or jll package
