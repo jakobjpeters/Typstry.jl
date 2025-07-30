@@ -33,6 +33,7 @@ However, the interface is undocumented, which may result in unexpected behavior.
 - `iterate(::TypstString)`
 - `ncodeunits(::TypstString)`
 - `pointer(::TypstString)`
+- `repr(::MIME"text/typst\u00A0::TypstString; context = nothing)`
 - `repr(::MIME,\u00A0::TypstString; context = nothing)`
     - This method patches incorrect output from the assumption in `repr` that
         the parameter is already in the requested `MIME` type when the `MIME`

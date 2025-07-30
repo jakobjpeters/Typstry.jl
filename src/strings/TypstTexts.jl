@@ -1,7 +1,7 @@
 
 module TypstTexts
 
-import Base: show
+import Base: repr, show
 import ..Typstry: show_typst
 
 using ..Typstry: TypstContext
@@ -14,6 +14,7 @@ A wrapper whose [`show_typst`](@ref) method uses `print` on the wrapped value.
 
 # Interface
 
+- `repr(::MIME"text/typst\u00A0::TypstText; context = nothing)`
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstText)`
 - `show(::IO,\u00A0::MIME"text/typst",\u00A0::TypstText)`
     - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
@@ -35,6 +36,8 @@ a
 struct TypstText{T}
     value::T
 end
+
+repr(::MIME"text/typst", tt::TypstText; context = nothing) = TypstString(tt)
 
 show_typst(io::IO, ::TypstContext, tt::TypstText) = print(io, tt.value)
 
