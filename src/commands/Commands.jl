@@ -31,7 +31,7 @@ This typeface is available when using one of the following approaches:
 
 and when compiling documents with the following methods:
 
-- [`render`](@ref)
+- [`render`](@ref Typstry.render)
 - [`typst`](@ref)
 - `show` with the `application/pdf`, `image/png`, and `image/svg+xml`
     `MIME` types and a `TypstString`, `TypstText`, and `Typst` value

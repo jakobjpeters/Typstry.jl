@@ -11,45 +11,42 @@ This reference documents non-public utilities.
 Typstry.examples
 ```
 
-## Utilities
-
-```@docs
-Typstry.compile_workload
-Typstry.code_mode
-Typstry.date_time
-Typstry.dates
-Typstry.duration
-Typstry.enclose
-Typstry.escape
-Typstry.indent
-Typstry.format
-Typstry.join_with
-Typstry.math_mode
-Typstry.math_pad
-Typstry.merge_contexts!
-Typstry.show_array
-Typstry.show_parameters
-Typstry.show_raw
-Typstry.show_vector
-Typstry.typst_context
-Typstry.unwrap
-```
-
 ## Contexts
 
 ```@docs
 Typstry.default_context
 ```
 
+## Utilities
+
+```@docs
+Typstry.compile_workload
+Typstry.enclose
+Typstry.join_with
+Typstry.unwrap
+```
+
 ## Strings
 
 ```@docs
+Typstry.code_mode
+Typstry.date_time
+Typstry.dates
+Typstry.duration
+Typstry.escape
+Typstry.format
+Typstry.indent
+Typstry.math_mode
+Typstry.math_pad
+Typstry.show_parameters
+Typstry.show_raw
+```
+
+```@docs
 Typstry.backticks
-Typstry.base_type
 Typstry.block
-Typstry.io_context
-Typstry.default_io_context
 Typstry.depth
+Typstry.io
 Typstry.mode
 Typstry.parenthesize
 Typstry.preamble

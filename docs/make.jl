@@ -116,7 +116,7 @@ for (package, examples) in append!([("Typstry", examples)], zip(extensions, _exa
     run(TypstCommand(["compile", "--font-path=" * julia_mono, "--format=svg", path]))
 end
 
-makedocs(; modules, format = Documenter.HTML(edit_link = "main"), pages = [
+makedocs(; modules, format = Documenter.HTML(; edit_link = "main"), pages = [
     "Typstry.jl" => "index.md",
     pages("tutorials", ["getting_started"]),
     pages("guides", [

@@ -42,11 +42,11 @@ However, the interface is undocumented, which may result in unexpected behavior.
     - Accepts a `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`.
 - `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstString)`
     - Accepts a `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`.
-    - Supports the [`julia_mono`](@ref) typeface.
+    - Supports the [`julia_mono`](@ref Typstry.Commands.julia_mono) typeface.
     - The generated Typst source text contains the context's `preamble` and the formatted value.
 - `show(::IO,\u00A0::TypstString)`
     - Prints in [`@typst_str`](@ref) format if each character satisfies `isprint`.
-        Otherwise, print in [`TypstString`](@ref) format.
+        Otherwise, print in `TypstString` format.
 
 # Examples
 

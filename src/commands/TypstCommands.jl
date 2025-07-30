@@ -25,14 +25,14 @@ This type implements the `Cmd` interface.
 However, the interface is undocumented, which may result in unexpected behavior.
 
 - `addenv(::TypstCommand,\u00A0env...;\u00A0inherit::Bool\u00A0=\u00A0true)`
-    - Can be used with [`julia_mono`](@ref).
+    - Can be used with [`julia_mono`](@ref Typstry.julia_mono).
 - `detach(::TypstCommand)`
 - `eltype(::Type{TypstCommand})`
 - `firstindex(::TypstCommand)`
 - `getindex(::TypstCommand,\u00A0i)`
 - `hash(::TypstCommand,\u00A0::UInt)`
 - `ignorestatus(::TypstCommand)`
-    - Do not throw a [`TypstCommandError`](@ref) if the Typst compiler throws an error.
+    - Do not throw a [`TypstCommandError`](@ref Typstry.TypstCommandError) if the Typst compiler throws an error.
         Errors thrown by the Typst compiler are printed to `stderr` regardless.
 - `iterate(::TypstCommand,\u00A0i)`
 - `iterate(::TypstCommand)`
@@ -43,7 +43,7 @@ However, the interface is undocumented, which may result in unexpected behavior.
 - `read(::TypstCommand)`
 - `run(::TypstCommand,\u00A0args...;\u00A0wait::Bool\u00A0=\u00A0true)`
     - Errors thrown by the Typst compiler will be printed to `stderr`.
-        Then, a Julia [`TypstCommandError`](@ref) will be
+        Then, a Julia [`TypstCommandError`](@ref Typstry.TypstCommandError) will be
         thrown unless the `ignorestatus` flag is set.
 - `setcpuaffinity(::TypstCommand,\u00A0cpus)`
 - `setenv(::TypstString,\u00A0env...;\u00A0kwargs...)`
