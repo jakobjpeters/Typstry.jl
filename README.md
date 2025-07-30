@@ -43,11 +43,11 @@ julia> using Typstry
 ## Showcase
 
 ```julia-repl
-julia> show(stdout, "text/typst", Typst([true 1; 1.0 [Any[true 1; 1.0 nothing]]]))
+julia> show(stdout, "text/typst", Typst([1 // 2 1; 1.0 [Any[1 // 2 1; 1.0 nothing]]]))
 $mat(
-  "true", 1;
+  1 / 2, 1;
   1.0, mat(
-    "true", 1;
+    1 / 2, 1;
     1.0, #none
   )
 )$
@@ -55,8 +55,8 @@ $mat(
 julia> TypstString(1 // 2; block = true)
 typst"$ 1 / 2 $"
 
-julia> typst"$ \(1 + 2im; mode = math) $"
-typst"$ (1 + 2i) $"
+julia> typst"$ 1 / \(1 + 2im; mode = math) $"
+typst"$ 1 / (1 + 2i) $"
 
 julia> TypstCommand(["help"])
 typst`help`
@@ -64,7 +64,7 @@ typst`help`
 julia> typst`compile input.typ output.pdf`
 typst`compile input.typ output.pdf`
 
-julia> render(1:4);
+julia> render(1:4)
 ```
 
 ## Features
@@ -86,10 +86,9 @@ julia> render(1:4);
 
 ### Planned
 
-- Implement `IO` interface for `TypstContext`
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
-    - Use a tree-sitter grammar or jll package
+    - Use a jll package
 - Implement Typst formatting for more types
     - `Base`
         - `AbstractDict`
@@ -105,10 +104,10 @@ julia> render(1:4);
             - DataFrames.jl
     - Partial Julia to Typst transpilation
         - ```
-          @typst(a * b) ==
-          TypstString(:(a * b)) ==
-          TypstString(TypstFunction(*, :a, :b)) ==
-          typst"$ a b $"
+          (@typst $a * b) ==
+          TypstString(:($a * b)) ==
+          TypstString(TypstFunction(*, a, :b)) ==
+          typst"$ 2b $"
           ```
 
 ## Similar Packages
@@ -117,6 +116,8 @@ julia> render(1:4);
 
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
     - Dependent of Typstry.jl
+- [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl)
+    - Weak dependent of Typstry.jl
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
 - [TypstJlyFish.jl](https://github.com/andreasKroepelin/TypstJlyfish.jl)
     - Interoperable with Typstry.jl
@@ -127,8 +128,6 @@ julia> render(1:4);
 
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
     - Dependent of Typstry.jl
-- [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl)
-    - Weak dependent of Typstry.jl
 - [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 
 ### LaTeX
