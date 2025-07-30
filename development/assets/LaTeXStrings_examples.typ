@@ -1,10 +1,5 @@
-#import "template.typ": f, template
-
+#import "template.typ": module, template
 #show: document => template(document)
-
-= LaTeXStrings.jl
-
-#f((
-    "L\"a\"", "LaTeXString", "```latex $a$ ```", [#```latex $a$ ```], "```latex $a$ ```", [```latex $a$ ```], "#```latex $a$ ```", [$#```latex $a$ ```$]
+#module("LaTeXStrings.jl", (
+    "L\"$a$\"", "LaTeXString", [`backticks`, `block`, `depth`, `indent`, `mode`], ````typst ```latex $a$ ``` ````, [```latex $a$ ```]
 ))
-

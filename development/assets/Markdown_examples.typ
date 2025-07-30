@@ -1,10 +1,5 @@
-#import "template.typ": f, template
-
+#import "template.typ": module, template
 #show: document => template(document)
-
-= Markdown.jl
-
-#f((
-    "md\"# a\"", "MD", "```markdown # A ```", [#```markdown # A ```], "```markdown # A ```", [```markdown # A ```], "#```markdown # A ```", [$#```markdown # A ```$]
+#module("Markdown.jl", (
+    "md\"# A\"", "MD", [`backticks`, `block`, `depth`, `indent`, `mode`], ````typst ```markdown # A ``` ````, [```markdown # A ```]
 ))
-

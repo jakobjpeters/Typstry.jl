@@ -1,111 +1,79 @@
-#import "template.typ": f, template
-
+#import "template.typ": module, template
 #show: document => template(document)
-
-= Typstry.jl
-
-#f((
-    "Any[true, 1, 1.2, 1//2]", "AbstractArray",
-        "(true, 1, 1.2, 1 / 2)", [#(true, 1, 1.2, 1 / 2)], "$vec(\n  \"true\", 1, 1.2, 1 / 2\n)$", [$vec(
-      "true", 1, 1.2, 1 / 2
-    )$], "vec(\n  \"true\", 1, 1.2, 1 / 2\n)", [$vec(
-      "true", 1, 1.2, 1 / 2
-    )$],
-    "'a'", "AbstractChar", "\"a\"", [#"a"], "\"a\"", ["a"], "\"a\"", [$"a"$],
-    "1.2", "AbstractFloat", "1.2", [#1.2], "$1.2$", [$1.2$], "1.2", [$1.2$],
-    "Any[true 1; 1.2 1//2]", "AbstractMatrix",
-        "(true, 1.2, 1, 1 / 2)", [#(true, 1.2, 1, 1 / 2)], "$mat(\n  \"true\", 1;\n  1.2, 1 / 2\n)$", [$mat(
-      "true", 1;
-      1.2, 1 / 2
-    )$], "mat(\n  \"true\", 1;\n  1.2, 1 / 2\n)", [$mat(
-      "true", 1;
-      1.2, 1 / 2
-    )$],
-    "\"a\"", "AbstractString", "\"a\"", [#"a"], "\"a\"", ["a"], "\"a\"", [$"a"$],
-    "true", "Bool", "true", [#true], "true", [true], "\"true\"", [$"true"$],
-    "im", "Complex{Bool}", "$i$", [#$i$], "$i$", [$i$], "i", [$i$],
-    "1 + 2im", "Complex", "$1 + 2i$", [#$1 + 2i$], "$1 + 2i$", [$1 + 2i$], "(1 + 2i)", [$(1 + 2i)$],
-    "π", "Irrational", "3.141592653589793", [#3.141592653589793], "$π$", [$π$], "π", [$π$],
-    "nothing", "Nothing", "none", [#none], "#none", [#none], "#none", [$#none$],
-    "0:2:6", "OrdinalRange{<:Integer, <:Integer}", "range(0, 7, step: 2)", [#range(0, 7, step: 2)], "$vec(\n  0, 2, 4, 6\n)$", [$vec(
-      0, 2, 4, 6
-    )$], "vec(\n  0, 2, 4, 6\n)", [$vec(
-      0, 2, 4, 6
-    )$],
-    "1//2", "Rational", "(1 / 2)", [#(1 / 2)], "$1 / 2$", [$1 / 2$], "(1 / 2)", [$(1 / 2)$],
-    "r\"[a-z]\"", "Regex", "regex(\"[a-z]\")", [#regex("[a-z]")], "#regex(\"[a-z]\")", [#regex("[a-z]")], "#regex(\"[a-z]\")", [$#regex("[a-z]")$],
-    "1", "Signed", "1", [#1], "$1$", [$1$], "1", [$1$],
-    "StepRangeLen(0, 2, 4)", "StepRangeLen{<:Integer, <:Integer, <:Integer}", "range(0, 7, step: 2)", [#range(0, 7, step: 2)], "$vec(\n  0, 2, 4, 6\n)$", [$vec(
-      0, 2, 4, 6
-    )$], "vec(\n  0, 2, 4, 6\n)", [$vec(
-      0, 2, 4, 6
-    )$],
-    "(true, 1, 1.2, 1//2)", "Tuple", "(true, 1, 1.2, 1 / 2)", [#(true, 1, 1.2, 1 / 2)], "$vec(\n  \"true\", 1, 1.2, 1 / 2\n)$", [$vec(
-      "true", 1, 1.2, 1 / 2
-    )$], "vec(\n  \"true\", 1, 1.2, 1 / 2\n)", [$vec(
-      "true", 1, 1.2, 1 / 2
-    )$],
-    "Typst(1)", "Typst", "1", [#1], "$1$", [$1$], "1", [$1$],
-    "typst\"[\\\"a\\\"]\"", "TypstString", "[\"a\"]", [#["a"]], "[\"a\"]", [["a"]], "[\"a\"]", [$["a"]$],
-    "TypstText([1, 2, 3, 4])", "TypstText", "[1, 2, 3, 4]", [#[1, 2, 3, 4]], "[1, 2, 3, 4]", [[1, 2, 3, 4]], "[1, 2, 3, 4]", [$[1, 2, 3, 4]$],
-    "0xff", "Unsigned", "0xff", [#0xff], "#0xff", [#0xff], "#0xff", [$#0xff$],
-    "v\"1.2.3\"", "VersionNumber", "version(1, 2, 3)", [#version(1, 2, 3)], "#version(1, 2, 3)", [#version(1, 2, 3)], "#version(1, 2, 3)", [$#version(1, 2, 3)$],
-    "html\"<p>a</p>\"", "Docs.HTML", "```html <p>a</p> ```", [#```html <p>a</p> ```], "```html <p>a</p> ```", [```html <p>a</p> ```], "#```html <p>a</p> ```", [$#```html <p>a</p> ```$],
-    "text\"[\\\"a\\\"]\"", "Docs.Text", "\"[\\\"a\\\"]\"", [#"[\"a\"]"], "#\"[\\\"a\\\"]\"", [#"[\"a\"]"], "#\"[\\\"a\\\"]\"", [$#"[\"a\"]"$],
-    "Dates.Date(1)", "Dates.Date", "datetime(\n  year: 1,\n  month: 1,\n  day: 1\n)", [#datetime(
-      year: 1,
-      month: 1,
-      day: 1
-    )], "#datetime(\n  year: 1,\n  month: 1,\n  day: 1\n)", [#datetime(
-      year: 1,
-      month: 1,
-      day: 1
-    )], "#datetime(\n  year: 1,\n  month: 1,\n  day: 1\n)", [$#datetime(
-      year: 1,
-      month: 1,
-      day: 1
-    )$],
-    "Dates.DateTime(1)", "Dates.DateTime", "datetime(\n  year: 1,\n  month: 1,\n  day: 1,\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [#datetime(
-      year: 1,
-      month: 1,
-      day: 1,
-      hour: 0,
-      minute: 0,
-      second: 0
-    )], "#datetime(\n  year: 1,\n  month: 1,\n  day: 1,\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [#datetime(
-      year: 1,
-      month: 1,
-      day: 1,
-      hour: 0,
-      minute: 0,
-      second: 0
-    )], "#datetime(\n  year: 1,\n  month: 1,\n  day: 1,\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [$#datetime(
-      year: 1,
-      month: 1,
-      day: 1,
-      hour: 0,
-      minute: 0,
-      second: 0
-    )$],
-    "Dates.Day(1)", "Dates.Period", "duration(\n  days: 1\n)", [#duration(
-      days: 1
-    )], "#duration(\n  days: 1\n)", [#duration(
-      days: 1
-    )], "#duration(\n  days: 1\n)", [$#duration(
-      days: 1
-    )$],
-    "Dates.Time(0)", "Dates.Time", "datetime(\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [#datetime(
-      hour: 0,
-      minute: 0,
-      second: 0
-    )], "#datetime(\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [#datetime(
-      hour: 0,
-      minute: 0,
-      second: 0
-    )], "#datetime(\n  hour: 0,\n  minute: 0,\n  second: 0\n)", [$#datetime(
-      hour: 0,
-      minute: 0,
-      second: 0
-    )$]
+#module("Typstry.jl", (
+    "Any[nothing, 1, 1.2, 1//2]", "AbstractArray", [`depth`, `indent`, `mode`], ````typst $vec(
+  #none, 1, 1.2, 1 / 2
+)$ ````, [$vec(
+  #none, 1, 1.2, 1 / 2
+)$],
+    "Any[nothing 1; 1.2 1//2]", "AbstractMatrix", [`depth`, `indent`, `mode`], ````typst $mat(
+  #none, 1;
+  1.2, 1 / 2
+)$ ````, [$mat(
+  #none, 1;
+  1.2, 1 / 2
+)$],
+    "'a'", "AbstractChar", [`mode`], ````typst #"a" ````, [#"a"],
+    "1.2", "AbstractFloat", [`mode`], ````typst $1.2$ ````, [$1.2$],
+    "\"a\"", "AbstractString", [`mode`], ````typst #"a" ````, [#"a"],
+    "true", "Bool", [`mode`], ````typst #true ````, [#true],
+    "1 + 2im", "Complex{<:Union{AbstractIrrational, AbstractFloat, Signed, Rational{<:Signed}}}", [`mode`, `parenthesize`], ````typst $1 + 2i$ ````, [$1 + 2i$],
+    "false//true + false//true*im", "Complex{<:Rational{<:Union{Bool, Unsigned}}}", [`mode`, `parenthesize`], ````typst $(0 / 1) + (0 / 1)i$ ````, [$(0 / 1) + (0 / 1)i$],
+    "im", "Complex{<:Union{Bool, Unsigned}}", [`mode`, `parenthesize`], ````typst $0 + 1i$ ````, [$0 + 1i$],
+    "HTML{String}(\"<p>a</p>\")", "HTML", [`backticks`, `block`, `depth`, `indent`, `mode`], ````typst ```html <p>a</p> ``` ````, [```html <p>a</p> ```],
+    "π", "Irrational{:π}", [`mode`], ````typst $π$ ````, [$π$],
+    "nothing", "Nothing", [`mode`], ````typst #none ````, [#none],
+    "0:2:6", "OrdinalRange{<:Signed, <:Signed}", [`mode`], ````typst #range(0, 7, step: 2) ````, [#range(0, 7, step: 2)],
+    "true:true:true", "OrdinalRange{<:Integer, <:Integer}", [`mode`], ````typst #range(1, 2) ````, [#range(1, 2)],
+    "1//2", "Rational{<:Signed}", [`mode`, `parenthesize`], ````typst $1 / 2$ ````, [$1 / 2$],
+    "true//true", "Rational{<:Union{Bool, Unsigned}}", [`mode`, `parenthesize`], ````typst $1 / 1$ ````, [$1 / 1$],
+    "r\"[a-z]\"", "Regex", [`mode`], ````typst #regex("[a-z]") ````, [#regex("[a-z]")],
+    "1", "Signed", [`mode`], ````typst $1$ ````, [$1$],
+    "0:2:6", "StepRangeLen{<:Signed, <:Signed, <:Signed, <:Signed}", [`mode`], ````typst #range(0, 7, step: 2) ````, [#range(0, 7, step: 2)],
+    "1:true:1", "StepRangeLen{<:Integer, <:Integer, <:Integer}", [`mode`], ````typst #range(1, 2) ````, [#range(1, 2)],
+    "[\"a\"]", "Text", [`mode`], ````typst #"[\"a\"]" ````, [#"[\"a\"]"],
+    "(true, 1, 1.2, 1//2)", "Tuple", [`mode`], ````typst #(true, 1, $1.2$, $1 / 2$) ````, [#(true, 1, $1.2$, $1 / 2$)],
+    "typst\"[\\\"a\\\"]\"", "TypstString", [], ````typst ["a"] ````, [["a"]],
+    "TypstText{Vector{Int64}}([1, 2, 3, 4])", "TypstText", [], ````typst [1, 2, 3, 4] ````, [[1, 2, 3, 4]],
+    "Typst{Int64}(1)", "Typst", [], ````typst $1$ ````, [$1$],
+    "0xff", "Unsigned", [`mode`], ````typst #0xff ````, [#0xff],
+    "v\"1.2.3\"", "VersionNumber", [`mode`], ````typst #version(1, 2, 3) ````, [#version(1, 2, 3)],
+    "Dates.Date(\"0001-01-01\")", "Dates.Date", [`mode`], ````typst #datetime(
+  year: 1,
+  month: 1,
+  day: 1
+) ````, [#datetime(
+  year: 1,
+  month: 1,
+  day: 1
+)],
+    "Dates.DateTime(\"0001-01-01T00:00:00\")", "Dates.DateTime", [`mode`], ````typst #datetime(
+  year: 1,
+  month: 1,
+  day: 1,
+  hour: 0,
+  minute: 0,
+  second: 0
+) ````, [#datetime(
+  year: 1,
+  month: 1,
+  day: 1,
+  hour: 0,
+  minute: 0,
+  second: 0
+)],
+    "Dates.Day(1)", "Dates.Period", [`mode`], ````typst #duration(
+  days: 1
+) ````, [#duration(
+  days: 1
+)],
+    "Dates.Time(0)", "Dates.Time", [`mode`], ````typst #datetime(
+  hour: 0,
+  minute: 0,
+  second: 0
+) ````, [#datetime(
+  hour: 0,
+  minute: 0,
+  second: 0
+)]
 ))
-
