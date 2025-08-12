@@ -7,7 +7,7 @@ import Base:
 import ..Typstry: show_typst
 
 using .Meta: isexpr, parse
-using ..Typstry: TypstContext, TypstText, escape
+using ..Typstry: TypstContext, TypstText, escape, show_render
 
 export TypstString, @typst_str
 
