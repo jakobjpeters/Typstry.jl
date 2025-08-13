@@ -4,7 +4,7 @@ module TypstTexts
 import Base: repr, show
 import ..Typstry: show_typst
 
-using ..Typstry: TypstContext
+using ..Typstry: TypstContext, show_render
 
 """
     TypstText{T}
