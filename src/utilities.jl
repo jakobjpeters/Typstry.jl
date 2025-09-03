@@ -16,7 +16,7 @@ Given an iterable of value-type pairs, interpolate each value into
 a `@typst_str` within a `PrecompileTools.@compile_workload` block.
 """
 compile_workload(examples::Vector) = @compile_workload for example ∈ examples
-    render(first(example))
+    render(first(example); open=false)
 end
 
 """
