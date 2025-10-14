@@ -1,15 +1,18 @@
 
-# Updating Typst_jll.jl and Typstry.jl
+# Updating Dependencies
 
-This tutorial demonstrates how to update the Typst_jll.jl used by Typstry.jl.
+This guide discusses updating Typst_jll.jl,
+Typstry.jl, and Typstry.jl's dependent packages.
 
-## Yggrasil
+## Typst_jll.jl
 
-This repository hosts the BinaryBuilder.jl recipes used to generate jll packages.
+[Yggrasil](https://github.com/JuliaPackaging/Yggdrasil)
+hosts the BinaryBuilder.jl recipes used to generate jll packages.
 Upon merging changes to a recipe, the corresponding jll package is updated automatically.
 
-1. Obtain the version number and commit hash of a [Typst release](https://github.com/typst/typst/releases)
-1. Fork [Yggrasil](https://github.com/JuliaPackaging/Yggdrasil)
+1. Obtain the version number and commit hash of a
+    [Typst release](https://github.com/typst/typst/releases)
+1. Fork Yggrasil
 2. Update the version number and commit hash in `Yggdrasil/T/Typst/build_tarballs.jl`
 
 ```julia
@@ -26,12 +29,17 @@ sources = [GitSource(
 
 ## Typstry.jl
 
-Typst uses semantic versioning and has a major version of `0`.
+Typst uses semantic versioning and currently has a major version of `0`.
 As such, patch version updates should be available automatically in Typstry.jl
-but minor version updates require updating the compatibility bounds of Typst_jll.jl.
+but minor version updates require updating the compatibility bound of Typst_jll.jl.
 Either submit an issue to Typstry.jl or a pull request by
 updating the `Project.toml` with the new version of Typst_jll.jl.
+In general, Typstry.jl only supports the latest version of Typst.
+However, previous versions may remain compatible until there is a feature requiring an update.
+
+## Interoperable Packages
+
 After a minor release of Typstry.jl,
-[interoperable packages](@ref package_interoperability)
+[dependent packages](@ref package_interoperability)
 require an update to their Typstry.jl compatibility bounds.
 They may also require updates for any breaking changes in Typstry.jl.

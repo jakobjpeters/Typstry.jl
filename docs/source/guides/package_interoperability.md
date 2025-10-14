@@ -24,9 +24,15 @@ typst"#import \"@namespace/name:version\""
 
 ## Julia Packages
 
+### Labelyst.jl
+
+This package is a dependent of Typstry.jl.
+
 ### Literate.jl
 
 ### Luxor.jl
+
+This package is a weak dependent of Typstry.jl.
 
 ```julia-repl
 julia> using Luxor: @svg, O, text
@@ -37,6 +43,8 @@ julia> @svg text(typst\"Hi cormullion!\", O)
 ```
 
 ### MakieTeX.jl
+
+This package is a dependent of Typstry.jl.
 
 !!! note
     This package re-exports [`@typst_str`](@ref) and [`TypstString`](@ref).
@@ -56,7 +64,11 @@ julia> save("makie_tex.svg", f)
 
 ### RegressionTables.jl
 
+This package is a weak dependent of Typstry.jl.
+
 ### TypstJlyfish.jl
+
+This package is interoperable with Typstry.jl.
 
 `````@eval
 import Markdown
