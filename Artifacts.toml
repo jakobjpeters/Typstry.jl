@@ -1,7 +1,7 @@
 
 [JuliaMono]
-git-tree-sha1 = "49dcd2c19616ebaa3cbc4eb8897132e15777709c"
+git-tree-sha1 = "14cdf206941576295cb1f7338f052a0e10e8196e"
 
     [[JuliaMono.download]]
-    sha256 = "027654737001a1f85cc1689faa3676fb42a06d5bf5aa6e83ff77eb1edb3a3602"
-    url = "https://github.com/cormullion/juliamono/releases/download/v0.055/JuliaMono.tar.gz"
+    sha256 = "ba1ee344c75d598695807c68ce4e53b19ff053715b42925bbe6a29769b1e180b"
+    url = "https://github.com/cormullion/juliamono/releases/download/v0.061/JuliaMono.tar.gz"
