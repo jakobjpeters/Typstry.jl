@@ -106,8 +106,8 @@ end
     @testset "`read`" begin
         @test read(typst`help`) isa Vector{UInt8}
         @test read(typst`help`, String) isa String
-        @test_throws TypstCommandError read(typst``, String)
-        @test_throws TypstCommandError read(typst``)
+        @test_throws TypstCommandError read(typst`error`, String)
+        @test_throws TypstCommandError read(typst`error`)
     end
 
     @testset "`run`" begin
