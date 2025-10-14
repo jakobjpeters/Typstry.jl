@@ -32,6 +32,6 @@ but minor version updates require updating the compatibility bounds of Typst_jll
 Either submit an issue to Typstry.jl or a pull request by
 updating the `Project.toml` with the new version of Typst_jll.jl.
 After a minor release of Typstry.jl,
-[interoperable packages](@ref Package Interoperability)
+[interoperable packages](@ref package_interoperability)
 require an update to their Typstry.jl compatibility bounds.
 They may also require updates for any breaking changes in Typstry.jl.

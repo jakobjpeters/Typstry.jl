@@ -1,5 +1,5 @@
 
-# Package Interoperability
+# [Package Interoperability](@id package_interoperability)
 
 This guide illustrates how to use Typstry.jl in compatible notebooks and packages.
 
