@@ -54,6 +54,8 @@ julia> save("makie_tex.svg", f)
 ```""")
 `````
 
+### RegressionTables.jl
+
 ### TypstJlyfish.jl
 
 `````@eval

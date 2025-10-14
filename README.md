@@ -128,6 +128,8 @@ julia> render(1:4)
 
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
     - Dependent of Typstry.jl
+- [RegressionTables.jl](https://github.com/jmboehm/RegressionTables.jl)
+    - Weak dependent of Typstry.jl
 - [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 
 ### LaTeX
