@@ -8,13 +8,10 @@ LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
+Typst_jll = "eb4b1da6-20f6-5c66-9826-fdb8ad410d0e"
 
 [compat]
 Aqua = "0.8"
 Documenter = "1"
 ExplicitImports = "1.6"
 julia = "1.10"
-
-[extras]
-Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"

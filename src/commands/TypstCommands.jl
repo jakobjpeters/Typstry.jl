@@ -2,8 +2,8 @@
 module TypstCommands
 
 import Base:
-    ==, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus,
-    iterate, keys, lastindex, length, read, setcpuaffinity, setenv, show
+    ==, Cmd, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus,
+    iterate, keys, lastindex, length, setcpuaffinity, setenv, show
 import Typst_jll
 
 using ..Commands: Typstry
@@ -24,6 +24,8 @@ Keyword parameters have the same semantics as for a `Cmd`.
 This type implements the `Cmd` interface.
 However, the interface is undocumented, which may result in unexpected behavior.
 
+- `==(::TypstCommand, ::TypstCommand)`
+- `Cmd(::TypstCommand; parameters...)`
 - `addenv(::TypstCommand,\u00A0env...;\u00A0inherit::Bool\u00A0=\u00A0true)`
     - Can be used with [`julia_mono`](@ref Typstry.julia_mono).
 - `detach(::TypstCommand)`
@@ -40,7 +42,13 @@ However, the interface is undocumented, which may result in unexpected behavior.
 - `lastindex(::TypstCommand)`
 - `length(::TypstCommand)`
 - `read(::TypstCommand, ::Type{String})`
+    - Errors thrown by the Typst compiler will be printed to `stderr`.
+        Then, a Julia [`TypstCommandError`](@ref Typstry.TypstCommandError) will be
+        thrown unless the `ignorestatus` flag is set.
 - `read(::TypstCommand)`
+    - Errors thrown by the Typst compiler will be printed to `stderr`.
+        Then, a Julia [`TypstCommandError`](@ref Typstry.TypstCommandError) will be
+        thrown unless the `ignorestatus` flag is set.
 - `run(::TypstCommand,\u00A0args...;\u00A0wait::Bool\u00A0=\u00A0true)`
     - Errors thrown by the Typst compiler will be printed to `stderr`.
         Then, a Julia [`TypstCommandError`](@ref Typstry.TypstCommandError) will be
@@ -108,6 +116,11 @@ tc::TypstCommand == _tc::TypstCommand = (
     tc.ignore_status == _tc.ignore_status
 )
 
+Cmd(typst_command::TypstCommand; parameters...) = Cmd(
+    `$(typst_command.compiler) $(typst_command.parameters)`;
+    ignorestatus = typst_command.ignore_status
+)
+
 detach(tc::TypstCommand) = TypstCommand(tc; detach = true)
 
 eltype(::Type{TypstCommand}) = String
@@ -136,12 +149,6 @@ keys(tc::TypstCommand) = LinearIndices(firstindex(tc) : lastindex(tc))
 lastindex(tc::TypstCommand) = length(tc)
 
 length(tc::TypstCommand) = length(tc.parameters) + 1
-
-read(tc::TypstCommand, ::Type{String}) = String(read(tc))
-function read(tc::TypstCommand)
-    command = `$(tc.compiler) $(tc.parameters)`
-    read(tc.ignore_status ? ignorestatus(command) : command)
-end
 
 setcpuaffinity(tc::TypstCommand, cpus) = TypstCommand(tc; cpus)
 

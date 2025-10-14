@@ -3,7 +3,7 @@ module TestStrings
 
 import Typstry: TypstContext, show_typst
 using .Meta: parse
-using Test: @test, @testset
+using Test: @test, @test_throws, @testset
 using ..TestTypstry: test_strings
 using Typstry
 
@@ -119,7 +119,12 @@ end
             test_pairs((ts, s) -> repr(MIME"text/typst"(), ts) == eval(parse(repr(ts))) == ts)
         end
 
-        @testset "`show`" begin end
+        @testset "`show`" begin
+            for mime in ["application/pdf", "image/png", "image/svg+xml"]
+                @test isnothing(show(devnull, MIME(mime), typst""))
+                @test_throws TypstCommandError show(devnull, MIME(mime), typst"$")
+            end
+        end
     end
 
     @testset "`Symbol`" begin test_equal(Symbol) end

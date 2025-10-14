@@ -1,7 +1,7 @@
 
 module Commands
 
-import Base: run
+import Base: read, run
 import Typstry
 
 using Artifacts: @artifact_str
@@ -76,9 +76,20 @@ function typst(parameters::AbstractString; catch_interrupt::Bool = true, ignores
     nothing
 end
 
-function run(tc::TypstCommand, args...; wait::Bool = true)
-    process = run(ignorestatus(`$(tc.compiler) $(tc.parameters)`), args...; wait)
-    tc.ignore_status || success(process) || throw(TypstCommandError(tc))
+read(typst_command::TypstCommand, ::Type{String}) = String(read(typst_command))
+function read(typst_command::TypstCommand)
+    io_buffer = IOBuffer()
+    run_typst(command -> pipeline(command; stdout = io_buffer), typst_command)
+    take!(io_buffer)
+end
+
+run(typst_command::TypstCommand, args...; wait::Bool = true) = run_typst(typst_command) do command
+    run(command, args...; wait)
+end
+
+function run_typst(callback, typst_command::TypstCommand)
+    process = callback(ignorestatus(Cmd(typst_command)))
+    typst_command.ignore_status || success(process) || throw(TypstCommandError(typst_command))
     process
 end
 

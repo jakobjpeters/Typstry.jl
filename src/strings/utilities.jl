@@ -206,14 +206,20 @@ show_raw(io::IO, m::MIME"text/markdown", x) = print(
 )
 show_raw(io::IO, m::MIME, x) = show(io, m, x)
 
-function show_render(io::IO, m::Union{
+function show_render(io::IO, mime::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, x)
-    input = tempname()
-    output = input * '.' * format(m)
+}, value)
+    io_buffer = IOBuffer()
+    typst_command = TypstCommand([
+        "compile", "--font-path", julia_mono, "--format", format(mime), "-", "-"
+    ])
+    _typst_context = typst_context(io, value)[2]
 
-    render(typst_context(io), x; input, output, open = false, ignorestatus = false)
-    write(io, read(output))
+    print(io_buffer, preamble(_typst_context))
+    show_typst(io_buffer, _typst_context, value)
+    println(io_buffer)
 
+    seekstart(io_buffer)
+    run_typst(command -> pipeline(command; stdin = io_buffer, stdout = io), typst_command)
     nothing
 end

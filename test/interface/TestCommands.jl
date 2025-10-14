@@ -1,6 +1,7 @@
 
 module TestCommands
 
+import Typst_jll
 using Test: @test, @testset, @test_throws, @test_warn
 using Typstry
 
@@ -9,15 +10,27 @@ const tc_error = typst`a`
 const tc_ignorestatus = ignorestatus(tc_error)
 
 @testset "`Typstry`" begin
-    @testset "`TypstCommand`" begin end
+    @testset "`TypstCommand`" begin
+        @test TypstCommand([]) isa TypstCommand
+        @test TypstCommand(["help"]) isa TypstCommand
+    end
 
-    @testset "`TypstError`" begin end
+    @testset "`TypstCommandError`" begin
+        @test TypstCommandError(TypstCommand([])) isa TypstCommandError
+        @test TypstCommandError(TypstCommand(["help"])) isa TypstCommandError
+    end
 
-    @testset "`@typst_cmd`" begin end
+    @testset "`@typst_cmd`" begin
+        @test typst`` isa TypstCommand
+    end
 
-    @testset "`julia_mono`" begin @test julia_mono isa String end
+    @testset "`julia_mono`" begin
+        @test julia_mono isa String
+    end
 
-    @testset "`render`" begin end
+    @testset "`render`" begin
+        @test isnothing(render(typst""; open = false))
+    end
 
     @testset "`typst`" begin
         mktempdir() do tmpdir
@@ -41,7 +54,13 @@ const tc_ignorestatus = ignorestatus(tc_error)
 end
 
 @testset "`Base`" begin
-    @testset "`==`" begin end
+    @testset "`==`" begin
+        @test typst`` == typst``
+    end
+
+    @testset "`Cmd`" begin
+        @test Cmd(typst``) isa Cmd
+    end
 
     @testset "`addenv`" begin end
 
@@ -51,22 +70,45 @@ end
 
     @testset "`firstindex`" begin @test firstindex(tc) == 1 end
 
-    @testset "`getindex`" begin end
+    @testset "`getindex`" begin
+        @test typst``[1] == Typst_jll.typst()[1]
+        @test typst`help`[2] == "help"
+    end
 
-    @testset "`hash`" begin end
+    @testset "`hash`" begin
+        @test hash(typst``) isa UInt
+    end
 
     @testset "`ignorestatus`" begin
         @test tc_ignorestatus == TypstCommand(tc_error; ignorestatus = true)
         @test_warn "error" run(tc_ignorestatus)
     end
 
-    @testset "`iterate`" begin end
+    @testset "`iterate`" begin
+        @test iterate(typst``, 1) == (Typst_jll.typst()[1], 2)
+        @test iterate(typst``, 2) == nothing
+        @test iterate(typst``) == (Typst_jll.typst()[1], 2)
+        @test iterate(typst`help`, 2) == ("help", 3)
+    end
 
     @testset "`keys`" begin end
 
-    @testset "`lastindex`" begin end
+    @testset "`lastindex`" begin
+        @test length(typst``) == 1
+        @test length(typst`help`) == 2
+    end
 
-    @testset "`length`" begin end
+    @testset "`length`" begin
+        @test length(typst``) == 1
+        @test length(typst`help`) == 2
+    end
+
+    @testset "`read`" begin
+        @test read(typst`help`) isa Vector{UInt8}
+        @test read(typst`help`, String) isa String
+        @test_throws TypstCommandError read(typst``, String)
+        @test_throws TypstCommandError read(typst``)
+    end
 
     @testset "`run`" begin
         # TODO: write more tests
@@ -78,9 +120,14 @@ end
 
     @testset "`setenv`" begin end
 
-    @testset "`show`" begin end
+    @testset "`show`" begin
+        @test isnothing(show(devnull, typst``))
+        @test isnothing(show(devnull, MIME"text/plain"(), TypstCommandError(typst``)))
+    end
 
-    @testset "`showerror`" begin end
+    @testset "`showerror`" begin
+        @test isnothing(showerror(devnull, TypstCommandError(typst``)))
+    end
 end
 
 end # TestCommands

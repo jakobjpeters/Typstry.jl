@@ -26,20 +26,20 @@ See also [`TypstContext`](@ref).
 julia> render(Any[true 1; 1.2 1 // 2]);
 ```
 """
-function render(tc::TypstContext, value;
+function render(_typst_context::TypstContext, value;
     input::AbstractString = "input.typ",
     output::AbstractString = "output.pdf",
     open::Bool = true,
     ignorestatus::Bool = true
 )
     Base.open(input; truncate = true) do file
-        ioc, tc, _ = typst_context(file, tc, value)
-        print(ioc, preamble(tc))
-        show_typst(IOContext(ioc, tc), value)
+        io_context, _typst_context, _ = typst_context(file, _typst_context, value)
+        print(io_context, preamble(_typst_context))
+        show_typst(io_context, value)
         println(file)
     end
     run(TypstCommand(TypstCommand([
-        "compile", input, output, "--font-path=$julia_mono", "--open"
+        "compile", input, output, "--font-path", julia_mono, "--open"
     ][begin:(end - !open)]); ignorestatus))
     nothing
 end

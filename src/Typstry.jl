@@ -15,12 +15,11 @@ using PrecompileTools: @compile_workload
 
 include("contexts/contexts.jl")
 include("utilities.jl")
-include("strings/strings.jl")
 
 include("commands/Commands.jl")
+using .Commands: TypstCommandError, TypstCommand, @typst_cmd, julia_mono, run_typst, typst
 
-using .Commands: TypstCommandError, TypstCommand, @typst_cmd, julia_mono, typst
-
+include("strings/strings.jl")
 include("render.jl")
 
 export
