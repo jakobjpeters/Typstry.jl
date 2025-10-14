@@ -134,7 +134,7 @@ IOContext(io::IO, tc::TypstContext) = IOContext(io, :typst_context => tc)
 
 copy(tc::TypstContext) = merge!(TypstContext(), tc)
 
-eltype(tc::TypstContext) = eltype(tc.context)
+eltype(tc::TypstContext) = Any
 
 getkey(tc::TypstContext, key, default) = getkey(tc.context, key, default)
 
@@ -168,4 +168,4 @@ function show(io::IO, tc::TypstContext)
     print(io, ')')
 end
 
-sizehint!(tc::TypstContext, n; kwargs...) = sizehint!(tc.context, n; kwargs...)
+sizehint!(tc::TypstContext, n; kwargs...) = TypstContext(sizehint!(tc.context, n; kwargs...))

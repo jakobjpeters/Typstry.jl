@@ -10,6 +10,7 @@
 - Implemented `Cmd(::TypstCommand; parameters...)`
 - `read(::TypstCommand)` and `read(::TypstCommand, ::Typst{String})`
     now throw a `TypstCommandError` upon failure
+- `sizehint!(::TypstContext, n)` now returns a `TypstContext` instead of a `Dict{Symbol, Any}`
 
 ### Bug fixes
 

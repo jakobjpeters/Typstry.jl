@@ -86,7 +86,7 @@ end
 
     @testset "`iterate`" begin
         @test iterate(typst``, 1) == (Typst_jll.typst()[1], 2)
-        @test iterate(typst``, 2) == nothing
+        @test isnothing(iterate(typst``, 2))
         @test iterate(typst``) == (Typst_jll.typst()[1], 2)
         @test iterate(typst`help`, 2) == ("help", 3)
     end
