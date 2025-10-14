@@ -34,7 +34,7 @@ end
 @testset "`TypstContext`" begin
     @test TypstContext() isa TypstContext
     @test context isa TypstContext
-    @test IOContext(TypstContext()) isa IOContext
+    @test IOContext(IOContext(stdout), TypstContext()) isa IOContext
     @test copy(TypstContext()) isa TypstContext
     @test Any <: eltype(TypstContext())
     @test getkey(TypstContext(), :key_1, :key_2) == :key_2
@@ -45,7 +45,7 @@ end
     @test mergewith(*, TypstContext()) isa TypstContext
     @test merge!(TypstContext()) isa TypstContext
     @test merge(TypstContext()) isa TypstContext
-    @test setindex(TypstContext(), value, :key)
+    @test setindex!(TypstContext(), :value, :key) == TypstContext(; key = :value)
     @test isnothing(show(devnull, TypstContext()))
     @test sizehint!(TypstContext(), 0) isa TypstContext
 end

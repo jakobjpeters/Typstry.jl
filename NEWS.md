@@ -16,3 +16,4 @@
 ### Bug fixes
 
 - Fixed undefined variable error when a `TypstCommand` fails
+- Fixed method error in `mergewith(combine, ::TypstContext, ::AbstractDict...)`

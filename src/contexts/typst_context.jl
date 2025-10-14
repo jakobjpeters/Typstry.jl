@@ -146,7 +146,7 @@ iterate(tc::TypstContext) = iterate(tc.context)
 
 length(tc::TypstContext) = length(tc.context)
 
-mergewith(combine, tc::TypstContext, ds::AbstractDict...) = mergewith!(combine, copy(tc), ds)
+mergewith(combine, tc::TypstContext, ds::AbstractDict...) = mergewith!(combine, copy(tc), ds...)
 
 merge!(tc::TypstContext, ds::AbstractDict...) = (merge!(tc.context, ds...); tc)
 
