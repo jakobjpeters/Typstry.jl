@@ -9,6 +9,12 @@ This supports using the [`julia_mono`](@ref) typeface.
 
 See also [`TypstContext`](@ref).
 
+!!! info
+    Typst requires the `output` path to contain a page number template `{p}`
+    when compiling documents with multiple pages to either PNG or SVG format.
+    In this case, use `open = false` to prevent throwing a [`TypstCommandError`](@ref).
+    See also [Typst #7182](https://github.com/typst/typst/issues/7182).
+
 # Parameters
 
 - `input::AbstractString = "input.typ"`
