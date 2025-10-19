@@ -35,23 +35,25 @@ A constant `Vector` of Julia values and their corresponding
 `Type`s implemented for [`show_typst`](@ref).
 """
 const examples = [
-    Any[nothing, 1, 1.2, 1 // 2] => AbstractArray => [:depth, :indent, :mode]
-    Any[nothing 1; 1.2 1 // 2] => AbstractMatrix => [:depth, :indent, :mode]
+    Any[nothing, 1, 1.2, 1 // 2] => AbstractArray => [:block, :depth, :indent, :mode]
+    Any[nothing 1; 1.2 1 // 2] => AbstractMatrix => [:block, :depth, :indent, :mode]
     'a' => AbstractChar => [:mode]
-    1.2 => AbstractFloat => [:mode]
+    1.2 => AbstractFloat => [:block, :mode]
     "a" => AbstractString => [:mode]
     true => Bool => [:mode]
     1 + 2im => Complex{<:Union{
         AbstractFloat, AbstractIrrational, Rational{<:Signed}, Signed
-    }} => [:mode, :parenthesize]
-    false // true * im => Complex{<:Rational{<:Union{Bool, Unsigned}}} => [:mode, :parenthesize]
+    }} => [:block, :mode, :parenthesize]
+    false // true * im => Complex{<:Rational{<:Union{Bool, Unsigned}}} => [
+        :block, :mode, :parenthesize
+    ]
     im => Complex{<:Union{Bool, Unsigned}} => [:mode, :parenthesize]
     html"<p>a</p>" => HTML => [:backticks, :block, :depth, :indent, :mode]
-    π => Irrational{:π} => [:mode]
+    π => Irrational{:π} => [:block, :mode]
     nothing => Nothing => [:mode]
     0:2:6 => OrdinalRange{<:Signed, <:Signed} => [:mode]
     true:true:true => OrdinalRange{<:Integer, <:Integer} => [:mode]
-    1 // 2 => Rational{<:Signed} => [:mode, :parenthesize]
+    1 // 2 => Rational{<:Signed} => [:block, :mode, :parenthesize]
     true // true => Rational{<:Union{Bool, Unsigned}} => [:mode, :parenthesize]
     r"[a-z]" => Regex => [:mode]
     1 => Signed => [:mode]
@@ -59,6 +61,7 @@ const examples = [
     StepRangeLen(true, true, true) => StepRangeLen{
         <:Integer, <:Integer, <:Integer, <:Integer
     } => [:mode]
+    :a => Symbol => [:block, :mode]
     text"[\"a\"]" => Text => [:mode]
     (true, 1, 1.2, 1 // 2) => Tuple => [:mode]
     typst"[\"a\"]" => TypstString => Symbol[]

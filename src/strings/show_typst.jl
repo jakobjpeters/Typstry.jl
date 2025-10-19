@@ -100,6 +100,9 @@ end
 function show_typst(io::IO, tc::TypstContext, x::Signed)
     mode(tc) == code ? print(io, x) : enclose(print, io, x, math_pad(tc))
 end
+show_typst(io::IO, typst_context::TypstContext, x::Symbol) = math_mode(
+    show_typst, io, typst_context, string(x)
+)
 function show_typst(io::IO, tc::TypstContext, x::Text)
     code_mode(io, tc)
     show_typst(io, string(x); mode = code)
