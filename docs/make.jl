@@ -5,16 +5,13 @@ using Documenter: Docs, DocMeta, deploydocs, makedocs
 using .Docs: HTML, Text
 using .DocMeta: setdocmeta!
 using LaTeXStrings: LaTeXString
-using Luxor: Drawing, finish, julia_blue, julia_green, julia_purple, julia_red, rect, sethue
 using Markdown: MD
 using Typstry: TypstContext, context, enclose, examples, join_with, show_raw
 using Typstry
 
 const assets = joinpath(@__DIR__, "source", "assets")
 const _examples = Vector{Pair{Any, Pair{Type, Vector{Symbol}}}}[]
-const logo = joinpath(assets, "logo.svg")
 const modes = instances(Mode)
-const width, height = 210, 297
 const modules = [Typstry]
 const extensions = ["LaTeXStrings", "Markdown"]
 const template = joinpath(assets, "template.typ")
@@ -35,19 +32,6 @@ for extension in extensions
     push!(modules, _module)
     push!(_examples, _module.examples)
 end
-
-mkpath(assets)
-Drawing(width, height, :svg, logo)
-
-for (color, (x_min, y_min)) in zip(
-    (julia_purple, julia_green, julia_red, julia_blue),
-    map(i -> ((0.3 - i) * width, i * height), 0:0.1:0.3)
-)
-    sethue(color)
-    rect(x_min, y_min, 0.7 * width, 0.7 * height; action = :fill)
-end
-
-finish()
 
 for (package, examples) in append!([("Typstry", examples)], zip(extensions, _examples))
     path = joinpath(assets, package * "_examples.typ")
