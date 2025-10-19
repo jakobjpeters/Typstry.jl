@@ -1,7 +1,7 @@
 
 module TypstTexts
 
-import Base: repr, show
+import Base: show
 import ..Typstry: show_typst
 
 using ..Typstry: TypstContext, show_render
@@ -37,13 +37,11 @@ struct TypstText{T}
     value::T
 end
 
-repr(::MIME"text/typst", tt::TypstText; context = nothing) = TypstString(tt)
+show_typst(io::IO, ::TypstContext, typst_text::TypstText) = print(io, typst_text.value)
 
-show_typst(io::IO, ::TypstContext, tt::TypstText) = print(io, tt.value)
-
-show(io::IO, ::MIME"text/typst", tt::TypstText) = show_typst(io, tt)
-show(io::IO, m::Union{
+show(io::IO, ::MIME"text/typst", typst_text::TypstText) = show_typst(io, typst_text)
+show(io::IO, mime::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, tt::TypstText) = show_render(io, m, tt)
+}, typst_text::TypstText) = show_render(io, mime, typst_text)
 
 end # TypstTexts

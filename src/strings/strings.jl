@@ -1,4 +1,6 @@
 
+import Base: repr
+
 include("utilities.jl")
 
 include("Modes.jl")
@@ -18,6 +20,8 @@ using .Typsts: Typst
 include("TypstStrings.jl")
 
 using .TypstStrings: TypstString, @typst_str
+
+repr(::MIME"text/typst", typst_text::TypstText; context = nothing) = TypstString(typst_text)
 
 merge!(default_context, TypstContext(;
     backticks = 3,

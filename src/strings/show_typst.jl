@@ -29,17 +29,20 @@ function show_typst(io::IO, tc::TypstContext, x::Bool)
     code_mode(io, tc)
     print(io, x)
 end
-show_typst(io::IO, tc::TypstContext, x::Complex{<:Union{
+function show_typst(io::IO, tc::TypstContext, x::Complex{<:Union{
     AbstractFloat, AbstractIrrational, Rational{<:Signed}, Signed
-}}) = math_mode(io, tc, x) do io, tc, x
-    enclose(io, x, (mode(tc) == math && parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
-        _real, _imag = real(x), imag(x)
+}})
+    _mode = mode(tc)
+    math_mode(io, tc, x) do io, tc, x
+        enclose(io, x, (_mode == math && parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
+            _real, _imag = real(x), imag(x)
 
-        signbit(_real) && print(io, '-')
-        show_typst(io, abs(_real); mode = math)
-        print(io, ' ', signbit(_imag) ? '-' : '+', ' ')
-        show_typst(io, abs(_imag); mode = math)
-        print(io, 'i')
+            signbit(_real) && print(io, '-')
+            show_typst(io, abs(_real); mode = math)
+            print(io, ' ', signbit(_imag) ? '-' : '+', ' ')
+            show_typst(io, abs(_imag); mode = math)
+            print(io, 'i')
+        end
     end
 end
 function show_typst(io::IO, ::TypstContext, x::Complex{<:Rational{<:Union{Bool, Unsigned}}})
@@ -77,11 +80,14 @@ function show_typst(io::IO, tc::TypstContext, ::Nothing)
     code_mode(io, tc)
     print(io, "none")
 end
-show_typst(io::IO, tc::TypstContext, x::Rational{<:Signed}) = math_mode(io, tc, x) do io, tc, x
-    enclose(io, x, (mode(tc) == math && parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
-        show_typst(io, numerator(x); mode = math)
-        print(io, " / ")
-        show_typst(io, denominator(x); mode = math)
+function show_typst(io::IO, tc::TypstContext, x::Rational{<:Signed})
+    _mode = mode(tc)
+    math_mode(io, tc, x) do io, tc, x
+        enclose(io, x, (_mode == math && parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
+            show_typst(io, numerator(x); mode = math)
+            print(io, " / ")
+            show_typst(io, denominator(x); mode = math)
+        end
     end
 end
 show_typst(io::IO, ::TypstContext, x::Rational{<:Union{Bool, Unsigned}}) = show_typst(

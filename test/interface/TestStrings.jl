@@ -81,7 +81,88 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
 
     @testset "`@typst_str`" begin end
 
-    @testset "`show_typst`" begin end
+    @testset "`show_typst`" begin
+        for example in Typstry.examples
+            for mode in instances(Mode)
+                @test isnothing(render(example; mode))
+            end
+        end
+
+        @testset "`AbstractChar`" begin
+            test_strings('a', typst"\"a\""; mode = code)
+            test_strings('a', typst"#\"a\""; mode = markup)
+            test_strings('a', typst"\"a\""; mode = math)
+
+            test_strings('"', typst"#\"\\\"\"")
+        end
+
+        @testset "`AbstractFloat`" begin
+            test_strings(1.0, typst"$1.0$"; mode = code)
+            test_strings(1.0, typst"$1.0$"; mode = markup)
+            test_strings(1.0, typst"1.0"; mode = math)
+
+            test_strings(1.0, typst"$ 1.0 $"; block = true)
+            test_strings(Inf, typst"#float.inf")
+            test_strings(NaN, typst"#float.nan")
+        end
+
+        @testset "`AbstractString`" begin
+            test_strings("a", typst"\"a\""; mode = code)
+            test_strings("a", typst"#\"a\""; mode = markup)
+            test_strings("a", typst"\"a\""; mode = math)
+
+            test_strings("\"", typst"#\"\\\"\"")
+        end
+
+        @testset "`Bool`" begin
+            test_strings(true, typst"true"; mode = code)
+            test_strings(true, typst"#true"; mode = markup)
+            test_strings(true, typst"#true"; mode = math)
+        end
+
+        @testset "`Irrational`" begin
+            test_strings(π, typst"$π$"; mode = code)
+            test_strings(π, typst"$π$"; mode = markup)
+            test_strings(π, typst"π"; mode = math)
+
+            test_strings(π, typst"$ π $"; block = true)
+        end
+
+        @testset "`Nothing`" begin
+            test_strings(nothing, typst"none"; mode = code)
+            test_strings(nothing, typst"#none"; mode = markup)
+            test_strings(nothing, typst"#none"; mode = math)
+        end
+
+        @testset "`Signed`" begin
+            test_strings(1, typst"1"; mode = code)
+            test_strings(1, typst"$1$"; mode = markup)
+            test_strings(1, typst"1"; mode = math)
+
+            test_strings(1, typst"$ 1 $"; block = true)
+        end
+
+        @testset "`Symbol`" begin
+            test_strings(:a, typst"$\"a\"$"; mode = code)
+            test_strings(:a, typst"$\"a\"$"; mode = markup)
+            test_strings(:a, typst"\"a\""; mode = math)
+
+            test_strings(:a, typst"$ \"a\" $"; block = true)
+            test_strings(Symbol('"'), typst"$\"\\\"\"$")
+        end
+
+        @testset "`Unsigned`" begin
+            test_strings(0x01, typst"0x01"; mode = code)
+            test_strings(0x01, typst"#0x01"; mode = markup)
+            test_strings(0x01, typst"#0x01"; mode = math)
+        end
+
+        @testset "`VersionNumber`" begin
+            test_strings(v"1.2.3", typst"version(1, 2, 3)"; mode = code)
+            test_strings(v"1.2.3", typst"#version(1, 2, 3)"; mode = markup)
+            test_strings(v"1.2.3", typst"#version(1, 2, 3)"; mode = math)
+        end
+    end
 
     for ((value, _), mode) ∈ Iterators.product(Typstry.examples, instances(Mode))
         @test begin

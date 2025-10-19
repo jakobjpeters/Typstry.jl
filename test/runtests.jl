@@ -3,10 +3,10 @@ using Typstry
 
 module TestTypstry
 
-import LaTeXStrings, Markdown, Typstry
+import LaTeXStrings, Markdown
 using Base: get_extension
 using Test: @test, @testset
-using Typstry: Mode, TypstString
+using Typstry
 
 const names = [:LaTeXStrings, :Markdown]
 const modules = map(name -> get_extension(Typstry, Symbol(name, :Extension)), names)
@@ -17,7 +17,13 @@ test_modes(x, ss) = @testset "modes" begin
     end
 end
 
-test_strings(x, s; kwargs...) = @test TypstString(x; kwargs...) == s
+function test_strings(x, _string::String; typst_context...)
+    @test String(TypstString(x; typst_context...)) == _string
+    @test isnothing(render(x; typst_context...))
+end
+function test_strings(x, typst_string::TypstString; typst_context...)
+    test_strings(x, String(typst_string); typst_context...)
+end
 
 @testset "Typstry" begin
     for (description, descriptions) in [

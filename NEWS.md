@@ -19,4 +19,5 @@
 ### Bug fixes
 
 - Fixed undefined variable error when a `TypstCommand` fails
+- Fixed undefined variable error for `repr(::MIME"text/typst", ::TypstString)`
 - Fixed method error in `mergewith(combine, ::TypstContext, ::AbstractDict...)`
