@@ -70,7 +70,14 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
         test_strings(TypstString(x; x = 2), "2")
     end
 
-    @testset "`TypstText`" begin @test TypstText(x) isa TypstText{X} end
+    @testset "`TypstText`" begin
+        @test TypstText(x) isa TypstText{X}
+        @test repr(MIME"text/typst"(), TypstText(x)) isa TypstString
+
+        for mime in ["application/pdf", "image/png", "image/svg+xml"]
+            @test isnothing(show(devnull, MIME(mime), TypstText(x)))
+        end
+    end
 
     @testset "`@typst_str`" begin end
 
