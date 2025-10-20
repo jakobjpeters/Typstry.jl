@@ -16,7 +16,7 @@ export TypstString, @typst_str
     TypstString(::TypstContext, ::Any)
     TypstString(::Any; context...)
 
-Format the value as a Typst formatted string.
+A Typst formatted string.
 
 The [`TypstContext`](@ref) is combined with additional context and passed to [`show_typst`](@ref).
 

@@ -24,7 +24,7 @@ include("render.jl")
 
 export
     ContextError, DefaultIO, Mode, TypstCommandError, TypstCommand,
-    TypstContext, TypstString, TypstText, Typst,
+    TypstContext, TypstFunction, TypstString, TypstText, Typst,
     @typst_cmd, @typst_str, code, context, julia_mono,
     markup, math, render, reset_context, show_typst, typst
 
@@ -64,6 +64,7 @@ const examples = [
     :a => Symbol => [:block, :mode]
     text"[\"a\"]" => Text => [:mode]
     (true, 1, 1.2, 1 // 2) => Tuple => [:mode]
+    TypstFunction(:+, (1, 2)) => TypstFunction => [:block, :mode]
     typst"[\"a\"]" => TypstString => Symbol[]
     TypstText([1, 2, 3, 4]) => TypstText => Symbol[]
     Typst(1) => Typst => Symbol[]

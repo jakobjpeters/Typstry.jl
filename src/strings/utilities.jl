@@ -127,7 +127,11 @@ indent(tc) = " " ^ tab_size(tc)
     math_mode(f, io, tc, x; kwargs...)
 """
 math_mode(f, io::IO, tc, x; kwargs...) = enclose(
-    (io, x; kwargs...) -> f(io, setindex!(tc, math, :mode), x; kwargs...), io, x, math_pad(tc); kwargs...
+    (io, x; kwargs...) -> f(io, setindex!(tc, math, :mode), x; kwargs...),
+    io,
+    x,
+    math_pad(tc);
+    kwargs...
 )
 
 """

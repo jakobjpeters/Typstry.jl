@@ -21,6 +21,9 @@ include("TypstStrings.jl")
 
 using .TypstStrings: TypstString, @typst_str
 
+include("TypstFunctions.jl")
+using .TypstFunctions: TypstFunction
+
 repr(::MIME"text/typst", typst_text::TypstText; context = nothing) = TypstString(typst_text)
 
 merge!(default_context, TypstContext(;

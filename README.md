@@ -86,6 +86,7 @@ julia> render(1:4)
 
 ### Planned
 
+- Traits to specify some formatting characteristics
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
     - Use a jll package
@@ -97,7 +98,6 @@ julia> render(1:4)
         - `Enum`
             - `Mode`
         - `Expr`
-        - `Symbol`
     - Package extensions
         - Standard Library
             - LinearAlgebra.jl

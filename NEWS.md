@@ -3,6 +3,7 @@
 
 ## v0.7.0
 
+- Implement `TypstFunction`
 - New logo designed by @cormullion
     - Closes [#17 by @cormullion](https://github.com/jakobjpeters/Typstry.jl/issues/17)
 - Dropped support for Typst_jll.jl v0.1 - 0.11
