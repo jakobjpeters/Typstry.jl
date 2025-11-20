@@ -2,7 +2,7 @@
 module TypstFunctions
 
 import Base: show
-import ..Typstry: TypstContext, TypstString, math, math_mode, join_with, show_typst, typst_context
+import ..Typstry: TypstContext, TypstString, code, math, math_mode, join_with, show_typst, typst_context
 using Base: isoperator
 
 export TypstFunction
