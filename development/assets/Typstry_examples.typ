@@ -34,6 +34,7 @@
     ":a", "Symbol", [`block`, `mode`], ````typst $"a"$ ````, [$"a"$],
     "[\"a\"]", "Text", [`mode`], ````typst #"[\"a\"]" ````, [#"[\"a\"]"],
     "(true, 1, 1.2, 1//2)", "Tuple", [`mode`], ````typst #(true, 1, $1.2$, $1 / 2$) ````, [#(true, 1, $1.2$, $1 / 2$)],
+    "TypstFunction{Symbol, Tuple{Int64, Int64}}(:+, (1, 2))", "TypstFunction", [`block`, `mode`], ````typst $1 + 2$ ````, [$1 + 2$],
     "typst\"[\\\"a\\\"]\"", "TypstString", [], ````typst ["a"] ````, [["a"]],
     "TypstText{Vector{Int64}}([1, 2, 3, 4])", "TypstText", [], ````typst [1, 2, 3, 4] ````, [[1, 2, 3, 4]],
     "Typst{Int64}(1)", "Typst", [], ````typst $1$ ````, [$1$],
