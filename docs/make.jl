@@ -104,9 +104,10 @@ makedocs(; modules, format = Documenter.HTML(; edit_link = "main"), pages = [
     "Typstry.jl" => "index.md",
     pages("tutorials", ["getting_started"]),
     pages("guides", [
-        "typst_formatting_examples",
-        "the_julia_to_typst_interface",
         "package_interoperability",
+        "terminal_images",
+        "the_julia_to_typst_interface",
+        "typst_formatting_examples",
         "updating_dependencies"
     ]), pages("references", [
         "commands", "contexts", "strings", "render", "package_extensions", "internals"
