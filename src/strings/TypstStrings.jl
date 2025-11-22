@@ -113,7 +113,8 @@ macro typst_str(s::String)
     args = _s.args
 
     while (regex_match = match(r"(\\+)(\()", s, current)) ≢ nothing
-        backslashes, start = length(first(regex_match.captures)), last(regex_match.offsets)
+        backslashes = length(first(regex_match.captures)::SubString{String})
+        start = last(regex_match.offsets)
         interpolate, previous = isodd(backslashes), prevind(s, start)
 
         if current < previous

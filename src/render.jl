@@ -1,7 +1,7 @@
 
 """
-    render(::TypstContext, value; parameters...)
-    render(value; parameters..., context...)
+    render(::TypstContext, value; parameters...)::Nothing
+    render(value; parameters..., context...)::Nothing
 
 Render the `value` to a document.
 

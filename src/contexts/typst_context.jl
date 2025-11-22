@@ -108,10 +108,12 @@ TypstContext with 8 entries:
 const context = TypstContext()
 
 """
-    reset_context()
+    reset_context()::TypstContext
 
 Remove any custom mappings from the [`context`](@ref)
 such that it is returned to its default state.
+
+See also [`TypstContext`](@ref).
 
 # Examples
 

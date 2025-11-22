@@ -13,18 +13,13 @@ include("TypstTexts.jl")
 
 using .TypstTexts: TypstText
 
-include("Typsts.jl")
-
-using .Typsts: Typst
-
 include("TypstStrings.jl")
 
 using .TypstStrings: TypstString, @typst_str
 
-include("TypstFunctions.jl")
-using .TypstFunctions: TypstFunction
+include("Typsts.jl")
 
-repr(::MIME"text/typst", typst_text::TypstText; context = nothing) = TypstString(typst_text)
+using .Typsts: Typst
 
 merge!(default_context, TypstContext(;
     backticks = 3,
@@ -46,3 +41,8 @@ for (key, value) in pairs(context)
         @doc "$($key)(tc, type, key)" $key
     end
 end
+
+include("TypstFunctions.jl")
+using .TypstFunctions: TypstFunction
+
+repr(::MIME"text/typst", typst_text::TypstText; context = nothing) = TypstString(typst_text)

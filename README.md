@@ -87,6 +87,8 @@ julia> render(1:4)
 ### Planned
 
 - Traits to specify some formatting characteristics
+- Syntax highlighting
+- Implement `IO` interface for `TypstContext`
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
     - Use a jll package
@@ -98,17 +100,14 @@ julia> render(1:4)
         - `Enum`
             - `Mode`
         - `Expr`
+            - Support more `head` kinds
     - Package extensions
         - Standard Library
             - LinearAlgebra.jl
             - DataFrames.jl
     - Partial Julia to Typst transpilation
-        - ```
-          (@typst $a * b) ==
-          TypstString(:($a * b)) ==
-          TypstString(TypstFunction(*, a, :b)) ==
-          typst"$ 2b $"
-          ```
+        - Improved functionality of `@typst`
+        - More methods of `TypstFunction`
 
 ## Similar Packages
 

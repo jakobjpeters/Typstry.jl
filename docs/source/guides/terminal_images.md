@@ -24,6 +24,7 @@ simply load the corresponding package in the REPL to automatically render each o
 - [?] [st](https://st.suckless.org/patches/kitty-graphics-protocol/)
 - [?] [Warp](https://docs.warp.dev/)
 - [?] [wayst](https://github.com/91861/wayst)
+- others?
 
 ## [SixelTerm.jl](https://github.com/eschnett/SixelTerm.jl)
 

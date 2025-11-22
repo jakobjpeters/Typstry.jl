@@ -4,7 +4,7 @@ module Typsts
 import Base: repr, show
 import ..Typstry: show_typst
 
-using ..Typstry: TypstContext, show_render
+using ..Typstry: TypstContext, TypstString, show_render
 
 export Typst
 

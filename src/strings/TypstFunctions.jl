@@ -1,9 +1,12 @@
 
 module TypstFunctions
 
-import Base: show
-import ..Typstry: TypstContext, TypstString, code, math, math_mode, join_with, show_typst, typst_context
+import Base: repr, show
+import ..Typstry: TypstContext, TypstString, math_mode, join_with, show_typst, typst_context
+import ..Typstry: show_typst
+
 using Base: isoperator
+using ..Typstry: TypstContext, TypstString, math, enclose, join_with, math_mode, parenthesize, typst_context, show_render
 
 export TypstFunction
 
@@ -14,7 +17,7 @@ A wrapper representing a Typst function.
 
 The default implementation formats the values in [`math`](@ref) mode,
 but [`show_typst`](@ref) may be implemented for custom
-types to format them in [`code`](@ref) mode too.
+types to format them in [`code`](@ref Typstry.code) mode too.
 
 # Fields
 
@@ -23,6 +26,7 @@ types to format them in [`code`](@ref) mode too.
 
 # Interface
 
+- `repr(::MIME"text/typst",\u00A0, ::TypstFunction)`
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstFunction{String})`
     - Format in call notation `callable(parameters...)`.
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstFunction{Symbol})`
@@ -41,28 +45,39 @@ struct TypstFunction{C, P <: Tuple}
     parameters::P
 end
 
+repr(::MIME"text/typst", typst_function::TypstFunction; context = nothing) = TypstString(typst_function)
+
 show_typst(
     io::IO, typst_context::TypstContext, typst_function::TypstFunction{TypstString}
 ) = math_mode(io, typst_context, typst_function) do io, typst_context, typst_function
-    show_typst(io, typst_function.callable)
-    print(io, '(')
-    join_with(show_typst, io, typst_function.parameters, ", "; mode = math)
-    print(io, ')')
+    enclose(
+        io, typst_function, (parenthesize(typst_context) ? ("(", ")") : ("", ""))...
+    ) do io, typst_function
+        show_typst(io, typst_function.callable)
+        print(io, " (")
+        join_with(show_typst, io, typst_function.parameters, ", "; mode = math)
+        print(io, ')')
+    end
 end
-function show_typst(io::IO, typst_context::TypstContext, typst_function::TypstFunction{Symbol})
+show_typst(io::IO, typst_context::TypstContext, typst_function::TypstFunction{Symbol}) = math_mode(io, typst_context, typst_function
+) do io, typst_context, typst_function
     (; callable, parameters) = typst_function
 
-    if isoperator(callable) && 0 < (arity = length(parameters)) < 3
-        math_mode(io, typst_context, typst_function) do io, typst_context, typst_function
-            if arity == 1
-                print(io, callable)
-                show_typst(io, only(parameters); mode = math)
-            elseif arity == 2
-                show_typst(io, parameters[1]; mode = math)
+    if isoperator(callable)
+        arity = length(parameters)
+
+        if arity == 1
+            print(io, callable)
+            show_typst(io, only(parameters))
+        elseif arity == 2
+            enclose(
+                io, parameters, (parenthesize(typst_context) ? ("(", ")") : ("", ""))...
+            ) do io, parameters
+                show_typst(io, parameters[1])
                 print(io, ' ', callable, ' ')
-                show_typst(io, parameters[2]; mode = math)
-            else error("unreachable reached")
+                show_typst(io, parameters[2])
             end
+        else show_typst(io, TypstFunction(string(callable), parameters))
         end
     else show_typst(io, TypstFunction(string(callable), parameters))
     end

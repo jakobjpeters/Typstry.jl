@@ -21,46 +21,6 @@ function show_typst(io::IO, tc::TypstContext, x::AbstractFloat)
     else math_mode((io, _, x) -> print(io, x), io, tc, x)
     end
 end
-function show_typst(io::IO, tc::TypstContext, x::AbstractString)
-    mode(tc) == markup && print(io, '#')
-    enclose((io, x) -> escape_string(io, x, '"'), io, x, '"')
-end
-function show_typst(io::IO, tc::TypstContext, x::Bool)
-    code_mode(io, tc)
-    print(io, x)
-end
-function show_typst(io::IO, tc::TypstContext, x::Complex{<:Union{
-    AbstractFloat, AbstractIrrational, Rational{<:Signed}, Signed
-}})
-    _mode = mode(tc)
-    math_mode(io, tc, x) do io, tc, x
-        enclose(io, x, (_mode == math && parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
-            _real, _imag = real(x), imag(x)
-
-            signbit(_real) && print(io, '-')
-            show_typst(io, abs(_real); mode = math)
-            print(io, ' ', signbit(_imag) ? '-' : '+', ' ')
-            show_typst(io, abs(_imag); mode = math)
-            print(io, 'i')
-        end
-    end
-end
-function show_typst(io::IO, ::TypstContext, x::Complex{<:Rational{<:Union{Bool, Unsigned}}})
-    _real, _imag = real(x), imag(x)
-    show_typst(io, Complex(
-        signed(numerator(_real)) // signed(denominator(_real)),
-        signed(numerator(_imag)) // signed(denominator(_imag))
-    ))
-end
-show_typst(io::IO, ::TypstContext, x::Complex{<:Union{Bool, Unsigned}}) = show_typst(
-    io, Complex(signed(real(x)), signed(imag(x)))
-)
-show_typst(io::IO, tc::TypstContext, x::HTML) = show_raw(io, tc, MIME"text/html"(), :html, x)
-show_typst(io::IO, tc::TypstContext, x::Irrational{T}) where T = math_mode(io, tc, x) do io, _, x
-    if T isa Symbol && length(string(T)) == 1 print(io, x)
-    else show_typst(io, string(x); mode = math)
-    end
-end
 show_typst(io::IO, tc::TypstContext, x::AbstractMatrix) = math_mode(io, tc, x) do io, tc, x
     _depth, _indent = depth(tc), indent(tc)
     __depth = _depth + 1
@@ -75,6 +35,74 @@ show_typst(io::IO, tc::TypstContext, x::AbstractMatrix) = math_mode(io, tc, x) d
         end
     end
     print(io, '\n', _indent ^ _depth, ')')
+end
+function show_typst(io::IO, tc::TypstContext, x::AbstractString)
+    mode(tc) == markup && print(io, '#')
+    enclose((io, x) -> escape_string(io, x, '"'), io, x, '"')
+end
+function show_typst(io::IO, tc::TypstContext, x::Bool)
+    code_mode(io, tc)
+    print(io, x)
+end
+function show_typst(io::IO, tc::TypstContext, x::Complex{<:Union{
+    AbstractFloat, AbstractIrrational, Rational{<:Signed}, Signed
+}})
+    _mode = mode(tc)
+    math_mode(io, tc, x) do io, tc, x
+        _real, _imag = real(x), imag(x)
+        _parenthesize = parenthesize(tc) && !(iszero(_real) || iszero(_imag))
+        enclose(io, x, (_mode == math && _parenthesize ? ("(", ")") : ("", ""))...) do io, x
+            if iszero(_real) && !iszero(_imag)
+                signbit(_imag) && print(io, '-')
+                isone(abs(_imag)) || show_typst(io, abs(_imag))
+                print(io, 'i')
+            else
+                show_typst(io, _real)
+
+                if !iszero(_imag)
+                    print(io, ' ', signbit(_imag) ? '-' : '+', ' ')
+                    isone(abs(_imag)) || show_typst(io, abs(_imag))
+                    print(io, 'i')
+                end
+            end
+        end
+    end
+end
+function show_typst(io::IO, ::TypstContext, x::Complex{<:Rational{<:Union{Bool, Unsigned}}})
+    _real, _imag = real(x), imag(x)
+    show_typst(io, Complex(
+        signed(numerator(_real)) // signed(denominator(_real)),
+        signed(numerator(_imag)) // signed(denominator(_imag))
+    ))
+end
+show_typst(io::IO, ::TypstContext, x::Complex{<:Union{Bool, Unsigned}}) = show_typst(
+    io, Complex(signed(real(x)), signed(imag(x)))
+)
+function show_typst(io::IO, typst_context::TypstContext, x::Expr)
+    (; head, args) = x
+
+    if head == :(=)
+        math_mode(io, typst_context, args) do io, _, args
+            show_typst(io, args[1])
+            print(io, " = ")
+            show_typst(io, args[2])
+        end
+    elseif head == :call show_typst(io, TypstFunction(args[1], Tuple(@view args[2:end])))
+    elseif head == :hcat show_typst(io, permutedims(args))
+    elseif head == :vect show_typst(io, args)
+    elseif head == :vcat
+        if all(arg -> arg isa Expr && arg.head == :row, args)
+            show_typst(io, stack(Iterators.map(arg -> arg.args, args); dims = 1))
+        else show_typst(io, args)
+        end
+    else error("`show_typst` is not yet implemented for an `Expr` with the head `$head`")
+    end
+end
+show_typst(io::IO, tc::TypstContext, x::HTML) = show_raw(io, tc, MIME"text/html"(), :html, x)
+show_typst(io::IO, tc::TypstContext, x::Irrational{T}) where T = math_mode(io, tc, x) do io, _, x
+    if T isa Symbol && length(string(T)) == 1 print(io, x)
+    else show_typst(io, string(x); mode = math)
+    end
 end
 function show_typst(io::IO, tc::TypstContext, ::Nothing)
     code_mode(io, tc)
@@ -178,10 +206,10 @@ show_typst(io::IO, x; context...) = show_typst(typst_context(io, TypstContext(; 
 show_typst(x; context...) = show_typst(typst_context(TypstContext(; context...), x)...)
 
 @doc """
-    show_typst(::IO, ::TypstContext, ::Any)
-    show_typst(::IO, ::Any; context...)
-    show_typst(::TypstContext, ::Any)
-    show_typst(::Any; context...)
+    show_typst(::IO, ::TypstContext, ::Any)::Nothing
+    show_typst(::IO, ::Any; context...)::Nothing
+    show_typst(::TypstContext, ::Any)::Nothing
+    show_typst(::Any; context...)::Nothing
 
 Print in Typst format with Julia settings and Typst
 parameters provided by the [`TypstContext`](@ref).

@@ -25,18 +25,15 @@ See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
 """
 code_mode(io::IO, tc) = if mode(tc) ≠ code print(io, "#") end
 
-date_time(::Date) = year, month, day
-date_time(::Time) = hour, minute, second
-date_time(::DateTime) = year, month, day, hour, minute, second
-
 @doc"""
     date_time(::Union{Dates.Date, Dates.Time, Dates.DateTime})
 """ date_time
 
-function dates(x::Union{Date, DateTime, Time})
-    fs = date_time(x)
-    "datetime", map(Symbol, fs), map(f -> f(x), fs)
+function dates(date_time::DateTime)
+    fs = (year, month, day, hour, minute, second)
+    "datetime", map(Symbol, fs), map(f -> f(date_time), fs)
 end
+dates(date::Date) = "datetime", (:year, :month, :day), (year(date), month(date), day(date))
 function dates(x::Period)
     buffer = IOBuffer()
 
@@ -45,6 +42,7 @@ function dates(x::Period)
 
     "duration", (duration(x),), (TypstText(readuntil(buffer, ' ')),)
 end
+dates(time::Time) = "datetime", (:hour, :minute, :second), (hour(time), minute(time), second(time))
 
 @doc """
     dates(::Union{Dates.Date, Dates.DateTime, Dates.Period, Dates.Time})
@@ -126,13 +124,12 @@ indent(tc) = " " ^ tab_size(tc)
 """
     math_mode(f, io, tc, x; kwargs...)
 """
-math_mode(f, io::IO, tc, x; kwargs...) = enclose(
-    (io, x; kwargs...) -> f(io, setindex!(tc, math, :mode), x; kwargs...),
-    io,
-    x,
-    math_pad(tc);
-    kwargs...
-)
+function math_mode(f, io::IO, tc, x; kwargs...)
+    _tc = setindex!(copy(tc), math, :mode)
+    _io = IOContext(io, :typst_context => _tc)
+
+    enclose((io, x; kwargs...) -> f(_io, _tc, x; kwargs...), _io, x, math_pad(tc); kwargs...)
+end
 
 """
     math_pad(tc)
