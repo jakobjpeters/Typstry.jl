@@ -43,7 +43,7 @@ The `value` is first processed, then passed to
 
 # Examples
 
-- A symbol returns its assignment, if it exists, otherwise itself
+A symbol returns its assignment, if it exists, otherwise itself
 
 ```jldoctest
 julia> x = 1;
@@ -52,8 +52,8 @@ julia> @typst x + y
 typst"\$(1 + \\\"y\\\")\$"
 ```
 
-- Other literal values, macro call expressions, and interpolation
-    expressions are evaluated, returning the result
+Other literal values, macro call expressions, and interpolation
+expressions are evaluated, returning the result
 
 ```jldoctest
 julia> @typst "hi"
@@ -66,7 +66,7 @@ julia> @typst \$(1 + 2)
 typst"\$3\$"
 ```
 
-- All other expressions are processed recursively, returning an `Expr`
+All other expressions are processed recursively, returning an `Expr`
 
 ```jldoctest
 julia> @typst (1 + im ^ 2) / f(3)

@@ -24,7 +24,7 @@ math = 2
 @doc """
     code
 
-A Typst syntactical [`Mode`](@ref) prefixed by the number sign.
+A Typst syntactical [`Mode`](@ref) prefixed by the number sign `#`.
 
 # Examples
 
@@ -37,7 +37,8 @@ code::Mode = 0
 @doc """
     markup
 
-A Typst syntactical [`Mode`](@ref) at the top-level of source text and enclosed within square brackets.
+A Typst syntactical [`Mode`](@ref) at the top-level of
+source text and enclosed within square brackets `[]`.
 
 ```jldoctest
 julia> markup
@@ -48,7 +49,7 @@ markup::Mode = 1
 @doc """
     math
 
-A Typst syntactical [`Mode`](@ref) enclosed within dollar signs.
+A Typst syntactical [`Mode`](@ref) enclosed within dollar signs `\$\$`.
 
 ```jldoctest
 julia> math
