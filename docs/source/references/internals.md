@@ -30,7 +30,6 @@ Typstry.unwrap
 
 ```@docs
 Typstry.code_mode
-Typstry.date_time
 Typstry.dates
 Typstry.duration
 Typstry.escape

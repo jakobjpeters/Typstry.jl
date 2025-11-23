@@ -17,7 +17,7 @@ A wrapper representing a Typst function.
 
 The default implementation formats the values in [`math`](@ref) mode,
 but [`show_typst`](@ref) may be implemented for custom
-types to format them in [`code`](@ref Typstry.code) mode too.
+types to format them in [`code`](@ref Typstry.Modes.code) mode too.
 
 # Fields
 

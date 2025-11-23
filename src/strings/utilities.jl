@@ -25,10 +25,6 @@ See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
 """
 code_mode(io::IO, tc) = if mode(tc) ≠ code print(io, "#") end
 
-@doc"""
-    date_time(::Union{Dates.Date, Dates.Time, Dates.DateTime})
-""" date_time
-
 function dates(date_time::DateTime)
     fs = (year, month, day, hour, minute, second)
     "datetime", map(Symbol, fs), map(f -> f(date_time), fs)
