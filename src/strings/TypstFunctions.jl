@@ -2,11 +2,10 @@
 module TypstFunctions
 
 import Base: repr, show
-import ..Typstry: TypstContext, TypstString, math_mode, join_with, show_typst, typst_context
-import ..Typstry: show_typst
+import Typstry: show_typst
 
 using Base: isoperator
-using ..Typstry: TypstContext, TypstString, math, enclose, join_with, math_mode, parenthesize, typst_context, show_render
+using Typstry: TypstContext, TypstString, TypstText, math, enclose, join_with, math_mode, parenthesize, typst_context, show_render
 
 export TypstFunction
 
@@ -26,7 +25,7 @@ types to format them in [`code`](@ref Typstry.Modes.code) mode too.
 
 # Interface
 
-- `repr(::MIME"text/typst",\u00A0, ::TypstFunction)`
+- `repr(::MIME"text/typst",\u00A0::TypstFunction)`
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstFunction{String})`
     - Format in call notation `callable(parameters...)`.
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstFunction{Symbol})`
@@ -37,6 +36,12 @@ types to format them in [`code`](@ref Typstry.Modes.code) mode too.
     - Fallback to `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstFunction{Symbol})`
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstFunction)`
     - Fallback to `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstFunction{TypstString})`
+- `show(::IO,\u00A0::MIME"text/typst",\u00A0::TypstFunction)`
+    - Accepts a `IOContext(::IO,\u00A0::TypstContext)`.
+- `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstFunction)`
+    - Accepts a `IOContext(::IO,\u00A0::TypstContext)`.
+    - Supports the [`julia_mono`](@ref Typstry.Commands.julia_mono) typeface.
+    - The generated Typst source text contains the context's `preamble` and the formatted value.
 
 See also [`TypstString`](@ref).
 """
@@ -45,7 +50,9 @@ struct TypstFunction{C, P <: Tuple}
     parameters::P
 end
 
-repr(::MIME"text/typst", typst_function::TypstFunction; context = nothing) = TypstString(typst_function)
+repr(mime::MIME"text/typst", typst_function::TypstFunction; context = nothing) = TypstString(
+    TypstText(sprint(show, mime, typst_function; context))
+)
 
 show_typst(
     io::IO, typst_context::TypstContext, typst_function::TypstFunction{TypstString}

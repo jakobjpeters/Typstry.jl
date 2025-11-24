@@ -6,7 +6,7 @@ This guide illustrates how to implement Typst formatting for custom types.
 ## Setup
 
 ```jldoctest 1
-julia> import Base: show
+julia> import Base: repr, show
 
 julia> import Typstry: TypstContext, show_typst
 
@@ -25,8 +25,8 @@ Implement a [`show_typst`](@ref) method to specify its Typst formatting. Remembe
 [Annotate values taken from untyped locations](https://docs.julialang.org/en/v1/manual/performance-tips/#Annotate-values-taken-from-untyped-locations).
 
 ```jldoctest 1
-julia> show_typst(io::IO, tc::TypstContext, ::Hi) = print(
-           io, "Hi", '!' ^ tc[:excitement]::Int
+julia> show_typst(io::IO, typst_context::TypstContext, ::Hi) = print(
+           io, "Hi", '!' ^ typst_context[:excitement]::Int
        );
 ```
 
@@ -43,33 +43,37 @@ julia> TypstContext(::Hi) = TypstContext(; excitement = 0);
 ```
 
 Those two methods are a complete implementation of the Julia to Typst interface.
-The following method is optional, but enables interoperability
-with packages that do not know about Typstry.jl.
+The following methods are optional,
+but enable interoperability with packages that do not know about Typstry.jl.
 
 ```jldoctest 1
-julia> show(io::IO, m::Union{
+julia> repr(mime::MIME"text/typst", hi::Hi; context = nothing) = TypstString(
+            TypstText(sprint(show, mime, hi; context))
+       );
+
+julia> show(io::IO, mime::Union{
            MIME"application/pdf",
            MIME"image/png",
            MIME"image/svg+xml",
            MIME"text/typst"
-       }, h::Hi) = show(io, m, Typst(h));
+       }, hi::Hi) = show(io, mime, Typst(hi));
 ```
 
 Now, `Hi` is fully supported by Typstry.jl and implements the `show` interface.
 
 ```jldoctest 1
-julia> h = Hi();
+julia> hi = Hi();
 
-julia> show_typst(h)
+julia> show_typst(hi)
 Hi
 
-julia> TypstString(h; excitement = 1)
+julia> TypstString(hi; excitement = 1)
 typst"Hi!"
 
-julia> typst"\(h; excitement = 2)"
+julia> typst"\(hi; excitement = 2)"
 typst"Hi!!"
 
-julia> show(IOContext(stdout, TypstContext(; excitement = 3)), "text/typst", h)
+julia> show(IOContext(stdout, TypstContext(; excitement = 3)), "text/typst", hi)
 Hi!!!
 ```
 

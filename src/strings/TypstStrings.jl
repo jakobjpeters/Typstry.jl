@@ -106,36 +106,38 @@ julia> typst"\\\\(x)"
 typst"\\\\(x)"
 ```
 """
-macro typst_str(s::String)
+macro typst_str(input::String)
     filename = __source__.file
-    current, final = firstindex(s), lastindex(s)
-    _s = Expr(:string)
-    args = _s.args
+    current, final = firstindex(input), lastindex(input)
+    output = Expr(:string)
+    args = output.args
 
-    while (regex_match = match(r"(\\+)(\()", s, current)) ≢ nothing
+    while (regex_match = match(r"(\\+)(\()", input, current)) ≢ nothing
         backslashes = length(first(regex_match.captures)::SubString{String})
         start = last(regex_match.offsets)
-        interpolate, previous = isodd(backslashes), prevind(s, start)
+        interpolate, previous = isodd(backslashes), prevind(input, start)
 
         if current < previous
-            push!(args, s[current:prevind(s, previous, interpolate + backslashes ÷ 2)])
+            push!(args, @view input[current:prevind(
+                input, previous, interpolate + backslashes ÷ 2
+            )])
         end
 
         if interpolate
-            x, current = parse(s, start; filename, greedy = false)
+            x, current = parse(input, start; filename, greedy = false)
             isexpr(x, :incomplete) && throw(first(x.args))
             interpolation = :($TypstString())
 
-            append!(interpolation.args, parse(
-                s[previous:prevind(s, current)]; filename
-            ).args[2:end])
+            append!(interpolation.args, parse(@view input[
+                previous:prevind(input, current)
+            ]; filename).args[2:end])
             push!(args, esc(interpolation))
         else current = start
         end
     end
 
-    current > final || push!(args, s[current:final])
-    :(TypstString(TypstText($_s)))
+    current > final || push!(args, @view input[current:final])
+    :(TypstString(TypstText($output)))
 end
 
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)

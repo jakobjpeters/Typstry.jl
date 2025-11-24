@@ -2,14 +2,14 @@
 module Typsts
 
 import Base: repr, show
-import ..Typstry: show_typst
+import Typstry: show_typst
 
-using ..Typstry: TypstContext, TypstString, show_render
+using Typstry: TypstContext, TypstString, TypstText, show_render
 
 export Typst
 
 """
-    Typst{T}
+    Typst{T}(::T)
     Typst(::T)
 
 A wrapper used to pass values to `show`,
@@ -40,7 +40,9 @@ struct Typst{T}
     value::T
 end
 
-repr(::MIME"text/typst", t::Typst; context = nothing) = TypstString(t)
+repr(mime::MIME"text/typst", typst::Typst; context = nothing) = TypstString(
+    TypstText(sprint(show, mime, typst; context))
+)
 
 show_typst(io::IO, ::TypstContext, t::Typst) = show_typst(io, t.value)
 

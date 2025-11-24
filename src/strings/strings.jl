@@ -44,5 +44,3 @@ end
 
 include("TypstFunctions.jl")
 using .TypstFunctions: TypstFunction
-
-repr(::MIME"text/typst", typst_text::TypstText; context = nothing) = TypstString(typst_text)

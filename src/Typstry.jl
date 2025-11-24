@@ -104,7 +104,7 @@ const examples = [
     false // true * im => Complex{<:Rational{<:Union{Bool, Unsigned}}} => [
         :block, :mode, :parenthesize
     ]
-    im => Complex{<:Union{Bool, Unsigned}} => [:mode, :parenthesize]
+    im => Complex{<:Union{Bool, Unsigned}} => [:block, :mode, :parenthesize]
     html"<p>a</p>" => HTML => [:backticks, :block, :depth, :indent, :mode]
     π => Irrational{:π} => [:block, :mode]
     nothing => Nothing => [:mode]

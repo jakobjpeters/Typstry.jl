@@ -188,19 +188,19 @@ function show_typst(io::IO, tc::TypstContext, x::Union{
         end
     end
 end
+show_typst(io::IO, ::TypstContext, x::Union{
+    OrdinalRange{<:Integer, <:Integer},
+    StepRangeLen{<:Integer, <:Integer, <:Integer, <:Integer}
+}) = show_typst(io, signed(first(x)):signed(step(x)):signed(last(x)))
 function show_typst(io::IO, ::TypstContext, x)
     if showable(MIME"text/typst"(), x) show(io, MIME"text/typst"(), x)
     elseif showable(MIME"image/gif"(), x) show_image(io, MIME"image/gif"(), x)
     elseif showable(MIME"image/svg+xml"(), x) show_image(io, MIME"image/svg+xml"(), x)
     elseif showable(MIME"image/png"(), x) show_image(io, MIME"image/png"(), x)
     elseif showable(MIME"image/jpg"(), x) show_image(io, MIME"image/jpg"(), x)
-    else show_typst(io, repr(MIME"text/plain"(), x))
+    else show_typst(io, repr(x))
     end
 end
-show_typst(io::IO, ::TypstContext, x::Union{
-    OrdinalRange{<:Integer, <:Integer},
-    StepRangeLen{<:Integer, <:Integer, <:Integer, <:Integer}
-}) = show_typst(io, signed(first(x)):signed(step(x)):signed(last(x)))
 show_typst(tc::TypstContext, x) = show_typst(typst_context(tc, x)...)
 show_typst(io::IO, x; context...) = show_typst(typst_context(io, TypstContext(; context...), x)...)
 show_typst(x; context...) = show_typst(typst_context(TypstContext(; context...), x)...)

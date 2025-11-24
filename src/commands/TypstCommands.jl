@@ -118,7 +118,8 @@ tc::TypstCommand == _tc::TypstCommand = (
 
 Cmd(typst_command::TypstCommand; parameters...) = Cmd(
     `$(typst_command.compiler) $(typst_command.parameters)`;
-    ignorestatus = typst_command.ignore_status
+    ignorestatus = typst_command.ignore_status,
+    parameters...
 )
 
 detach(tc::TypstCommand) = TypstCommand(tc; detach = true)

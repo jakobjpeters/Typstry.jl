@@ -1,10 +1,10 @@
 
 module TypstTexts
 
-import Base: show
-import ..Typstry: show_typst
+import Base: repr, show
+import Typstry: show_typst
 
-using ..Typstry: TypstContext, show_render
+using Typstry: Typstry, TypstContext, show_render
 
 """
     TypstText{T}
@@ -36,6 +36,10 @@ a
 struct TypstText{T}
     value::T
 end
+
+repr(mime::MIME"text/typst", typst_text::TypstText; context = nothing) = Typstry.TypstString(
+    TypstText(sprint(show, mime, typst_text; context))
+)
 
 show_typst(io::IO, ::TypstContext, typst_text::TypstText) = print(io, typst_text.value)
 
