@@ -44,13 +44,25 @@ julia> using Typstry
 
 ```julia-repl
 julia> show(stdout, "text/typst", Typst([1 // 2 1; 1.0 [Any[1 // 2 1; 1.0 nothing]]]))
-$mat(
-  1 / 2, 1;
-  1.0, mat(
-    1 / 2, 1;
-    1.0, #none
+#math.mat(
+  (
+    $1 / 2$,
+    1
+  ),
+  (
+    1.0,
+    math.mat(
+      (
+        $1 / 2$,
+        1
+      ),
+      (
+        1.0,
+        none
+      )
+    )
   )
-)$
+)
 
 julia> TypstString(1 // 2; block = true)
 typst"$ 1 / 2 $"
@@ -86,13 +98,10 @@ julia> render(1:4)
 
 ### Planned
 
-- Traits to specify some formatting characteristics
-    - Automatically switch to a given mode
-    - Determine whether a formatted type returns Typst `content`,
-        which is useful for containers such as `AbstractArray`
-    - Specify fields in `TypstContext`
+- Make `TypstString`, `TypstText`, `Typst`, `TypstFunction`, a subtype of `AbstractTypst`
+- Try out recursive `lower`ing to a set of base cases instead of using `show_typst`
 - Syntax highlighting
-- Implement `IO` interface for `TypstContext`
+- Typst unicode completions
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
     - Use a jll package
@@ -104,14 +113,18 @@ julia> render(1:4)
         - `Enum`
             - `Mode`
         - `Expr`
-            - Support more `head` kinds
+        - `Symbol`
     - Package extensions
         - Standard Library
             - LinearAlgebra.jl
             - DataFrames.jl
     - Partial Julia to Typst transpilation
-        - Improved functionality of `@typst`
-        - More methods of `TypstFunction`
+        - ```
+          (@typst $a * b) ==
+          TypstString(:($a * b)) ==
+          TypstString(TypstFunction(*, a, :b)) ==
+          typst"$ 2b $"
+          ```
 
 ## Similar Packages
 
@@ -119,6 +132,8 @@ julia> render(1:4)
 
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
     - Dependent of Typstry.jl
+- [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl)
+    - Weak dependent of Typstry.jl
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
 - [TypstJlyFish.jl](https://github.com/andreasKroepelin/TypstJlyfish.jl)
     - Interoperable with Typstry.jl
@@ -127,15 +142,12 @@ julia> render(1:4)
 
 ### Typst and LaTeX
 
-- [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl)
-    - Weak dependent of Typstry.jl
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
     - Dependent of Typstry.jl
 - [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 
 ### LaTeX
 
-- [Handcalcs.jl](https://github.com/co1emi11er2/Handcalcs.jl)
 - [Latexify.jl](https://github.com/korsbo/Latexify.jl)
 - [LaTeXCompilers.jl](https://github.com/tpapp/LaTeXCompilers.jl)
 - [LaTeXEntities.jl](https://github.com/JuliaString/LaTeX_Entities.jl)
