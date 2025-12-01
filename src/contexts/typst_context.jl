@@ -94,14 +94,13 @@ See also [`reset_context`](@ref).
 
 ```jldoctest
 julia> context
-TypstContext with 8 entries:
+TypstContext with 7 entries:
   :mode         => markup
   :parenthesize => true
   :block        => false
   :preamble     => TypstString(TypstText("#set page(margin: 1em, height: auto, …
   :io           => (() -> IOContext(stdout, :compact => true))::DefaultIO
   :tab_size     => 2
-  :backticks    => 3
   :depth        => 0
 ```
 """
@@ -119,14 +118,13 @@ See also [`TypstContext`](@ref).
 
 ```jldoctest
 julia> reset_context()
-TypstContext with 8 entries:
+TypstContext with 7 entries:
   :mode         => markup
   :parenthesize => true
   :block        => false
   :preamble     => TypstString(TypstText("#set page(margin: 1em, height: auto, …
   :io           => (() -> IOContext(stdout, :compact => true))::DefaultIO
   :tab_size     => 2
-  :backticks    => 3
   :depth        => 0
 ```
 """

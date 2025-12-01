@@ -1,5 +1,5 @@
 
-import Base: repr
+using Base: repr
 
 include("utilities.jl")
 
@@ -22,7 +22,6 @@ include("Typsts.jl")
 using .Typsts: Typst
 
 merge!(default_context, TypstContext(;
-    backticks = 3,
     block = false,
     depth = 0,
     io = DefaultIO(),

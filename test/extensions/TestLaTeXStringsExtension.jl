@@ -4,16 +4,36 @@ module TestLaTeXStringsExtension
 using ..TestTypstry: test_modes, test_strings
 using LaTeXStrings: @L_str
 
-const latex = L"a"
+const latex = L""
 
 test_modes(latex, [
-    "```latex \$a\$ ```",
-    "```latex \$a\$ ```",
-    "#```latex \$a\$ ```"
+    """raw(
+      "\$\$",
+      block: false,
+      lang: "latex"
+    )"""
+    """#raw(
+      "\$\$",
+      block: false,
+      lang: "latex"
+    )"""
+    """#raw(
+      "\$\$",
+      block: false,
+      lang: "latex"
+    )"""
 ])
 
 test_strings(
-    latex, "````latex\n    \$a\$\n    ````"; backticks = 4, block = true, depth = 1, tab_size = 4
+    latex,
+    """#raw(
+        "\$\$",
+        block: true,
+        lang: "latex"
+    )""";
+    block = true,
+    tab_size = 4
 )
+const latex = L"a"
 
 end # TestLaTeXStringsExtension

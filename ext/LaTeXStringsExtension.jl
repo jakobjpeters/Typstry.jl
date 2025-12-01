@@ -9,7 +9,9 @@ show_typst(io::IO, tc::TypstContext, x::LaTeXString) = show_raw(
     io, tc, MIME"text/latex"(), :latex, x
 )
 
-const examples = [L"a" => LaTeXString => [:backticks, :block, :depth, :indent, :mode]]
+const examples = [L"a" => LaTeXString => [
+    :block, :depth, :lang, :align, :syntaxes, :theme, :tab_size
+]]
 
 compile_workload(examples)
 

@@ -4,21 +4,34 @@ module TestMarkdownExtension
 using ..TestTypstry: test_modes, test_strings
 using Markdown: @md_str
 
-const markdown = md"""a\
-b"""
+const markdown = md"a"
 
 test_modes(markdown, [
-    "```markdown a\nb ```"
-    "```markdown a\nb ```"
-    "#```markdown a\nb ```"
+    """raw(
+      "a",
+      block: false,
+      lang: "markdown"
+    )"""
+    """#raw(
+      "a",
+      block: false,
+      lang: "markdown"
+    )"""
+    """#raw(
+      "a",
+      block: false,
+      lang: "markdown"
+    )"""
 ])
 
 test_strings(
     markdown,
-    "````markdown\n    a\n    b\n    ````";
-    backticks = 4,
+    """#raw(
+        "a",
+        block: true,
+        lang: "markdown"
+    )""";
     block = true,
-    depth = 1,
     tab_size = 4
 )
 

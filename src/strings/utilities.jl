@@ -27,32 +27,18 @@ code_mode(io::IO, tc) = if mode(tc) ≠ code print(io, "#") end
 
 function dates(date_time::DateTime)
     fs = (year, month, day, hour, minute, second)
-    "datetime", map(Symbol, fs), map(f -> f(date_time), fs)
+    :datetime, map(Symbol, fs), map(f -> f(date_time), fs)
 end
-dates(date::Date) = "datetime", (:year, :month, :day), (year(date), month(date), day(date))
+dates(date::Date) = :datetime, (:year, :month, :day), (year(date), month(date), day(date))
 function dates(x::Period)
     buffer = IOBuffer()
 
     print(buffer, x)
     seekstart(buffer)
 
-    "duration", (duration(x),), (TypstText(readuntil(buffer, ' ')),)
+    :duration, (duration(x),), (TypstText(readuntil(buffer, ' ')),)
 end
-dates(time::Time) = "datetime", (:hour, :minute, :second), (hour(time), minute(time), second(time))
-
-@doc """
-    dates(::Union{Dates.Date, Dates.DateTime, Dates.Period, Dates.Time})
-
-# Examples
-
-```jldoctest
-julia> Typstry.dates(Dates.Date(1))
-("datetime", (:year, :month, :day), (1, 1, 1))
-
-julia> Typstry.dates(Dates.Day(1))
-("duration", (:days,), (TypstText{String}("1"),))
-```
-""" dates
+dates(time::Time) = :datetime, (:hour, :minute, :second), (hour(time), minute(time), second(time))
 
 duration(::Day) = :days
 duration(::Hour) = :hours
@@ -60,24 +46,10 @@ duration(::Minute) = :minutes
 duration(::Second) = :seconds
 duration(::Week) = :weeks
 
-@doc """
-    duration(::Dates.Period)
-
-# Examples
-
-```jldoctest
-julia> Typstry.duration(Dates.Day(1))
-:days
-
-julia> Typstry.duration(Dates.Hour(1))
-:hours
-```
-""" duration
-
 """
-    escape(io, n)
+    escape(io::IO, count::Int)
 
-Print `\\` to `io` `n` times.
+Print `\\` to `io` `count` times.
 
 # Examples
 
@@ -86,10 +58,17 @@ julia> Typstry.escape(stdout, 2)
 \\\\
 ```
 """
-escape(io::IO, n::Int) = join(io, repeated('\\', n))
+escape(io::IO, count::Int) = join(io, repeated('\\', count))
 
 """
-    format(::Union{MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"})
+    format(::Union{
+        MIME"application/pdf",
+        MIME"image/gif",
+        MIME"image/jpg",
+        MIME"image/png",
+        MIME"image/svg+xml",
+        MIME"image/webp"
+    })
 
 Return the image format acronym corresponding to the given `MIME`.
 
@@ -111,6 +90,7 @@ format(::MIME"image/gif") = "gif"
 format(::MIME"image/jpg") = "jpg"
 format(::MIME"image/png") = "png"
 format(::MIME"image/svg+xml") = "svg"
+format(::MIME"image/webp") = "webp"
 
 """
     indent(tc)
@@ -139,69 +119,40 @@ function math_pad(tc)
     end
 end
 
-function show_image(io::IO, m::Union{
-    MIME"image/gif", MIME"image/svg+xml", MIME"image/png", MIME"image/jpg"
+show_parameters(
+    io::IO, typst_context::TypstContext, callable, x, keys::Vector{Symbol}
+) = show_typst(io, TypstFunction(typst_context, callable, x...; Iterators.map(
+    Iterators.filter(key -> haskey(typst_context, key), keys)
+) do key
+    key => typst_context[key]
+end...))
+
+function show_image(io::IO, mime::Union{
+    MIME"image/gif", MIME"image/svg+xml", MIME"image/png", MIME"image/jpg", MIME"image/webp"
 }, value)
-    tc = typst_context(io, value)
-    path = tempname() * '.' * format(m)
+    _typst_context = typst_context(io, value)[2]
+    path = tempname() * '.' * format(mime)
 
-    code_mode(io, tc)
-    show_parameters(io, tc, :format, [:format, :width, :height, :alt, :fit, :scaling, :icc], path)
     open(path; write = true) do file
-        show(IOContext(file, IOContext(io, :typst_context => tc)), m, value)
+        show(IOContext(file, _typst_context), mime, value)
     end
-    print(io, ')')
+
+    show_parameters(io, _typst_context, TypstString(TypstText(:image)), (path,), [
+        :alt, :fit, :format, :height, :icc, :page, :scaling, :width
+    ])
 end
 
-"""
-    show_parameters(io, tc, f, keys, final)
-"""
-function show_parameters(io::IO, tc, f, keys, final)
-    pairs = map(key -> key => unwrap(tc, TypstString, key), filter(key -> haskey(tc, key), keys))
-
-    println(io, f, '(')
-    join_with(io, pairs, ",\n") do _io, (key, value)
-        print(_io, indent(tc) ^ (depth(tc) + 1), key, ": ")
-        show_typst(_io, value)
-    end
-
-    if !isempty(pairs)
-        final && print(io, ',')
-        println(io)
-    end
-end
-
-"""
-    show_raw(::IO, ::TypstContext, ::MIME, ::Symbol, x)
-"""
-function show_raw(io::IO, tc::TypstContext, m::MIME, language::Symbol, x)
-    _backticks, _block = '`' ^ backticks(tc), block(tc)
-
-    mode(tc) == math && code_mode(io, tc)
-    print(io, _backticks, language)
-
-    if _block
-        space = indent(tc) ^ depth(tc)
-
-        println(io)
-
-        for line in eachsplit(
-            (@view sprint(show, m, x; context = io)[begin:(end - (m isa MIME"text/markdown"))]),
-            '\n'
-        )
-            println(io, space, line)
-        end
-
-        print(io, space)
-    else enclose((io, x) -> show_raw(io, m, x), io, x, ' ')
-    end
-
-    print(io, _backticks)
-end
-show_raw(io::IO, m::MIME"text/markdown", x) = print(
-    io, @view sprint(show, m, x; context = io)[begin:(end - 1)]
+show_raw(io::IO, typst_context::TypstContext, mime::MIME, language::Symbol, x) = show_parameters(
+    io,
+    setindex!(typst_context, string(language), :lang),
+    TypstString(TypstText(:raw)),
+    (show_raw(io, mime, x),),
+    [:block, :lang, :align, :syntaxes, :theme]
 )
-show_raw(io::IO, m::MIME, x) = show(io, m, x)
+show_raw(context::IO, mime::MIME"text/markdown", x) = @view sprint(
+    show, mime, x; context
+)[begin:(end - 1)]
+show_raw(context::IO, mime::MIME, x) = sprint(show, mime, x; context)
 
 function show_render(io::IO, mime::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"

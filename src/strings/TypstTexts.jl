@@ -17,7 +17,7 @@ A wrapper whose [`show_typst`](@ref) method uses `print` on the wrapped value.
 - `repr(::MIME"text/typst\u00A0::TypstText; context = nothing)`
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstText)`
 - `show(::IO,\u00A0::MIME"text/typst",\u00A0::TypstText)`
-    - Accepts `IOContext(::IO,\u00A0:typst_context\u00A0=>\u00A0::TypstContext)`
+    - Accepts `IOContext(::IO,\u00A0::TypstContext)`
 - `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstText)`
     - Accepts `IOContext(::IO,\u00A0::TypstContext)`
     - Uses the `preamble` in [`context`](@ref Typstry.context)
@@ -26,10 +26,7 @@ A wrapper whose [`show_typst`](@ref) method uses `print` on the wrapped value.
 # Examples
 
 ```jldoctest
-julia> tt = TypstText('a')
-TypstText{Char}('a')
-
-julia> show_typst(tt)
+julia> show_typst(TypstText('a'))
 a
 ```
 """

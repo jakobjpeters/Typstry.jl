@@ -20,6 +20,7 @@
 - Implement `show_typst` for `NamedTuple`, `Symbol`, `TypstFunction`
 - Implement `*(::TypstString, ::TypstString)::TypstString`
 - Implement `show(::IO, ::MIME"text/plain", ::TypstString)`
+- Deleted `backticks` from the default `context`
 
 ### Bug fixes
 

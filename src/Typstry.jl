@@ -3,7 +3,7 @@ module Typstry
 
 import Base:
     IOBuffer, IOContext, ==, copy, eltype, getkey, get, iterate, length,
-    mergewith, merge!, merge, read, run, setindex!, show, sizehint!
+    mergewith, merge!, merge, run, setindex!, show, sizehint!
 
 using Base: MathConstants.catalan
 using Dates:
@@ -35,7 +35,7 @@ A constant `Vector` of Julia values and their corresponding
 `Type`s implemented for [`show_typst`](@ref).
 """
 const examples = [
-    Any[nothing, 1, 1.2, 1 // 2] => AbstractArray => [:block, :depth, :indent, :mode]
+    Any[nothing, typst"$1$", 1.2, 1 // 2] => AbstractArray => [:block, :depth, :indent, :mode]
     Any[nothing 1; 1.2 1 // 2] => AbstractMatrix => [:block, :depth, :indent, :mode]
     'a' => AbstractChar => [:mode]
     1.2 => AbstractFloat => [:block, :mode]
@@ -65,7 +65,9 @@ const examples = [
     :a => Symbol => [:block, :mode]
     text"[\"a\"]" => Text => [:mode]
     (true, 1, 1.2, 1 // 2) => Tuple => [:mode]
-    TypstFunction(:+, (1, 2)) => TypstFunction => [:block, :mode]
+    TypstFunction(
+        context, typst"arguments", (1, 2), (; a = 3, b = 4)
+    ) => TypstFunction => [:depth, :indent, :mode]
     typst"[\"a\"]" => TypstString => Symbol[]
     TypstText([1, 2, 3, 4]) => TypstText => Symbol[]
     Typst(1) => Typst => Symbol[]
