@@ -35,9 +35,9 @@ function enclose(f, io::IO, x, left, right = reverse(string(left)); context...)
 end
 
 """
-    join_with(f, io, xs, delimeter; kwargs...)
+    join_with(callback, io, values, delimeter; keyword_parameters...)
 
-Similar to `join`, except printing with `f(io, x; kwargs...)`.
+Similar to `join`, except printing with `callback(io, value; keyword_parameters...)`.
 
 # Examples
 
@@ -46,12 +46,12 @@ julia> Typstry.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = 
 -1x, -2x, -3x, -4x
 ```
 """
-function join_with(f, io::IO, xs, delimeter; kwargs...)
-    _xs = Stateful(xs)
+function join_with(callback, io::IO, values, delimeter; kwargs...)
+    stateful_values = Stateful(values)
 
-    for x in _xs
-        f(io, x; kwargs...)
-        isempty(_xs) || print(io, delimeter)
+    for stateful_value in stateful_values
+        callback(io, stateful_value; kwargs...)
+        isempty(stateful_values) || print(io, delimeter)
     end
 end
 

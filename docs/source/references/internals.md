@@ -30,24 +30,9 @@ Typstry.unwrap
 
 ```@docs
 Typstry.code_mode
-Typstry.dates
-Typstry.duration
 Typstry.escape
 Typstry.format
 Typstry.indent
 Typstry.math_mode
 Typstry.math_pad
-Typstry.show_parameters
-Typstry.show_raw
-```
-
-```@docs
-Typstry.backticks
-Typstry.block
-Typstry.depth
-Typstry.io
-Typstry.mode
-Typstry.parenthesize
-Typstry.preamble
-Typstry.tab_size
 ```

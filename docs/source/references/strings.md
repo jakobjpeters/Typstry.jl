@@ -9,7 +9,6 @@ TypstString
 TypstText
 Typst
 @typst_str
-@typst
 Mode
 code
 markup

@@ -88,8 +88,7 @@ Interpolation syntax may be escaped in the same manner as quotation marks.
 !!! tip
     Print directly to an `IO` using [`show_typst`](@ref).
 
-    See also the performance tip to [Avoid string interpolation for I/O]
-    (https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
+    See also the performance tip to [Avoid string interpolation for I/O](https://docs.julialang.org/en/v1/manual/performance-tips/#Avoid-string-interpolation-for-I/O).
 
 # Examples
 

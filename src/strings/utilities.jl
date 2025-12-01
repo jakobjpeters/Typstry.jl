@@ -21,7 +21,7 @@
 
 Print the number sign, unless `mode(tc) == code`.
 
-See also [`Mode`](@ref) and [`mode`](@ref Typstry.mode).
+See also [`Mode`](@ref).
 """
 code_mode(io::IO, tc) = if mode(tc) ≠ code print(io, "#") end
 
@@ -54,6 +54,9 @@ Print `\\` to `io` `count` times.
 # Examples
 
 ```jldoctest
+julia> Typstry.escape(stdout, 1)
+\\
+
 julia> Typstry.escape(stdout, 2)
 \\\\
 ```
@@ -111,7 +114,7 @@ end
     math_pad(tc)
 
 Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
-[`block`](@ref Typstry.block) and [`mode`](@ref Typstry.mode) settings.
+`block` and `mode` settings.
 """
 function math_pad(tc)
     if mode(tc) == math ""

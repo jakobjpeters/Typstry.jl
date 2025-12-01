@@ -6,18 +6,26 @@ This reference documents the lazily-loaded implementations of
 
 ## LaTeXStrings.jl
 
-`````julia-repl
+```jldoctest
 julia> using LaTeXStrings, Typstry
 
-julia> show_typst(L"$a$")
-```latex $a$```
-`````
+julia> show_typst(L"")
+#raw(
+  "$$",
+  block: false,
+  lang: "latex"
+)
+```
 
 ## Markdown.jl
 
-`````julia-repl
+```jldoctest
 julia> using Markdown, Typstry
 
-julia> show_typst(md"# A")
-```markdown # A```
-`````
+julia> show_typst(md"a")
+#raw(
+  "a",
+  block: false,
+  lang: "markdown"
+)
+```

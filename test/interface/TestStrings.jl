@@ -91,7 +91,7 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
         end
 
         @testset "`AbstractFloat`" begin
-            test_strings(1.0, typst"$1.0$"; mode = code)
+            test_strings(1.0, typst"1.0"; mode = code)
             test_strings(1.0, typst"$1.0$"; mode = markup)
             test_strings(1.0, typst"1.0"; mode = math)
 
@@ -171,11 +171,14 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
         end
 
         @testset "`TypstFunction`" begin
-            typst_function = TypstFunction(context, typst"arguments")
-
-            test_strings(typst_function, TypstString(TypstText("arguments()")); mode = code)
-            test_strings(typst_function, TypstString(TypstText("#arguments()")); mode = markup)
-            test_strings(typst_function, TypstString(TypstText("#arguments()")); mode = math)
+            for (mode, expected) in zip(instances(Mode), [
+                "arguments()", "#arguments()", "#arguments()"]
+            )
+                test_strings(
+                    TypstFunction(setindex!(copy(context), mode, :mode), typst"arguments"),
+                    TypstString(TypstText(expected))
+                )
+            end
 
             test_strings(
                 TypstFunction(context, typst"arguments", 1, 2; a = 3, b = 4),

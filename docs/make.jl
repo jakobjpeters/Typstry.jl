@@ -15,7 +15,7 @@ const modes = instances(Mode)
 const modules = [Typstry]
 const extensions = ["LaTeXStrings", "Markdown"]
 const template = joinpath(assets, "template.typ")
-const tc = mergewith!((x, _) -> x, TypstContext(; backticks = 4), context)
+const typst_context = mergewith!((x, _) -> x, TypstContext(; mode = code), context)
 
 pages(folder, names) = titlecase(replace(folder, "_" => " ")) => map(name -> joinpath(folder, name * ".md"), names)
 
@@ -45,7 +45,7 @@ for (package, examples) in append!([("Typstry", examples)], zip(extensions, _exa
             """
         )
         join_with(file, examples, ",\n") do file, (v, (t, cs))
-            print(file, "    ")
+            print(file, "  ")
 
             if v isa MD show_typst(file, "md\"# A\""; mode = code)
             else show_typst(file, repr(v); mode = code)
@@ -56,7 +56,7 @@ for (package, examples) in append!([("Typstry", examples)], zip(extensions, _exa
             print(file, ", [")
             join_with((file, c) -> print(file, '`', c, '`'), file, cs, ", ")
             print(file, "], ")
-            show_raw(file, tc, MIME"text/typst"(), :typst, Typst(v))
+            show_raw(file, typst_context, MIME"text/typst"(), :typst, Typst(v))
             print(file, ", [")
             show_typst(file, v)
             print(file, ']')

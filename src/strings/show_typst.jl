@@ -10,7 +10,7 @@ function show_typst(io::IO, tc::TypstContext, x::AbstractFloat)
     elseif isnan(x)
         code_mode(io, tc)
         print(io, "float.nan")
-    else math_mode((io, _, x) -> print(io, x), io, tc, x)
+    else mode(tc) == code ? print(io, x) : enclose(print, io, x, math_pad(tc))
     end
 end
 show_typst(io::IO, typst_context::TypstContext, x::AbstractMatrix) = show_parameters(
@@ -119,7 +119,7 @@ function show_typst(io::IO, tc::TypstContext, x::Union{
     OrdinalRange{<:Signed, <:Signed},
     StepRangeLen{<:Signed, <:Signed, <:Signed, <:Signed}
 })
-    inputs = (tc, TypstString(TypstText(:range)), first(x), last(x))
+    inputs = (tc, TypstString(TypstText(:range)), first(x), last(x) + one(last(x)))
     _step = step(x)
 
     if _step == 1 show_typst(io, TypstFunction(inputs...))

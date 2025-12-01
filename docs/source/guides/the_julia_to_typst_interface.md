@@ -97,7 +97,9 @@ julia> show_typst(nothing)
 #none
 
 julia> show_typst(r"[a-z]")
-#regex("[a-z]")
+#regex(
+  "[a-z]"
+)
 ```
 
 ### Consider both the Typst source text and compiled document formatting
@@ -120,10 +122,16 @@ julia> show_typst(typst"[\"a\"]")
 
 ```jldoctest 1
 julia> show_typst(1:4)
-#range(1, 5)
+#range(
+  1,
+  5
+)
 
 julia> show_typst(1:4; mode = code)
-range(1, 5)
+range(
+  1,
+  5
+)
 ```
 
 ### Test for edge cases
@@ -148,11 +156,13 @@ julia> show_typst(1 // 2; mode = math)
 
 ```jldoctest 1
 julia> show_typst([true, Any[1, 1.2]])
-$vec(
-  #true, vec(
-    1, 1.2
+#math.vec(
+  true,
+  math.vec(
+    1,
+    1.2
   )
-)$
+)
 ```
 
 ### Check parametric and abstract types
@@ -161,12 +171,19 @@ $vec(
 
 ```jldoctest 1
 julia> show_typst(0:2:6)
-#range(0, 7, step: 2)
+#range(
+  0,
+  7,
+  step: 2
+)
 
 julia> show_typst(0:2.0:6)
-$vec(
-  0.0, 2.0, 4.0, 6.0
-)$
+#math.vec(
+  0.0,
+  2.0,
+  4.0,
+  6.0
+)
 ```
 
 ### Prefer to perform computation in Julia, rather than Typst code mode

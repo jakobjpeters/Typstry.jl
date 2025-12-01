@@ -5,7 +5,7 @@ import Base: show
 import Typstry: show_typst
 
 using Base: Pairs
-using Typstry: TypstContext, TypstString, TypstText, code, code_mode, depth, enclose, join_with, show_render, tab_size
+using Typstry: Mode, TypstContext, TypstString, TypstText, code, depth, enclose, join_with, mode, show_render, tab_size
 
 """
     TypstFunction{P <: Tuple}(
@@ -17,7 +17,9 @@ using Typstry: TypstContext, TypstString, TypstText, code, code_mode, depth, enc
 
 A wrapper representing a Typst function.
 
-This uses the `depth::Int` and `tab_size::Int` keys from the [`TypstContext`](@ref).
+This uses the `depth::Int`, `mode::Mode`, and `tab_size::Int` keys from the [`TypstContext`](@ref).
+
+See also [`Mode`](@ref).
 
 # Interface
 
@@ -44,6 +46,7 @@ julia> show_typst(TypstFunction(context, typst"arguments", 1, 2; a = 3, b = 4))
 """
 struct TypstFunction{P <: Tuple}
     depth::Int
+    mode::Mode
     tab_size::Int
     callable::TypstString
     parameters::P
@@ -52,7 +55,12 @@ struct TypstFunction{P <: Tuple}
     TypstFunction(
         typst_context::TypstContext, callable::TypstString, parameters...; keyword_parameters...
     ) = new{typeof(parameters)}(
-        depth(typst_context), tab_size(typst_context), callable, parameters, keyword_parameters
+        depth(typst_context),
+        mode(typst_context),
+        tab_size(typst_context),
+        callable,
+        parameters,
+        keyword_parameters
     )
 end
 
@@ -61,7 +69,7 @@ repr(mime::MIME"text/typst", typst_function::TypstFunction; context = nothing) =
 )
 
 function show_typst(io::IO, typst_context::TypstContext, typst_function::TypstFunction)
-    code_mode(io, typst_context)
+    typst_function.mode == code || print(io, "#")
     show_typst(io, typst_function.callable)
     enclose(io, typst_function, '(', ')') do io, typst_function
         parameters = typst_function.parameters

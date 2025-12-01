@@ -25,8 +25,7 @@ sources = [GitSource(
 
 3. Submit a pull request with these changes, titled `[Typst] Update version to $version`
 4. Fix any build issues
-    - Building a new version of Typst frequently requires
-    [updating the build system's internal version of Rust](https://github.com/JuliaPackaging/Yggdrasil/pull/12421).
+    - Building a new version of Typst frequently requires [updating the build system's internal version of Rust](https://github.com/JuliaPackaging/Yggdrasil/pull/12421).
 5. Wait until the pull request is merged
 
 ## Typstry.jl

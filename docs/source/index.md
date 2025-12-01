@@ -30,13 +30,25 @@ julia> using Typstry
 
 ```jldoctest
 julia> show(stdout, "text/typst", Typst([1 // 2 1; 1.0 [Any[1 // 2 1; 1.0 nothing]]]))
-$mat(
-  1 / 2, 1;
-  1.0, mat(
-    1 / 2, 1;
-    1.0, #none
+#math.mat(
+  (
+    $1 / 2$,
+    1
+  ),
+  (
+    1.0,
+    math.mat(
+      (
+        $1 / 2$,
+        1
+      ),
+      (
+        1.0,
+        none
+      )
+    )
   )
-)$
+)
 
 julia> TypstString(1 // 2; block = true)
 typst"$ 1 / 2 $"
@@ -72,6 +84,10 @@ julia> render(1:4)
 
 ### Planned
 
+- Make `TypstString`, `TypstText`, `Typst`, `TypstFunction`, a subtype of `AbstractTypst`
+- Try out recursive `lower`ing to a set of base cases instead of using `show_typst`
+- Syntax highlighting
+- Typst unicode completions
 - Default `auto::Mode`?
     - Automatically determine the Typst syntactic context
     - Use a jll package
