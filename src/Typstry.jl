@@ -107,6 +107,7 @@ const examples = [
     im => Complex{<:Union{Bool, Unsigned}} => [:block, :mode, :parenthesize]
     html"<p>a</p>" => HTML => [:backticks, :block, :depth, :indent, :mode]
     π => Irrational{:π} => [:block, :mode]
+    (; a = 1, b = 2) => NamedTuple => [:indent, :depth, :mode]
     nothing => Nothing => [:mode]
     0:2:6 => OrdinalRange{<:Signed, <:Signed} => [:mode]
     true:true:true => OrdinalRange{<:Integer, <:Integer} => [:mode]

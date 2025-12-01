@@ -21,6 +21,7 @@
 - Implement `@typst`
 - Implement `*(::TypstString, ::TypstString)::TypstString`
 - Implement `show(::IO, ::MIME"text/plain", ::TypstString)`
+- Implement `show_typst(::IO, ::TypstContext, ::NamedTuple)`
 
 ### Bug fixes
 

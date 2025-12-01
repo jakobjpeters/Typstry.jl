@@ -104,6 +104,24 @@ show_typst(io::IO, tc::TypstContext, x::Irrational{T}) where T = math_mode(io, t
     else show_typst(io, string(x); mode = math)
     end
 end
+function show_typst(io::IO, typst_context::TypstContext, x::NamedTuple)
+    _indent, _depth = indent(typst_context), depth(typst_context)
+    next_depth = _depth + 1
+
+    code_mode(io, typst_context)
+
+    if isempty(x) print(io, "(:)")
+    else
+        enclose(io, x, "(\n", '\n' * _indent ^ _depth * ')') do io, x
+            join_with(io, pairs(x), ",\n") do io, (key, value)
+                print(io, _indent ^ next_depth)
+                show_typst(io, string(key); depth = next_depth, mode = code)
+                print(io, ": ")
+                show_typst(io, value; depth = next_depth, mode = code)
+            end
+        end
+    end
+end
 function show_typst(io::IO, tc::TypstContext, ::Nothing)
     code_mode(io, tc)
     print(io, "none")

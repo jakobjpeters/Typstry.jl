@@ -144,6 +144,14 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
             test_strings(π, typst"$ π $"; block = true)
         end
 
+        @testset "`NamedTuple`" begin
+            test_strings((;), typst"(:)"; mode = code)
+            test_strings((;), typst"#(:)"; mode = markup)
+            test_strings((;), typst"#(:)"; mode = math)
+
+            test_strings((; a = 1, b = 2), typst"#(a: 1, b: 2)")
+        end
+
         @testset "`Nothing`" begin
             test_strings(nothing, typst"none"; mode = code)
             test_strings(nothing, typst"#none"; mode = markup)
