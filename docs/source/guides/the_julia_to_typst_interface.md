@@ -3,6 +3,9 @@
 
 This guide illustrates how to implement Typst formatting for custom types.
 
+!!! warning
+    This interface is in active development and will receive breaking changes.
+
 ## Setup
 
 ```jldoctest 1
