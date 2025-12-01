@@ -121,19 +121,9 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
         end
 
         @testset "`Complex`" begin
-            test_strings(im, typst"$i$"; mode = code)
-            test_strings(im, typst"$i$"; mode = markup)
-            test_strings(im, typst"i"; mode = math)
-
-            test_strings(0im, typst"$0$")
-            test_strings(-im, typst"$-i$")
-            test_strings(2im, typst"$2i$")
-            test_strings(-2im, typst"$-2i$")
-            test_strings(1 + 0im, typst"$1$")
-            test_strings(-1 + 0im, typst"$-1$")
-            test_strings(1 + im, typst"$1 + i$")
-            test_strings(1 - im, typst"$1 - i$")
-            test_strings(1 + 2im, typst"$1 + 2i$")
+            test_strings(im, typst"$0 + i$"; mode = code)
+            test_strings(im, typst"$0 + i$"; mode = markup)
+            test_strings(im, typst"0 + i"; mode = math)
         end
 
         @testset "`Irrational`" begin

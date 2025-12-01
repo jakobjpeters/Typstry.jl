@@ -22,63 +22,6 @@ using .Commands: TypstCommandError, TypstCommand, @typst_cmd, julia_mono, run_ty
 include("strings/strings.jl")
 include("render.jl")
 
-_typst(value) = value
-function _typst(value::Expr)
-    (; head, args) = value
-
-    if head == :$ only(args)
-    elseif head == :macrocall value
-    else :(Expr($(QuoteNode(head)), $(_typst.(args)...)))
-    end
-end
-_typst(value::Symbol) = :((@isdefined $value) ? $value : ($(QuoteNode(value))))
-
-"""
-    (@typst value typst_context...)::TypstString
-
-Transpile a subset of Julia to Typst.
-
-The `value` is first processed, then passed to
-[`TypstString`](@ref) with the `typst_context`.
-
-# Examples
-
-A symbol returns its assignment, if it exists, otherwise itself
-
-```jldoctest
-julia> x = 1;
-
-julia> @typst x + y
-typst"\$(1 + \\\"y\\\")\$"
-```
-
-Other literal values, macro call expressions, and interpolation
-expressions are evaluated, returning the result
-
-```jldoctest
-julia> @typst "hi"
-typst"#\\\"hi\\\""
-
-julia> @typst typst"hi"
-typst"hi"
-
-julia> @typst \$(1 + 2)
-typst"\$3\$"
-```
-
-All other expressions are processed recursively, returning an `Expr`
-
-```jldoctest
-julia> @typst (1 + im ^ 2) / f(3)
-typst"\$((1 + (i ^ 2)) / (\\\"f\\\" (3)))\$"
-```
-"""
-macro typst(value, typst_context...)
-    :(TypstString($(esc(_typst(value))); $(esc.(typst_context)...)))
-end
-
-export @typst
-
 export
     ContextError, DefaultIO, Mode, TypstCommandError, TypstCommand,
     TypstContext, TypstFunction, TypstString, TypstText, Typst,

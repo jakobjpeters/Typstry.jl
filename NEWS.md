@@ -17,11 +17,9 @@
     now throw a `TypstCommandError` upon failure
 - `sizehint!(::TypstContext, n)` now returns a `TypstContext` instead of a `Dict{Symbol, Any}`
 - Updated JuliaMono from version 0.55 to 0.61
-- Implement `show_typst` for `Symbol`, `TypstFunction`, and `Expr`
-- Implement `@typst`
+- Implement `show_typst` for `NamedTuple`, `Symbol`, `TypstFunction`
 - Implement `*(::TypstString, ::TypstString)::TypstString`
 - Implement `show(::IO, ::MIME"text/plain", ::TypstString)`
-- Implement `show_typst(::IO, ::TypstContext, ::NamedTuple)`
 
 ### Bug fixes
 
