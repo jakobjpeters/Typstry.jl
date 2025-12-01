@@ -87,6 +87,10 @@ julia> render(1:4)
 ### Planned
 
 - Traits to specify some formatting characteristics
+    - Automatically switch to a given mode
+    - Determine whether a formatted type returns Typst `content`,
+        which is useful for containers such as `AbstractArray`
+    - Specify fields in `TypstContext`
 - Syntax highlighting
 - Implement `IO` interface for `TypstContext`
 - Default `auto::Mode`?

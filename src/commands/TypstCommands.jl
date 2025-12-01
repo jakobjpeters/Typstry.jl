@@ -13,7 +13,7 @@ export TypstCommand, @typst_cmd
 
 """
     TypstCommand(::AbstractVector{<:AbstractString})
-    TypstCommand(::TypstCommand; kwargs...)
+    TypstCommand(::TypstCommand; parameters...)
 
 The Typst compiler and its parameters.
 
@@ -74,16 +74,20 @@ struct TypstCommand
     ignore_status::Bool
 
     TypstCommand(parameters) = new(Typst_jll.typst(), parameters, false)
-    TypstCommand(tc::TypstCommand; ignorestatus = tc.ignore_status, kwargs...) = new(
-        Cmd(tc.compiler; kwargs...), tc.parameters, ignorestatus
+    TypstCommand(
+        typst_command::TypstCommand; ignorestatus = typst_command.ignore_status, parameters...
+    ) = new(Cmd(typst_command.compiler; parameters...), typst_command.parameters, ignorestatus)
+
+    Base.addenv(typst_command::TypstCommand, environment...; inherit::Bool = true) = new(
+        addenv(typst_command.compiler, environment...; inherit),
+        typst_command.parameters,
+        typst_command.ignore_status
     )
 
-    Base.addenv(tc::TypstCommand, environment...; inherit::Bool = true) = new(
-        addenv(tc.compiler, environment...; inherit), tc.parameters, tc.ignore_status
-    )
-
-    Base.setenv(tc::TypstCommand, environment...; kwargs...) = new(
-        setenv(tc.compiler, environment...; kwargs...), tc.parameters, tc.ignore_status
+    Base.setenv(typst_command::TypstCommand, environment...; parameters...) = new(
+        setenv(typst_command.compiler, environment...; parameters...),
+        typst_command.parameters,
+        typst_command.ignore_status
     )
 end
 
@@ -105,15 +109,14 @@ julia> typst`compile input.typ output.typ`
 typst`compile input.typ output.typ`
 ```
 """
-macro typst_cmd(s::String)
-    parameters = isempty(s) ? String[] : map(string, eachsplit(s, ' '))
-    :(TypstCommand($parameters))
+macro typst_cmd(input::String)
+    :(TypstCommand($(string.(eachsplit(input)))))
 end
 
-tc::TypstCommand == _tc::TypstCommand = (
-    tc.compiler == _tc.compiler &&
-    tc.parameters == _tc.parameters &&
-    tc.ignore_status == _tc.ignore_status
+typst_command::TypstCommand == _typst_command::TypstCommand = (
+    typst_command.compiler == _typst_command.compiler &&
+    typst_command.parameters == _typst_command.parameters &&
+    typst_command.ignore_status == _typst_command.ignore_status
 )
 
 Cmd(typst_command::TypstCommand; parameters...) = Cmd(
@@ -122,39 +125,43 @@ Cmd(typst_command::TypstCommand; parameters...) = Cmd(
     parameters...
 )
 
-detach(tc::TypstCommand) = TypstCommand(tc; detach = true)
+detach(typst_command::TypstCommand) = TypstCommand(typst_command; detach = true)
 
 eltype(::Type{TypstCommand}) = String
 
 firstindex(::TypstCommand) = 1
 
-getindex(tc::TypstCommand, i) = i == 1 ? only(tc.compiler) : tc.parameters[i - 1]
+function getindex(typst_command::TypstCommand, i)
+    i == 1 ? only(typst_command.compiler) : typst_command.parameters[i - 1]
+end
 
-hash(tc::TypstCommand, h::UInt) = hash((
-    TypstCommand, tc.compiler, tc.parameters, tc.ignore_status
-), h)
+hash(typst_command::TypstCommand, code::UInt) = hash((
+    TypstCommand, typst_command.compiler, typst_command.parameters, typst_command.ignore_status
+), code)
 
-ignorestatus(tc::TypstCommand) = TypstCommand(tc; ignorestatus = true)
+ignorestatus(typst_command::TypstCommand) = TypstCommand(typst_command; ignorestatus = true)
 
-function iterate(tc::TypstCommand, i)
-    if i == 1 (only(tc.compiler), 2)
+function iterate(typst_command::TypstCommand, i)
+    if i == 1 (only(typst_command.compiler), 2)
     else
-        parameters, _i = tc.parameters, i - 1
+        parameters, _i = typst_command.parameters, i - 1
         length(parameters) < _i ?  nothing : (parameters[_i], i + 1)
     end
 end
-iterate(tc::TypstCommand) = iterate(tc, firstindex(tc))
+iterate(typst_command::TypstCommand) = iterate(typst_command, firstindex(typst_command))
 
-keys(tc::TypstCommand) = LinearIndices(firstindex(tc) : lastindex(tc))
+keys(typst_command::TypstCommand) = LinearIndices(
+    firstindex(typst_command):lastindex(typst_command)
+)
 
-lastindex(tc::TypstCommand) = length(tc)
+lastindex(typst_command::TypstCommand) = length(typst_command)
 
-length(tc::TypstCommand) = length(tc.parameters) + 1
+length(typst_command::TypstCommand) = length(typst_command.parameters) + 1
 
-setcpuaffinity(tc::TypstCommand, cpus) = TypstCommand(tc; cpus)
+setcpuaffinity(typst_command::TypstCommand, cpus) = TypstCommand(typst_command; cpus)
 
-function show(io::IO, ::MIME"text/plain", tc::TypstCommand)
-    parameters = tc.parameters
+function show(io::IO, ::MIME"text/plain", typst_command::TypstCommand)
+    parameters = typst_command.parameters
 
     if all(parameter -> all(isprint, parameter), parameters)
         enclose(io, parameters, "typst`", "`") do _io, _parameters

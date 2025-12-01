@@ -2,7 +2,7 @@
 module TypstStrings
 
 import Base:
-    IOBuffer, codeunit, codeunit, isvalid, iterate, iterate,
+    *, IOBuffer, codeunit, codeunit, isvalid, iterate, iterate,
     ncodeunits, pointer, repr, show
 import ..Typstry: show_typst
 
@@ -25,6 +25,7 @@ The [`TypstContext`](@ref) is combined with additional context and passed to [`s
 This type implements the `String` interface.
 However, the interface is undocumented, which may result in unexpected behavior.
 
+- `*(::TypstString,\u00A0::TypstString)`
 - `IOBuffer(::TypstString)`
 - `codeunit(::TypstString,\u00A0::Integer)`
 - `codeunit(::TypstString)`
@@ -139,6 +140,10 @@ macro typst_str(input::String)
     current > final || push!(args, @view input[current:final])
     :(TypstString(TypstText($output)))
 end
+
+*(typst_string::TypstString, _typst_string::TypstString) = TypstString(
+    TypstText(typst_string.text * _typst_string.text)
+)
 
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 
