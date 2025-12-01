@@ -20,6 +20,7 @@
 - Implement `show_typst` for `Symbol`, `TypstFunction`, and `Expr`
 - Implement `@typst`
 - Implement `*(::TypstString, ::TypstString)::TypstString`
+- Implement `show(::IO, ::MIME"text/plain", ::TypstString)`
 
 ### Bug fixes
 

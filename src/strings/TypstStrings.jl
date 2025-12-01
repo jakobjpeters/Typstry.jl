@@ -40,6 +40,9 @@ However, the interface is undocumented, which may result in unexpected behavior.
         the parameter is already in the requested `MIME` type when the `MIME`
         type satisfies `istextmime` and the parameter is an `AbstractString`.
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstString)`
+- `show(::IO,\u00A0::MIME"text/plain",\u00A0::TypstString)`
+    - Print in `typst""` format if each character satisfies `isprint`.
+        Otherwise, print with `show(::IO,\u00A0::TypstString)`.
 - `show(::IO,\u00A0::MIME"text/typst",\u00A0::TypstString)`
     - Accepts a `IOContext(::IO,\u00A0::TypstContext)`.
 - `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstString)`
@@ -47,8 +50,7 @@ However, the interface is undocumented, which may result in unexpected behavior.
     - Supports the [`julia_mono`](@ref Typstry.Commands.julia_mono) typeface.
     - The generated Typst source text contains the context's `preamble` and the formatted value.
 - `show(::IO,\u00A0::TypstString)`
-    - Prints in [`@typst_str`](@ref) format if each character satisfies `isprint`.
-        Otherwise, print in `TypstString` format.
+    - Print in `TypstString(TypstText(::String))` format.
 
 # Examples
 
@@ -129,7 +131,7 @@ macro typst_str(input::String)
             isexpr(x, :incomplete) && throw(first(x.args))
             interpolation = :($TypstString())
 
-            append!(interpolation.args, parse(@view input[
+            @views append!(interpolation.args, parse(input[
                 previous:prevind(input, current)
             ]; filename).args[2:end])
             push!(args, esc(interpolation))
@@ -168,34 +170,34 @@ show(io::IO, ::MIME"text/typst", x::TypstString) = show_typst(io, x)
 show(io::IO, m::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
 }, ts::TypstString) = show_render(io, m, ts)
-function show(io::IO, ts::TypstString)
-    text = ts.text
-
-    if all(isprint, text)
+function show(io::IO, ::MIME"text/plain", typst_string::TypstString)
+    if all(isprint, typst_string)
         escapes = 0
 
         print(io, "typst\"")
 
-        for c in text
-            if c == '\\' escapes += 1
+        for character in typst_string
+            if character == '\\' escapes += 1
             else
-                if c == '"' escape(io, escapes + 1)
-                elseif c == '(' escape(io, escapes)
+                if character == '"' escape(io, escapes + 1)
+                elseif character == '(' escape(io, escapes)
                 end
 
                 escapes = 0
             end
 
-            print(io, c)
+            print(io, character)
         end
 
         escape(io, escapes)
         print(io, '"')
-    else
-        print(io, TypstString, '(', TypstText, '(')
-        show(io, text)
-        print(io, "))")
+    else show(io, typst_string)
     end
+end
+function show(io::IO, typst_string::TypstString)
+    print(io, TypstString, '(', TypstText, '(')
+    show(io, typst_string.text)
+    print(io, "))")
 end
 
 end # TypstStrings
