@@ -2,7 +2,6 @@
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
-Luxor = "ae8d54c2-7ccd-5906-9d76-62fc9837b5bc"
 Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
 
 [sources]
@@ -12,7 +11,6 @@ Typstry = {path = ".."}
 Documenter = "1.16.1"
 LaTeXStrings = "1.4"
 Logging = "1.11"
-Luxor = "4.4"
 Typst_jll = "0.14"
 julia = "1.12"
 
