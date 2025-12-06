@@ -65,9 +65,7 @@ const examples = [
     :a => Symbol => [:block, :mode]
     text"[\"a\"]" => Text => [:mode]
     (true, 1, 1.2, 1 // 2) => Tuple => [:mode]
-    TypstFunction(
-        context, typst"arguments", (1, 2), (; a = 3, b = 4)
-    ) => TypstFunction => [:depth, :indent, :mode]
+    TypstFunction(context, typst"arguments") => TypstFunction => [:depth, :indent, :mode]
     typst"[\"a\"]" => TypstString => Symbol[]
     TypstText([1, 2, 3, 4]) => TypstText => Symbol[]
     Typst(1) => Typst => Symbol[]

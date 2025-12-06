@@ -1,11 +1,13 @@
 
 module TypstFunctions
 
-import Base: show
+import Base: ==, show
 import Typstry: show_typst
 
 using Base: Pairs
 using Typstry: Mode, TypstContext, TypstString, TypstText, code, depth, enclose, join_with, mode, show_render, tab_size
+
+export TypstFunction
 
 """
     TypstFunction{P <: Tuple}(
@@ -101,9 +103,53 @@ function show_typst(io::IO, typst_context::TypstContext, typst_function::TypstFu
     end
 end
 
+==(typst_function_1::TypstFunction, typst_function_2::TypstFunction) = (
+    typst_function_1.depth == typst_function_2.depth &&
+    typst_function_1.mode == typst_function_2.mode &&
+    typst_function_1.tab_size == typst_function_2.tab_size &&
+    typst_function_1.callable == typst_function_2.callable &&
+    typst_function_1.parameters == typst_function_2.parameters &&
+    typst_function_1.keyword_parameters == typst_function_2.keyword_parameters
+)
+
 show(io::IO, ::MIME"text/typst", typst_function::TypstFunction) = show_typst(io, typst_function)
 show(io::IO, mime::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
 }, typst_function::TypstFunction) = show_render(io, mime, typst_function)
+function show(io::IO, typst_function::TypstFunction)
+    (; depth, mode, tab_size, callable, parameters, keyword_parameters) = typst_function
+
+    print(
+        io,
+        TypstFunction,
+        '(',
+        TypstContext,
+        "(; depth = ",
+        depth,
+        ", mode = ",
+        mode,
+        ", tab_size = ",
+        tab_size,
+        "), "
+    )
+    show(io, typst_function.callable)
+
+    if !isempty(parameters)
+        print(io, ", ")
+        join_with(io, parameters, ", ") do io, parameter
+            show(io, parameter)
+        end
+    end
+
+    if !isempty(keyword_parameters)
+        print(io, "; ")
+        join_with(io, typst_function.keyword_parameters, ", ") do io, (key, value)
+            print(io, key, " = ")
+            show(io, value)
+        end
+    end
+
+    print(io, ')')
+end
 
 end # TypstFunctions

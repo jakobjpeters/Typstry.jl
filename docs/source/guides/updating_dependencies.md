@@ -32,9 +32,9 @@ sources = [GitSource(
 
 Typst uses semantic versioning and currently has a major version of `0`.
 As such, patch version updates should be available automatically in Typstry.jl
-but minor version updates require updating the compatibility bound of Typst_jll.jl.
+but minor version updates require updating the compatibility bound of Typst\_jll.jl.
 Either submit an issue to Typstry.jl or a pull request by
-updating the `Project.toml` with the new version of Typst_jll.jl.
+updating the `Project.toml` with the new version of Typst\_jll.jl.
 In general, Typstry.jl only supports the latest version of Typst.
 However, previous versions may remain compatible until there is a feature requiring an update.
 

@@ -59,6 +59,7 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
     end
 
     @testset "`Typst`" begin
+        @test Typst([]) == Typst([])
         @test typst_int == typst_int
         @test typst_int != Typst(1.0)
         @test typeof(typst_int) == Typst{Int}
@@ -71,6 +72,7 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
     end
 
     @testset "`TypstText`" begin
+        @test TypstText([]) == TypstText([])
         @test TypstText(x) isa TypstText{X}
         @test repr(MIME"text/typst"(), TypstText(x)) isa TypstString
 
@@ -171,6 +173,9 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
         end
 
         @testset "`TypstFunction`" begin
+            typst_function = TypstFunction(TypstContext(; depth = 0, mode = markup, tab_size = 2), typst"")
+            @test typst_function == deepcopy(typst_function)
+
             for (mode, expected) in zip(instances(Mode), [
                 "arguments()", "#arguments()", "#arguments()"]
             )

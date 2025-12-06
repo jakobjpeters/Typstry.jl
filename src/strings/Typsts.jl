@@ -1,7 +1,7 @@
 
 module Typsts
 
-import Base: repr, show
+import Base: ==, repr, show
 import Typstry: show_typst
 
 using Typstry: TypstContext, TypstString, TypstText, show_render
@@ -17,6 +17,7 @@ whose [`show_typst`](@ref) method formats the wrapped value.
 
 # Interface
 
+- `==(::Typst{T},\u00A0::Typst{T})\u00A0where\u00A0T`
 - `repr(::MIME"text/typst\u00A0::Typst; context = nothing)`
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::Typst)`
 - `show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`
@@ -36,6 +37,8 @@ julia> show_typst(Typst(1))
 struct Typst{T}
     value::T
 end
+
+==(typst_1::Typst{T}, typst_2::Typst{T}) where T = typst_1.value == typst_2.value
 
 repr(mime::MIME"text/typst", typst::Typst; context = nothing) = TypstString(
     TypstText(sprint(show, mime, typst; context))

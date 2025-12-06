@@ -22,6 +22,8 @@
 - `*(::TypstString, ::TypstString)::TypstString`
 - `Cmd(::TypstCommand; parameters...)`
 - `show(::IO, ::MIME"text/plain", ::TypstString)`
+- `==(::Typst{T}, ::Typst{T}) where T`
+- `==(::TypstText{T}, ::TypstText{T}) where T`
 
 ### Changes
 
