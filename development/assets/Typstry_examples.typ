@@ -163,11 +163,11 @@
   1.2,
   $1 / 2$
 )],
-  "TypstFunction(TypstContext(; depth = 0, mode = markup, tab_size = 2), TypstString(TypstText(\"arguments\")))", "TypstFunction", [`depth`, `indent`, `mode`], raw(
-  "#arguments()",
+  "TypstFunction(TypstContext(; depth = 0, mode = markup, tab_size = 2), TypstString(TypstText(\"\")))", "TypstFunction", [`depth`, `indent`, `mode`, `tab_size`], raw(
+  "#()",
   block: false,
   lang: "typst"
-), [#arguments()],
+), [#()],
   "TypstString(TypstText(\"[\\\"a\\\"]\"))", "TypstString", [], raw(
   "[\"a\"]",
   block: false,
