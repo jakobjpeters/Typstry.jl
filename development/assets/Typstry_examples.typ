@@ -163,20 +163,11 @@
   1.2,
   $1 / 2$
 )],
-  "TypstFunction{Tuple{Tuple{Int64, Int64}, @NamedTuple{a::Int64, b::Int64}}}(0, markup, 2, TypstString(TypstText(\"arguments\")), ((1, 2), (a = 3, b = 4)), Base.Pairs{Symbol, Union{}, Nothing, @NamedTuple{}}())", "TypstFunction", [`depth`, `indent`, `mode`], raw(
-  "#arguments(\n  (\n    1,\n    2\n  ),\n  (\n    a: 3,\n    b: 4\n  )\n)",
+  "TypstFunction(TypstContext(; depth = 0, mode = markup, tab_size = 2), TypstString(TypstText(\"arguments\")))", "TypstFunction", [`depth`, `indent`, `mode`], raw(
+  "#arguments()",
   block: false,
   lang: "typst"
-), [#arguments(
-  (
-    1,
-    2
-  ),
-  (
-    a: 3,
-    b: 4
-  )
-)],
+), [#arguments()],
   "TypstString(TypstText(\"[\\\"a\\\"]\"))", "TypstString", [], raw(
   "[\"a\"]",
   block: false,
