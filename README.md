@@ -122,7 +122,7 @@ julia> render(1:4)
         - ```
           (@typst $a * b) ==
           TypstString(:($a * b)) ==
-          TypstString(TypstFunction(*, a, :b)) ==
+          TypstString(TypstEquation(*, a, :b)) ==
           typst"$ 2b $"
           ```
 
@@ -134,6 +134,8 @@ julia> render(1:4)
     - Dependent of Typstry.jl
 - [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl)
     - Weak dependent of Typstry.jl
+- [RegressionTables.jl](https://github.com/jmboehm/RegressionTables.jl)
+    - Weak dependent of Typtry.jl
 - [TypstGenerator.jl](https://github.com/onecalfman/TypstGenerator.jl)
 - [TypstJlyFish.jl](https://github.com/andreasKroepelin/TypstJlyfish.jl)
     - Interoperable with Typstry.jl
