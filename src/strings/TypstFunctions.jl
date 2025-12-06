@@ -25,6 +25,7 @@ See also [`Mode`](@ref).
 
 # Interface
 
+- `==(::TypstFunction,\u00A0::TypstFunction)`
 - `repr(::MIME"text/typst\u00A0::TypstFunction; context = nothing)`
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstFunction)`
 - `show(::IO,\u00A0::MIME"text/typst",\u00A0::TypstFunction)`
