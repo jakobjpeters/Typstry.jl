@@ -18,7 +18,7 @@
 
 ### Methods
 
-- `show_typst` for for `NamedTuple`, `Symbol`, `TypstFunction`
+- `show_typst` for `NamedTuple`, `Symbol`, `TypstFunction`
 - `*(::TypstString, ::TypstString)::TypstString`
 - `Cmd(::TypstCommand; parameters...)`
 - `show(::IO, ::MIME"text/plain", ::TypstString)`
