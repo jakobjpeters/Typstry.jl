@@ -34,11 +34,11 @@ julia> Typstry.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = 
 -1x, -2x, -3x, -4x
 ```
 """
-function join_with(callback, io::IO, values, delimeter; kwargs...)
+function join_with(callback, io::IO, values, delimeter; parameters...)
     stateful_values = Stateful(values)
 
     for stateful_value in stateful_values
-        callback(io, stateful_value; kwargs...)
+        callback(io, stateful_value; parameters...)
         isempty(stateful_values) || print(io, delimeter)
     end
 end
@@ -67,17 +67,14 @@ end
 typst_context(ioc::IOContext) = unwrap(ioc, :typst_context, TypstContext())
 typst_context(::IO) = TypstContext()
 
-function _unwrap(dt::DataType, key::Symbol, value)
-    value isa dt ? value : throw(ContextError(dt, typeof(value), key))
+function _unwrap(data_type::DataType, key::Symbol, value)
+    value isa data_type ? value : throw(ContextError(data_type, typeof(value), key))
 end
 
-unwrap(x, key::Symbol, default) = _unwrap(typeof(default), key, get(x, key, default))
-function unwrap(x, type::Type, key)
-    value = x[key]
+unwrap(collection, key::Symbol, default) = _unwrap(
+    typeof(default), key, get(collection, key, default)
+)
+function unwrap(collection, type::DataType, key)
+    value = collection[key]
     _unwrap(type, key, value)
 end
-
-@doc """
-    unwrap(x, key::Symbol, default)
-    unwrap(x, type::Type, key)
-""" unwrap

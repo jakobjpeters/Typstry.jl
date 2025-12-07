@@ -1,7 +1,7 @@
 
 # Internals
 
-This reference documents non-public utilities.
+This reference documents implementation details.
 
 !!! info
     A Dates.jl package extension would currently print warnings during precompilation.
@@ -12,7 +12,6 @@ This reference documents non-public utilities.
 ```@docs
 Typstry.enclose
 Typstry.join_with
-Typstry.unwrap
 ```
 
 ## Strings
