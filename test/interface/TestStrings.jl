@@ -64,6 +64,16 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
         @test typst_int != Typst(1.0)
         @test typeof(typst_int) == Typst{Int}
         @test string(typst_int) == "Typst{Int64}(1)"
+        @test repr(Typst(1)) == typst"$1$"
+        @test repr("text/typst", Typst(1); context = IOContext(stdout, TypstContext(; mode = math))) == typst"1"
+
+        buffer = IOBuffer()
+        show(buffer, "text/typst", Typst(1))
+        @test String(take!(buffer)) == "\$1\$"
+
+        for mime in ["application/pdf", "image/png", "image/svg+xml"]
+            @test isnothing(show(devnull, mime, Typst(1)))
+        end
     end
 
     @testset "`TypstString`" begin
@@ -189,6 +199,14 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
                 TypstFunction(context, typst"arguments", 1, 2; a = 3, b = 4),
                 TypstString(TypstText("#arguments(\n  1,\n  2,\n  a: 3,\n  b: 4\n)"))
             )
+
+            @test repr("text/typst", typst_function) == "#()"
+
+            for mime in ["application/pdf", "image/png", "image/svg+xml", "text/typst"]
+                @test isnothing(show(devnull, MIME(mime), typst_function))
+            end
+
+            @test eval(Meta.parse(string(typst_function))) == typst_function
         end
 
         @testset "`Unsigned`" begin
