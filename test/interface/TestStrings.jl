@@ -64,7 +64,7 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
         @test typst_int != Typst(1.0)
         @test typeof(typst_int) == Typst{Int}
         @test string(typst_int) == "Typst{Int64}(1)"
-        @test repr(Typst(1)) == typst"$1$"
+        @test repr("text/typst", Typst(1)) == typst"$1$"
         @test repr("text/typst", Typst(1); context = IOContext(stdout, TypstContext(; mode = math))) == typst"1"
 
         buffer = IOBuffer()
@@ -223,7 +223,7 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
     end
 
     @testset "`examples`" begin
-        for ((value, _), mode) ∈ Iterators.product(Typstry.examples, instances(Mode))
+        for ((value, _), mode) ∈ Iterators.product(Typstry.Precompile.examples, instances(Mode))
             buffer = IOBuffer()
 
             if mode == markup show_typst(buffer, value; mode)

@@ -6,7 +6,7 @@ using .Docs: HTML, Text
 using .DocMeta: setdocmeta!
 using LaTeXStrings: LaTeXString
 using Markdown: MD
-using Typstry: TypstContext, context, enclose, examples, join_with, show_raw
+using Typstry: TypstContext, context, enclose, Precompile.examples, join_with, show_raw
 using Typstry
 
 const assets = joinpath(@__DIR__, "source", "assets")

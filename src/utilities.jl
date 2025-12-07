@@ -1,19 +1,6 @@
 
-# """
-#     counter
-# """
-# const counter = Stateful(countfrom())
-
-# """
-#     lock
-# """
-# const lock = ReentrantLock()
-
-"""
-    compile_workload(examples)
-"""
 compile_workload(examples::Vector) = @compile_workload for example ∈ examples
-    render(first(example); open=false)
+    render(first(example); open = false)
 end
 
 """
