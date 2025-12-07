@@ -19,7 +19,7 @@ This typeface is available when using one of the following approaches:
 and when compiling documents with the following methods:
 
 - [`@run`](@ref Typstry.Commands.Run.@run)
-- [`render`](@ref Typstry.render)
+- [`render`](@ref Typstry.Render.render)
 - `show` with the `application/pdf`, `image/png`, `image/svg+xml`, and `image/webp`
     `MIME` types and a `TypstFunction`, `TypstString`, `TypstText`, and `Typst` value
 

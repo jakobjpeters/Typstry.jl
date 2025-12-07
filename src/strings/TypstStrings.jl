@@ -6,7 +6,7 @@ import Base:
     ncodeunits, pointer, repr, show
 import ..Typstry: show_typst
 
-using .Meta: isexpr, parse
+using .Meta: isexpr
 using ..Typstry: TypstContext, TypstText, escape, show_render
 
 export TypstString, @typst_str
@@ -68,14 +68,16 @@ typst"(1 + 2i)"
 struct TypstString <: AbstractString
     text::String
 
-    TypstString(tc::TypstContext, x) = new(sprint(show_typst, x; context = :typst_context => tc))
+    TypstString(typst_context::TypstContext, value) = new(sprint(
+        show_typst, value; context = :typst_context => typst_context
+    ))
 end
 
-TypstString(x; context...) = TypstString(TypstContext(; context...), x)
+TypstString(value; typst_context...) = TypstString(TypstContext(; typst_context...), value)
 
 """
-    @typst_str("")
     typst""
+    @typst_str(::String)
 
 Construct a [`TypstString`](@ref).
 
@@ -126,11 +128,11 @@ macro typst_str(input::String)
         end
 
         if interpolate
-            x, current = parse(input, start; filename, greedy = false)
-            isexpr(x, :incomplete) && throw(first(x.args))
+            parameters, current = Meta.parse(input, start; filename, greedy = false)
+            isexpr(parameters, :incomplete) && throw(only(parameters.args))
             interpolation = :($TypstString())
 
-            @views append!(interpolation.args, parse(input[
+            @views append!(interpolation.args, Meta.parse(input[
                 previous:prevind(input, current)
             ]; filename).args[2:end])
             push!(args, esc(interpolation))

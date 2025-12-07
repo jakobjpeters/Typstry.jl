@@ -36,7 +36,11 @@ const tc_ignorestatus = ignorestatus(tc_error)
     end
 
     @testset "`@typst_cmd`" begin
+        command = :help
+
         @test typst`` isa TypstCommand
+        @test typst`$command` == typst`$(command)` == typst`$(:help)` == typst`$("he" * "lp")` == typst`help`
+        @test typst`a$("b c")d` == typst`ab cd`
     end
 
     @testset "`julia_mono`" begin

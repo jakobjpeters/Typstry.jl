@@ -6,6 +6,7 @@ import Base:
     iterate, keys, lastindex, length, setcpuaffinity, setenv, show
 import Typst_jll, Typstry
 
+using .Meta: isexpr
 using Typstry: enclose, join_with
 
 export TypstCommand, @typst_cmd
@@ -92,12 +93,13 @@ struct TypstCommand
 end
 
 """
-    @typst_cmd("")
     typst``
+    @typst_cmd(::String)
 
 Construct a [`TypstCommand`](@ref) where each parameter is separated by a space.
 
-This does not yet support interpolation; use the constructor instead.
+Interpolation has the same syntax as command and string literal interpolation,
+but has the semantics of string literal interpolation.
 
 # Examples
 
@@ -105,12 +107,31 @@ This does not yet support interpolation; use the constructor instead.
 julia> typst`help`
 typst`help`
 
-julia> typst`compile input.typ output.typ`
-typst`compile input.typ output.typ`
+julia> println(typst`compile \$("document.typ --jobs") \$1`)
+TypstCommand(["compile", "document.typ", "--jobs", "1"])
 ```
 """
 macro typst_cmd(input::String)
-    :(TypstCommand($(string.(eachsplit(input)))))
+    filename = __source__.file
+    current = previous = firstindex(input)
+    final = lastindex(input)
+    output = Expr(:string)
+    args = output.args
+
+    while (current = findnext('$', input, current)) ≢ nothing
+        previous < current && push!(args, @view input[previous:prevind(input, current)])
+
+        interpolation, current = Meta.parse(
+            input, nextind(input, current); filename, greedy = false
+        )
+        isexpr(interpolation, :incomplete) && return throw(only(interpolation.args))
+        previous = current
+
+        push!(args, esc(interpolation))
+    end
+
+    previous > final || push!(args, @view input[previous:final])
+    :(TypstCommand(string.(eachsplit($output))))
 end
 
 typst_command::TypstCommand == _typst_command::TypstCommand = (

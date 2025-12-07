@@ -11,7 +11,7 @@ export TypstCommandError
     TypstCommandError <: Exception
 
 An `Exception` indicating a Typst command-line
-interface error from running a [`TypstCommand`](@ref Typstry.TypstCommand).
+interface error from running a [`TypstCommand`](@ref Typstry.Commands.TypstCommands.TypstCommand).
 
 # Interface
 
