@@ -7,6 +7,7 @@
 - Replace `typst(::String)` with `@run parameters...`
     - Constructs and runs `TypstCommand`
     - Uses `ignorestatus` and catches interrupts
+- The default values for `input` and `output` are now `document.typ` and `document.pdf`, respectively
 
 ### Bug fixes
 

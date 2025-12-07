@@ -3,7 +3,7 @@ module Typstry
 
 import Base:
     IOBuffer, IOContext, ==, copy, eltype, getkey, get, iterate, length,
-    mergewith, merge!, merge, run, setindex!, show, sizehint!
+    mergewith, merge!, merge, setindex!, show, sizehint!
 
 using Base: MathConstants.catalan
 using Dates:
@@ -13,6 +13,8 @@ using .Iterators: Stateful, repeated
 using PrecompileTools: @compile_workload
 
 include("contexts/contexts.jl")
+export ContextError, DefaultIO, TypstContext
+
 include("utilities.jl")
 
 include("commands/Commands.jl")
@@ -20,13 +22,15 @@ using .Commands: TypstCommandError, TypstCommand, @run, @typst_cmd, julia_mono, 
 export TypstCommandError, TypstCommand, @run, @typst_cmd, julia_mono
 
 include("strings/strings.jl")
-include("render.jl")
-include("Precompile.jl")
-
 export
-    ContextError, DefaultIO, Mode,
-    TypstContext, TypstFunction, TypstString, TypstText, Typst,
+    Mode, TypstFunction, TypstString, TypstText, Typst,
     @typst_str, code, context,
-    markup, math, render, reset_context, show_typst
+    markup, math, reset_context, show_typst
+
+include("Render.jl")
+using .Render: render
+export render
+
+include("Precompile.jl")
 
 end # Typstry

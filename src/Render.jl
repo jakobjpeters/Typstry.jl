@@ -1,4 +1,10 @@
 
+module Render
+
+using Typstry: TypstCommand, TypstContext, julia_mono, preamble, show_typst, typst_context
+
+export render
+
 """
     render(::TypstContext, value; parameters...)::Nothing
     render(value; parameters..., context...)::Nothing
@@ -17,9 +23,9 @@ See also [`TypstContext`](@ref).
 
 # Parameters
 
-- `input::AbstractString = "input.typ"`
+- `input::AbstractString = "document.typ"`
     - Write the `preamble` and formatted value to this Typst source file.
-- `output::AbstractString = "output.pdf"`
+- `output::AbstractString = "document.pdf"`
     - Compile the document in the format specified by the file extension `pdf`, `png`, or `svg`.
 - `open::Bool = true`
     - Whether to preview the document with the default viewer, if available.
@@ -33,8 +39,8 @@ julia> render(Any[true 1; 1.2 1 // 2]);
 ```
 """
 function render(_typst_context::TypstContext, value;
-    input::AbstractString = "input.typ",
-    output::AbstractString = "output.pdf",
+    input::AbstractString = "document.typ",
+    output::AbstractString = "document.pdf",
     open::Bool = true,
     ignorestatus::Bool = true
 )
@@ -55,3 +61,5 @@ render(value;
     open::Bool = true,
     ignorestatus::Bool = true,
 context...) = render(TypstContext(; context...), value; input, output, open, ignorestatus)
+
+end # Render
