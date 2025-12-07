@@ -11,22 +11,25 @@ export TypstCommandError
     TypstCommandError <: Exception
 
 An `Exception` indicating a Typst command-line
-interface error from running a [`TypstCommand`](@ref).
+interface error from running a [`TypstCommand`](@ref Typstry.TypstCommand).
 
 # Interface
 
 - `showerror(::IO,\u00A0::TypstCommandError)`
 """
 struct TypstCommandError <: Exception
-    typst_command::TypstCommand
+    parameters::Vector{String}
+
+    TypstCommandError(typst_command::TypstCommand) = new(typst_command.parameters)
 end
 
 showerror(io::IO, typst_command_error::TypstCommandError) = print(
     io,
-    "TypstCommandError: failed to run a `",
+    TypstCommandError,
+    ": failed to run a `",
     TypstCommand,
     '(',
-    typst_command_error.typst_command.parameters,
+    typst_command_error.parameters,
     ")`"
 )
 

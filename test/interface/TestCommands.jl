@@ -16,8 +16,9 @@ const tc_ignorestatus = ignorestatus(tc_error)
     end
 
     @testset "`TypstCommandError`" begin
-        @test TypstCommandError(TypstCommand([])) isa TypstCommandError
-        @test TypstCommandError(TypstCommand(["help"])) isa TypstCommandError
+        @test TypstCommandError([]) isa TypstCommandError
+        @test TypstCommandError(["help"]) isa TypstCommandError
+        @test isnothing(showerror(devnull, TypstCommandError([])))
     end
 
     @testset "`@run`" begin
@@ -118,11 +119,10 @@ end
 
     @testset "`show`" begin
         @test isnothing(show(devnull, typst``))
-        @test isnothing(show(devnull, MIME"text/plain"(), TypstCommandError(typst``)))
     end
 
     @testset "`showerror`" begin
-        @test isnothing(showerror(devnull, TypstCommandError(typst``)))
+        @test isnothing(showerror(devnull, TypstCommandError([])))
     end
 end
 

@@ -164,9 +164,9 @@ function show(io::IO, ::MIME"text/plain", typst_command::TypstCommand)
     parameters = typst_command.parameters
 
     if all(parameter -> all(isprint, parameter), parameters)
-        enclose(io, parameters, "typst`", '`') do _io, _parameters
-            join_with(_io, _parameters, ' ') do __io, parameter
-                printstyled(__io, parameter; underline = true)
+        enclose(io, parameters, "typst`", '`') do io, parameters
+            join_with(io, parameters, ' ') do io, parameter
+                printstyled(io, parameter; underline = true)
             end
         end
     else show(io, typst_command)
