@@ -59,7 +59,7 @@ end
 
     @testset "`Cmd`" begin
         @test Cmd(typst``) isa Cmd
-        @test !success(pipeline(Cmd(ignorestatus(typst``)), devnull))
+        @test !success(pipeline(Cmd(ignorestatus(typst`x`)), devnull))
         @test success(pipeline(Cmd(typst`help`), devnull))
     end
 
