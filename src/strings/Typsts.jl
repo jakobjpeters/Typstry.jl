@@ -44,11 +44,11 @@ repr(mime::MIME"text/typst", typst::Typst; context = nothing) = TypstString(
     TypstText(sprint(show, mime, typst; context))
 )
 
-show_typst(io::IO, ::TypstContext, t::Typst) = show_typst(io, t.value)
+show_typst(io::IO, ::TypstContext, typst::Typst) = show_typst(io, typst.value)
 
-show(io::IO, ::MIME"text/typst", t::Typst) = show_typst(io, t)
-show(io::IO, m::Union{
+show(io::IO, ::MIME"text/typst", typst::Typst) = show_typst(io, typst)
+show(io::IO, mime::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, t::Typst) = show_render(io, m, t)
+}, typst::Typst) = show_render(io, mime, typst)
 
 end # Typsts

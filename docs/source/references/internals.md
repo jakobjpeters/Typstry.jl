@@ -10,6 +10,7 @@ This reference documents implementation details.
 ## Utilities
 
 ```@docs
+Typstry.compile_workload
 Typstry.enclose
 Typstry.join_with
 ```
@@ -17,10 +18,6 @@ Typstry.join_with
 ## Strings
 
 ```@docs
-Typstry.code_mode
 Typstry.escape
 Typstry.format
-Typstry.indent
-Typstry.math_mode
-Typstry.math_pad
 ```

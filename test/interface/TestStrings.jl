@@ -79,6 +79,11 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
     @testset "`TypstString`" begin
         test_strings(TypstString(x), "1")
         test_strings(TypstString(x; x = 2), "2")
+
+        @test typst"a" * typst"b" isa TypstString
+        @test typst"a" * typst"b" == typst"ab"
+        @test repr("text/plain", typst"") == "typst\"\""
+        @test isnothing(show(devnull, "text/typst", typst""))
     end
 
     @testset "`TypstText`" begin
@@ -224,17 +229,17 @@ test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
 
     @testset "`examples`" begin
         for ((value, _), mode) ∈ Iterators.product(Typstry.Precompile.examples, instances(Mode))
-            buffer = IOBuffer()
+            io_buffer = IOBuffer()
 
-            if mode == markup show_typst(buffer, value; mode)
+            if mode == markup show_typst(io_buffer, value; mode)
             elseif mode == math
-                print(buffer, '$')
-                show_typst(buffer, value; mode)
-                print(buffer, '$')
+                print(io_buffer, '$')
+                show_typst(io_buffer, value; mode)
+                print(io_buffer, '$')
             elseif mode == code
-                print(buffer, "#{")
-                show_typst(buffer, value; mode)
-                print(buffer, '}')
+                print(io_buffer, "#{")
+                show_typst(io_buffer, value; mode)
+                print(io_buffer, '}')
             end
 
             # TODO:
@@ -280,6 +285,21 @@ end
     @testset "`length`" begin test_equal(length) end
 
     @testset "`print`" begin test_pairs((ts, s) -> ts == sprint(print, ts) == s) end
+end
+
+@testset "Utilities" begin
+    @testset "`format`" begin
+        for (mime, extension) in [
+            "application/pdf" => :pdf
+            "image/gif" => :gif
+            "image/jpg" => :jpg
+            "image/png" => :png
+            "image/svg+xml" => :svg
+            "image/webp" => :webp
+        ]
+            @test Typstry.format(MIME(mime)) == string(extension)
+        end
+    end
 end
 
 end # TestStrings

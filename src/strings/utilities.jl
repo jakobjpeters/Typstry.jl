@@ -1,28 +1,4 @@
 
-# """
-#     parameters
-# """
-# const parameters = Dict(
-#     :image => [:alt, :fit, :height, :width],
-#     :mat => [:align, :augment, :column_gap, :delim, :gap, :row_gap],
-#     :raw => [:align, :block, :lang, :syntaxes, :tab_size, :theme],
-#     :text => [
-#         :alternates, :baseline, :bottom_edge, :cjk_latin_spacing, :costs, :dir,
-#         :discretionary_ligatures, :fallback, :features, :fill, :font, :fractions,
-#         :historical_ligatures, :hyphenate, :kerning, :lang, :ligatures, :number_type,
-#         :number_width, :overhang, :region, :script, :size, :slashed_zero, :spacing,
-#         :stretch, :stroke, :style, :stylistic_set, :top_edge, :tracking, :weight
-#     ],
-#     :vec => [:align, :delim, :gap]
-# )
-
-"""
-    code_mode(io, tc)
-
-Print the number sign, unless `mode(tc) == code`.
-
-See also [`Mode`](@ref).
-"""
 code_mode(io::IO, tc) = if mode(tc) ≠ code print(io, "#") end
 
 function dates(date_time::DateTime)
@@ -31,12 +7,12 @@ function dates(date_time::DateTime)
 end
 dates(date::Date) = :datetime, (:year, :month, :day), (year(date), month(date), day(date))
 function dates(x::Period)
-    buffer = IOBuffer()
+    io_buffer = IOBuffer()
 
-    print(buffer, x)
-    seekstart(buffer)
+    print(io_buffer, x)
+    seekstart(io_buffer)
 
-    :duration, (duration(x),), (TypstText(readuntil(buffer, ' ')),)
+    :duration, (duration(x),), (TypstText(readuntil(io_buffer, ' ')),)
 end
 dates(time::Time) = :datetime, (:hour, :minute, :second), (hour(time), minute(time), second(time))
 
@@ -63,7 +39,14 @@ julia> Typstry.escape(stdout, 2)
 """
 escape(io::IO, count::Int) = join(io, repeated('\\', count))
 
-"""
+format(::MIME"application/pdf") = "pdf"
+format(::MIME"image/gif") = "gif"
+format(::MIME"image/jpg") = "jpg"
+format(::MIME"image/png") = "png"
+format(::MIME"image/svg+xml") = "svg"
+format(::MIME"image/webp") = "webp"
+
+@doc """
     format(::Union{
         MIME"application/pdf",
         MIME"image/gif",
@@ -87,22 +70,8 @@ julia> Typstry.format(MIME"image/png"())
 julia> Typstry.format(MIME"image/svg+xml"())
 "svg"
 ```
-"""
-format(::MIME"application/pdf") = "pdf"
-format(::MIME"image/gif") = "gif"
-format(::MIME"image/jpg") = "jpg"
-format(::MIME"image/png") = "png"
-format(::MIME"image/svg+xml") = "svg"
-format(::MIME"image/webp") = "webp"
+""" format
 
-"""
-    indent(tc)
-"""
-indent(tc) = " " ^ tab_size(tc)
-
-"""
-    math_mode(f, io, tc, x; kwargs...)
-"""
 function math_mode(f, io::IO, tc, x; kwargs...)
     _tc = setindex!(copy(tc), math, :mode)
     _io = IOContext(io, :typst_context => _tc)
@@ -110,15 +79,9 @@ function math_mode(f, io::IO, tc, x; kwargs...)
     enclose((io, x; kwargs...) -> f(_io, _tc, x; kwargs...), _io, x, math_pad(tc); kwargs...)
 end
 
-"""
-    math_pad(tc)
-
-Return `""`, `"\\\$"`, or `"\\\$ "` depending on the
-`block` and `mode` settings.
-"""
-function math_pad(tc)
-    if mode(tc) == math ""
-    else block(tc) ? "\$ " : "\$"
+function math_pad(typst_context::TypstContext)
+    if mode(typst_context) == math ""
+    else block(typst_context) ? "\$ " : "\$"
     end
 end
 
@@ -152,10 +115,10 @@ show_raw(io::IO, typst_context::TypstContext, mime::MIME, language::Symbol, x) =
     (show_raw(io, mime, x),),
     [:block, :lang, :align, :syntaxes, :theme]
 )
-show_raw(context::IO, mime::MIME"text/markdown", x) = @view sprint(
-    show, mime, x; context
+show_raw(context::IO, mime::MIME"text/markdown", value) = @view sprint(
+    show, mime, value; context
 )[begin:(end - 1)]
-show_raw(context::IO, mime::MIME, x) = sprint(show, mime, x; context)
+show_raw(context::IO, mime::MIME, value) = sprint(show, mime, value; context)
 
 function show_render(io::IO, mime::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"

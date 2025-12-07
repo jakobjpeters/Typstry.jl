@@ -1,5 +1,8 @@
 
-compile_workload(examples::Vector) = @compile_workload for example ∈ examples
+"""
+    compile_workload(examples)
+"""
+compile_workload(examples) = @compile_workload for example ∈ examples
     render(first(example); open = false)
 end
 
@@ -64,7 +67,7 @@ function typst_context(tc::TypstContext, value)
     # TODO: throw a `ContextError`
     typst_context(get(() -> context[:io]()::IO, tc, :io), tc, _tc, value)
 end
-typst_context(ioc::IOContext) = unwrap(ioc, :typst_context, TypstContext())
+typst_context(io_context::IOContext) = unwrap(io_context, :typst_context, TypstContext())
 typst_context(::IO) = TypstContext()
 
 function _unwrap(data_type::DataType, key::Symbol, value)
