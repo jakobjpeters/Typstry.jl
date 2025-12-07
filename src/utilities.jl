@@ -4,9 +4,10 @@ compile_workload(examples::Vector) = @compile_workload for example ∈ examples
 end
 
 """
-    enclose(f, io, x, left, right = reverse(left); kwargs...)
+    enclose(callback, io, value, left, right = reverse(left); parameters...)
 
-Call `f(io,\u00A0x;\u00A0kwargs...)` between printing `left` and `right`, respectfully.
+Call `callback(io,\u00A0value;\u00A0parameters...)`
+between printing `left` and `right`, respectfully.
 
 # Examples
 
@@ -15,9 +16,9 @@ julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x
 \$ 1x \$
 ```
 """
-function enclose(f, io::IO, x, left, right = reverse(string(left)); context...)
+function enclose(callback, io::IO, value, left, right = reverse(string(left)); parameters...)
     print(io, left)
-    f(io, x; context...)
+    callback(io, value; parameters...)
     print(io, right)
 end
 

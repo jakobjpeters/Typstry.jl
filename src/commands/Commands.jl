@@ -33,7 +33,7 @@ and when compiling documents with the following methods:
 
 - [`render`](@ref Typstry.render)
 - [`typst`](@ref)
-- `show` with the `application/pdf`, `image/png`, and `image/svg+xml`
+- `show` with the `application/pdf`, `image/png`, `image/svg+xml`, and `image/webp`
     `MIME` types and a `TypstFunction`, `TypstString`, `TypstText`, and `Typst` value
 
 See also [`TypstCommand`](@ref).

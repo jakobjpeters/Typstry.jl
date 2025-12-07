@@ -4,9 +4,8 @@ module TypstCommands
 import Base:
     ==, Cmd, addenv, detach, eltype, firstindex, getindex, hash, ignorestatus,
     iterate, keys, lastindex, length, setcpuaffinity, setenv, show
-import Typst_jll
+import Typst_jll, Typstry
 
-using ..Commands: Typstry
 using Typstry: enclose, join_with
 
 export TypstCommand, @typst_cmd
@@ -24,8 +23,8 @@ Keyword parameters have the same semantics as for a `Cmd`.
 This type implements the `Cmd` interface.
 However, the interface is undocumented, which may result in unexpected behavior.
 
-- `==(::TypstCommand, ::TypstCommand)`
-- `Cmd(::TypstCommand; parameters...)`
+- `==(::TypstCommand,\u00A0::TypstCommand)`
+- `Cmd(::TypstCommand;\u00A0parameters...)`
 - `addenv(::TypstCommand,\u00A0env...;\u00A0inherit::Bool\u00A0=\u00A0true)`
     - Can be used with [`julia_mono`](@ref Typstry.julia_mono).
 - `detach(::TypstCommand)`
@@ -57,6 +56,7 @@ However, the interface is undocumented, which may result in unexpected behavior.
 - `setenv(::TypstString,\u00A0env...;\u00A0kwargs...)`
     - Can be used with [`julia_mono`](@ref Typstry.julia_mono).
 - `show(::IO,\u00A0::MIME"text/plain",\u00A0::TypstCommand)`
+- `show(::IO,\u00A0::TypstCommand)`
 
 # Examples
 
@@ -164,13 +164,16 @@ function show(io::IO, ::MIME"text/plain", typst_command::TypstCommand)
     parameters = typst_command.parameters
 
     if all(parameter -> all(isprint, parameter), parameters)
-        enclose(io, parameters, "typst`", "`") do _io, _parameters
+        enclose(io, parameters, "typst`", '`') do _io, _parameters
             join_with(_io, _parameters, ' ') do __io, parameter
                 printstyled(__io, parameter; underline = true)
             end
         end
-    else print(TypstCommand, '(', parameters, ')')
+    else show(io, typst_command)
     end
 end
+show(io::IO, typst_command::TypstCommand) = print(
+    io, TypstCommand, '(', typst_command.parameters, ')'
+)
 
 end # TypstCommands
