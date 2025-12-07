@@ -9,7 +9,7 @@ export DefaultIO
     DefaultIO
     DefaultIO()
 
-A type used to initialize the default `io` in [`context`](@ref Typstry.context).
+A type used to initialize the default `io` in [`context`](@ref Typstry.Contexts.TypstContexts.context).
 
 !!! info
     This is a workaround for `stdout` being invalid when assigned to a global variable.

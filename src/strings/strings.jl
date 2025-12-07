@@ -21,6 +21,8 @@ include("Typsts.jl")
 
 using .Typsts: Typst
 
+using .Contexts.TypstContexts: default_context
+
 merge!(default_context, TypstContext(;
     block = false,
     depth = 0,

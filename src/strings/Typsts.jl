@@ -24,7 +24,7 @@ whose [`show_typst`](@ref) method formats the wrapped value.
     - Accepts `IOContext(::IO,\u00A0::TypstContext)`
 - `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::Typst)`
     - Accepts `IOContext(::IO,\u00A0::TypstContext)`
-    - Uses the `preamble` in [`context`](@ref Typstry.context)
+    - Uses the `preamble` in [`context`](@ref Typstry.Contexts.TypstContexts.context)
     - Supports the [`julia_mono`](@ref Typstry.Commands.JuliaMono.julia_mono) typeface
 
 # Examples

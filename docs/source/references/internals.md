@@ -7,12 +7,6 @@ This reference documents non-public utilities.
     A Dates.jl package extension would currently print warnings during precompilation.
     See also the [Julia issue #52511](https://github.com/JuliaLang/julia/issues/52511)
 
-## Contexts
-
-```@docs
-Typstry.default_context
-```
-
 ## Utilities
 
 ```@docs

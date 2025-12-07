@@ -5,11 +5,14 @@ using Typstry: TypstCommand, TypstContext, julia_mono, preamble, show_typst, typ
 
 export render
 
+const default_input, default_output = "document." .* ["typ", "pdf"]
+const default_open, default_ignorestatus = true, true
+
 function render(_typst_context::TypstContext, value;
-    input::AbstractString = "document.typ",
-    output::AbstractString = "document.pdf",
-    open::Bool = true,
-    ignorestatus::Bool = true
+    input::AbstractString = default_input,
+    output::AbstractString = default_output,
+    open::Bool = default_open,
+    ignorestatus::Bool = default_ignorestatus
 )
     Base.open(input; truncate = true) do file
         io_context, _typst_context, _ = typst_context(file, _typst_context, value)
@@ -23,11 +26,12 @@ function render(_typst_context::TypstContext, value;
     nothing
 end
 render(value;
-    input::AbstractString = "input.typ",
-    output::AbstractString = "output.pdf",
-    open::Bool = true,
-    ignorestatus::Bool = true,
-context...) = render(TypstContext(; context...), value; input, output, open, ignorestatus)
+    input::AbstractString = default_input,
+    output::AbstractString = default_output,
+    open::Bool = default_open,
+    ignorestatus::Bool = default_ignorestatus,
+    typst_context...
+) = render(TypstContext(; typst_context...), value; input, output, open, ignorestatus)
 
 @doc """
     render(::TypstContext, value; parameters...)::Nothing
@@ -47,13 +51,13 @@ See also [`TypstContext`](@ref).
 
 # Parameters
 
-- `input::AbstractString = "document.typ"`
+- `input::AbstractString = $(repr(default_input))`
     - Write the `preamble` and formatted value to this Typst source file.
-- `output::AbstractString = "document.pdf"`
+- `output::AbstractString = $(repr(default_output))`
     - Compile the document in the format specified by the file extension `pdf`, `png`, or `svg`.
-- `open::Bool = true`
+- `open::Bool = $(repr(default_open))`
     - Whether to preview the document with the default viewer, if available.
-- `ignorestatus::Bool = true`
+- `ignorestatus::Bool = $(repr(default_ignorestatus))`
     - Whether to throw a [`TypstCommandError`](@ref Typstry.Commands.TypstCommandErrors.TypstCommandError) if the command errors.
 
 # Examples
