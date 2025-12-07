@@ -3,7 +3,10 @@ module Precompile
 
 using Dates: DateTime, Date, Day, Period, Time
 using .Docs: HTML, Text
-using Typstry: compile_workload, TypstFunction, TypstString, TypstText, Typst, @typst_str, context
+using PrecompileTools: @compile_workload
+using Typstry: TypstFunction, TypstString, TypstText, Typst, @typst_str, context, render
+
+export examples, compile_workload
 
 const examples = [
     Any[nothing, typst"$1$", typst"$1.2$", 1 // 2] => AbstractArray => [:block, :depth, :indent, :mode]
@@ -47,6 +50,13 @@ const examples = [
     Day(1) => Period => [:mode]
     Time(0) => Time => [:mode]
 ]
+
+"""
+    compile_workload(examples)
+"""
+compile_workload(examples) = @compile_workload for example ∈ examples
+    render(first(example); open = false)
+end
 
 compile_workload(examples)
 

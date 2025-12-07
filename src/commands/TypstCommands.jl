@@ -7,7 +7,7 @@ import Base:
 import Typst_jll, Typstry
 
 using .Meta: isexpr
-using Typstry: enclose, join_with
+using Typstry.Utilities: enclose, join_with
 
 export TypstCommand, @typst_cmd
 

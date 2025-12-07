@@ -1,10 +1,10 @@
 
-"""
-    compile_workload(examples)
-"""
-compile_workload(examples) = @compile_workload for example ∈ examples
-    render(first(example); open = false)
-end
+module Utilities
+
+using .Iterators: Stateful
+using Typstry: TypstContext, ContextError, context
+
+export enclose, join_with, typst_context, unwrap
 
 """
     enclose(callback, io, value, left, right = reverse(left); parameters...)
@@ -15,7 +15,7 @@ between printing `left` and `right`, respectfully.
 # Examples
 
 ```jldoctest
-julia> Typstry.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
+julia> Typstry.Utilities.enclose((io, i; x) -> print(io, i, x), stdout, 1, "\\\$ "; x = "x")
 \$ 1x \$
 ```
 """
@@ -33,7 +33,7 @@ Similar to `join`, except printing with `callback(io, value; keyword_parameters.
 # Examples
 
 ```jldoctest
-julia> Typstry.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
+julia> Typstry.Utilities.join_with((io, i; x) -> print(io, -i, x), stdout, 1:4, ", "; x = "x")
 -1x, -2x, -3x, -4x
 ```
 """
@@ -81,3 +81,5 @@ function unwrap(collection, type::DataType, key)
     value = collection[key]
     _unwrap(type, key, value)
 end
+
+end # Utilities

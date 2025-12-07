@@ -5,7 +5,9 @@ import Base: ==, show
 import Typstry: show_typst
 
 using Base: Pairs
-using Typstry: Mode, TypstContext, TypstString, TypstText, code, depth, enclose, join_with, mode, show_render, tab_size
+using Typstry:
+    Utilities, Mode, TypstContext, TypstString, TypstText, code, depth, mode, show_render, tab_size
+using .Utilities: enclose, join_with
 
 export TypstFunction
 

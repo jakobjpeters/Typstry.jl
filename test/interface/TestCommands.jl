@@ -65,7 +65,9 @@ end
 
     @testset "`addenv`" begin end
 
-    @testset "`detach`" begin end
+    @testset "`detach`" begin
+        @test detach(typst``) isa TypstCommand
+    end
 
     @testset "`eltype`" begin @test eltype(TypstCommand) == String end
 
@@ -92,11 +94,13 @@ end
         @test iterate(typst`help`, 2) == ("help", 3)
     end
 
-    @testset "`keys`" begin end
+    @testset "`keys`" begin
+        @test only(keys(typst``)) == 1
+    end
 
     @testset "`lastindex`" begin
-        @test length(typst``) == 1
-        @test length(typst`help`) == 2
+        @test lastindex(typst``) == 1
+        @test lastindex(typst`help`) == 2
     end
 
     @testset "`length`" begin

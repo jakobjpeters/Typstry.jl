@@ -49,8 +49,10 @@ const pairs = [
     typst"𝒂𝒃\(x)𝒄𝒅\\(x)𝒆𝒇" => "𝒂𝒃1𝒄𝒅\\(x)𝒆𝒇"
 ]
 
-test_pairs(f) = @test all(splat(f), pairs)
-test_equal(f) = test_pairs((ts, s) -> f(ts) == f(s))
+test_pairs(callback) = @test all(splat(callback), pairs)
+test_equal(callback) = test_pairs() do typst_string, string
+    callback(typst_string) == callback(string)
+end
 
 @testset "`Typstry`" begin
     @testset "`Mode`" begin
@@ -252,15 +254,23 @@ end
     @testset "`AbstractString` Interface" begin
         @testset "`IOBuffer`" begin test_equal(read ∘ IOBuffer) end
 
-        @testset "`codeunit`" begin test_pairs((ts, s) ->
-            codeunit(ts) == codeunit(s) && all(i -> codeunit(ts, i) == codeunit(s, i), eachindex(ts))
-        ) end
+        @testset "`codeunit`" begin
+            test_pairs() do ts, s
+                codeunit(ts) == codeunit(s) && all(eachindex(ts)) do i
+                    codeunit(ts, i) == codeunit(s, i)
+                end
+            end
+        end
 
         @testset "`isvalid`" begin end
 
-        @testset "`iterate`" begin test_pairs((ts, s) ->
-            iterate(ts) == iterate(s) && all(i -> iterate(ts, i) == iterate(s, i), eachindex(ts))
-        ) end
+        @testset "`iterate`" begin
+            test_pairs() do ts, s
+                iterate(ts) == iterate(s) && all(eachindex(ts)) do i
+                    iterate(ts, i) == iterate(s, i)
+                end
+            end
+        end
 
         @testset "`ncodeunits`" begin test_equal(ncodeunits) end
 
