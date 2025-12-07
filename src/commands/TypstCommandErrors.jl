@@ -1,7 +1,7 @@
 
 module TypstCommandErrors
 
-import Base: showerror, show
+import Base: showerror
 
 using ..Commands: TypstCommand
 
@@ -12,24 +12,22 @@ export TypstCommandError
 
 An `Exception` indicating a Typst command-line
 interface error from running a [`TypstCommand`](@ref).
+
+# Interface
+
+- `showerror(::IO,\u00A0::TypstCommandError)`
 """
 struct TypstCommandError <: Exception
     typst_command::TypstCommand
 end
 
-showerror(io::IO, te::TypstCommandError) = print(
+showerror(io::IO, typst_command_error::TypstCommandError) = print(
     io,
     "TypstCommandError: failed to run a `",
     TypstCommand,
     '(',
-    te.typst_command.parameters,
+    typst_command_error.typst_command.parameters,
     ")`"
 )
-
-function show(io::IO, m::MIME"text/plain", te::TypstCommandError)
-    print(io, TypstCommandError, '(')
-    show(io, m, te.typst_command)
-    print(io, ')')
-end
 
 end # TypstCommandErrors

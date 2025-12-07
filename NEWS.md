@@ -4,6 +4,9 @@
 ## v0.8.0
 
 - Implement `show(::IO, ::TypstCommand)`
+- Replace `typst(::String)` with `@run parameters...`
+    - Constructs and runs `TypstCommand`
+    - Uses `ignorestatus` and catches interrupts
 
 ### Bug fixes
 

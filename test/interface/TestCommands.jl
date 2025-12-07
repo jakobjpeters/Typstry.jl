@@ -20,6 +20,20 @@ const tc_ignorestatus = ignorestatus(tc_error)
         @test TypstCommandError(TypstCommand(["help"])) isa TypstCommandError
     end
 
+    @testset "`@run`" begin
+        redirect_stdio(; stderr = devnull, stdout = devnull) do
+            command = :help
+
+            @test isnothing(@run)
+            @test isnothing(@run :help)
+            @test isnothing(@run :help :help)
+            @test isnothing(@run "he" * "lp")
+            @test isnothing(@run command)
+            @test isnothing(@run :x)
+            @test_throws UndefVarError isnothing(@run x)
+        end
+    end
+
     @testset "`@typst_cmd`" begin
         @test typst`` isa TypstCommand
     end
@@ -31,26 +45,6 @@ const tc_ignorestatus = ignorestatus(tc_error)
     @testset "`render`" begin
         @test isnothing(render(typst""; open = false))
     end
-
-    @testset "`typst`" begin
-        mktempdir() do tmpdir
-            infile = joinpath(tmpdir, "test.typ")
-            outfile1 = joinpath(tmpdir, "test.pdf")
-            outfile2 = joinpath(tmpdir, "out.pdf")
-            write(infile, "= Test Document\n")
-            cd(tmpdir) do
-                typst("compile test.typ")
-                typst("c test.typ out.pdf")
-            end
-            @test isfile(outfile1)
-            @test isfile(outfile2)
-            # Only check that it runs without error.
-            redirect_stdout(devnull) do
-                typst("--help")
-                typst("fonts --variants")
-            end
-        end
-    end
 end
 
 @testset "`Base`" begin
@@ -60,6 +54,8 @@ end
 
     @testset "`Cmd`" begin
         @test Cmd(typst``) isa Cmd
+        @test !success(pipeline(Cmd(ignorestatus(typst``)), devnull))
+        @test success(pipeline(Cmd(typst`help`), devnull))
     end
 
     @testset "`addenv`" begin end

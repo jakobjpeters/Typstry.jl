@@ -16,16 +16,17 @@ include("contexts/contexts.jl")
 include("utilities.jl")
 
 include("commands/Commands.jl")
-using .Commands: TypstCommandError, TypstCommand, @typst_cmd, julia_mono, run_typst, typst
+using .Commands: TypstCommandError, TypstCommand, @run, @typst_cmd, julia_mono, Interface.run_typst
+export TypstCommandError, TypstCommand, @run, @typst_cmd, julia_mono
 
 include("strings/strings.jl")
 include("render.jl")
 include("Precompile.jl")
 
 export
-    ContextError, DefaultIO, Mode, TypstCommandError, TypstCommand,
+    ContextError, DefaultIO, Mode,
     TypstContext, TypstFunction, TypstString, TypstText, Typst,
-    @typst_cmd, @typst_str, code, context, julia_mono,
-    markup, math, render, reset_context, show_typst, typst
+    @typst_str, code, context,
+    markup, math, render, reset_context, show_typst
 
 end # Typstry

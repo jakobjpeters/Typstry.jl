@@ -33,7 +33,7 @@ See also [`Mode`](@ref).
 - `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstFunction)`
     - Accepts `IOContext(::IO,\u00A0::TypstContext)`
     - Uses the `preamble` in [`context`](@ref Typstry.context)
-    - Supports the [`julia_mono`](@ref Typstry.Commands.julia_mono) typeface
+    - Supports the [`julia_mono`](@ref Typstry.Commands.JuliaMono.julia_mono) typeface
 
 # Examples
 
