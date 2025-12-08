@@ -7,6 +7,9 @@ document:
 # logo:
 #     julia docs/logo.jl
 
+# serve documentation
+# serve:
+
 # run tests
 test:
     julia --project=test test/runtests.jl

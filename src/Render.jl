@@ -6,7 +6,7 @@ import Base: show
 using Typstry:
     Strings, TypstCommand, TypstContext, TypstFunction, TypstString, TypstText, Typst,
     julia_mono, Commands.Interface.run_typst, show_typst
-using .Strings: format, preamble, typst_context
+using .Strings: Utilities.format, preamble, typst_context
 
 export render
 

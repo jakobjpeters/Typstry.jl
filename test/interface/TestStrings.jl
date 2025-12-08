@@ -307,7 +307,7 @@ end
             "image/svg+xml" => :svg
             "image/webp" => :webp
         ]
-            @test Typstry.Strings.format(MIME(mime)) == string(extension)
+            @test Typstry.Strings.Utilities.format(MIME(mime)) == string(extension)
         end
     end
 end

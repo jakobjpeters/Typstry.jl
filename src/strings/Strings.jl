@@ -3,14 +3,12 @@ module Strings
 
 # TODO:
 using Base: MathConstants.catalan
-using Dates:
-    Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
-    day, hour, minute, month, second, year
-using .Iterators: repeated
+using Dates: DateTime, Date, Period, Time
 using Typstry.Contexts: DefaultIO, TypstContext, context, TypstContexts.default_context, reset_context
 using Typstry.Utilities: enclose, typst_context, unwrap
 
-include("utilities.jl")
+include("Utilities.jl")
+using .Utilities: code_mode, dates, math_mode, math_pad, show_image, show_parameters, show_raw
 
 include("Modes.jl")
 using .Modes: Mode, code, markup, math

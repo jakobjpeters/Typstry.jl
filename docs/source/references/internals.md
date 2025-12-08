@@ -16,8 +16,8 @@ Typstry.Precompile.compile_workload
 ## Strings
 
 ```@docs
-Typstry.Strings.escape
-Typstry.Strings.format
+Typstry.Strings.Utilities.escape
+Typstry.Strings.Utilities.format
 ```
 
 ## Utilities

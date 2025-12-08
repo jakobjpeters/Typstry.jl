@@ -7,9 +7,8 @@ import Base:
 import ..Strings: show_typst
 
 using .Meta: isexpr
-using ..Strings: TypstText
+using ..Strings: TypstText, Utilities.escape
 using Typstry: TypstContext
-using ..Strings: escape
 
 export TypstString, @typst_str
 
