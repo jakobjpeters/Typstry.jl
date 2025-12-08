@@ -2,6 +2,8 @@
 module TestStrings
 
 import Typstry: TypstContext, show_typst
+
+using Dates: Day, Hour, Minute, Second, Week
 using .Meta: parse
 using Test: @test, @test_throws, @testset
 using ..TestTypstry: test_strings
@@ -226,6 +228,18 @@ end
             test_strings(v"1.2.3", TypstString(TypstText("version(\n  1,\n  2,\n  3\n)")); mode = code)
             test_strings(v"1.2.3", TypstString(TypstText("#version(\n  1,\n  2,\n  3\n)")); mode = markup)
             test_strings(v"1.2.3", TypstString(TypstText("#version(\n  1,\n  2,\n  3\n)")); mode = math)
+        end
+
+        @testset "Dates.jl" begin
+            for (key, value) in [
+                :days => Day(0)
+                :hours => Hour(0)
+                :minutes => Minute(0)
+                :seconds => Second(0)
+                :weeks => Week(0)
+            ]
+                @test Typstry.Strings.Dates.duration(value) == key
+            end
         end
     end
 
