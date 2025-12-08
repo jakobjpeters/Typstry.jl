@@ -3,7 +3,7 @@ module MarkdownExtension
 
 import Typstry: show_typst
 using Markdown: MD, @md_str
-using Typstry: TypstContext, Precompile.compile_workload, Strings.show_raw
+using Typstry: TypstContext, Precompile.compile_workload, Strings.Utilities.show_raw
 
 show_typst(io::IO, tc::TypstContext, x::MD) = show_raw(io, tc, MIME"text/markdown"(), :markdown, x)
 

@@ -3,7 +3,7 @@ module LaTeXStringsExtension
 
 import Typstry: show_typst
 using LaTeXStrings: LaTeXString, @L_str
-using Typstry: TypstContext, Precompile.compile_workload, Strings.show_raw
+using Typstry: TypstContext, Precompile.compile_workload, Strings.Utilities.show_raw
 
 show_typst(io::IO, tc::TypstContext, x::LaTeXString) = show_raw(
     io, tc, MIME"text/latex"(), :latex, x

@@ -1,4 +1,19 @@
 
+module ShowTypst
+
+import ..Strings: show_typst
+import Typstry
+
+# TODO:
+using Base: MathConstants.catalan
+using Dates: DateTime, Date, Period, Time
+using Typstry.Contexts: TypstContext, context
+using Typstry.Utilities: enclose, typst_context
+using ..Strings: Strings, Utilities, TypstString, TypstText, code, markup, math
+using .Utilities: code_mode, dates, math_mode, math_pad, show_image, show_parameters, show_raw
+
+export show_typst
+
 show_typst(io::IO, typst_context::TypstContext, x::AbstractArray) = show_parameters(
     io, typst_context, TypstString(TypstText("math.vec")), x, [:delim, :align, :gap]
 )
@@ -10,7 +25,7 @@ function show_typst(io::IO, tc::TypstContext, x::AbstractFloat)
     elseif isnan(x)
         code_mode(io, tc)
         print(io, "float.nan")
-    else mode(tc) == code ? print(io, x) : enclose(print, io, x, math_pad(tc))
+    else Strings.mode(tc) == code ? print(io, x) : enclose(print, io, x, math_pad(tc))
     end
 end
 show_typst(io::IO, typst_context::TypstContext, x::AbstractMatrix) = show_parameters(
@@ -19,7 +34,7 @@ show_typst(io::IO, typst_context::TypstContext, x::AbstractMatrix) = show_parame
     ]
 )
 function show_typst(io::IO, tc::TypstContext, x::AbstractString)
-    mode(tc) == markup && print(io, '#')
+    Strings.mode(tc) == markup && print(io, '#')
     enclose((io, x) -> escape_string(io, x, '"'), io, x, '"')
 end
 function show_typst(io::IO, tc::TypstContext, x::Bool)
@@ -29,9 +44,9 @@ end
 function show_typst(io::IO, tc::TypstContext, x::Complex{<:Union{
     AbstractFloat, AbstractIrrational, Rational{<:Signed}, Signed
 }})
-    _mode = mode(tc)
+    _mode = Strings.mode(tc)
     math_mode(io, tc, x) do io, tc, x
-        enclose(io, x, (_mode == math && parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
+        enclose(io, x, (_mode == math && Strings.parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
             imaginary = imag(x)
 
             show_typst(io, real(x))
@@ -61,7 +76,7 @@ function show_typst(io::IO, typst_context::TypstContext, x::NamedTuple)
     if isempty(x)
         code_mode(io, typst_context)
         print(io, "(:)")
-    else show_typst(io, TypstFunction(typst_context, TypstString(TypstText("")); x...))
+    else show_typst(io, Strings.TypstFunction(typst_context, TypstString(TypstText("")); x...))
     end
 end
 function show_typst(io::IO, tc::TypstContext, ::Nothing)
@@ -69,9 +84,9 @@ function show_typst(io::IO, tc::TypstContext, ::Nothing)
     print(io, "none")
 end
 function show_typst(io::IO, tc::TypstContext, x::Rational{<:Signed})
-    _mode = mode(tc)
+    _mode = Strings.mode(tc)
     math_mode(io, tc, x) do io, tc, x
-        enclose(io, x, (_mode == math && parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
+        enclose(io, x, (_mode == math && Strings.parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
             show_typst(io, numerator(x); mode = math)
             print(io, " / ")
             show_typst(io, denominator(x); mode = math)
@@ -83,10 +98,10 @@ show_typst(io::IO, ::TypstContext, x::Rational{<:Union{Bool, Unsigned}}) = show_
 )
 show_typst(io::IO, typst_context::TypstContext, x::Regex) = show_typst(
     io,
-    TypstFunction(typst_context, TypstString(TypstText(:regex)), @view sprint(show, x)[3:(end - 1)])
+    Strings.TypstFunction(typst_context, TypstString(TypstText(:regex)), @view sprint(show, x)[3:(end - 1)])
 )
 function show_typst(io::IO, tc::TypstContext, x::Signed)
-    mode(tc) == code ? print(io, x) : enclose(print, io, x, math_pad(tc))
+    Strings.mode(tc) == code ? print(io, x) : enclose(print, io, x, math_pad(tc))
 end
 show_typst(io::IO, typst_context::TypstContext, x::Symbol) = math_mode(
     show_typst, io, typst_context, string(x)
@@ -99,21 +114,21 @@ function show_typst(io::IO, tc::TypstContext, x::Tuple)
     if length(x) == 1
         code_mode(io, tc)
         enclose(show_typst, io, only(x), '(', ",)"; mode = code)
-    else show_typst(io, TypstFunction(tc, TypstString(TypstText("")), x...))
+    else show_typst(io, Strings.TypstFunction(tc, TypstString(TypstText("")), x...))
     end
 end
 function show_typst(io::IO, tc::TypstContext, x::Unsigned)
     code_mode(io, tc)
     show(io, x)
 end
-show_typst(io::IO, tc::TypstContext, x::VersionNumber) = show_typst(io, TypstFunction(
+show_typst(io::IO, tc::TypstContext, x::VersionNumber) = show_typst(io, Strings.TypstFunction(
     tc,
     TypstString(TypstText(:version)), parse.(Int, eachsplit(string(x), '.'))...
 ))
 function show_typst(io::IO, tc::TypstContext, x::Union{Date, DateTime, Period, Time})
     f, keys, values = dates(x)
     _values = map(value -> TypstString(value; mode = code), values)
-    show_typst(io, tc, TypstFunction(tc, TypstString(TypstText(f)); zip(keys, values)...))
+    show_typst(io, tc, Strings.TypstFunction(tc, TypstString(TypstText(f)); zip(keys, values)...))
 end
 function show_typst(io::IO, tc::TypstContext, x::Union{
     OrdinalRange{<:Signed, <:Signed},
@@ -122,8 +137,8 @@ function show_typst(io::IO, tc::TypstContext, x::Union{
     inputs = (tc, TypstString(TypstText(:range)), first(x), last(x) + one(last(x)))
     _step = step(x)
 
-    if _step == 1 show_typst(io, TypstFunction(inputs...))
-    else show_typst(io, TypstFunction(inputs...; step = _step))
+    if _step == 1 show_typst(io, Strings.TypstFunction(inputs...))
+    else show_typst(io, Strings.TypstFunction(inputs...; step = _step))
     end
 end
 show_typst(io::IO, ::TypstContext, x::Union{
@@ -165,3 +180,5 @@ See also the [Typst Formatting Examples](@ref).
 !!! tip
     Please create an issue or pull-request to implement new methods.
 """ show_typst
+
+end # ShowTypst

@@ -1,21 +1,17 @@
 
 module Strings
 
-# TODO:
-using Base: MathConstants.catalan
-using Dates: DateTime, Date, Period, Time
-using Typstry.Contexts: DefaultIO, TypstContext, context, TypstContexts.default_context, reset_context
-using Typstry.Utilities: enclose, typst_context, unwrap
+using Typstry: Contexts.TypstContexts, DefaultIO, TypstContext, Utilities.unwrap
+using .TypstContexts: context, default_context, reset_context
+
+function show_typst end
+export show_typst
 
 include("Utilities.jl")
-using .Utilities: code_mode, dates, math_mode, math_pad, show_image, show_parameters, show_raw
 
 include("Modes.jl")
 using .Modes: Mode, code, markup, math
 export Mode, code, markup, math
-
-include("show_typst.jl")
-export show_typst
 
 include("TypstTexts.jl")
 using .TypstTexts: TypstText
@@ -28,6 +24,8 @@ export TypstString, @typst_str
 include("Typsts.jl")
 using .Typsts: Typst
 export Typst
+
+include("ShowTypst.jl")
 
 merge!(default_context, TypstContext(;
     block = false,

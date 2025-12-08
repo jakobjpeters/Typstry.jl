@@ -6,7 +6,7 @@ using .Docs: HTML, Text
 using .DocMeta: setdocmeta!
 using LaTeXStrings: LaTeXString
 using Markdown: MD
-using Typstry: Utilities, context, Precompile.examples, Strings.show_raw
+using Typstry: Utilities, context, Precompile.examples, Strings.Utilities.show_raw
 using .Utilities: enclose, join_with
 using Typstry
 
