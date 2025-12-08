@@ -3,7 +3,7 @@
 
 <div align="center">
 
-<p><img height="200px" src="docs/source/assets/logo.svg"/></p>
+<p><img height="200px" src="docs/src/assets/logo.svg"/></p>
 
 # Typstry.jl
 
@@ -98,7 +98,6 @@ julia> render(1:4)
 
 ### Planned
 
-- Make `TypstString`, `TypstText`, `Typst`, `TypstFunction`, a subtype of `AbstractTypst`
 - Try out recursive `lower`ing to a set of base cases instead of using `show_typst`
 - Syntax highlighting
 - Typst unicode completions
@@ -130,6 +129,7 @@ julia> render(1:4)
 
 ### Typst
 
+- [DocstringAsImage.jl](https://github.com/AtelierArith/DocstringAsImage.jl)
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
     - Dependent of Typstry.jl
 - [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl)
