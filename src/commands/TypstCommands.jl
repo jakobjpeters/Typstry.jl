@@ -100,6 +100,7 @@ Construct a [`TypstCommand`](@ref) where each parameter is separated by a space.
 
 Interpolation has the same syntax as command and string literal interpolation,
 but has the semantics of string literal interpolation.
+The semantics may change in the future.
 
 # Examples
 

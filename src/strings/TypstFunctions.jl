@@ -5,7 +5,7 @@ import Base: ==, show
 import ..Strings: show_typst
 
 using Base: Pairs
-using ..Strings: AbstractTypst, Mode, TypstString, TypstText, code, depth, mode, tab_size
+using ..Strings: AbstractTypst, Mode, TypstString, code, depth, mode, tab_size
 using Typstry: TypstContext
 using Typstry.Utilities: enclose, join_with
 
@@ -65,8 +65,13 @@ struct TypstFunction{P <: Tuple} <: AbstractTypst
     )
 end
 
-repr(mime::MIME"text/typst", typst_function::TypstFunction; context = nothing) = TypstString(
-    TypstText(sprint(show, mime, typst_function; context))
+==(typst_function_1::TypstFunction, typst_function_2::TypstFunction) = (
+    typst_function_1.depth == typst_function_2.depth &&
+    typst_function_1.mode == typst_function_2.mode &&
+    typst_function_1.tab_size == typst_function_2.tab_size &&
+    typst_function_1.callable == typst_function_2.callable &&
+    typst_function_1.parameters == typst_function_2.parameters &&
+    typst_function_1.keyword_parameters == typst_function_2.keyword_parameters
 )
 
 function show_typst(io::IO, typst_context::TypstContext, typst_function::TypstFunction)
@@ -102,16 +107,6 @@ function show_typst(io::IO, typst_context::TypstContext, typst_function::TypstFu
     end
 end
 
-==(typst_function_1::TypstFunction, typst_function_2::TypstFunction) = (
-    typst_function_1.depth == typst_function_2.depth &&
-    typst_function_1.mode == typst_function_2.mode &&
-    typst_function_1.tab_size == typst_function_2.tab_size &&
-    typst_function_1.callable == typst_function_2.callable &&
-    typst_function_1.parameters == typst_function_2.parameters &&
-    typst_function_1.keyword_parameters == typst_function_2.keyword_parameters
-)
-
-show(io::IO, ::MIME"text/typst", typst_function::TypstFunction) = show_typst(io, typst_function)
 function show(io::IO, typst_function::TypstFunction)
     (; depth, mode, tab_size, callable, parameters, keyword_parameters) = typst_function
 
