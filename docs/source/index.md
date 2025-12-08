@@ -116,6 +116,7 @@ julia> render(1:4)
 
 ### Typst
 
+- [DocstringAsImage.jl](https://github.com/AtelierArith/DocstringAsImage.jl)
 - [Labelyst.jl](https://github.com/emanuel-kopp/Labelyst.jl)
     - Dependent of Typstry.jl
 - [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl)
