@@ -1,34 +1,12 @@
 
 module Utilities
 
-using Dates:
-    Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
-    day, hour, minute, month, second, year
 using .Iterators: repeated
 using Typstry: Strings, Typstry, TypstContext, Utilities.enclose, Utilities.typst_context
 
+export code_mode, escape, format, math_mode, math_pad, show_parameters, show_image, show_raw
+
 code_mode(io::IO, tc) = if Strings.mode(tc) ≠ Strings.code print(io, "#") end
-
-function dates(date_time::DateTime)
-    fs = (year, month, day, hour, minute, second)
-    :datetime, map(Symbol, fs), map(f -> f(date_time), fs)
-end
-dates(date::Date) = :datetime, (:year, :month, :day), (year(date), month(date), day(date))
-function dates(x::Period)
-    io_buffer = IOBuffer()
-
-    print(io_buffer, x)
-    seekstart(io_buffer)
-
-    :duration, (duration(x),), (Typstry.TypstText(readuntil(io_buffer, ' ')),)
-end
-dates(time::Time) = :datetime, (:hour, :minute, :second), (hour(time), minute(time), second(time))
-
-duration(::Day) = :days
-duration(::Hour) = :hours
-duration(::Minute) = :minutes
-duration(::Second) = :seconds
-duration(::Week) = :weeks
 
 """
     escape(io::IO, count::Int)

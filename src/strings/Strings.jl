@@ -26,6 +26,7 @@ using .Typsts: Typst
 export Typst
 
 include("ShowTypst.jl")
+include("Dates.jl")
 
 merge!(default_context, TypstContext(;
     block = false,

@@ -6,11 +6,10 @@ import Typstry
 
 # TODO:
 using Base: MathConstants.catalan
-using Dates: DateTime, Date, Period, Time
 using Typstry.Contexts: TypstContext, context
 using Typstry.Utilities: enclose, typst_context
 using ..Strings: Strings, Utilities, TypstString, TypstText, code, markup, math
-using .Utilities: code_mode, dates, math_mode, math_pad, show_image, show_parameters, show_raw
+using .Utilities: code_mode, math_mode, math_pad, show_image, show_parameters, show_raw
 
 export show_typst
 
@@ -125,11 +124,6 @@ show_typst(io::IO, tc::TypstContext, x::VersionNumber) = show_typst(io, Strings.
     tc,
     TypstString(TypstText(:version)), parse.(Int, eachsplit(string(x), '.'))...
 ))
-function show_typst(io::IO, tc::TypstContext, x::Union{Date, DateTime, Period, Time})
-    f, keys, values = dates(x)
-    _values = map(value -> TypstString(value; mode = code), values)
-    show_typst(io, tc, Strings.TypstFunction(tc, TypstString(TypstText(f)); zip(keys, values)...))
-end
 function show_typst(io::IO, tc::TypstContext, x::Union{
     OrdinalRange{<:Signed, <:Signed},
     StepRangeLen{<:Signed, <:Signed, <:Signed, <:Signed}
