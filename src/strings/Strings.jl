@@ -1,13 +1,16 @@
 
 module Strings
 
-using Typstry: Contexts.TypstContexts, DefaultIO, TypstContext, Utilities.unwrap
-using .TypstContexts: context, default_context, reset_context
-
-function show_typst end
-export show_typst
+using Typstry: Contexts.TypstContexts, TypstContext, Utilities.unwrap
+using .TypstContexts: TypstContext, context, reset_context
 
 include("Utilities.jl")
+using .Utilities: typst_context
+
+show_typst(io::IO, value; context...) = show_typst(
+    typst_context(io, TypstContext(; context...), value)...
+)
+export show_typst
 
 include("Modes.jl")
 using .Modes: Mode, code, markup, math
@@ -28,17 +31,6 @@ export Typst
 include("ShowTypst.jl")
 include("Dates.jl")
 
-merge!(default_context, TypstContext(;
-    block = false,
-    depth = 0,
-    io = DefaultIO(),
-    mode = markup,
-    parenthesize = true,
-    preamble = TypstString(TypstText(
-        "#set page(margin: 1em, height: auto, width: auto, fill: white)\n#set text(16pt, font: \"JuliaMono\")\n"
-    )),
-    tab_size = 2
-))
 reset_context()
 
 for (key, value) in pairs(context)

@@ -1,6 +1,8 @@
 
 module Modes
 
+using Typstry: Contexts.TypstContexts.default_context
+
 export Mode, code, markup, math
 
 """
@@ -56,5 +58,7 @@ julia> math
 math::Mode = 2
 ```
 """ math
+
+default_context[:mode] = markup
 
 end # Modes

@@ -149,8 +149,9 @@ function show_typst(io::IO, ::TypstContext, x)
     else show_typst(io, repr(x))
     end
 end
-show_typst(tc::TypstContext, x) = show_typst(typst_context(tc, x)...)
-show_typst(io::IO, x; context...) = show_typst(typst_context(io, TypstContext(; context...), x)...)
+show_typst(_typst_context::TypstContext, value) = show_typst(
+    typst_context(_typst_context, value)...
+)
 show_typst(x; context...) = show_typst(typst_context(TypstContext(; context...), x)...)
 
 @doc """

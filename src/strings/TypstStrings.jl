@@ -8,7 +8,7 @@ import ..Strings: show_typst
 
 using .Meta: isexpr
 using ..Strings: TypstText, Utilities.escape
-using Typstry: TypstContext
+using Typstry.Contexts.TypstContexts: TypstContext, default_context
 
 export TypstString, @typst_str
 
@@ -198,5 +198,10 @@ function show(io::IO, typst_string::TypstString)
     show(io, typst_string.text)
     print(io, "))")
 end
+
+default_context[:preamble] = typst"""
+#set page(margin: 1em, height: auto, width: auto, fill: white)
+#set text(16pt, font: \"JuliaMono\")
+"""
 
 end # TypstStrings

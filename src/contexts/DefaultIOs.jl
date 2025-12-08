@@ -3,6 +3,8 @@ module DefaultIOs
 
 import Base: show
 
+using ..Contexts: TypstContexts.default_context
+
 export DefaultIO
 
 """
@@ -34,5 +36,7 @@ function show(io::IO, ::DefaultIO)
     print(io, "(stdout, :compact => true))::")
     show(io, DefaultIO)
 end
+
+default_context[:io] = DefaultIO()
 
 end # DefaultIOs

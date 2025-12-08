@@ -6,7 +6,7 @@ import Base:
     mergewith, merge, setindex!, show, sizehint!
 import Typstry
 
-export TypstContext, context, reset_context
+export TypstContext, default_context, context, reset_context
 
 """
     TypstContext <: AbstractDict{Symbol, Any}
@@ -65,7 +65,7 @@ end
 
 TypstContext(_) = TypstContext()
 
-const default_context = TypstContext()
+const default_context = TypstContext(; block = false, depth = 0, parenthesize = true, tab_size = 2)
 
 """
     context
@@ -100,8 +100,8 @@ See also [`reset_context`](@ref).
 ```jldoctest
 julia> context
 TypstContext with 7 entries:
-  :mode         => markup
   :parenthesize => true
+  :mode         => markup
   :block        => false
   :preamble     => TypstString(TypstText("#set page(margin: 1em, height: auto, …
   :io           => (() -> IOContext(stdout, :compact => true))::DefaultIO
@@ -124,8 +124,8 @@ See also [`TypstContext`](@ref).
 ```jldoctest
 julia> reset_context()
 TypstContext with 7 entries:
-  :mode         => markup
   :parenthesize => true
+  :mode         => markup
   :block        => false
   :preamble     => TypstString(TypstText("#set page(margin: 1em, height: auto, …
   :io           => (() -> IOContext(stdout, :compact => true))::DefaultIO
