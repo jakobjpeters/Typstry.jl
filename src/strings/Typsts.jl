@@ -1,32 +1,27 @@
 
 module Typsts
 
-import Base: ==, repr, show
+import Base: ==
 import ..Strings: show_typst
 
-using ..Strings: TypstString, TypstText
+using ..Strings: AbstractTypst
 using Typstry: TypstContext
 
 export Typst
 
 """
-    Typst{T}(::T)
+    Typst{T}(::T) <: AbstractTypst
     Typst(::T)
 
 A wrapper used to pass values to `show`,
 whose [`show_typst`](@ref) method formats the wrapped value.
 
+Subtype of [`AbstractTypst`](@ref).
+
 # Interface
 
 - `==(::Typst{T},\u00A0::Typst{T})\u00A0where\u00A0T`
-- `repr(::MIME"text/typst\u00A0::Typst; context = nothing)`
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::Typst)`
-- `show(::IO,\u00A0::MIME"text/typst",\u00A0::Typst)`
-    - Accepts `IOContext(::IO,\u00A0::TypstContext)`
-- `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::Typst)`
-    - Accepts `IOContext(::IO,\u00A0::TypstContext)`
-    - Uses the `preamble` in [`context`](@ref Typstry.Contexts.TypstContexts.context)
-    - Supports the [`julia_mono`](@ref Typstry.Commands.JuliaMono.julia_mono) typeface
 
 # Examples
 
@@ -35,18 +30,12 @@ julia> show_typst(Typst(1))
 \$1\$
 ```
 """
-struct Typst{T}
+struct Typst{T} <: AbstractTypst
     value::T
 end
 
 ==(typst_1::Typst{T}, typst_2::Typst{T}) where T = typst_1.value == typst_2.value
 
-repr(mime::MIME"text/typst", typst::Typst; context = nothing) = TypstString(
-    TypstText(sprint(show, mime, typst; context))
-)
-
 show_typst(io::IO, ::TypstContext, typst::Typst) = show_typst(io, typst.value)
-
-show(io::IO, ::MIME"text/typst", typst::Typst) = show_typst(io, typst)
 
 end # Typsts

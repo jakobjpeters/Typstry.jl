@@ -4,7 +4,7 @@ using Luxor:
     julia_blue, julia_green, julia_purple, julia_red, paper_sizes,
     drawpath, finish, poly, rect, setfont, sethue, settext
 
-const logo = joinpath(@__DIR__, "source", "assets", "logo.svg")
+const logo = joinpath(@__DIR__, "src", "assets", "logo.svg")
 const sheet_width, sheet_height = paper_sizes["A4"] ./ 4
 const spacing = 0.2
 const drawing_width, drawing_height = (3 * spacing + 1) .* (sheet_width, sheet_height)

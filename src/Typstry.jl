@@ -13,10 +13,10 @@ export TypstCommandError, TypstCommand, @run, @typst_cmd, julia_mono
 
 include("strings/Strings.jl")
 using .Strings:
-    Mode, TypstFunction, TypstString, TypstText, Typst,
+    AbstractTypst, Mode, TypstFunction, TypstString, TypstText, Typst,
     @typst_str, code, markup, math, show_typst
 export
-    Mode, TypstFunction, TypstString, TypstText, Typst,
+    AbstractTypst, Mode, TypstFunction, TypstString, TypstText, Typst,
     @typst_str, code, markup, math, show_typst
 
 include("Render.jl")

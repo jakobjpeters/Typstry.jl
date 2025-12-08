@@ -1,9 +1,8 @@
 # Terminal Images
 
-Some terminals implement protocols that enable direct image rendering.
-If the current terminal supports a given protocol,
-simply load the corresponding package in the REPL to automatically render each of
-[`TypstFunction`](@ref), [`TypstString`](@ref), [`TypstText`](@ref), and [`Typst`](@ref).
+Some terminals implement protocols that enable direct image rendering. If the current terminal
+supports a given protocol, simply load the corresponding package in the REPL to automatically render
+values of type [`AbstractTypst`](@ref) and [`TypstString`](@ref).
 
 ## [ITerm2Images.jl](https://github.com/eschnett/ITerm2Images.jl)
 

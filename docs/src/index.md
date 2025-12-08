@@ -84,7 +84,6 @@ julia> render(1:4)
 
 ### Planned
 
-- Make `TypstString`, `TypstText`, `Typst`, `TypstFunction`, a subtype of `AbstractTypst`
 - Try out recursive `lower`ing to a set of base cases instead of using `show_typst`
 - Syntax highlighting
 - Typst unicode completions

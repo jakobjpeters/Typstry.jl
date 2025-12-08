@@ -1,7 +1,9 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+LiveServer = "16fef848-5104-11e9-1b77-fb7a48bbb589"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Typstry = "f0ed7684-a786-439e-b1e3-3b82803b501e"
 
 [sources]

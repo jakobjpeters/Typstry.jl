@@ -4,6 +4,10 @@ module Strings
 using Typstry: Contexts.TypstContexts, TypstContext, Utilities.unwrap
 using .TypstContexts: TypstContext, context, reset_context
 
+include("AbstractTypsts.jl")
+using .AbstractTypsts: AbstractTypst
+export AbstractTypst
+
 include("Utilities.jl")
 using .Utilities: typst_context
 
@@ -42,5 +46,19 @@ end
 include("TypstFunctions.jl")
 using .TypstFunctions: TypstFunction
 export TypstFunction
+
+module Interface
+
+import Base: repr, show
+
+using ..Strings: AbstractTypst, TypstString, TypstText, show_typst
+
+repr(mime::MIME"text/typst", typst::AbstractTypst; context = nothing) = TypstString(
+    TypstText(sprint(show, mime, typst; context))
+)
+
+show(io::IO, ::MIME"text/typst", typst::AbstractTypst) = show_typst(io, typst)
+
+end # ToDo
 
 end # Strings

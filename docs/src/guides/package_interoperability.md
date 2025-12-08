@@ -5,18 +5,17 @@ This guide illustrates how to use Typstry.jl in compatible notebooks and package
 
 ## Notebooks
 
-IJulia.jl, Pluto.jl, and QuartoNotebookRunner.jl each display [`TypstFunction`](@ref)s,
-[`TypstString`](@ref)s, [`TypstText`](@ref)s, and [`Typst`](@ref)s using
-`show` with the `application/pdf`, `image/png`, and `image/svg+xml` `MIME` types.
+IJulia.jl, Pluto.jl, and QuartoNotebookRunner.jl each display values of type [`AbstractTypst`](@ref)
+and [`TypstString`](@ref) using `show` with the `application/pdf`, `image/png`, and
+`image/svg+xml` `MIME` types.
 
 !!! tip
     Set mappings in [`context`](@ref) to customize the default formatting in these environments.
 
 ## Typst Packages
 
-Compiling a document which imports a Typst package can be achieved in exactly the
-same manner as compiling a standard Typst source file with the command-line interface.
-For example:
+Compiling a document which imports a Typst package can be achieved in exactly the same manner as
+compiling a standard Typst source file with the command-line interface. For example:
 
 ```julia
 typst"#import \"@namespace/name:version\""

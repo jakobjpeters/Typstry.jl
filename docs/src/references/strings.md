@@ -4,6 +4,7 @@
 This reference documents formatting Julia values into Typst source text.
 
 ```@docs
+AbstractTypst
 TypstFunction
 TypstString
 TypstText

@@ -5,7 +5,7 @@ import Base: ==, show
 import ..Strings: show_typst
 
 using Base: Pairs
-using ..Strings: Mode, TypstString, TypstText, code, depth, mode, tab_size
+using ..Strings: AbstractTypst, Mode, TypstString, TypstText, code, depth, mode, tab_size
 using Typstry: TypstContext
 using Typstry.Utilities: enclose, join_with
 
@@ -17,25 +17,21 @@ export TypstFunction
         callable::Symbol,
         parameters::P...;
         keyword_parameters...
-    )
+    ) <: AbstractTypst
 
 A wrapper representing a Typst function.
 
 This uses the `depth::Int`, `mode::Mode`, and `tab_size::Int` keys from the [`TypstContext`](@ref).
+
+Subtype of [`AbstractTypst`](@ref).
 
 See also [`Mode`](@ref).
 
 # Interface
 
 - `==(::TypstFunction,\u00A0::TypstFunction)`
-- `repr(::MIME"text/typst\u00A0::TypstFunction; context = nothing)`
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0::TypstFunction)`
-- `show(::IO,\u00A0::MIME"text/typst",\u00A0::TypstFunction)`
-    - Accepts `IOContext(::IO,\u00A0::TypstContext)`
-- `show(::IO,\u00A0::Union{MIME"application/pdf",\u00A0MIME"image/png",\u00A0MIME"image/svg+xml"},\u00A0::TypstFunction)`
-    - Accepts `IOContext(::IO,\u00A0::TypstContext)`
-    - Uses the `preamble` in [`context`](@ref Typstry.Contexts.TypstContexts.context)
-    - Supports the [`julia_mono`](@ref Typstry.Commands.JuliaMono.julia_mono) typeface
+- `show(::IO,\u00A0::TypstFunction)`
 
 # Examples
 
@@ -49,7 +45,7 @@ julia> show_typst(TypstFunction(context, typst"arguments", 1, 2; a = 3, b = 4))
 )
 ```
 """
-struct TypstFunction{P <: Tuple}
+struct TypstFunction{P <: Tuple} <: AbstractTypst
     depth::Int
     mode::Mode
     tab_size::Int

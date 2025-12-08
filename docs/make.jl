@@ -1,16 +1,20 @@
 
 import Dates, Documenter, LaTeXStrings, Markdown
+
 using Base: get_extension
 using Documenter: Docs, DocMeta, deploydocs, makedocs
 using .Docs: HTML, Text
 using .DocMeta: setdocmeta!
 using LaTeXStrings: LaTeXString
 using Markdown: MD
+using Revise: revise
 using Typstry: Utilities, context, Precompile.examples, Strings.Utilities.show_raw
 using .Utilities: enclose, join_with
 using Typstry
 
-const assets = joinpath(@__DIR__, "source", "assets")
+revise()
+
+const assets = joinpath(@__DIR__, "src", "assets")
 const _examples = Vector{Pair{Any, Pair{Type, Vector{Symbol}}}}[]
 const modes = instances(Mode)
 const modules = [Typstry]
@@ -113,6 +117,6 @@ makedocs(; modules, format = Documenter.HTML(; edit_link = "main"), pages = [
     ]), pages("references", [
         "commands", "contexts", "strings", "render", "package_extensions", "internals"
     ])
-], sitename = "Typstry.jl", source = "source")
+], sitename = "Typstry.jl")
 
 deploydocs(; devurl = "development", repo = "github.com/jakobjpeters/Typstry.jl.git")

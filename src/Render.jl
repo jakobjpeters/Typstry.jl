@@ -4,7 +4,7 @@ module Render
 import Base: show
 
 using Typstry:
-    Strings, TypstCommand, TypstContext, TypstFunction, TypstString, TypstText, Typst,
+    Strings, AbstractTypst, TypstCommand, TypstContext, TypstString,
     julia_mono, Commands.Interface.run_typst, show_typst
 using .Strings: Utilities, preamble
 using .Utilities: format, typst_context
@@ -75,7 +75,7 @@ julia> render(Any[true 1; 1.2 1 // 2]);
 
 function show(io::IO, mime::Union{
     MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, value::Union{TypstFunction, TypstString, TypstText, Typst})
+}, value::Union{AbstractTypst, TypstString})
     io_buffer = IOBuffer()
     typst_command = TypstCommand([
         "compile", "--font-path", julia_mono, "--format", format(mime), "-", "-"

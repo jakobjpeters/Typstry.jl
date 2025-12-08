@@ -23,7 +23,7 @@ Calls to `show_typst` from the following methods:
 - [`render`](@ref Typstry.Render.render)
 - `show_typst(::IO,\u00A0::TypstContext,\u00A0x)`
 - `show` with the `application/pdf`, `image/png`, `image/svg+xml`, and `text/typst`
-    `MIME` types and a `TypstFunction`, `TypstString`, `TypstText`, and `Typst` value
+    `MIME` types and a [`AbstractTypst`](@ref Typstry.Strings.AbstractTypsts.AbstractTypst) or [`TypstString`](@ref Typstry.Strings.TypstStrings.TypstString)
 
 specify the [`TypstContext`](@ref) by combining the following contexts:
 
