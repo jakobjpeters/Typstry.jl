@@ -19,7 +19,7 @@ for (check, ignore) ∈ [
     check_all_qualified_accesses_via_owners => ()
     check_no_implicit_imports => ()
     check_no_self_qualified_accesses => ()
-    check_no_stale_explicit_imports => (:Typstry, :MathConstants, :Utilities, :mode)
+    check_no_stale_explicit_imports => (:Typstry, :MathConstants, :Utilities, :reset_context)
 ]
     @test isnothing(check(Typstry; ignore))
 end

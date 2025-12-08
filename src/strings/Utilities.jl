@@ -2,11 +2,11 @@
 module Utilities
 
 using .Iterators: repeated
-using Typstry: Strings, Typstry, TypstContext, Utilities.enclose, Utilities.typst_context
+using Typstry: Strings, Typstry, TypstContext, Utilities.enclose, Utilities.typst_context, Utilities.unwrap
 
 export code_mode, escape, format, math_mode, math_pad, show_parameters, show_image, show_raw
 
-code_mode(io::IO, tc) = if Strings.mode(tc) ≠ Strings.code print(io, "#") end
+code_mode(io::IO, tc) = if unwrap(tc, Strings.Mode, :mode) ≠ Strings.code print(io, "#") end
 
 """
     escape(io::IO, count::Int)
@@ -70,8 +70,8 @@ function math_mode(f, io::IO, tc, x; kwargs...)
 end
 
 function math_pad(typst_context::TypstContext)
-    if Strings.mode(typst_context) == Strings.math ""
-    else Strings.block(typst_context) ? "\$ " : "\$"
+    if unwrap(typst_context, Strings.Mode, :mode) == Strings.math ""
+    else unwrap(typst_context, Bool, :block) ? "\$ " : "\$"
     end
 end
 

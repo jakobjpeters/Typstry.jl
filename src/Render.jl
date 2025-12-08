@@ -4,9 +4,8 @@ module Render
 import Base: show
 
 using Typstry:
-    Strings, AbstractTypst, TypstCommand, TypstContext, TypstString,
-    julia_mono, Commands.Interface.run_typst, show_typst
-using .Strings: Utilities, preamble
+    Strings.Utilities, AbstractTypst, TypstCommand, TypstContext, TypstString,
+    julia_mono, Commands.Interface.run_typst, show_typst, Utilities.unwrap
 using .Utilities: format, typst_context
 
 export render
@@ -22,7 +21,7 @@ function render(_typst_context::TypstContext, value;
 )
     Base.open(input; truncate = true) do file
         io_context, _typst_context, _ = typst_context(file, _typst_context, value)
-        print(io_context, preamble(_typst_context))
+        print(io_context, unwrap(_typst_context, TypstString, :preamble))
         show_typst(io_context, value)
         println(file)
     end
@@ -82,7 +81,7 @@ function show(io::IO, mime::Union{
     ])
     _typst_context = typst_context(io, value)[2]
 
-    print(io_buffer, preamble(_typst_context))
+    print(io_buffer, unwrap(_typst_context, TypstString, :preamble))
     show_typst(io_buffer, _typst_context, value)
     println(io_buffer)
 

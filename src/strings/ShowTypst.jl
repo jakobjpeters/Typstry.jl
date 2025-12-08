@@ -7,8 +7,8 @@ import Typstry
 # TODO:
 using Base: MathConstants.catalan
 using Typstry.Contexts: TypstContext, context
-using Typstry.Utilities: enclose, typst_context
-using ..Strings: Strings, Utilities, TypstString, TypstText, code, markup, math
+using Typstry.Utilities: enclose, typst_context, unwrap
+using ..Strings: Strings, Utilities, Mode, TypstString, TypstText, code, markup, math
 using .Utilities: code_mode, math_mode, math_pad, show_image, show_parameters, show_raw
 
 export show_typst
@@ -24,7 +24,7 @@ function show_typst(io::IO, tc::TypstContext, x::AbstractFloat)
     elseif isnan(x)
         code_mode(io, tc)
         print(io, "float.nan")
-    else Strings.mode(tc) == code ? print(io, x) : enclose(print, io, x, math_pad(tc))
+    else unwrap(tc, Mode, :mode) == code ? print(io, x) : enclose(print, io, x, math_pad(tc))
     end
 end
 show_typst(io::IO, typst_context::TypstContext, x::AbstractMatrix) = show_parameters(
@@ -33,7 +33,7 @@ show_typst(io::IO, typst_context::TypstContext, x::AbstractMatrix) = show_parame
     ]
 )
 function show_typst(io::IO, tc::TypstContext, x::AbstractString)
-    Strings.mode(tc) == markup && print(io, '#')
+    unwrap(tc, Mode, :mode) == markup && print(io, '#')
     enclose((io, x) -> escape_string(io, x, '"'), io, x, '"')
 end
 function show_typst(io::IO, tc::TypstContext, x::Bool)
@@ -43,9 +43,9 @@ end
 function show_typst(io::IO, tc::TypstContext, x::Complex{<:Union{
     AbstractFloat, AbstractIrrational, Rational{<:Signed}, Signed
 }})
-    _mode = Strings.mode(tc)
+    _mode = unwrap(tc, Mode, :mode)
     math_mode(io, tc, x) do io, tc, x
-        enclose(io, x, (_mode == math && Strings.parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
+        enclose(io, x, (_mode == math && unwrap(tc, Bool, :parenthesize) ? ("(", ")") : ("", ""))...) do io, x
             imaginary = imag(x)
 
             show_typst(io, real(x))
@@ -83,9 +83,9 @@ function show_typst(io::IO, tc::TypstContext, ::Nothing)
     print(io, "none")
 end
 function show_typst(io::IO, tc::TypstContext, x::Rational{<:Signed})
-    _mode = Strings.mode(tc)
+    _mode = unwrap(tc, Mode, :mode)
     math_mode(io, tc, x) do io, tc, x
-        enclose(io, x, (_mode == math && Strings.parenthesize(tc) ? ("(", ")") : ("", ""))...) do io, x
+        enclose(io, x, (_mode == math && unwrap(tc, Bool, :parenthesize) ? ("(", ")") : ("", ""))...) do io, x
             show_typst(io, numerator(x); mode = math)
             print(io, " / ")
             show_typst(io, denominator(x); mode = math)
@@ -100,7 +100,7 @@ show_typst(io::IO, typst_context::TypstContext, x::Regex) = show_typst(
     Strings.TypstFunction(typst_context, TypstString(TypstText(:regex)), @view sprint(show, x)[3:(end - 1)])
 )
 function show_typst(io::IO, tc::TypstContext, x::Signed)
-    Strings.mode(tc) == code ? print(io, x) : enclose(print, io, x, math_pad(tc))
+    unwrap(tc, Mode, :mode) == code ? print(io, x) : enclose(print, io, x, math_pad(tc))
 end
 show_typst(io::IO, typst_context::TypstContext, x::Symbol) = math_mode(
     show_typst, io, typst_context, string(x)

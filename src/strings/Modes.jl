@@ -59,6 +59,6 @@ math::Mode = 2
 ```
 """ math
 
-default_context[:mode] = markup
+__init__() = (default_context[:mode] = markup)
 
 end # Modes

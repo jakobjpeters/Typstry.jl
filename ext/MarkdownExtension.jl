@@ -7,8 +7,13 @@ using Typstry: TypstContext, Precompile.compile_workload, Strings.Utilities.show
 
 show_typst(io::IO, tc::TypstContext, x::MD) = show_raw(io, tc, MIME"text/markdown"(), :markdown, x)
 
-const examples = [md"# A" => MD => [:block, :depth, :lang, :align, :syntaxes, :theme, :tab_size]]
+const examples = []
 
-compile_workload(examples)
+function __init__()
+    append!(examples, [
+        md"# A" => MD => [:block, :depth, :lang, :align, :syntaxes, :theme, :tab_size]
+    ])
+    compile_workload(examples)
+end
 
 end # module

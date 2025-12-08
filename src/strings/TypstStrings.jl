@@ -7,8 +7,8 @@ import Base:
 import ..Strings: show_typst
 
 using .Meta: isexpr
-using ..Strings: TypstText, Utilities.escape
-using Typstry.Contexts.TypstContexts: TypstContext, default_context
+using ..Strings: Strings, Utilities.escape
+using Typstry: TypstContext
 
 export TypstString, @typst_str
 
@@ -69,12 +69,14 @@ typst"(1 + 2i)"
 struct TypstString <: AbstractString
     text::String
 
+    Base.:*(typst_string::TypstString, _typst_string::TypstString) = new(
+        typst_string.text * _typst_string.text
+    )
+
     TypstString(typst_context::TypstContext, value) = new(sprint(
         show_typst, value; context = :typst_context => typst_context
     ))
 end
-
-TypstString(value; typst_context...) = TypstString(TypstContext(; typst_context...), value)
 
 """
     typst""
@@ -142,12 +144,10 @@ macro typst_str(input::String)
     end
 
     current > final || push!(args, @view input[current:final])
-    :(TypstString(TypstText($output)))
+    :(TypstString(Strings.TypstText($output)))
 end
 
-*(typst_string::TypstString, _typst_string::TypstString) = TypstString(
-    TypstText(typst_string.text * _typst_string.text)
-)
+TypstString(value; typst_context...) = TypstString(TypstContext(; typst_context...), value)
 
 IOBuffer(ts::TypstString) = IOBuffer(ts.text)
 
@@ -194,14 +194,9 @@ function show(io::IO, ::MIME"text/plain", typst_string::TypstString)
     end
 end
 function show(io::IO, typst_string::TypstString)
-    print(io, TypstString, '(', TypstText, '(')
+    print(io, TypstString, '(', Strings.TypstText, '(')
     show(io, typst_string.text)
     print(io, "))")
 end
-
-default_context[:preamble] = typst"""
-#set page(margin: 1em, height: auto, width: auto, fill: white)
-#set text(16pt, font: \"JuliaMono\")
-"""
 
 end # TypstStrings

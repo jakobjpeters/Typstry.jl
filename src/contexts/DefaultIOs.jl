@@ -37,6 +37,6 @@ function show(io::IO, ::DefaultIO)
     show(io, DefaultIO)
 end
 
-default_context[:io] = DefaultIO()
+__init__() = (default_context[:io] = DefaultIO())
 
 end # DefaultIOs
