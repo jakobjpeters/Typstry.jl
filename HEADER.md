@@ -1,7 +1,7 @@
 
 <div align="center">
 
-<p><img height="200px" src="docs/source/assets/logo.svg"/></p>
+<p><img height="200px" src="docs/src/assets/logo.svg"/></p>
 
 # Typstry.jl
 
