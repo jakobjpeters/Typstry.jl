@@ -231,7 +231,7 @@ end
         end
 
         @testset "Dates.jl" begin
-            for (key, value) in [
+            for (key, value) in Any[
                 :days => Day(0)
                 :hours => Hour(0)
                 :minutes => Minute(0)
@@ -240,6 +240,11 @@ end
             ]
                 @test Typstry.Strings.Dates.duration(value) == key
             end
+        end
+
+        @testset "fallback" begin
+            struct A end
+            @test isnothing(show_typst(devnull, A()))
         end
     end
 
