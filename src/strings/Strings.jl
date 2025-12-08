@@ -1,27 +1,35 @@
 
-using Base: repr
+module Strings
+
+# TODO:
+using Base: MathConstants.catalan
+using Dates:
+    Date, DateTime, Day, Hour, Minute, Period, Second, Time, Week,
+    day, hour, minute, month, second, year
+using .Iterators: repeated
+using Typstry.Contexts: DefaultIO, TypstContext, context, TypstContexts.default_context, reset_context
+using Typstry.Utilities: enclose, typst_context, unwrap
 
 include("utilities.jl")
 
 include("Modes.jl")
-
 using .Modes: Mode, code, markup, math
+export Mode, code, markup, math
 
 include("show_typst.jl")
+export show_typst
 
 include("TypstTexts.jl")
-
 using .TypstTexts: TypstText
+export TypstText
 
 include("TypstStrings.jl")
-
 using .TypstStrings: TypstString, @typst_str
+export TypstString, @typst_str
 
 include("Typsts.jl")
-
 using .Typsts: Typst
-
-using .Contexts.TypstContexts: default_context
+export Typst
 
 merge!(default_context, TypstContext(;
     block = false,
@@ -44,3 +52,6 @@ end
 
 include("TypstFunctions.jl")
 using .TypstFunctions: TypstFunction
+export TypstFunction
+
+end # Strings

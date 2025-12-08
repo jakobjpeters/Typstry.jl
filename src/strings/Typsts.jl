@@ -2,9 +2,10 @@
 module Typsts
 
 import Base: ==, repr, show
-import Typstry: show_typst
+import ..Strings: show_typst
 
-using Typstry: TypstContext, TypstString, TypstText, show_render
+using ..Strings: TypstString, TypstText
+using Typstry: TypstContext
 
 export Typst
 
@@ -47,8 +48,5 @@ repr(mime::MIME"text/typst", typst::Typst; context = nothing) = TypstString(
 show_typst(io::IO, ::TypstContext, typst::Typst) = show_typst(io, typst.value)
 
 show(io::IO, ::MIME"text/typst", typst::Typst) = show_typst(io, typst)
-show(io::IO, mime::Union{
-    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, typst::Typst) = show_render(io, mime, typst)
 
 end # Typsts

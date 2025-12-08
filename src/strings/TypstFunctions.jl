@@ -2,12 +2,12 @@
 module TypstFunctions
 
 import Base: ==, show
-import Typstry: show_typst
+import ..Strings: show_typst
 
 using Base: Pairs
-using Typstry:
-    Utilities, Mode, TypstContext, TypstString, TypstText, code, depth, mode, show_render, tab_size
-using .Utilities: enclose, join_with
+using ..Strings: Mode, TypstString, TypstText, code, depth, mode, tab_size
+using Typstry: TypstContext
+using Typstry.Utilities: enclose, join_with
 
 export TypstFunction
 
@@ -116,9 +116,6 @@ end
 )
 
 show(io::IO, ::MIME"text/typst", typst_function::TypstFunction) = show_typst(io, typst_function)
-show(io::IO, mime::Union{
-    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, typst_function::TypstFunction) = show_render(io, mime, typst_function)
 function show(io::IO, typst_function::TypstFunction)
     (; depth, mode, tab_size, callable, parameters, keyword_parameters) = typst_function
 

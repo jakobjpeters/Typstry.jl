@@ -4,10 +4,12 @@ module TypstStrings
 import Base:
     *, IOBuffer, codeunit, codeunit, isvalid, iterate, iterate,
     ncodeunits, pointer, repr, show
-import ..Typstry: show_typst
+import ..Strings: show_typst
 
 using .Meta: isexpr
-using ..Typstry: TypstContext, TypstText, escape, show_render
+using ..Strings: TypstText
+using Typstry: TypstContext
+using ..Strings: escape
 
 export TypstString, @typst_str
 
@@ -168,9 +170,6 @@ repr(m::MIME, ts::TypstString; context = nothing) = sprint(show, m, ts; context)
 show_typst(io::IO, ::TypstContext, x::TypstString) = print(io, x)
 
 show(io::IO, ::MIME"text/typst", x::TypstString) = show_typst(io, x)
-show(io::IO, m::Union{
-    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, ts::TypstString) = show_render(io, m, ts)
 function show(io::IO, ::MIME"text/plain", typst_string::TypstString)
     if all(isprint, typst_string)
         escapes = 0

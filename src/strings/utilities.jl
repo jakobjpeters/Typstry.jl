@@ -30,10 +30,10 @@ Print `\\` to `io` `count` times.
 # Examples
 
 ```jldoctest
-julia> Typstry.escape(stdout, 1)
+julia> Typstry.Strings.escape(stdout, 1)
 \\
 
-julia> Typstry.escape(stdout, 2)
+julia> Typstry.Strings.escape(stdout, 2)
 \\\\
 ```
 """
@@ -61,13 +61,13 @@ Return the image format acronym corresponding to the given `MIME`.
 # Examples
 
 ```jldoctest
-julia> Typstry.format(MIME"application/pdf"())
+julia> Typstry.Strings.format(MIME"application/pdf"())
 "pdf"
 
-julia> Typstry.format(MIME"image/png"())
+julia> Typstry.Strings.format(MIME"image/png"())
 "png"
 
-julia> Typstry.format(MIME"image/svg+xml"())
+julia> Typstry.Strings.format(MIME"image/svg+xml"())
 "svg"
 ```
 """ format
@@ -119,21 +119,3 @@ show_raw(context::IO, mime::MIME"text/markdown", value) = @view sprint(
     show, mime, value; context
 )[begin:(end - 1)]
 show_raw(context::IO, mime::MIME, value) = sprint(show, mime, value; context)
-
-function show_render(io::IO, mime::Union{
-    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
-}, value)
-    io_buffer = IOBuffer()
-    typst_command = TypstCommand([
-        "compile", "--font-path", julia_mono, "--format", format(mime), "-", "-"
-    ])
-    _typst_context = typst_context(io, value)[2]
-
-    print(io_buffer, preamble(_typst_context))
-    show_typst(io_buffer, _typst_context, value)
-    println(io_buffer)
-
-    seekstart(io_buffer)
-    run_typst(command -> pipeline(command; stdin = io_buffer, stdout = io), typst_command)
-    nothing
-end

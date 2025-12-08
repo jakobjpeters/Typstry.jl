@@ -1,7 +1,12 @@
 
 module Render
 
-using Typstry: TypstCommand, TypstContext, julia_mono, preamble, show_typst, typst_context
+import Base: show
+
+using Typstry:
+    Strings, TypstCommand, TypstContext, TypstFunction, TypstString, TypstText, Typst,
+    julia_mono, Commands.Interface.run_typst, show_typst
+using .Strings: format, preamble, typst_context
 
 export render
 
@@ -66,5 +71,23 @@ See also [`TypstContext`](@ref).
 julia> render(Any[true 1; 1.2 1 // 2]);
 ```
 """ render
+
+function show(io::IO, mime::Union{
+    MIME"application/pdf", MIME"image/png", MIME"image/svg+xml"
+}, value::Union{TypstFunction, TypstString, TypstText, Typst})
+    io_buffer = IOBuffer()
+    typst_command = TypstCommand([
+        "compile", "--font-path", julia_mono, "--format", format(mime), "-", "-"
+    ])
+    _typst_context = typst_context(io, value)[2]
+
+    print(io_buffer, preamble(_typst_context))
+    show_typst(io_buffer, _typst_context, value)
+    println(io_buffer)
+
+    seekstart(io_buffer)
+    run_typst(command -> pipeline(command; stdin = io_buffer, stdout = io), typst_command)
+    nothing
+end
 
 end # Render
