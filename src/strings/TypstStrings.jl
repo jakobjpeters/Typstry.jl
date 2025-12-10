@@ -69,8 +69,8 @@ typst"(1 + 2i)"
 struct TypstString <: AbstractString
     text::String
 
-    Base.:*(typst_string::TypstString, _typst_string::TypstString) = new(
-        typst_string.text * _typst_string.text
+    Base.:*(typst_string_1::TypstString, typst_string_2::TypstString) = new(
+        typst_string.text * typst_string_2.text
     )
 
     TypstString(typst_context::TypstContext, value) = new(sprint(
@@ -149,26 +149,28 @@ end
 
 TypstString(value; typst_context...) = TypstString(TypstContext(; typst_context...), value)
 
-IOBuffer(ts::TypstString) = IOBuffer(ts.text)
+IOBuffer(typst_string::TypstString) = IOBuffer(typst_string.text)
 
-codeunit(ts::TypstString, i::Integer) = codeunit(ts.text, i)
-codeunit(ts::TypstString) = codeunit(ts.text)
+codeunit(typst_string::TypstString, index::Integer) = codeunit(typst_string.text, index)
+codeunit(typst_string::TypstString) = codeunit(typst_string.text)
 
-isvalid(ts::TypstString, i::Integer) = isvalid(ts.text, i::Integer)
+isvalid(typst_string::TypstString, index::Integer) = isvalid(typst_string.text, index)
 
-iterate(ts::TypstString, i::Integer) = iterate(ts.text, i)
-iterate(ts::TypstString) = iterate(ts.text)
+iterate(typst_string::TypstString, index::Integer) = iterate(typst_string.text, index)
+iterate(typst_string::TypstString) = iterate(typst_string.text)
 
-ncodeunits(ts::TypstString) = ncodeunits(ts.text)
+ncodeunits(typst_string::TypstString) = ncodeunits(typst_string.text)
 
-pointer(ts::TypstString) = pointer(ts.text)
+pointer(typst_string::TypstString) = pointer(typst_string.text)
 
-repr(::MIME"text/typst", ts::TypstString; context = nothing) = ts
-repr(m::MIME, ts::TypstString; context = nothing) = sprint(show, m, ts; context)
+repr(::MIME"text/typst", typst_string::TypstString; context = nothing) = typst_string
+repr(mime::MIME, typst_string::TypstString; context = nothing) = sprint(
+    show, mime, typst_string; context
+)
 
-show_typst(io::IO, ::TypstContext, x::TypstString) = print(io, x)
+show_typst(io::IO, ::TypstContext, typst_string::TypstString) = print(io, typst_string)
 
-show(io::IO, ::MIME"text/typst", x::TypstString) = show_typst(io, x)
+show(io::IO, ::MIME"text/typst", typst_string::TypstString) = show_typst(io, typst_string)
 function show(io::IO, ::MIME"text/plain", typst_string::TypstString)
     if all(isprint, typst_string)
         escapes = 0

@@ -135,10 +135,10 @@ macro typst_cmd(input::String)
     :(TypstCommand(string.(eachsplit($output))))
 end
 
-typst_command::TypstCommand == _typst_command::TypstCommand = (
-    typst_command.compiler == _typst_command.compiler &&
-    typst_command.parameters == _typst_command.parameters &&
-    typst_command.ignore_status == _typst_command.ignore_status
+typst_command_1::TypstCommand == typst_command_2::TypstCommand = (
+    typst_command_1.compiler == typst_command_2.compiler &&
+    typst_command_1.parameters == typst_command_2.parameters &&
+    typst_command_1.ignore_status == typst_command_2.ignore_status
 )
 
 Cmd(typst_command::TypstCommand; parameters...) = Cmd(
@@ -153,8 +153,8 @@ eltype(::Type{TypstCommand}) = String
 
 firstindex(::TypstCommand) = 1
 
-function getindex(typst_command::TypstCommand, i)
-    i == 1 ? only(typst_command.compiler) : typst_command.parameters[i - 1]
+function getindex(typst_command::TypstCommand, index)
+    index == 1 ? only(typst_command.compiler) : typst_command.parameters[index - 1]
 end
 
 hash(typst_command::TypstCommand, code::UInt) = hash((
@@ -163,11 +163,11 @@ hash(typst_command::TypstCommand, code::UInt) = hash((
 
 ignorestatus(typst_command::TypstCommand) = TypstCommand(typst_command; ignorestatus = true)
 
-function iterate(typst_command::TypstCommand, i)
+function iterate(typst_command::TypstCommand, index)
     if i == 1 (only(typst_command.compiler), 2)
     else
-        parameters, _i = typst_command.parameters, i - 1
-        length(parameters) < _i ?  nothing : (parameters[_i], i + 1)
+        parameters, previous_index = typst_command.parameters, index - 1
+        length(parameters) < previous_index ?  nothing : (parameters[previous_index], index + 1)
     end
 end
 iterate(typst_command::TypstCommand) = iterate(typst_command, firstindex(typst_command))

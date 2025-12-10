@@ -10,6 +10,7 @@
     - Constructs and runs `TypstCommand`
     - Uses `ignorestatus` and catches interrupts
 - The default values for `input` and `output` are now `document.typ` and `document.pdf`, respectively
+- Substantial code structure improvements
 
 ### Bug fixes
 
