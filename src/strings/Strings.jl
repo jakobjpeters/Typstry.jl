@@ -1,14 +1,12 @@
 
 module Strings
 
-using Typstry: Contexts.TypstContexts, TypstContext, Utilities.unwrap
-using .TypstContexts: TypstContext, default_context, context, reset_context, typst_context
+using Typstry: Contexts.TypstContexts.default_context, reset_context
 
 include("Utilities.jl")
 
-show_typst(io::IO, value; context...) = show_typst(
-    typst_context(io, TypstContext(; context...), value)...
-)
+include("ShowTypst.jl")
+using .ShowTypst: show_typst
 export show_typst
 
 include("Modes.jl")
@@ -23,7 +21,8 @@ include("AbstractTypsts.jl")
 using .AbstractTypsts: AbstractTypst, TypstFunction, TypstText, Typst
 export AbstractTypst, TypstFunction, TypstText, Typst
 
-include("ShowTypst.jl")
+# TODO: change to `Lower.jl`
+include("Interface.jl")
 include("Dates.jl")
 
 function __init__()
