@@ -2,7 +2,8 @@
 module Utilities
 
 using .Iterators: repeated
-using Typstry: Strings, Typstry, TypstContext, Utilities.enclose, Utilities.typst_context, Utilities.unwrap
+using Typstry: Contexts, Strings, Typstry, TypstContext, Utilities.enclose
+using .Contexts: TypstContexts.typst_context, ContextErrors.unwrap
 
 export code_mode, escape, format, math_mode, math_pad, show_parameters, show_image, show_raw
 

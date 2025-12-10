@@ -164,7 +164,7 @@ hash(typst_command::TypstCommand, code::UInt) = hash((
 ignorestatus(typst_command::TypstCommand) = TypstCommand(typst_command; ignorestatus = true)
 
 function iterate(typst_command::TypstCommand, index)
-    if i == 1 (only(typst_command.compiler), 2)
+    if index == 1 (only(typst_command.compiler), 2)
     else
         parameters, previous_index = typst_command.parameters, index - 1
         length(parameters) < previous_index ?  nothing : (parameters[previous_index], index + 1)

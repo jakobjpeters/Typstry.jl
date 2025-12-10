@@ -1,11 +1,11 @@
 
 module Typstry
 
+include("Utilities.jl")
+
 include("contexts/Contexts.jl")
 using .Contexts: ContextError, DefaultIO, TypstContext, context, reset_context
 export ContextError, DefaultIO, TypstContext, context, reset_context
-
-include("Utilities.jl")
 
 include("commands/Commands.jl")
 using .Commands: TypstCommandError, TypstCommand, @run, @typst_cmd, julia_mono, Interface.run_typst

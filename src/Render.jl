@@ -3,10 +3,9 @@ module Render
 
 import Base: show
 
-using Typstry:
-    Strings.Utilities, AbstractTypst, TypstCommand, TypstContext, TypstString,
-    julia_mono, Commands.Interface.run_typst, show_typst, Utilities.unwrap
-using .Utilities: format, typst_context
+using Typstry: Contexts, AbstractTypst, TypstCommand, TypstContext, TypstString,
+    Strings.Utilities.format, julia_mono, Commands.Interface.run_typst, show_typst
+using .Contexts: TypstContexts.typst_context, ContextErrors.unwrap
 
 export render
 

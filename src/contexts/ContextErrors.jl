@@ -3,7 +3,7 @@ module ContextErrors
 
 import Base: showerror, show
 
-export ContextError
+export ContextError, unwrap
 
 """
     ContextError <: Exception
@@ -45,5 +45,17 @@ showerror(io::IO, ce::ContextError) = print(
 show(io::IO, ::MIME"text/plain", ce::ContextError) = print(
     io, ContextError, "(", ce.expected, ", ", ce.received, ", :", ce.key, ")"
 )
+
+function _unwrap(data_type::DataType, key::Symbol, value)
+    value isa data_type ? value : throw(ContextError(data_type, typeof(value), key))
+end
+
+unwrap(collection, key::Symbol, default) = _unwrap(
+    typeof(default), key, get(collection, key, default)
+)
+function unwrap(collection, type::DataType, key)
+    value = collection[key]
+    _unwrap(type, key, value)
+end
 
 end # ContextErrors

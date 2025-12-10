@@ -70,7 +70,7 @@ struct TypstString <: AbstractString
     text::String
 
     Base.:*(typst_string_1::TypstString, typst_string_2::TypstString) = new(
-        typst_string.text * typst_string_2.text
+        typst_string_1.text * typst_string_2.text
     )
 
     TypstString(typst_context::TypstContext, value) = new(sprint(

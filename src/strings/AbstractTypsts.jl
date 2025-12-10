@@ -6,8 +6,8 @@ import ..Strings: show_typst
 
 using Base: Pairs
 using ..Strings: Mode, TypstString, code
-using Typstry: Typstry, Utilities, TypstContext
-using .Utilities: enclose, join_with, unwrap
+using Typstry: Typstry, Utilities, TypstContext, Contexts.ContextErrors.unwrap
+using .Utilities: enclose, join_with
 
 export AbstractTypst, TypstFunction, TypstText, Typst
 

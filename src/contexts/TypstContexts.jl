@@ -4,16 +4,18 @@ module TypstContexts
 import Base:
     IOContext, copy, eltype, getkey, get, iterate, length,
     mergewith, merge, setindex!, show, sizehint!
-import Typstry
 
-export TypstContext, default_context, context, reset_context
+using ..Contexts: ContextErrors.unwrap
+using Typstry: Utilities.join_with
+
+export TypstContext, default_context, context, reset_context, typst_context
 
 """
     TypstContext <: AbstractDict{Symbol, Any}
     TypstContext(::Any)
     TypstContext(; kwargs...)
 
-Provide formatting data for [`show_typst`](@ref Typstry.show_typst).
+Provide formatting data for [`show_typst`](@ref Typstry.Strings.show_typst).
 
 Implement a method of this constructor for a custom type to specify its custom settings and parameters.
 
@@ -173,7 +175,7 @@ function show(io::IO, typst_context::TypstContext)
 
     if !isempty(typst_context)
         print(io, "; ")
-        Typstry.join_with(io, typst_context, ", ") do io, (key, value)
+        join_with(io, typst_context, ", ") do io, (key, value)
             print(io, key, " = ")
             show(io, value)
         end
@@ -185,5 +187,29 @@ end
 sizehint!(typst_context::TypstContext, size; parameters...) = TypstContext(
     sizehint!(typst_context.context, size; parameters...)
 )
+
+function typst_context(ioc::IOContext, tc::TypstContext, ____tc::TypstContext, value)
+    _tc = typst_context(ioc)
+    __tc = merge!(copy(_tc), tc)
+    ___tc = unwrap(_tc, :context, TypstContext())
+
+    if haskey(ioc, :typst_context) _tc[:context] = __tc
+    else ioc = IOContext(ioc, __tc)
+    end
+
+    (ioc, merge!(mergewith!((x, _) -> x, ____tc, context), ___tc, __tc), value)
+end
+typst_context(ioc::IOContext, tc::TypstContext, value) = typst_context(
+    ioc, tc, TypstContext(value), value
+)
+typst_context(io::IO, tc::TypstContext, value) = typst_context(IOContext(io), tc, value)
+typst_context(io::IO, value) = typst_context(io, TypstContext(), value)
+function typst_context(tc::TypstContext, value)
+    _tc = TypstContext(value)
+    # TODO: throw a `ContextError`
+    typst_context(get(() -> context[:io]()::IO, tc, :io), tc, _tc, value)
+end
+typst_context(io_context::IOContext) = unwrap(io_context, :typst_context, TypstContext())
+typst_context(::IO) = TypstContext()
 
 end # TypstContexts

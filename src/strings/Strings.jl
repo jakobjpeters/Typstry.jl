@@ -2,10 +2,9 @@
 module Strings
 
 using Typstry: Contexts.TypstContexts, TypstContext, Utilities.unwrap
-using .TypstContexts: TypstContext, default_context, context, reset_context
+using .TypstContexts: TypstContext, default_context, context, reset_context, typst_context
 
 include("Utilities.jl")
-using .Utilities: typst_context
 
 show_typst(io::IO, value; context...) = show_typst(
     typst_context(io, TypstContext(; context...), value)...

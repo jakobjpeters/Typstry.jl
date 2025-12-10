@@ -4,10 +4,9 @@ module ShowTypst
 import ..Strings: show_typst
 import Typstry
 
-# TODO:
-using Base: MathConstants.catalan
-using Typstry.Contexts: TypstContext, context
-using Typstry.Utilities: enclose, typst_context, unwrap
+using Base: MathConstants.catalan # TODO
+using Typstry.Contexts: TypstContext, context, TypstContexts.typst_context, ContextErrors.unwrap
+using Typstry.Utilities: enclose
 using ..Strings: Strings, Utilities, Mode, TypstString, TypstText, code, markup, math
 using .Utilities: code_mode, math_mode, math_pad, show_image, show_parameters, show_raw
 
