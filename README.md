@@ -150,6 +150,7 @@ julia> render(1:4)
 
 ### LaTeX
 
+- [LAlatex.jl](https://github.com/ea42gh/LAlatex.jl)
 - [Latexify.jl](https://github.com/korsbo/Latexify.jl)
 - [LaTeXCompilers.jl](https://github.com/tpapp/LaTeXCompilers.jl)
 - [LaTeXEntities.jl](https://github.com/JuliaString/LaTeX_Entities.jl)
