@@ -132,6 +132,8 @@ julia> render(1:4)
 
 - [MakieTeX.jl](https://github.com/JuliaPlots/MakieTeX.jl)
     - Dependent of Typstry.jl
+- [PrettyTables.jl](https://github.com/ronisbr/PrettyTables.jl)
+    - Weak dependent of Typstry.jl
 - [SummaryTables.jl](https://github.com/PumasAI/SummaryTables.jl)
 
 ### LaTeX

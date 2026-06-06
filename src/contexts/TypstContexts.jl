@@ -12,8 +12,8 @@ export TypstContext, default_context, context, reset_context, typst_context
 
 """
     TypstContext <: AbstractDict{Symbol, Any}
-    TypstContext(::Any)
-    TypstContext(; kwargs...)
+    TypstContext(::AbstractTypst)
+    TypstContext(; typst_context...)
 
 Provide formatting data for [`show_typst`](@ref Typstry.Strings.show_typst).
 
@@ -65,8 +65,6 @@ struct TypstContext <: AbstractDict{Symbol, Any}
     TypstContext(; typst_context...) = new(typst_context)
 end
 
-TypstContext(_) = TypstContext()
-
 const default_context = TypstContext(; block = false, depth = 0, parenthesize = true, tab_size = 2)
 
 """
@@ -112,6 +110,14 @@ TypstContext with 7 entries:
 ```
 """
 const context = TypstContext()
+
+TypstContext(io_context::IOContext, value) = merge!(mergewith!(
+    (left, right) -> left, TypstContext(value), context
+), TypstContext(io_context))
+TypstContext(io::IO, value) = TypstContext(IOContext(io), value)
+TypstContext(io_context::IOContext) = unwrap(io_context, :typst_context, TypstContext())
+TypstContext(typst_context::TypstContext) = typst_context
+TypstContext(_) = copy(context)
 
 """
     reset_context()::TypstContext
@@ -184,9 +190,10 @@ function show(io::IO, typst_context::TypstContext)
     print(io, ')')
 end
 
-sizehint!(typst_context::TypstContext, size; parameters...) = TypstContext(
+function sizehint!(typst_context::TypstContext, size; parameters...)
     sizehint!(typst_context.context, size; parameters...)
-)
+    typst_context
+end
 
 function typst_context(ioc::IOContext, tc::TypstContext, ____tc::TypstContext, value)
     _tc = typst_context(ioc)

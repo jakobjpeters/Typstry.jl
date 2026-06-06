@@ -28,12 +28,13 @@ julia> escape(stdout, 2)
 """
 escape(io::IO, count::Int) = join(io, repeated('\\', count))
 
-format(::MIME"application/pdf") = "pdf"
-format(::MIME"image/gif") = "gif"
-format(::MIME"image/jpg") = "jpg"
-format(::MIME"image/png") = "png"
-format(::MIME"image/svg+xml") = "svg"
-format(::MIME"image/webp") = "webp"
+format(mime::MIME) = format(typeof(mime))
+format(::Type{MIME"application/pdf"}) = "pdf"
+format(::Type{MIME"image/gif"}) = "gif"
+format(::Type{MIME"image/jpg"}) = "jpg"
+format(::Type{MIME"image/png"}) = "png"
+format(::Type{MIME"image/svg+xml"}) = "svg"
+format(::Type{MIME"image/webp"}) = "webp"
 
 @doc """
     format(::Union{

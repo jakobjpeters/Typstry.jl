@@ -5,32 +5,23 @@ using Typstry: Contexts.TypstContexts.default_context, reset_context
 
 include("Utilities.jl")
 
-include("ShowTypst.jl")
-using .ShowTypst: show_typst
-export show_typst
-
 include("Modes.jl")
 using .Modes: Mode, code, markup, math
 export Mode, code, markup, math
+
+include("AbstractTypsts.jl")
+using .AbstractTypsts:
+    AbstractTypst, TypstFunction, TypstImage, TypstMode, TypstRaw, TypstText, Typst,
+    lower, show_typst
+export
+    AbstractTypst, TypstFunction, TypstImage, TypstMode, TypstRaw, TypstText, Typst,
+    lower, show_typst
 
 include("TypstStrings.jl")
 using .TypstStrings: TypstString, @typst_str
 export TypstString, @typst_str
 
-include("AbstractTypsts.jl")
-using .AbstractTypsts: AbstractTypst, TypstFunction, TypstText, Typst
-export AbstractTypst, TypstFunction, TypstText, Typst
-
-# TODO: change to `Lower.jl`
 include("Interface.jl")
-include("Dates.jl")
-
-function __init__()
-    default_context[:preamble] = TypstString(TypstText("""
-    #set page(margin: 1em, height: auto, width: auto, fill: white)
-    #set text(16pt, font: \"JuliaMono\")
-    """))
-    reset_context()
-end
+# include("Dates.jl")
 
 end # Strings

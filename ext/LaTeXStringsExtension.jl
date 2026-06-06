@@ -1,23 +1,19 @@
 
 module LaTeXStringsExtension
 
-import Typstry: show_typst
+import Typstry: lower
 
 using LaTeXStrings: LaTeXString, @L_str
-using Typstry: TypstContext, Precompile.compile_workload, Strings.Utilities.show_raw
+using Typstry: TypstRaw, Precompile.compile_workload
 
-show_typst(io::IO, tc::TypstContext, x::LaTeXString) = show_raw(
-    io, tc, MIME"text/latex"(), :latex, x
-)
+lower(latex_string::LaTeXString) = TypstRaw(MIME"text/latex"(), :latex, latex_string)
 
 const examples = []
 
-using Typstry
-
 function __init__()
-    append!(examples, [L"a" => LaTeXString => [
+    push!(examples, L"a" => LaTeXString => [
         :block, :depth, :lang, :align, :syntaxes, :theme, :tab_size
-    ]])
+    ])
     compile_workload(examples)
 end
 

@@ -4,11 +4,11 @@ module TypstStrings
 import Base:
     *, IOBuffer, codeunit, codeunit, isvalid, iterate, iterate,
     ncodeunits, pointer, repr, show
-import ..Strings: show_typst
+import ..Strings: lower
 
 using .Meta: isexpr
-using ..Strings: Strings, Utilities.escape
-using Typstry: TypstContext
+using ..Strings: AbstractTypst, TypstText, Utilities.escape, show_typst
+using Typstry: TypstContext, Contexts.TypstContexts.default_context, reset_context
 
 export TypstString, @typst_str
 
@@ -69,6 +69,7 @@ typst"(1 + 2i)"
 struct TypstString <: AbstractString
     text::String
 
+    # TODO: can this be `*`?
     Base.:*(typst_string_1::TypstString, typst_string_2::TypstString) = new(
         typst_string_1.text * typst_string_2.text
     )
@@ -76,6 +77,11 @@ struct TypstString <: AbstractString
     TypstString(typst_context::TypstContext, value) = new(sprint(
         show_typst, value; context = :typst_context => typst_context
     ))
+
+    # TODO: does this need `Base.repr`?
+    repr(mime::MIME"text/typst", typst::AbstractTypst; context = nothing) = new(
+        sprint(show, mime, typst; context)
+    )
 end
 
 """
@@ -144,7 +150,7 @@ macro typst_str(input::String)
     end
 
     current > final || push!(args, @view input[current:final])
-    :(TypstString(Strings.TypstText($output)))
+    :(TypstString(TypstText($output)))
 end
 
 TypstString(value; typst_context...) = TypstString(TypstContext(; typst_context...), value)
@@ -159,6 +165,8 @@ isvalid(typst_string::TypstString, index::Integer) = isvalid(typst_string.text, 
 iterate(typst_string::TypstString, index::Integer) = iterate(typst_string.text, index)
 iterate(typst_string::TypstString) = iterate(typst_string.text)
 
+lower(typst_string::TypstString) = TypstText(typst_string)
+
 ncodeunits(typst_string::TypstString) = ncodeunits(typst_string.text)
 
 pointer(typst_string::TypstString) = pointer(typst_string.text)
@@ -167,8 +175,6 @@ repr(::MIME"text/typst", typst_string::TypstString; context = nothing) = typst_s
 repr(mime::MIME, typst_string::TypstString; context = nothing) = sprint(
     show, mime, typst_string; context
 )
-
-show_typst(io::IO, ::TypstContext, typst_string::TypstString) = print(io, typst_string)
 
 show(io::IO, ::MIME"text/typst", typst_string::TypstString) = show_typst(io, typst_string)
 function show(io::IO, ::MIME"text/plain", typst_string::TypstString)
@@ -196,9 +202,17 @@ function show(io::IO, ::MIME"text/plain", typst_string::TypstString)
     end
 end
 function show(io::IO, typst_string::TypstString)
-    print(io, TypstString, '(', Strings.TypstText, '(')
+    print(io, TypstString, '(', TypstText, '(')
     show(io, typst_string.text)
     print(io, "))")
+end
+
+function __init__()
+    default_context[:preamble] = TypstString(TypstText("""
+    #set page(margin: 1em, height: auto, width: auto, fill: white)
+    #set text(16pt, font: \"JuliaMono\")
+    """))
+    reset_context()
 end
 
 end # TypstStrings

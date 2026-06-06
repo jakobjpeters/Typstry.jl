@@ -37,6 +37,7 @@ function show(io::IO, ::DefaultIO)
     show(io, DefaultIO)
 end
 
+# __init__() = @eval const test = stdout
 __init__() = (default_context[:io] = DefaultIO())
 
 end # DefaultIOs

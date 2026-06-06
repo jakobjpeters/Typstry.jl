@@ -1,17 +1,19 @@
 
 module MarkdownExtension
 
-import Typstry: show_typst
-using Markdown: MD, @md_str
-using Typstry: TypstContext, Precompile.compile_workload, Strings.Utilities.show_raw
+import Typstry: lower
 
-show_typst(io::IO, tc::TypstContext, x::MD) = show_raw(io, tc, MIME"text/markdown"(), :markdown, x)
+using Markdown: MD, @md_str
+using Typstry: TypstRaw, Precompile.compile_workload
+using Typstry
+
+lower(markdown::MD) = TypstRaw(MIME"text/markdown"(), :markdown, markdown)
 
 const examples = []
 
 function __init__()
-    append!(examples, [
-        md"# A" => MD => [:block, :depth, :lang, :align, :syntaxes, :theme, :tab_size]
+    push!(examples, md"# A" => MD => [
+        :block, :depth, :lang, :align, :syntaxes, :theme, :tab_size
     ])
     compile_workload(examples)
 end

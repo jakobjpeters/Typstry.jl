@@ -3,7 +3,7 @@
 
 ## v0.8.0
 
-- Create `AbstractTypst` as the supertype of `TypstFunction`, `TypstText`, and `Typst`
+- Create `AbstractTypst` as the supertype of `TypstFunction`, `TypstImage`, `TypstMode` `TypstText`, and `Typst`
 - Implement `show(::IO, ::TypstCommand)`
 - Implement interpolation for `@typst_cmd`
 - Replace `typst(::String)` with `@run parameters...`

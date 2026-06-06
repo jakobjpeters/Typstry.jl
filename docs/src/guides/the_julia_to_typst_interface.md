@@ -6,6 +6,16 @@ This guide illustrates how to implement Typst formatting for custom types.
 !!! warning
     This interface is in active development and will receive breaking changes.
 
+## `lower`
+
+This is a high-level interface.
+When possible, prefer to implement this over `show_typst`.
+
+## `show_typst`
+
+This is a low-level interface.
+When possible, prefer to implement `lower` over this.
+
 ## Setup
 
 ```jldoctest 1
